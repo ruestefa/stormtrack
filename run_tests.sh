@@ -11,31 +11,62 @@
 #   ETH Zurich, IAC, Atmosdyn
 #
 # History:
-#   2020-02-14 -- Basic implementation: collect and run all test suites
-#   2020-02-21 -- Refinement: add SKIP option; fine-tune verbosity
+#   2020-02-14: Basic implementation: collect and run all test suites
+#   2020-02-21: Refinements: add SKIP option; fine-tune verbosity
+#               Implement env-var-based and env-var-like options
 #
 #------------------------------------------------------------------------------
-# Arguments and parameters
+# Options: Pass as env vars or env-var-like options
 #------------------------------------------------------------------------------
+
+# Export env-var-like CLI options as env vars
+# Example: `$ script.sh FOO=BAR` should behave like `$ FOO=BAR script.sh`
+export_env_vars()
+{
+    local arg; for arg in "${@}"
+    do
+        local name_val=(${arg/=/ })
+        export ${name_val[0]}="${name_val[1]}"
+    done
+}
+export_env_vars "${@}"
 
 # Path to test root directory
-TEST_DIR="./tests"
+DEFAULT_TEST_DIR="./tests"
+TEST_DIR="${TEST_DIR:-${DEFAULT_TEST_DIR}}"
 
-# Modules to skip (dotted path, may be partial)
-SKIP=(
-    # test_stormtrack.core.identification.test_area_lonlat
-)
+# Mdules (dot-path; may be partial) to skip (comma-separated list)
+DEFAULT_SKIP_MODULES=''
+SKIP_MODULES="${SKIP_MODULES:-${DEFAULT_SKIP_MODULES}}"
 
-# Dry run w/o running the tests
-DRY=false
+# Dry run without running the tests
+DEFAULT_DRY_RUN=false
+DRY_RUN="${DRY_RUN:-${DEFAULT_DRY_RUN}}"
 
 # Verbosity (0 silent; 1 regular; 2 verbose; >2 debug)
-VERBOSITY=1
+DEFAULT_VERBOSITY=1
+VERBOSITY="${VERBOSITY:-${DEFAULT_VERBOSITY}}"
 
 # Path to Python executable
-PYTHON="venv/bin/python"
+DEFAULT_PYTHON="python"
+PYTHON="${PYTHON:-${DEFAULT_PYTHON}}"
 
 #------------------------------------------------------------------------------
+
+[ ${VERBOSITY} -ge 2 ] && {
+    echo -e "\n=============================="
+    echo "SETUP"
+    echo -e "------------------------------"
+    echo "TEST_DIR      : ${TEST_DIR}"
+    echo "SKIP_MODULES  : ${SKIP_MODULES}"
+    echo "DRY_RUN       : ${DRY_RUN}"
+    echo "VERBOSITY     : ${VERBOSITY}"
+    echo "PYTHON        : ${PYTHON}"
+    echo -e "==============================\n"
+}
+
+# Modules to skip: convert cmma-separated list to bash array
+SKIP_MODULES=(${SKIP_MODULES//,/ })
 
 # Check the Python executable
 case ${VERBOSITY} in
@@ -148,10 +179,10 @@ run_test_suite()
     local test_name="${module_pypath} @ ${module_root}"
 
     # Check if test suite shall be skipped
-    local pypath_skip
-    for pypath_skip in ${SKIP[@]}
+    local skip_module
+    for skip_module in ${SKIP_MODULES[@]}
     do
-        echo "${module_pypath}" | \grep -q "${pypath_skip//./\\.}" && {
+        echo "${module_pypath}" | \grep -q "${skip_module//./\\.}" && {
             [ ${VERBOSITY} -ge 1 ] && echo "[ SKIP ] ${test_name}"
             return 2
         }
@@ -166,7 +197,7 @@ run_test_suite()
     [ ${VERBOSITY} -ge 2 ] && echo -e "[      ] ${test_name}"
     local cmd="PYTHONPATH=${pypath} ${PYTHON} -m ${module_pypath}"
     pdbg ${_name_} "command" "${cmd}"
-    if ${DRY}
+    if ${DRY_RUN}
     then
         [ ${VERBOSITY} -ge 1 ] && echo "[  DRY ] ${test_name}"
     else
