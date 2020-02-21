@@ -200,6 +200,7 @@ ifeq (${IGNORE_VENV}, 0)
 ifeq (${VIRTUAL_ENV},)
 	@echo -e "${ECHO_PREFIX}creating virtual environment '${VENV_NAME}' at '${VENV_DIR}'"
 	which python
+	python --version
 	python -m venv ${VENV_DIR} --prompt='${VENV_NAME}'
 	${PREFIX}python --version
 	${PREFIX}python -m pip install -U pip
