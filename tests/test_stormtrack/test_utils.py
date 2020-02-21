@@ -6,6 +6,10 @@ from unittest import TestCase
 
 import numpy as np
 
+sys.path.append(".tox/unittest/lib/python3.7/site-packages")
+# import os; print(os.getcwd())  # SR_DBG
+# exit(1)
+
 from .utils import circle
 
 #==============================================================================

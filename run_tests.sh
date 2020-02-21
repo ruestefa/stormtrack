@@ -11,41 +11,46 @@
 #   ETH Zurich, IAC, Atmosdyn
 #
 # History:
-#   2020-02-14: Basic implementation: collect and run all test suites
-#   2020-02-21: Refinements: add SKIP option; fine-tune verbosity
+#   2020-02-14: Basic implementation: collect and run all test modules
+#   2020-02-21: Refinements: add EXCLUDE option; fine-tune verbosity
 #               Implement env-var-based and env-var-like options
 #
 #------------------------------------------------------------------------------
 # Options: Pass as env vars or env-var-like options
 #------------------------------------------------------------------------------
 
-# Export env-var-like CLI options as env vars
+# Set variables based on assignment-like CLI options
 # Example: `$ script.sh FOO=BAR` should behave like `$ FOO=BAR script.sh`
-export_env_vars()
+declare_variables()
 {
     local arg; for arg in "${@}"
     do
         local name_val=(${arg/=/ })
-        export ${name_val[0]}="${name_val[1]}"
+        declare -g ${name_val[0]}="${name_val[1]}"
     done
 }
-export_env_vars "${@}"
+declare_variables "${@}"
 
 # Path to test root directory
 DEFAULT_TEST_DIR="./tests"
 TEST_DIR="${TEST_DIR:-${DEFAULT_TEST_DIR}}"
 
-# Mdules (dot-path; may be partial) to skip (comma-separated list)
-DEFAULT_SKIP_MODULES=''
-SKIP_MODULES="${SKIP_MODULES:-${DEFAULT_SKIP_MODULES}}"
+# Only run these modules (comma-separated list of (partial) dot-paths)
+DEFAULT_INCLUDE=''
+INCLUDE="${INCLUDE:-${DEFAULT_INCLUDE}}"
+
+# Skip these modules (comma-separated list of (partial) dot-paths)
+DEFAULT_EXCLUDE=''
+EXCLUDE="${EXCLUDE:-${DEFAULT_EXCLUDE}}"
 
 # Dry run without running the tests
 DEFAULT_DRY_RUN=false
 DRY_RUN="${DRY_RUN:-${DEFAULT_DRY_RUN}}"
 
 # Verbosity (0 silent; 1 regular; 2 verbose; >2 debug)
-DEFAULT_VERBOSITY=1
-VERBOSITY="${VERBOSITY:-${DEFAULT_VERBOSITY}}"
+echo $VERBOSE
+DEFAULT_VERBOSE=1
+VERBOSE="${VERBOSE:-${DEFAULT_VERBOSE}}"
 
 # Path to Python executable
 DEFAULT_PYTHON="python"
@@ -53,23 +58,25 @@ PYTHON="${PYTHON:-${DEFAULT_PYTHON}}"
 
 #------------------------------------------------------------------------------
 
-[ ${VERBOSITY} -ge 2 ] && {
+[ ${VERBOSE} -ge 2 ] && {
     echo -e "\n=============================="
     echo "SETUP"
     echo -e "------------------------------"
     echo "TEST_DIR      : ${TEST_DIR}"
-    echo "SKIP_MODULES  : ${SKIP_MODULES}"
+    echo "INCLUDE       : ${INCLUDE}"
+    echo "EXCLUDE       : ${EXCLUDE}"
     echo "DRY_RUN       : ${DRY_RUN}"
-    echo "VERBOSITY     : ${VERBOSITY}"
+    echo "VERBOSE       : ${VERBOSE}"
     echo "PYTHON        : ${PYTHON}"
     echo -e "==============================\n"
 }
 
-# Modules to skip: convert cmma-separated list to bash array
-SKIP_MODULES=(${SKIP_MODULES//,/ })
+# Convert cmma-separated lists to bash arrays
+INCLUDE=(${INCLUDE//,/ })
+EXCLUDE=(${EXCLUDE//,/ })
 
 # Check the Python executable
-case ${VERBOSITY} in
+case ${VERBOSE} in
     0) ;&
     1) ${PYTHON} --version >/dev/null || exit 1 ;;
     *) ${PYTHON} --version || exit 1 ;;
@@ -103,7 +110,7 @@ main()
     for module_pypath_root in "${modules_pypath_root[@]}"
     do
         pdbg ${_name_} "module_pypath_root" "${module_pypath_root}"
-        run_test_suite $(echo "${module_pypath_root/@/ }")
+        run_test_module $(echo "${module_pypath_root/@/ }")
         case ${?} in
             0) n_pass=$((n_pass + 1)) ;;
             1) n_fail=$((n_fail + 1)) ;;
@@ -114,9 +121,13 @@ main()
     [ ${n_tot} -ne ${#modules_pypath_root[@]} ] && {
         echo "warning: expected ${#modules_pypath_root[@]} test modules, but counted ${n_tot}" >&2
     }
-    [ ${VERBOSITY} -ge 2 ] && echo ''
-    [ ${VERBOSITY} -ge 1 ] && {
-        local pc="$(\printf "%3d%%" $((100 * n_pass / (n_tot - n_skip))))"
+    [ ${VERBOSE} -ge 2 ] && echo ''
+    [ ${VERBOSE} -ge 1 ] && {
+        local n_run=$((n_tot - n_skip))
+        case ${n_run} in
+            0) pc="    " ;;
+            *) local pc="$(\printf "%3d%%" $((100 * n_pass / n_run)))" ;;
+        esac
         echo "[ ${pc} ] ${n_pass} passed, ${n_fail} failed of ${n_tot} total, ${n_skip} skipped"
     }
     return ${n_fail}
@@ -169,21 +180,39 @@ collect_package_roots()
     dirname "${package_paths[@]}" | \sort -u
 }
 
-run_test_suite()
+run_test_module()
 {
-    local _name_="run_test_suite"
+    local _name_="run_test_module"
     local module_pypath="${1}"
     local module_root="${2}"
     pdbg ${_name_} "module_pypath" "${module_pypath}"
     pdbg ${_name_} "module_root" "${module_root}"
     local test_name="${module_pypath} @ ${module_root}"
 
-    # Check if test suite shall be skipped
-    local skip_module
-    for skip_module in ${SKIP_MODULES[@]}
+    # Run test module only if specified as included
+    if [ ${#INCLUDE[@]} -gt 0 ]
+    then
+        local include=false
+        local module_to_include
+        for module_to_include in "${INCLUDE[@]}"
+        do
+            echo "${module_pypath}" | \grep -q "${module_to_include//./\\.}" && {
+                include=true
+                break
+            }
+        done
+        ${include} || {
+            [ ${VERBOSE} -ge 1 ] && echo "[ SKIP ] ${test_name} (not included)"
+            return 2
+        }
+    fi
+
+    # Skip test module if specified as excluded
+    local module_to_exclude
+    for module_to_exclude in "${EXCLUDE[@]}"
     do
-        echo "${module_pypath}" | \grep -q "${skip_module//./\\.}" && {
-            [ ${VERBOSITY} -ge 1 ] && echo "[ SKIP ] ${test_name}"
+        echo "${module_pypath}" | \grep -q "${module_to_exclude//./\\.}" && {
+            [ ${VERBOSE} -ge 1 ] && echo "[ SKIP ] ${test_name} (excluded)"
             return 2
         }
     done
@@ -193,15 +222,18 @@ run_test_suite()
     pdbg ${_name_} "pypath" "${pypath}"
 
     # Run tests
-    [ ${VERBOSITY} -ge 3 ] && echo ''
-    [ ${VERBOSITY} -ge 2 ] && echo -e "[      ] ${test_name}"
+    [ ${VERBOSE} -ge 3 ] && echo ''
+    [ ${VERBOSE} -ge 2 ] && echo -e "[  RUN ] ${test_name}"
     local cmd="PYTHONPATH=${pypath} ${PYTHON} -m ${module_pypath}"
     pdbg ${_name_} "command" "${cmd}"
     if ${DRY_RUN}
     then
-        [ ${VERBOSITY} -ge 1 ] && echo "[  DRY ] ${test_name}"
+        [ ${VERBOSE} -ge 1 ] && {
+            echo "[  DRY ] ${test_name}"
+            echo "         ${cmd}"
+        }
     else
-        case ${VERBOSITY} in
+        case ${VERBOSE} in
             0) ;&
             1) eval "${cmd}" >/dev/null 2>&1 ;;
             *) eval "${cmd}" ;;
@@ -223,7 +255,7 @@ run_test_suite()
 # Print debug message
 pdbg()
 {
-    [ ${VERBOSITY} -le 2 ] && return 0
+    [ ${VERBOSE} -le 2 ] && return 0
     local fmt="%-15s"
     local i
     for i in $(seq $((${#} - 2)))

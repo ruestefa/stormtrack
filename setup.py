@@ -14,6 +14,7 @@ from setuptools import setup
 from setuptools.command.build_ext import build_ext
 
 # Import Cython AFTER setuptools
+from Cython.Build import cythonize
 from Cython import Compiler  # isort:skip
 
 def read_file(path):
@@ -74,6 +75,7 @@ Compiler.Options.annotate = True
 compiler_directives={"embedsignature": True}
 
 cython_setup = {
+    # "ext_modules": cythonize(extensions),
     "ext_modules": extensions,
     "cmdclass": {"build_ext": build_ext},
     "include_dirs": [numpy.get_include()],
