@@ -3,13 +3,18 @@
 """
 The setup script.
 """
+# Standard library
+from pathlib import Path
+
+# Third-party
 import numpy
-
-from setuptools import setup
+from setuptools import Extension
 from setuptools import find_packages
+from setuptools import setup
+from setuptools.command.build_ext import build_ext
 
-# Import Cython after setuptools
-from Cython.Build import cythonize  # isort:skip
+# Import Cython AFTER setuptools
+from Cython import Compiler  # isort:skip
 
 def read_file(path):
     with open(path, "r") as f:
@@ -57,14 +62,31 @@ scripts = [
     "track-features=stormtrack.track_features:pre_main",
 ]
 
+module_paths = Path("src").rglob(".pyx")
+extensions = [
+    Extension(p.name[: -len(p.suffix)], [p]) for p in module_paths
+]
+
+# https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#compiler-options
+Compiler.Options.annotate = True
+
+# https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#compiler-directives
+compiler_directives={"embedsignature": True}
+
+cython_setup = {
+    "ext_modules": extensions,
+    "cmdclass": {"build_ext": build_ext},
+    "include_dirs": [numpy.get_include()],
+    "compiler_directives": compiler_directives,
+}
+
 setup(
     python_requires=python,
     install_requires=dependencies,
     entry_points={"console_scripts": scripts},
     packages=find_packages("src"),
     package_dir={"": "src"},
-    ext_modules=cythonize("src/**/*.pyx", annotate=True),
-    include_dirs=[numpy.get_include()],
     include_package_data=True,
+    **cython_setup,
     **metadata,
 )
