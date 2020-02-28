@@ -11,25 +11,25 @@ import numpy as np
 from stormtrack.core.identification import Feature
 from stormtrack.utils.various import import_module
 
-#==============================================================================
 
 # Define tolerances for area deviations based on setup
 # They are defined by increasing specificity and later searched inversely
 
 tol_pct_by_setup = [
-        (dict(),                                                         1.0),
-        (dict(method="dyntools", delta=0.5, clat=0),                     1.1),
-        (dict(method="dyntools", delta=0.5, clat=10),                    1.1),
-        (dict(method="dyntools", delta=0.5, clat=90),                    1.7),
-        (dict(method="dyntools", delta=1.0, clat=40),                    2.1),
-        (dict(method="pyproj"),                                         10.0),
-        (dict(method="pyproj", clat=40),                                 8.0),
-        (dict(method="pyproj", clat=80),                                30.0),
-        (dict(method="pyproj", delta=0.5, clat=60),                     15.0),
-        (dict(method="pyproj", delta=0.5, clat=70),                     20.0),
-        (dict(method="pyproj", delta=0.5, clat=90),                     60.0),
-        (dict(method="pyproj", delta=1.0, clat=0),                      20.0),
-    ]
+    (dict(), 1.0),
+    (dict(method="dyntools", delta=0.5, clat=0), 1.1),
+    (dict(method="dyntools", delta=0.5, clat=10), 1.1),
+    (dict(method="dyntools", delta=0.5, clat=90), 1.7),
+    (dict(method="dyntools", delta=1.0, clat=40), 2.1),
+    (dict(method="pyproj"), 10.0),
+    (dict(method="pyproj", clat=40), 8.0),
+    (dict(method="pyproj", clat=80), 30.0),
+    (dict(method="pyproj", delta=0.5, clat=60), 15.0),
+    (dict(method="pyproj", delta=0.5, clat=70), 20.0),
+    (dict(method="pyproj", delta=0.5, clat=90), 60.0),
+    (dict(method="pyproj", delta=1.0, clat=0), 20.0),
+]
+
 
 def get_tol_pct(setup):
     for setup_i, tol_pct in tol_pct_by_setup[::-1]:
@@ -39,6 +39,7 @@ def get_tol_pct(setup):
         else:
             return tol_pct
     return 0
+
 
 # dyntls d0.01 lat00 r800  800  800   0.05%  2012524  2010619   0.09%
 # dyntls d0.01 lat40 r800  800  800   0.05%  2012469  2010619   0.09%
@@ -83,18 +84,17 @@ def get_tol_pct(setup):
 # pyproj d1.00 lat40 r800  800  815   1.96%  2090214  2010619   3.96%
 # pyproj d1.00 lat80 r800  800  699  12.56%  1537328  2010619  23.54%
 
-#==============================================================================
 
 class Test_Base(TestCase):
 
     # Method used to compute the areas from the pixels
     # Note: 'grid' seems to be more precise than 'proj'
-    #method_comp_area = "proj"
+    # method_comp_area = "proj"
     method_comp_area = "grid"
 
     # Whether to run the tests (True) or just print the results (False)
-    check_results=True
-    #check_results=False
+    check_results = True
+    # check_results=False
 
     def create_feature(self):
         """Create feature from self.mask."""
@@ -112,19 +112,26 @@ class Test_Base(TestCase):
         elif self.method_comp_area == "proj":
             lon, lat = self.lon2d, self.lat2d
         else:
-            raise ValueError("mode='"+mode+"'")
+            raise ValueError("mode='" + mode + "'")
         return self.feature.area_lonlat(lon, lat, method=self.method_comp_area)
 
     def print_res_sol(self, area_res, area_sol):
         """Helper method to print result and solution with the error."""
         rad_sol = self.rad_km
-        rad_res = np.sqrt(area_res/np.pi)
-        err_rad = abs(rad_res - rad_sol)/rad_sol
-        err_area = abs(area_res - area_sol)/area_sol
-        print("\r{} {:4} {:4} {:7.2%} {:8} {:8} {:7.2%}".format(
+        rad_res = np.sqrt(area_res / np.pi)
+        err_rad = abs(rad_res - rad_sol) / rad_sol
+        err_area = abs(area_res - area_sol) / area_sol
+        print(
+            "\r{} {:4} {:4} {:7.2%} {:8} {:8} {:7.2%}".format(
                 self.__class__.__name__.lstrip("Test_"),
-                int(self.rad_km), int(rad_res), err_rad,
-                int(area_res), int(area_sol), err_area))
+                int(self.rad_km),
+                int(rad_res),
+                err_rad,
+                int(area_res),
+                int(area_sol),
+                err_area,
+            )
+        )
 
     def eval_test(self, area_res, area_sol, tol_pct=None):
 
@@ -132,15 +139,15 @@ class Test_Base(TestCase):
             tol_pct = get_tol_pct(self.setup)
 
         if self.check_results:
-            rel_err_pct = 100*abs(area_res - area_sol)/area_sol
-            msg = ("area differs by {:.1f}% > {}%: {} km2 != {} km2"
-                    ).format(rel_err_pct, tol_pct, area_res, area_sol)
+            rel_err_pct = 100 * abs(area_res - area_sol) / area_sol
+            msg = ("area differs by {:.1f}% > {}%: {} km2 != {} km2").format(
+                rel_err_pct, tol_pct, area_res, area_sol
+            )
             self.assertTrue(rel_err_pct < tol_pct, msg)
 
         else:
             self.print_res_sol(area_res, area_sol)
 
-#------------------------------------------------------------------------------
 
 class Test_dyntls_d1p00_lat00_r800(Test_Base):
 
@@ -150,7 +157,7 @@ class Test_dyntls_d1p00_lat00_r800(Test_Base):
 
         s.clon, s.clat = 0.0, 0.0
         s.rad_km = 800.0
-        s.area_km2 = np.pi*s.rad_km**2
+        s.area_km2 = np.pi * s.rad_km ** 2
 
         s.nlat, s.nlon = 17, 17
         s.lat1d = np.linspace(-8.0, 8.0, s.nlat)
@@ -158,25 +165,30 @@ class Test_dyntls_d1p00_lat00_r800(Test_Base):
         s.lat2d, s.lon2d = np.meshgrid(s.lat1d, s.lon1d)
 
         _, X = 0, 1
-        s.mask = np.array([
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,X,X,X,_,_,_,_,_,_,_],
-        [_,_,_,_,_,X,X,X,X,X,X,X,_,_,_,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,_,_,_,X,X,X,X,X,X,X,_,_,_,_,_],
-        [_,_,_,_,_,_,_,X,X,X,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        ], np.bool).T[:, ::-1]
+        # fmt: off
+        s.mask = np.array(
+            [
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,X,X,X,_,_,_,_,_,_,_],
+                [_,_,_,_,_,X,X,X,X,X,X,X,_,_,_,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,_,_,_,X,X,X,X,X,X,X,_,_,_,_,_],
+                [_,_,_,_,_,_,_,X,X,X,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+            ],
+            np.bool,
+        ).T[:, ::-1]
+        # fmt: on
 
         s.create_feature()
 
@@ -184,6 +196,7 @@ class Test_dyntls_d1p00_lat00_r800(Test_Base):
         res = s.comp_feature_area()
         sol = s.area_km2
         s.eval_test(res, sol)
+
 
 class Test_dyntls_d1p00_lat40_r800(Test_Base):
 
@@ -193,7 +206,7 @@ class Test_dyntls_d1p00_lat40_r800(Test_Base):
 
         s.clon, s.clat = 0.0, 40.0
         s.rad_km = 800.0
-        s.area_km2 = np.pi*s.rad_km**2
+        s.area_km2 = np.pi * s.rad_km ** 2
 
         s.nlat, s.nlon = 17, 21
         s.lat1d = np.linspace(32.0, 48.0, s.nlat)
@@ -201,25 +214,30 @@ class Test_dyntls_d1p00_lat40_r800(Test_Base):
         s.lat2d, s.lon2d = np.meshgrid(s.lat1d, s.lon1d)
 
         _, X = 0, 1
-        s.mask = np.array([
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,X,X,X,X,X,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_],
-        [_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,X,X,X,X,X,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        ], np.bool).T[:, ::-1]
+        # fmt: off
+        s.mask = np.array(
+            [
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,X,X,X,X,X,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_],
+                [_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,X,X,X,X,X,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+            ],
+            np.bool,
+        ).T[:, ::-1]
+        # fmt: on
 
         s.create_feature()
 
@@ -227,6 +245,7 @@ class Test_dyntls_d1p00_lat40_r800(Test_Base):
         res = s.comp_feature_area()
         sol = s.area_km2
         s.eval_test(res, sol)
+
 
 class Test_dyntls_d1p00_lat80_r800(Test_Base):
 
@@ -236,7 +255,7 @@ class Test_dyntls_d1p00_lat80_r800(Test_Base):
 
         s.clon, s.clat = 0.0, 80.0
         s.rad_km = 800.0
-        s.area_km2 = np.pi*s.rad_km**2
+        s.area_km2 = np.pi * s.rad_km ** 2
 
         s.nlat, s.nlon = 17, 95
         s.lat1d = np.linspace(72.0, 88.0, s.nlat)
@@ -244,25 +263,30 @@ class Test_dyntls_d1p00_lat80_r800(Test_Base):
         s.lat2d, s.lon2d = np.meshgrid(s.lat1d, s.lon1d)
 
         _, X = 0, 1
-        s.mask = np.array([
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        ], np.bool).T[:, ::-1]
+        # fmt: off
+        s.mask = np.array(
+            [
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+            ],
+            np.bool
+        ).T[:, ::-1]
+        # fmt: on
 
         s.create_feature()
 
@@ -271,7 +295,6 @@ class Test_dyntls_d1p00_lat80_r800(Test_Base):
         sol = s.area_km2
         s.eval_test(res, sol)
 
-#------------------------------------------------------------------------------
 
 class Test_pyproj_d1p00_lat00_r800(Test_Base):
 
@@ -281,7 +304,7 @@ class Test_pyproj_d1p00_lat00_r800(Test_Base):
 
         s.clon, s.clat = 0.0, 0.0
         s.rad_km = 800.0
-        s.area_km2 = np.pi*s.rad_km**2
+        s.area_km2 = np.pi * s.rad_km ** 2
 
         s.nlat, s.nlon = 17, 17
         s.lat1d = np.linspace(-8.0, 8.0, s.nlat)
@@ -289,25 +312,30 @@ class Test_pyproj_d1p00_lat00_r800(Test_Base):
         s.lat2d, s.lon2d = np.meshgrid(s.lat1d, s.lon1d)
 
         _, X = 0, 1
-        s.mask = np.array([
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,X,X,X,X,X,X,X,_,_,_,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,_,_,_,X,X,X,X,X,X,X,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        ], np.bool).T[:, ::-1]
+        # fmt: off
+        s.mask = np.array(
+            [
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,X,X,X,X,X,X,X,_,_,_,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,_,_,_,X,X,X,X,X,X,X,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+            ],
+            np.bool,
+        ).T[:, ::-1]
+        # fmt: on
 
         s.create_feature()
 
@@ -315,6 +343,7 @@ class Test_pyproj_d1p00_lat00_r800(Test_Base):
         res = s.comp_feature_area()
         sol = s.area_km2
         s.eval_test(res, sol)
+
 
 class Test_pyproj_d1p00_lat40_r800(Test_Base):
 
@@ -324,7 +353,7 @@ class Test_pyproj_d1p00_lat40_r800(Test_Base):
 
         s.clon, s.clat = 0.0, 40.0
         s.rad_km = 800.0
-        s.area_km2 = np.pi*s.rad_km**2
+        s.area_km2 = np.pi * s.rad_km ** 2
 
         s.nlat, s.nlon = 17, 21
         s.lat1d = np.linspace(32.0, 48.0, s.nlat)
@@ -332,25 +361,30 @@ class Test_pyproj_d1p00_lat40_r800(Test_Base):
         s.lat2d, s.lon2d = np.meshgrid(s.lat1d, s.lon1d)
 
         _, X = 0, 1
-        s.mask = np.array([
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_],
-        [_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
-        [_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_],
-        [_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
-        [_,_,_,_,_,_,_,X,X,X,X,X,X,X,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        ], np.bool).T[:, ::-1]
+        # fmt: off
+        s.mask = np.array(
+            [
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_],
+                [_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
+                [_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_],
+                [_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
+                [_,_,_,_,_,_,_,X,X,X,X,X,X,X,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+            ],
+            np.bool,
+        ).T[:, ::-1]
+        # fmt: on
 
         s.create_feature()
 
@@ -358,6 +392,7 @@ class Test_pyproj_d1p00_lat40_r800(Test_Base):
         res = s.comp_feature_area()
         sol = s.area_km2
         s.eval_test(res, sol)
+
 
 class Test_pyproj_d1p00_lat80_r800(Test_Base):
 
@@ -367,7 +402,7 @@ class Test_pyproj_d1p00_lat80_r800(Test_Base):
 
         s.clon, s.clat = 0.0, 80.0
         s.rad_km = 800.0
-        s.area_km2 = np.pi*s.rad_km**2
+        s.area_km2 = np.pi * s.rad_km ** 2
 
         s.nlat, s.nlon = 17, 75
         s.lat1d = np.linspace(72.0, 88.0, s.nlat)
@@ -375,25 +410,30 @@ class Test_pyproj_d1p00_lat80_r800(Test_Base):
         s.lat2d, s.lon2d = np.meshgrid(s.lat1d, s.lon1d)
 
         _, X = 0, 1
-        s.mask = np.array([
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
-        [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
-        [_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
-        [_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
-        [_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-        ], np.bool).T[:, ::-1]
+        # fmt: off
+        s.mask = np.array(
+            [
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_],
+                [_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_],
+                [_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_],
+                [_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_],
+                [_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+                [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+            ],
+            np.bool,
+        ).T[:, ::-1]
+        # fmt: on
 
         s.create_feature()
 
@@ -402,12 +442,13 @@ class Test_pyproj_d1p00_lat80_r800(Test_Base):
         sol = s.area_km2
         s.eval_test(res, sol)
 
-#==============================================================================
+
 # Automatic tests based on text files
-#==============================================================================
+
 
 default_path = os.path.dirname(os.path.abspath(__file__))
 infile_fmt = "{path}/circle_on_globe_clat-{clat:02}_rad-{rad}_delta-{delta}_{method}.py"
+
 
 def create_test_class(name, setup):
     def method_setUp(s):
@@ -415,8 +456,19 @@ def create_test_class(name, setup):
             s.setup["path"] = s.default_path
         infile = s.infile_fmt.format(**s.setup)
         mod = import_module(infile)
-        for var in ["clon", "clat", "rad_km", "area_km2", "nlat", "nlon",
-                "lat1d", "lon1d", "lat2d", "lon2d", "mask"]:
+        for var in [
+            "clon",
+            "clat",
+            "rad_km",
+            "area_km2",
+            "nlat",
+            "nlon",
+            "lat1d",
+            "lon1d",
+            "lat2d",
+            "lon2d",
+            "mask",
+        ]:
             setattr(s, var, getattr(mod, var))
         s.create_feature()
 
@@ -437,7 +489,8 @@ def create_test_class(name, setup):
 
     return type(name, bases, dict_)
 
-clats = np.arange(10)*10
+
+clats = np.arange(10) * 10
 rads = [800]
 deltas = [0.5, 0.1, 0.05]
 methods = ["dyntools", "pyproj"]
@@ -456,18 +509,17 @@ for clat, rad, delta, method in itertools.product(clats, rads, deltas, methods):
 
     # Define test class name
     delta_str = "{:4.2f}".format(delta).replace(".", "p")
-    cls_name = (
-        cls_name_fmt.format(delta_str=delta_str, **setup)
-        .replace("_dyntools_", "_dyntls_")
+    cls_name = cls_name_fmt.format(delta_str=delta_str, **setup).replace(
+        "_dyntools_", "_dyntls_"
     )
 
     # Create test class and add it to current module
     globals()[cls_name] = create_test_class(cls_name, setup)
 
-#==============================================================================
 
 if __name__ == "__main__":
     import logging as log
+
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
     log.getLogger().setLevel(log.DEBUG)
     unittest.main()
