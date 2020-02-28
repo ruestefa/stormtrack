@@ -1,10 +1,5 @@
 SHELL := /bin/bash
 
-.PHONY: clean-all clean-test clean-pyc clean-build clean-venv
-.PHONY: venv install install-edit install-pinned install-test install-test-pinned install-dev
-.PHONY: bump-major bump-minor bump-patch bump-major-dry bump-minor-dry bump-patch-dry
-.PHONY: test test-cov test-cov-html test-all
-.PHONY: docs help
 .DEFAULT_GOAL := help
 
 #==============================================================================
@@ -153,6 +148,7 @@ browser = ${PREFIX}python -c "$$BROWSER_PY"
 # Help
 #==============================================================================
 
+.PHONY: help
 help:
 	@python -c "$$PRINT_HELP_PY" < $(MAKEFILE_LIST)
 
@@ -160,24 +156,34 @@ help:
 # Cleanup
 #==============================================================================
 
-clean-all: clean-venv clean-test clean-build clean-pyc #CMD Remove all build, test, coverage and Python artifacts.
+.PHONY: clean-all
+clean-all: clean-venv clean-test clean-build clean-cython clean-pyc #CMD Remove all build, test, coverage and Python artifacts.
 	@echo -e "${ECHO_PREFIX}cleaning up"
 
-clean-build: #CMD Remove build artifacts.
+.PHONY: clean-build
+clean-build: #CMD Remove Python build artifacts.
 	@echo -e "${ECHO_PREFIX}removing build artifacts"
 	\rm -rf "build/"
 	\rm -rf "dist/"
 	\rm -rf ".eggs/"
-	@\rm -ff $(\find . -not -path './venv*' -and -not -path './ENV*' -name '*.egg' -exec echo "rm -ff '{}'" \;)
-	@\rm -ff $(\find . -not -path './venv*' -and -not -path './ENV*' -name '*.egg' -exec echo "rm -ff '{}'" \;)
+	\find . -not -path "${VENV_DIR}" -name '*.egg' -exec rm -f {} \+
+	\find . -not -path "${VENV_DIR}" -name '*.egg-info' -exec rm -rf {} \+
 
+.PHONY: clean-cython
+clean-cython: #CMD Remove Cython build artifacts.
+	\find src -name '*.html' -exec rm -f {} \+
+	\find src -name '*.c' -exec rm -f {} \+
+	\find src -name '*.so' -exec rm -f {} \+
+
+.PHONY: clean-pyc
 clean-pyc: #CMD Remove Python file artifacts.
 	@echo -e "${ECHO_PREFIX}removing Python file artifacts"
-	@\rm -rf $(\find . -not -path './venv*' -and -not -path './ENV*' -name '*.pyc'       -exec echo "rm -rf '{}'" \;)
-	@\rm -rf $(\find . -not -path './venv*' -and -not -path './ENV*' -name '*.pyo'       -exec echo "rm -rf '{}'" \;)
-	@\rm -rf $(\find . -not -path './venv*' -and -not -path './ENV*' -name '*~'          -exec echo "rm -rf '{}'" \;)
-	@\rm -rf $(\find . -not -path './venv*' -and -not -path './ENV*' -name '__pycache__' -exec echo "rm -rf '{}'" \;)
+	\find . -not -path "${VENV_DIR}" -name '*.pyc' -exec rm -f {} \+
+	\find . -not -path "${VENV_DIR}" -name '*.pyo' -exec rm -f {} \+
+	\find . -not -path "${VENV_DIR}" -name '*~' -exec rm -f {} \+
+	\find . -not -path "${VENV_DIR}" -name '__pycache__' -exec rm -rf {} \+
 
+.PHONY: clean-test
 clean-test: #CMD Remove testing artifacts.
 	@echo -e "${ECHO_PREFIX}removing testing artifacts"
 	\rm -rf ".tox/"
@@ -185,6 +191,7 @@ clean-test: #CMD Remove testing artifacts.
 	\rm -rf "htmlcov/"
 	\rm -rf ".pytest_cache"
 
+.PHONY: clean-venv
 clean-venv: #CMD Remove virtual environment.
 	@echo -e "${ECHO_PREFIX}removing virtual environment at '${VENV_DIR}'"
 	\rm -rf "${VENV_DIR}"
@@ -193,6 +200,7 @@ clean-venv: #CMD Remove virtual environment.
 # Virtual Environments
 #==============================================================================
 
+.PHONY: venv
 venv: #CMD Create a virtual environment.
 ifeq (${IGNORE_VENV}, 0)
 	$(eval PREFIX = ${PREFIX_VENV})
@@ -211,28 +219,34 @@ endif
 # Installation
 #==============================================================================
 
+.PHONY: install
 install: venv #CMD Install the package with unpinned runtime dependencies.
 	@echo -e "${ECHO_PREFIX}installing the package"
 	${PREFIX}python -m pip install .
 
+.PHONY: install-edit
 install-edit: venv #CMD Install the package as editable with unpinned runtime dependencies.
 	@echo -e "${ECHO_PREFIX}installing the package as editable"
 	${PREFIX}python -m pip install -e .
 
+.PHONY: install-pinned
 install-pinned: venv #CMD Install the package with pinned runtime dependencies.
 	@echo -e "${ECHO_PREFIX}installing the package with pinned dependencies"
 	${PREFIX}python -m pip install -r requirements/run-pinned.txt
 	${PREFIX}python -m pip install .
 
+.PHONY: install-test-pinned
 install-test-pinned: venv #CMD Install the package with pinned runtime and testing dependencies.
 	@echo -e "${ECHO_PREFIX}installing the package as editable with pinned testing dependencies"
 	${PREFIX}python -m pip install -r requirements/test-pinned.txt
 	${PREFIX}python -m pip install -e .
 
+.PHONY: install-test
 install-test: install-edit #CMD Install the package with unpinned runtime and testing dependencies.
 	@echo -e "${ECHO_PREFIX}installing the package with testing dependencies"
 	${PREFIX}python -m pip install -r requirements/test-unpinned.txt
 
+.PHONY: install-dev
 install-dev: install-test #CMD Install the package as editable with unpinned runtime,\ntesting, and development dependencies.
 	@echo -e "${ECHO_PREFIX}installing the package as editable with testing and development dependencies"
 	${PREFIX}python -m pip install -r requirements/dev-unpinned.txt
@@ -241,6 +255,7 @@ install-dev: install-test #CMD Install the package as editable with unpinned run
 # Version control
 #==============================================================================
 
+.PHONY: git
 git: clean-all #CMD Initialize a git repository and make initial commit.
 ifeq ($(shell git tag >/dev/null 2>&1 && echo 0 || echo 1), 0)
 	@echo -e "${ECHO_PREFIX}git already initialized"
@@ -256,26 +271,32 @@ endif
 # Versioning
 #==============================================================================
 
+.PHONY: bump-patch
 bump-patch: ${_INSTALL_DEV} #CMD Bump patch component of version number (x.y.Z), incl. git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment patch component"
 	${PREFIX}bumpversion patch
 
+.PHONY: bump-minor
 bump-minor: ${_INSTALL_DEV} #CMD Bump minor component of version number (x.Y.z), incl. git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment minor component"
 	${PREFIX}bumpversion minor
 
+.PHONY: bump-major
 bump-major: ${_INSTALL_DEV} #CMD Bump minor component of version number (X.y.z), incl. git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment major component"
 	${PREFIX}bumpversion major
 
+.PHONY: bump-patch-dry
 bump-patch-dry: ${_INSTALL_DEV} #CMD Bump patch component of version number (x.y.Z), without git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment patch component (dry run)"
 	${PREFIX}bumpversion patch --no-commit --no-tag
 
+.PHONY: bump-minor-dry
 bump-minor-dry: ${_INSTALL_DEV} #CMD Bump minor component of version number (x.Y.z), without git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment minor component (dry run)"
 	${PREFIX}bumpversion minor --no-commit --no-tag
 
+.PHONY: bump-major-dry
 bump-major-dry: ${_INSTALL_DEV} #CMD Bump minor component of version number (X.y.z), without git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment major component (dry run)"
 	${PREFIX}bumpversion major --no-commit --no-tag
@@ -284,10 +305,12 @@ bump-major-dry: ${_INSTALL_DEV} #CMD Bump minor component of version number (X.y
 # Formatting and linting
 #==============================================================================
 
+.PHONY: format
 format: ${_INSTALL_DEV} #CMD Reformat the code to conform with standards like PEP 8.
 	@echo -e "${ECHO_PREFIX}reformatting the code"
 	${PREFIX}black src tests
 
+.PHONY: lint
 lint: ${_INSTALL_DEV} #CMD Check the code style.
 	@echo -e "${ECHO_PREFIX}checking the code style (linting)"
 	${PREFIX}flake8 src tests
@@ -296,19 +319,23 @@ lint: ${_INSTALL_DEV} #CMD Check the code style.
 # Testing
 #==============================================================================
 
+.PHONY: test
 test: ${_INSTALL_TEST} #CMD Run all tests with the default Python version.
 	@echo -e "${ECHO_PREFIX}running tests"
 	${PREFIX}pytest
 
+.PHONY: test-cov
 test-cov: ${_INSTALL_TEST} #CMD Check code coverage of tests.
 	@echo -e "${ECHO_PREFIX}running tests with coverage check"
 	${PREFIX}pytest --cov=src
 
+.PHONY: test-cov-html
 test-cov-html: ${_INSTALL_TEST} #CMD Check code coverage of tests and show results in browser.
 	@echo -e "${ECHO_PREFIX}running tests with coverage check and browser report"
 	${PREFIX}pytest --cov=src --cov-report=html
 	${browser} htmlcov/index.html
 
+.PHONY: test-all
 test-all: ${_INSTALL_TEST} #CMD Run tests on all specified Python versions with tox.
 	@echo -e "${ECHO_PREFIX}running tests in isolated environments"
 	${PREFIX}tox
@@ -317,6 +344,7 @@ test-all: ${_INSTALL_TEST} #CMD Run tests on all specified Python versions with 
 # Documentation
 #==============================================================================
 
+# .PHONY: docs
 # docs: ${_INSTALL_DEV} #CMD Generate HTML documentation, including API docs.
 #	@echo -e "${ECHO_PREFIX}generating HTML documentation"
 # 	\rm -f docs/stormtrack.rst
@@ -326,6 +354,7 @@ test-all: ${_INSTALL_TEST} #CMD Run tests on all specified Python versions with 
 # 	$(MAKE) -C docs html
 # 	${browser} docs/_build/html/index.html
 
+# .PHONY: servedocs
 # servedocs: docs #CMD Compile the docs watching for changes.
 #	@echo -e "${ECHO_PREFIX}continuously regenerating HTML documentation"
 # 	${PREFIX}watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
