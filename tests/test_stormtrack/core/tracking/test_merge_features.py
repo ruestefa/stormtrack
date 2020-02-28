@@ -15,7 +15,6 @@ from stormtrack.core.tracking import TrackFeatureMerger
 # Local
 from ...utils import feature_rectangle
 
-#==============================================================================
 
 class MergeFeatures_Base(TestCase):
 
@@ -24,12 +23,15 @@ class MergeFeatures_Base(TestCase):
     def setUp(self):
 
         # Check domain consistency (otherwise segfault if nx/ny too small)
-        if not all(0 <= x < self.nx and 0 <= y < self.ny
-                for (xy0, xy1, _, _), _ in self.data_features_in
-                for x, y in (xy0, xy1)):
-            err = ("feature points outside domain [({}, {}), ({}, {})] "
-                    "defined by nx={}, ny={}; adapt nx and/or ny!").format(
-                    0, 0, self.nx-1, self.ny-1, self.nx, self.ny)
+        if not all(
+            0 <= x < self.nx and 0 <= y < self.ny
+            for (xy0, xy1, _, _), _ in self.data_features_in
+            for x, y in (xy0, xy1)
+        ):
+            err = (
+                "feature points outside domain [({}, {}), ({}, {})] "
+                "defined by nx={}, ny={}; adapt nx and/or ny!"
+            ).format(0, 0, self.nx - 1, self.ny - 1, self.nx, self.ny)
             raise ValueError(err)
 
         # Create track and features
@@ -42,10 +44,10 @@ class MergeFeatures_Base(TestCase):
         # Add edges to graph (links between features over time)
         self.track.graph.add_edges(self.data_es_inds_in)
         eprobs_in = self.compute_edge_probabilities_in(self.data_size_ovlp_in)
-        self.track.graph.es["p_size"]    = eprobs_in["p_size"]
+        self.track.graph.es["p_size"] = eprobs_in["p_size"]
         self.track.graph.es["p_overlap"] = eprobs_in["p_overlap"]
-        self.track.graph.es["p_tot"]     = eprobs_in["p_tot"]
-        self.track.graph.es["p_share"]   = eprobs_in["p_share"]
+        self.track.graph.es["p_tot"] = eprobs_in["p_tot"]
+        self.track.graph.es["p_share"] = eprobs_in["p_share"]
 
     def next_tid(self):
         next_tid = self.__class__._next_tid
@@ -78,14 +80,14 @@ class MergeFeatures_Base(TestCase):
         max_ts = max([f.timestep for f in self.features])
         n_starts = len([f for f in self.features if f.timestep == min_ts])
         n_heads = len([f for f in self.features if f.timestep == max_ts])
-        attr_head = [False]*(n_features - n_heads) + [True]*n_heads
+        attr_head = [False] * (n_features - n_heads) + [True] * n_heads
 
         self.track.graph.add_vertices(len(self.features))
-        self.track.graph.vs["feature"] = [f          for f in self.features]
-        self.track.graph.vs["name"]    = [str(f.id)  for f in self.features]
-        self.track.graph.vs["ts"]      = [f.timestep for f in self.features]
-        self.track.graph.vs["type"]    = [t          for t in self.types]
-        #self.track.graph.vs["_active_head"] = attr_head
+        self.track.graph.vs["feature"] = [f for f in self.features]
+        self.track.graph.vs["name"] = [str(f.id) for f in self.features]
+        self.track.graph.vs["ts"] = [f.timestep for f in self.features]
+        self.track.graph.vs["type"] = [t for t in self.types]
+        # self.track.graph.vs["_active_head"] = attr_head
         self.track.graph.vs["missing_predecessors"] = None
         self.track.graph.vs["missing_successors"] = None
 
@@ -111,9 +113,11 @@ class MergeFeatures_Base(TestCase):
             p_shares.append(p_share)
 
         return dict(
-                p_size=np.array(p_sizes), p_overlap=np.array(p_overlaps),
-                p_tot=np.array(p_tots), p_share=np.array(p_shares),
-            )
+            p_size=np.array(p_sizes),
+            p_overlap=np.array(p_overlaps),
+            p_tot=np.array(p_tots),
+            p_share=np.array(p_shares),
+        )
 
     def compute_edge_probabilities_out(self, data_in, data_out):
         p_sizes, p_overlaps, p_tots, p_shares = [], [], [], []
@@ -145,22 +149,22 @@ class MergeFeatures_Base(TestCase):
             p_shares.append(p_share)
 
         return dict(
-                p_size=np.array(p_sizes), p_overlap=np.array(p_overlaps),
-                p_tot=np.array(p_tots), p_share=np.array(p_shares),
-            )
-
-    #--------------------------------------------------------------------------
+            p_size=np.array(p_sizes),
+            p_overlap=np.array(p_overlaps),
+            p_tot=np.array(p_tots),
+            p_share=np.array(p_shares),
+        )
 
     def cmp_p_size(self, parent_n, child_n):
-        return min([parent_n, child_n])/max([parent_n, child_n])
+        return min([parent_n, child_n]) / max([parent_n, child_n])
 
     def cmp_p_ovlp(self, parent_n, child_n, ovlp_n):
-        return 2*ovlp_n/(parent_n + child_n)
+        return 2 * ovlp_n / (parent_n + child_n)
 
     def cmp_p_tot(self, parent_n, child_n, ovlp_n):
         p_size = self.cmp_p_size(parent_n, child_n)
         p_ovlp = self.cmp_p_ovlp(parent_n, child_n, ovlp_n)
-        return self.f_size*p_size + self.f_ovlp*p_ovlp
+        return self.f_size * p_size + self.f_ovlp * p_ovlp
 
     def cmp_p_shares(self, sizes0, sizes1, ovlps):
         if len(sizes0) > len(sizes1):
@@ -168,24 +172,28 @@ class MergeFeatures_Base(TestCase):
         assert len(sizes0) == 1
         assert len(sizes1) == len(ovlps)
         size_parent, size_children = sizes0[0], sizes1
-        p_tots = np.array([self.cmp_p_tot(size_parent, size_child, ovlp) for
-                size_child, ovlp in zip(size_children, ovlps)])
-        return p_tots/p_tots.sum()
+        p_tots = np.array(
+            [
+                self.cmp_p_tot(size_parent, size_child, ovlp)
+                for size_child, ovlp in zip(size_children, ovlps)
+            ]
+        )
+        return p_tots / p_tots.sum()
 
     def cmp_p_share(self, sizes0, sizes1, ovlps, ind):
         return self.cmp_p_shares(sizes0, sizes1, ovlps)[ind]
-
-    #--------------------------------------------------------------------------
 
     def get_features_n_in(self, *ids):
         """Returns function to retrieve the sizes of input features.
 
         The function can be used at a later point once the features exist.
         """
+
         def fct(*, get_ids=False):
             if get_ids:
                 return ids
-            return[f.n for f in self.features if f.id in ids]
+            return [f.n for f in self.features if f.id in ids]
+
         return fct
 
     def get_features_n_out(self, *ids):
@@ -193,25 +201,25 @@ class MergeFeatures_Base(TestCase):
 
         The function can be used at a later point once the features exist.
         """
+
         def fct(*, get_ids=False):
             if get_ids:
                 return ids
             return [f.n for f in self.track.features() if f.id in ids]
+
         return fct
 
-    #==========================================================================
-
     def run_test(self):
-        TrackFeatureMerger(self.track, nx=self.nx, ny=self.ny,
-                connectivity=self.connectivity).run()
-
-    #==========================================================================
+        TrackFeatureMerger(
+            self.track, nx=self.nx, ny=self.ny, connectivity=self.connectivity
+        ).run()
 
     def check_results(self):
 
         # Check no. features per timestep
-        for features, sol in zip(self.track.features_ts(),
-                self.n_features_ts_postmerge):
+        for features, sol in zip(
+            self.track.features_ts(), self.n_features_ts_postmerge
+        ):
             self.assertEqual(len(features), sol)
 
         # Check some properties of the new feature
@@ -222,7 +230,7 @@ class MergeFeatures_Base(TestCase):
         new_vertex = new_feature.vertex()
 
         # Check Feature-vertex associations
-        self.assertFeatureVertexValid(self.features+[new_feature])
+        self.assertFeatureVertexValid(self.features + [new_feature])
         self.assertFeatureVertexExists(self.track.features())
 
         # Check some feature/vertex properties
@@ -230,24 +238,28 @@ class MergeFeatures_Base(TestCase):
             fid = vertex["feature"].id
             if vertex["type"] != self.data_feature_types_out[fid]:
                 err = "feature {}: wrong type: expected {}, found {}".format(
-                        fid, self.data_feature_types_out[fid], vertex["type"])
+                    fid, self.data_feature_types_out[fid], vertex["type"]
+                )
                 raise AssertionError(err)
 
         # Collect edges
         self.assertEqual(len(self.track.graph.es), len(self.data_es_inds_out))
         edges = {}
-        id2feature = lambda id_: [f for f in self.track.features()
-                if f.id == id_][0]
+        id2feature = lambda id_: [f for f in self.track.features() if f.id == id_][0]
         for i0, i1 in self.data_es_inds_out:
-            edge = self.track.graph.es.find(_between=(
+            edge = self.track.graph.es.find(
+                _between=(
                     (id2feature(i0).vertex().index,),
-                    (id2feature(i1).vertex().index,)))
+                    (id2feature(i1).vertex().index,),
+                )
+            )
             edges[(i0, i1)] = edge
 
         # Compare expected and actual edge probabilities
         edge_order = self.get_edge_order(self.data_size_ovlp_out)
         eprobs_sol = self.compute_edge_probabilities_out(
-                self.data_size_ovlp_in, self.data_size_ovlp_out)
+            self.data_size_ovlp_in, self.data_size_ovlp_out
+        )
         eprobs_in = self.compute_edge_probabilities_in(self.data_size_ovlp_in)
         eprobs_res = self.extract_edge_probabilities(edge_order)
         self.assertEdgeProbabilities(eprobs_sol, eprobs_res, eprobs_in)
@@ -257,15 +269,21 @@ class MergeFeatures_Base(TestCase):
             res = eprobs_res[key]
             epi = eprobs_in[key]
             if not np.allclose(res, sol):
-                err = ("edge probabilities differ:\n\n{}:\n"
-                        "edge {}\nin    {}\nsol   {}\nres   {}"
-                        ).format(key,
-                        "".join(["{:>3}-{:<3}".format(io[0]+str(e0),
-                                io[0]+str(e1))
-                                for e0, e1, io in edge_order]),
-                        "  ".join(["{:5.3f}".format(p) for p in epi]),
-                        "  ".join(["{:5.3f}".format(p) for p in sol]),
-                        "  ".join(["{:5.3f}".format(p) for p in res]))
+                err = (
+                    "edge probabilities differ:\n\n{}:\n"
+                    "edge {}\nin    {}\nsol   {}\nres   {}"
+                ).format(
+                    key,
+                    "".join(
+                        [
+                            "{:>3}-{:<3}".format(io[0] + str(e0), io[0] + str(e1))
+                            for e0, e1, io in edge_order
+                        ]
+                    ),
+                    "  ".join(["{:5.3f}".format(p) for p in epi]),
+                    "  ".join(["{:5.3f}".format(p) for p in sol]),
+                    "  ".join(["{:5.3f}".format(p) for p in res]),
+                )
                 raise AssertionError(err)
 
     def get_edge_order(self, data):
@@ -300,13 +318,10 @@ class MergeFeatures_Base(TestCase):
         for ind0, ind1, inout in edge_order:
             vx0 = self.track.graph.vs.find(str(ind0))
             vx1 = self.track.graph.vs.find(str(ind1))
-            edge = self.track.graph.es.find(
-                    _between=((vx0.index,), (vx1.index,)))
+            edge = self.track.graph.es.find(_between=((vx0.index,), (vx1.index,)))
             for key, val in probs.items():
                 val.append(edge[key])
         return {key: np.array(val) for key, val in probs.items()}
-
-    #--------------------------------------------------------------------------
 
     def assertFeatureVertexValid(self, features):
         """Check that feature vertices are valid if they exist."""
@@ -314,8 +329,7 @@ class MergeFeatures_Base(TestCase):
             try:
                 feature.vertex()
             except Exception as e:
-                err = "Feature {}: invalid vertex (error: {})".format(
-                        feature.id, e)
+                err = "Feature {}: invalid vertex (error: {})".format(feature.id, e)
                 raise AssertionError(err)
 
     def assertFeatureVertexExists(self, features):
@@ -325,12 +339,12 @@ class MergeFeatures_Base(TestCase):
                 err = "feature {} is not associated with a vertex"
                 raise AssertionError(err)
 
-#------------------------------------------------------------------------------
 
 class MergeFeatures(MergeFeatures_Base):
 
     # Call super().setUp() in tests
-    def setUp(s): pass
+    def setUp(s):
+        pass
 
     def test_1(s):
 
@@ -362,25 +376,25 @@ class MergeFeatures(MergeFeatures_Base):
 
         # Define features
         s.data_features_in = [
-                ((( 3, 10), ( 5, 12), 0, 0), "genesis"),
-                ((( 2,  5), ( 4,  8), 1, 0), "genesis"),
-                ((( 1,  1), ( 4,  3), 2, 0), "genesis"),
-                ((( 4,  8), ( 5, 11), 3, 1), "continuation"),
-                ((( 3,  2), ( 6,  7), 4, 1), "merging/splitting"),
-                ((( 5,  9), ( 7, 11), 5, 2), "lysis"),
-                ((( 5,  6), ( 8,  7), 6, 2), "lysis"),
-                ((( 5,  1), ( 8,  4), 7, 2), "lysis"),
-            ]
+            (((3, 10), (5, 12), 0, 0), "genesis"),
+            (((2, 5), (4, 8), 1, 0), "genesis"),
+            (((1, 1), (4, 3), 2, 0), "genesis"),
+            (((4, 8), (5, 11), 3, 1), "continuation"),
+            (((3, 2), (6, 7), 4, 1), "merging/splitting"),
+            (((5, 9), (7, 11), 5, 2), "lysis"),
+            (((5, 6), (8, 7), 6, 2), "lysis"),
+            (((5, 1), (8, 4), 7, 2), "lysis"),
+        ]
         s.data_neighbors = [(3, 4)]
         s.data_feature_types_out = {
-                0: "genesis",
-                1: "genesis",
-                2: "genesis",
-                3: "merging/splitting",
-                5: "lysis",
-                6: "lysis",
-                7: "lysis",
-            }
+            0: "genesis",
+            1: "genesis",
+            2: "genesis",
+            3: "merging/splitting",
+            5: "lysis",
+            6: "lysis",
+            7: "lysis",
+        }
 
         # Feature index pairs for edges (note that the merged feature will
         # inherit the lowest id of the original features)
@@ -391,21 +405,21 @@ class MergeFeatures(MergeFeatures_Base):
         # Format: ((<fids0>), (<fids1>), <ovlp>, <ind>)
         fi, fo = s.get_features_n_in, s.get_features_n_out
         s.data_size_ovlp_in = [
-                (fi(0),    fi(3),    (4,),   0), # 0 <-> 3
-                (fi(1, 2), fi(4),    (6, 4), 0), # [12]<-> 4 / 0
-                (fi(1, 2), fi(4),    (6, 4), 1), # [12]<-> 4 / 1
-                (fi(3),    fi(5),    (3,),   0), # 3 <-> 5
-                (fi(4),    fi(6, 7), (4, 6), 0), # 4 <->[67] / 0
-                (fi(4),    fi(6, 7), (4, 6), 1), # 4 <->[67] / 1
-            ]
+            (fi(0), fi(3), (4,), 0),  # 0 <-> 3
+            (fi(1, 2), fi(4), (6, 4), 0),  # [12]<-> 4 / 0
+            (fi(1, 2), fi(4), (6, 4), 1),  # [12]<-> 4 / 1
+            (fi(3), fi(5), (3,), 0),  # 3 <-> 5
+            (fi(4), fi(6, 7), (4, 6), 0),  # 4 <->[67] / 0
+            (fi(4), fi(6, 7), (4, 6), 1),  # 4 <->[67] / 1
+        ]
         s.data_size_ovlp_out = [
-                (fo(0, 1, 2), fo(3),       (4, 7, 4), 0), # [012]<-> 3 / 0
-                (fo(0, 1, 2), fo(3),       (4, 7, 4), 1), # [012]<-> 3 / 1
-                (fo(0, 1, 2), fo(3),       (4, 7, 4), 2), # [012]<-> 3 / 2
-                (fo(3),       fo(5, 6, 7), (3, 4, 6), 0), # 3 <->[567] / 0
-                (fo(3),       fo(5, 6, 7), (3, 4, 6), 1), # 3 <->[567] / 1
-                (fo(3),       fo(5, 6, 7), (3, 4, 6), 2), # 3 <->[567] / 2
-            ]
+            (fo(0, 1, 2), fo(3), (4, 7, 4), 0),  # [012]<-> 3 / 0
+            (fo(0, 1, 2), fo(3), (4, 7, 4), 1),  # [012]<-> 3 / 1
+            (fo(0, 1, 2), fo(3), (4, 7, 4), 2),  # [012]<-> 3 / 2
+            (fo(3), fo(5, 6, 7), (3, 4, 6), 0),  # 3 <->[567] / 0
+            (fo(3), fo(5, 6, 7), (3, 4, 6), 1),  # 3 <->[567] / 1
+            (fo(3), fo(5, 6, 7), (3, 4, 6), 2),  # 3 <->[567] / 2
+        ]
 
         super().setUp()
 
@@ -453,50 +467,67 @@ class MergeFeatures(MergeFeatures_Base):
 
         # Define features: (((x0, y0), (x1, y1), id, ts), type)
         s.data_features_in = [
-                ((( 2, 14), ( 4, 17), 0, 0), "genesis/splitting"),
-                ((( 1,  9), ( 5, 11), 1, 0), "genesis"),
-                ((( 2,  4), ( 4,  7), 2, 0), "genesis"),
-                ((( 2,  1), ( 4,  2), 3, 0), "genesis"),
-                ((( 3, 16), ( 4, 17), 4, 1), "continuation"),
-                ((( 3, 12), ( 5, 14), 5, 1), "continuation"),
-                ((( 3,  3), ( 5, 11), 6, 1), "merging"),
-                ((( 3,  1), ( 5,  2), 7, 1), "continuation"),
-                ((( 4, 14), ( 7, 16), 8, 2), "merging/lysis"),
-                ((( 4,  2), ( 6, 12), 9, 2), "merging/lysis"),
-            ]
+            (((2, 14), (4, 17), 0, 0), "genesis/splitting"),
+            (((1, 9), (5, 11), 1, 0), "genesis"),
+            (((2, 4), (4, 7), 2, 0), "genesis"),
+            (((2, 1), (4, 2), 3, 0), "genesis"),
+            (((3, 16), (4, 17), 4, 1), "continuation"),
+            (((3, 12), (5, 14), 5, 1), "continuation"),
+            (((3, 3), (5, 11), 6, 1), "merging"),
+            (((3, 1), (5, 2), 7, 1), "continuation"),
+            (((4, 14), (7, 16), 8, 2), "merging/lysis"),
+            (((4, 2), (6, 12), 9, 2), "merging/lysis"),
+        ]
         s.data_neighbors = [(5, 6), (6, 7)]
         s.data_feature_types_out = {
-                0: "genesis/splitting",
-                1: "genesis",
-                2: "genesis",
-                3: "genesis",
-                4: "continuation",
-                5: "merging/splitting",
-                8: "merging/lysis",
-                9: "lysis",
-            }
+            0: "genesis/splitting",
+            1: "genesis",
+            2: "genesis",
+            3: "genesis",
+            4: "continuation",
+            5: "merging/splitting",
+            8: "merging/lysis",
+            9: "lysis",
+        }
 
         # Feature index pairs for edges (note that the merged feature will
         # inherit the lowest id of the original features)
-        s.data_es_inds_in = [(0, 4), (0, 5), (1, 6), (2, 6), (3, 7),
-                (4, 8), (5, 8), (6, 9), (7, 9)]
-        s.data_es_inds_out = [(0, 4), (0, 5), (1, 5), (2, 5), (3, 5),
-                (4, 8), (5, 8), (5, 9)]
+        s.data_es_inds_in = [
+            (0, 4),
+            (0, 5),
+            (1, 6),
+            (2, 6),
+            (3, 7),
+            (4, 8),
+            (5, 8),
+            (6, 9),
+            (7, 9),
+        ]
+        s.data_es_inds_out = [
+            (0, 4),
+            (0, 5),
+            (1, 5),
+            (2, 5),
+            (3, 5),
+            (4, 8),
+            (5, 8),
+            (5, 9),
+        ]
 
         # Data for successor probabilities
         # Format: ((<fids0>), (<fids1>), <ovlps> <ind>)
         fi, fo = s.get_features_n_in, s.get_features_n_out
         s.data_size_ovlp_in = [
-                (fi(0),    fi(4, 5), (4, 2),  0), # 0 <->[45] / 0
-                (fi(0),    fi(4, 5), (4, 2),  1), # 0 <->[45] / 1
-                (fi(1, 2), fi(6),    (9, 8),  0), # [12]<-> 6 / 0
-                (fi(1, 2), fi(6),    (9, 8),  1), # [12]<-> 6 / 1
-                (fi(3),    fi(7),    (4,),    0), # 3 <-> 7
-                (fi(4, 5), fi(8),    (1, 2),  0), # [45]<-> 8 / 0
-                (fi(4, 5), fi(8),    (1, 2),  1), # [45]<-> 8 / 1
-                (fi(6, 7), fi(9),    (18, 2), 0), # [67]<-> 9 / 0
-                (fi(6, 7), fi(9),    (18, 2), 1), # [67]<-> 9 / 1
-            ]
+            (fi(0), fi(4, 5), (4, 2), 0),  # 0 <->[45] / 0
+            (fi(0), fi(4, 5), (4, 2), 1),  # 0 <->[45] / 1
+            (fi(1, 2), fi(6), (9, 8), 0),  # [12]<-> 6 / 0
+            (fi(1, 2), fi(6), (9, 8), 1),  # [12]<-> 6 / 1
+            (fi(3), fi(7), (4,), 0),  # 3 <-> 7
+            (fi(4, 5), fi(8), (1, 2), 0),  # [45]<-> 8 / 0
+            (fi(4, 5), fi(8), (1, 2), 1),  # [45]<-> 8 / 1
+            (fi(6, 7), fi(9), (18, 2), 0),  # [67]<-> 9 / 0
+            (fi(6, 7), fi(9), (18, 2), 1),  # [67]<-> 9 / 1
+        ]
         #
         # The output successor probabilities are tricky in this case,
         # because the merging results in many-to-many-relationships
@@ -508,15 +539,15 @@ class MergeFeatures(MergeFeatures_Base):
         # This means that the edges are not all consistent anymore.
         #
         s.data_size_ovlp_out = [
-                (fi(0),          fi(4, 5), (4, 2),       0), # 0 <->[45] / 0
-                (fo(0, 1, 2, 3), fo(5),    (2, 9, 8, 4), 0), # [0123]<-> 5 / 0
-                (fo(0, 1, 2, 3), fo(5),    (2, 9, 8, 4), 1), # [0123]<-> 5 / 1
-                (fo(0, 1, 2, 3), fo(5),    (2, 9, 8, 4), 2), # [0123]<-> 5 / 2
-                (fo(0, 1, 2, 3), fo(5),    (2, 9, 8, 4), 3), # [0123]<-> 5 / 3
-                (fi(4),          fi(8),    (3,),         0), # 4 <-> 8
-                (fo(5),          fo(8, 9), (2, 22),      0), # 5 <->[89] / 0
-                (fo(5),          fo(8, 9), (2, 22),      1), # 5 <->[89] / 1
-            ]
+            (fi(0), fi(4, 5), (4, 2), 0),  # 0 <->[45] / 0
+            (fo(0, 1, 2, 3), fo(5), (2, 9, 8, 4), 0),  # [0123]<-> 5 / 0
+            (fo(0, 1, 2, 3), fo(5), (2, 9, 8, 4), 1),  # [0123]<-> 5 / 1
+            (fo(0, 1, 2, 3), fo(5), (2, 9, 8, 4), 2),  # [0123]<-> 5 / 2
+            (fo(0, 1, 2, 3), fo(5), (2, 9, 8, 4), 3),  # [0123]<-> 5 / 3
+            (fi(4), fi(8), (3,), 0),  # 4 <-> 8
+            (fo(5), fo(8, 9), (2, 22), 0),  # 5 <->[89] / 0
+            (fo(5), fo(8, 9), (2, 22), 1),  # 5 <->[89] / 1
+        ]
 
         super().setUp()
 
@@ -553,15 +584,15 @@ class MergeFeatures(MergeFeatures_Base):
 
         # Define features: (((x0, y0), (x1, y1), id, ts), type)
         s.data_features_in = [
-                ((( 1,  1), ( 4,  6), 0, 0), "genesis/splitting"),
-                ((( 3,  5), ( 6,  7), 1, 1), "lysis"),
-                ((( 4,  1), ( 6,  4), 2, 1), "lysis"),
-            ]
+            (((1, 1), (4, 6), 0, 0), "genesis/splitting"),
+            (((3, 5), (6, 7), 1, 1), "lysis"),
+            (((4, 1), (6, 4), 2, 1), "lysis"),
+        ]
         s.data_neighbors = [(1, 2)]
         s.data_feature_types_out = {
-                0: "genesis",
-                1: "lysis",
-            }
+            0: "genesis",
+            1: "lysis",
+        }
 
         # Feature index pairs for edges (note that the merged feature will
         # inherit the lowest id of the original features)
@@ -572,12 +603,12 @@ class MergeFeatures(MergeFeatures_Base):
         # Format: ((<fids0>), (<fids1>), <ovlp>, <ind>)
         fi, fo = s.get_features_n_in, s.get_features_n_out
         s.data_size_ovlp_in = [
-                (fi(0),    fi(1, 2), (4, 4), 0), # 0 <->[12] / 0
-                (fi(0),    fi(1, 2), (4, 4), 1), # 0 <->[12] / 1
-            ]
+            (fi(0), fi(1, 2), (4, 4), 0),  # 0 <->[12] / 0
+            (fi(0), fi(1, 2), (4, 4), 1),  # 0 <->[12] / 1
+        ]
         s.data_size_ovlp_out = [
-                (fo(0),    fo(1),    (8,),   0), # 0 <->[12] / 0
-            ]
+            (fo(0), fo(1), (8,), 0),  # 0 <->[12] / 0
+        ]
 
         super().setUp()
 
@@ -590,10 +621,9 @@ class MergeFeatures(MergeFeatures_Base):
         s.check_results()
 
 
-#==============================================================================
-
 if __name__ == "__main__":
     import logging as log
+
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
     log.getLogger().setLevel(log.DEBUG)
     unittest.main()

@@ -16,24 +16,22 @@ from stormtrack.core.tracking import FeatureTrack
 from stormtrack.core.tracking import FeatureTracker
 from stormtrack.core.tracking import FeatureTrackSplitter
 
-#==============================================================================
 
 class DummyFeature:
-
     def __init__(self, id_, ts, type):
         self.id = id_
         self.timestep = ts
         type_reg = dict(
-                ge = "genesis",
-                ly = "lysis",
-                gl = "genesis/lysis",
-                co = "continuation",
-                me = "merging",
-                sp = "splitting",
-                ms = "merging/splitting",
-                gs = "genesis/splitting",
-                ml = "merging/lysis",
-            )
+            ge="genesis",
+            ly="lysis",
+            gl="genesis/lysis",
+            co="continuation",
+            me="merging",
+            sp="splitting",
+            ms="merging/splitting",
+            gs="genesis/splitting",
+            ml="merging/lysis",
+        )
         self.type = type_reg[type]
 
         self.n = -1
@@ -41,8 +39,8 @@ class DummyFeature:
     def set_track(self, track):
         self.track = track
 
-class SplitTracks_Base(TestCase):
 
+class SplitTracks_Base(TestCase):
     def init_track(self, tid, features_ts, edges_attrs):
         features = [f for ff in features_ts for f in ff]
 
@@ -67,15 +65,11 @@ class SplitTracks_Base(TestCase):
             vx1 = graph.vs.find(str(vid1))
             graph.add_edge(vx0.index, vx1.index, **edge_attrs)
 
-        #SR_TMP<
+        # SR_TMP<
         config = dict(
-                f_overlap       = 0.5,
-                f_size          = 0.5,
-                min_p_overlap   = 0.0,
-                min_p_size      = 0.0,
-                min_p_tot       = 0.0,
-            )
-        #SR_TMP>
+            f_overlap=0.5, f_size=0.5, min_p_overlap=0.0, min_p_size=0.0, min_p_tot=0.0,
+        )
+        # SR_TMP>
 
         # Initialize track
         track = FeatureTrack(id_=0, graph=graph, config=config)
@@ -86,14 +80,15 @@ class SplitTracks_Base(TestCase):
         tracks.sort(key=lambda t: t.n)
         tracks_edges_sol.sort(key=lambda es: len(es))
 
-        #SR_TODO more elegant and robust structure than nested try/except
+        # SR_TODO more elegant and robust structure than nested try/except
 
         # Check number of tracks
         try:
             self.assertEqual(len(tracks), len(tracks_edges_sol))
         except AssertionError:
             err = "wrong number of tracks: {} instead of {}".format(
-                    len(tracks), len(tracks_edges_sol))
+                len(tracks), len(tracks_edges_sol)
+            )
         else:
 
             # Check track edges
@@ -104,15 +99,17 @@ class SplitTracks_Base(TestCase):
                 except AssertionError:
                     nerr += 1
             if nerr == 0:
-                return # !!! NO MORE CHECKS AFTER THIS !!!
+                return  # !!! NO MORE CHECKS AFTER THIS !!!
             err = "edges of {}/{} tracks wrong".format(nerr, len(tracks))
 
         # Error message
         tracks_edges_res = [self._get_edge_tuples(t.graph) for t in tracks]
-        err += "\n\nexpected:\n{}".format("\n".join(
-                ["  {}".format(sorted(i)) for i in tracks_edges_sol]))
-        err += "\n\nfound:\n{}".format("\n".join(
-                ["  {}".format(sorted(i)) for i in tracks_edges_res]))
+        err += "\n\nexpected:\n{}".format(
+            "\n".join(["  {}".format(sorted(i)) for i in tracks_edges_sol])
+        )
+        err += "\n\nfound:\n{}".format(
+            "\n".join(["  {}".format(sorted(i)) for i in tracks_edges_res])
+        )
         err += "\n"
         raise AssertionError(err)
 
@@ -124,11 +121,9 @@ class SplitTracks_Base(TestCase):
         vid2fid = lambda vid: graph.vs[vid]["feature"].id
         return {(vid2fid(e.source), vid2fid(e.target)) for e in graph.es}
 
-#------------------------------------------------------------------------------
 
-#SR_TODO check subtracks, not just their number
+# SR_TODO check subtracks, not just their number
 class SplitTracks_TwoBranches_SplitReMerge(SplitTracks_Base):
-
     def setUp(s):
         """
                       [ 2]-[ 4]-[ 6]-[ 8]
@@ -136,37 +131,37 @@ class SplitTracks_TwoBranches_SplitReMerge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 9]-[10]-[11]-[12]
 
         """
-        features_ts = [ #     id ts  type
-                [DummyFeature( 0, 0, "ge")],
-                [DummyFeature( 1, 1, "sp")],
-                [DummyFeature( 2, 2, "co"), DummyFeature( 3, 2, "co")],
-                [DummyFeature( 4, 3, "co"), DummyFeature( 5, 3, "co")],
-                [DummyFeature( 6, 4, "co"), DummyFeature( 7, 4, "co")],
-                [DummyFeature( 8, 5, "co"), DummyFeature( 9, 5, "co")],
-                [DummyFeature(10, 6, "me")],
-                [DummyFeature(11, 7, "co")],
-                [DummyFeature(12, 8, "ly")],
-            ]
+        features_ts = [  #     id ts  type
+            [DummyFeature(0, 0, "ge")],
+            [DummyFeature(1, 1, "sp")],
+            [DummyFeature(2, 2, "co"), DummyFeature(3, 2, "co")],
+            [DummyFeature(4, 3, "co"), DummyFeature(5, 3, "co")],
+            [DummyFeature(6, 4, "co"), DummyFeature(7, 4, "co")],
+            [DummyFeature(8, 5, "co"), DummyFeature(9, 5, "co")],
+            [DummyFeature(10, 6, "me")],
+            [DummyFeature(11, 7, "co")],
+            [DummyFeature(12, 8, "ly")],
+        ]
         #
         #             [ 2]-[ 4]-[ 6]-[ 8]
         #            x                   \
         #   [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 9]x[10]-[11]-[12]
         #
         edges_attrs = {
-                ( 0,  1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 1,  2): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
-                ( 1,  3): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
-                ( 2,  4): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 3,  5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 4,  6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 5,  7): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 6,  8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 7,  9): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 8, 10): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
-                ( 9, 10): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
-                (10, 11): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (11, 12): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-            }
+            (0, 1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (1, 2): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
+            (1, 3): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
+            (2, 4): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (3, 5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (4, 6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (5, 7): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (6, 8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (7, 9): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (8, 10): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
+            (9, 10): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
+            (10, 11): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (11, 12): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+        }
         s.track = s.init_track(0, features_ts, edges_attrs)
 
         used_tids = {0}
@@ -179,10 +174,26 @@ class SplitTracks_TwoBranches_SplitReMerge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 9]-[10]-[11]-[12]
         """
         subtracks = s.splitter.split(s.track, n=6)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 2), (1, 3), (3, 5), (5, 7), ( 7, 9), (2, 4),
-                    (4, 6), (6, 8), (8, 10), (9, 10), (10, 11), (11, 12)}
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [
+                {
+                    (0, 1),
+                    (1, 2),
+                    (1, 3),
+                    (3, 5),
+                    (5, 7),
+                    (7, 9),
+                    (2, 4),
+                    (4, 6),
+                    (6, 8),
+                    (8, 10),
+                    (9, 10),
+                    (10, 11),
+                    (11, 12),
+                }
+            ],
+        )
 
     def test_n5_nosplit(s):
         """ nt=5
@@ -191,10 +202,26 @@ class SplitTracks_TwoBranches_SplitReMerge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 9]-[10]-[11]-[12]
         """
         subtracks = s.splitter.split(s.track, n=5)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 2), (1, 3), (3, 5), (5, 7), ( 7, 9), (2, 4),
-                    (4, 6), (6, 8), (8, 10), (9, 10), (10, 11), (11, 12)}
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [
+                {
+                    (0, 1),
+                    (1, 2),
+                    (1, 3),
+                    (3, 5),
+                    (5, 7),
+                    (7, 9),
+                    (2, 4),
+                    (4, 6),
+                    (6, 8),
+                    (8, 10),
+                    (9, 10),
+                    (10, 11),
+                    (11, 12),
+                }
+            ],
+        )
 
     def test_n4_split(s):
         """ nt=4
@@ -203,14 +230,17 @@ class SplitTracks_TwoBranches_SplitReMerge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 9]x[10]-[11]-[12]
         """
         subtracks = s.splitter.split(s.track, n=4)
-        s.assertTracksEdgesEqual(subtracks, [
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [
                 {(0, 1), (1, 3), (3, 5), (5, 7), (7, 9)},
                 {(2, 4), (4, 6), (6, 8), (8, 10), (10, 11), (11, 12)},
-            ])
+            ],
+        )
 
-#SR_TODO check subtracks, not just their number
+
+# SR_TODO check subtracks, not just their number
 class SplitTracks_TwoBranches_Split(SplitTracks_Base):
-
     def setUp(s):
         """
                       [ 2]-[ 4]-[ 6]-[ 8]
@@ -218,29 +248,29 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
 
         """
-        features_ts = [ #     id ts  n  type
-                [DummyFeature( 0, 0, "ge")],
-                [DummyFeature( 1, 1, "sp")],
-                [DummyFeature( 2, 2, "co"), DummyFeature( 3, 2, "co")],
-                [DummyFeature( 4, 3, "co"), DummyFeature( 5, 3, "co")],
-                [DummyFeature( 6, 4, "co"), DummyFeature( 7, 4, "ly")],
-                [DummyFeature( 8, 5, "ly")],
-            ]
+        features_ts = [  #     id ts  n  type
+            [DummyFeature(0, 0, "ge")],
+            [DummyFeature(1, 1, "sp")],
+            [DummyFeature(2, 2, "co"), DummyFeature(3, 2, "co")],
+            [DummyFeature(4, 3, "co"), DummyFeature(5, 3, "co")],
+            [DummyFeature(6, 4, "co"), DummyFeature(7, 4, "ly")],
+            [DummyFeature(8, 5, "ly")],
+        ]
         #
         #              [ 2]-[ 4]-[ 6]-[ 8]
         #             x
         #    [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
         #
         edges_attrs1 = {
-                ( 0,  1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 1,  2): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
-                ( 1,  3): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
-                ( 2,  4): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 3,  5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 4,  6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 5,  7): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 6,  8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-            }
+            (0, 1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (1, 2): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
+            (1, 3): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
+            (2, 4): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (3, 5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (4, 6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (5, 7): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (6, 8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+        }
         s.track1 = s.init_track(1, features_ts, edges_attrs1)
         #
         #              [ 2]-[ 4]-[ 6]-[ 8]
@@ -248,15 +278,15 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
         #    [ 0]-[ 1]x[ 3]-[ 5]-[ 7]
         #
         edges_attrs2 = {
-                ( 0,  1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 1,  2): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
-                ( 1,  3): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
-                ( 2,  4): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 3,  5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 4,  6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 5,  7): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 6,  8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-            }
+            (0, 1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (1, 2): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
+            (1, 3): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
+            (2, 4): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (3, 5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (4, 6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (5, 7): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (6, 8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+        }
         s.track2 = s.init_track(2, features_ts, edges_attrs2)
 
         used_tids = {1, 2}
@@ -269,10 +299,10 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
              [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
         """
         subtracks = s.splitter.split(s.track1, n=5)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 2), (2, 4), (4, 6), (6, 8), (1, 3), (3, 5),
-                    (5, 7)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [{(0, 1), (1, 2), (2, 4), (4, 6), (6, 8), (1, 3), (3, 5), (5, 7)},],
+        )
 
     def test_track1_n4_split(s):
         """ nt=4
@@ -281,11 +311,9 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
              [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
         """
         subtracks = s.splitter.split(s.track1, n=4)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 3), (3, 5), (5, 7)},
-                {(2, 4), (4, 6), (6, 8)},
-            ])
-
+        s.assertTracksEdgesEqual(
+            subtracks, [{(0, 1), (1, 3), (3, 5), (5, 7)}, {(2, 4), (4, 6), (6, 8)},]
+        )
 
     def test_track1_n3_split(s):
         """ nt=3
@@ -294,10 +322,9 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
              [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
         """
         subtracks = s.splitter.split(s.track1, n=3)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 3), (3, 5), (5, 7)},
-                {(2, 4), (4, 6), (6, 8)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks, [{(0, 1), (1, 3), (3, 5), (5, 7)}, {(2, 4), (4, 6), (6, 8)},]
+        )
 
     def test_track2_n5_nosplit(s):
         """ nt=5
@@ -306,10 +333,10 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
              [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
         """
         subtracks = s.splitter.split(s.track2, n=5)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 2), (2, 4), (4, 6), (6, 8), (1, 3), (3, 5),
-                    (5, 7)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [{(0, 1), (1, 2), (2, 4), (4, 6), (6, 8), (1, 3), (3, 5), (5, 7)},],
+        )
 
     def test_track2_n4_nosplit(s):
         """ nt=4
@@ -318,10 +345,10 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
              [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
         """
         subtracks = s.splitter.split(s.track2, n=4)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 2), (2, 4), (4, 6), (6, 8), (1, 3), (3, 5),
-                    (5, 7)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [{(0, 1), (1, 2), (2, 4), (4, 6), (6, 8), (1, 3), (3, 5), (5, 7)},],
+        )
 
     def test_track2_n3_split(s):
         """ nt=2
@@ -330,43 +357,42 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
              [ 0]-[ 1]x[ 3]-[ 5]-[ 7]
         """
         subtracks = s.splitter.split(s.track2, n=3)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 2), (2, 4), (4, 6), (6, 8)},
-                {(3, 5), (5, 7)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks, [{(0, 1), (1, 2), (2, 4), (4, 6), (6, 8)}, {(3, 5), (5, 7)},]
+        )
 
-#SR_TODO check subtracks, not just their number
+
+# SR_TODO check subtracks, not just their number
 class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
-
     def setUp(s):
         """
                  [ 2]-[ 4]-[ 6]
                                \
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
         """
-        features_ts = [ #     id ts  type
-                [DummyFeature( 0, 0, "ge")],
-                [DummyFeature( 1, 1, "co"), DummyFeature( 2, 1, "ge")],
-                [DummyFeature( 3, 2, "co"), DummyFeature( 4, 2, "co")],
-                [DummyFeature( 5, 3, "co"), DummyFeature( 6, 3, "co")],
-                [DummyFeature( 7, 4, "me")],
-                [DummyFeature( 8, 5, "ly")],
-            ]
+        features_ts = [  #     id ts  type
+            [DummyFeature(0, 0, "ge")],
+            [DummyFeature(1, 1, "co"), DummyFeature(2, 1, "ge")],
+            [DummyFeature(3, 2, "co"), DummyFeature(4, 2, "co")],
+            [DummyFeature(5, 3, "co"), DummyFeature(6, 3, "co")],
+            [DummyFeature(7, 4, "me")],
+            [DummyFeature(8, 5, "ly")],
+        ]
         #
         #        [ 2]-[ 4]-[ 6]
         #                      x
         #   [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
         #
         edges_attrs1 = {
-                (0, 1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (1, 3): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (2, 4): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (3, 5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (4, 6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (5, 7): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
-                (6, 7): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
-                (7, 8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-            }
+            (0, 1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (1, 3): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (2, 4): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (3, 5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (4, 6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (5, 7): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
+            (6, 7): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
+            (7, 8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+        }
         s.track1 = s.init_track(1, features_ts, edges_attrs1)
         #
         #        [ 2]-[ 4]-[ 6]
@@ -374,15 +400,15 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
         #   [ 0]-[ 1]-[ 3]-[ 5]x[ 7]-[ 8]
         #
         edges_attrs2 = {
-                (0, 1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (1, 3): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (2, 4): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (3, 5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (4, 6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                (5, 7): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
-                (6, 7): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
-                (7, 8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-            }
+            (0, 1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (1, 3): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (2, 4): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (3, 5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (4, 6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (5, 7): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
+            (6, 7): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
+            (7, 8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+        }
         s.track2 = s.init_track(2, features_ts, edges_attrs2)
 
         used_tids = {1, 2}
@@ -395,10 +421,10 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
         """
         subtracks = s.splitter.split(s.track1, n=5)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 3), (3, 5), (5, 7), (7, 8), (2, 4), (4, 6),
-                    (6, 7)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [{(0, 1), (1, 3), (3, 5), (5, 7), (7, 8), (2, 4), (4, 6), (6, 7)},],
+        )
 
     def test_track1_n4_nosplit(s):
         """ nt=4
@@ -407,10 +433,10 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
         """
         subtracks = s.splitter.split(s.track1, n=4)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 3), (3, 5), (5, 7), (7, 8), (2, 4), (4, 6),
-                    (6, 7)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [{(0, 1), (1, 3), (3, 5), (5, 7), (7, 8), (2, 4), (4, 6), (6, 7)},],
+        )
 
     def test_track1_n3_split(s):
         """ nt=3
@@ -419,10 +445,9 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
         """
         subtracks = s.splitter.split(s.track1, n=3)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 3), (3, 5), (5, 7), (7, 8)},
-                {(2, 4), (4, 6)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks, [{(0, 1), (1, 3), (3, 5), (5, 7), (7, 8)}, {(2, 4), (4, 6)},]
+        )
 
     def test_track1_n2_split(s):
         """ nt=2
@@ -431,10 +456,9 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
         """
         subtracks = s.splitter.split(s.track1, n=2)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 3), (3, 5), (5, 7), (7, 8)},
-                {(2, 4), (4, 6)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks, [{(0, 1), (1, 3), (3, 5), (5, 7), (7, 8)}, {(2, 4), (4, 6)},]
+        )
 
     def test_track2_n5_nosplit(s):
         """ nt=5
@@ -443,10 +467,10 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
         """
         subtracks = s.splitter.split(s.track2, n=5)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 3), (3, 5), (5, 7), (7, 8), (2, 4), (4, 6),
-                    (6, 7)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [{(0, 1), (1, 3), (3, 5), (5, 7), (7, 8), (2, 4), (4, 6), (6, 7)},],
+        )
 
     def test_track2_n4_split(s):
         """ nt=4
@@ -455,10 +479,9 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]x[ 7]-[ 8]
         """
         subtracks = s.splitter.split(s.track2, n=4)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 3), (3, 5)},
-                {(2, 4), (4, 6), (6, 7), (7, 8)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks, [{(0, 1), (1, 3), (3, 5)}, {(2, 4), (4, 6), (6, 7), (7, 8)},]
+        )
 
     def test_track2_n3_split(s):
         """ nt=3
@@ -467,10 +490,10 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
             [ 0]-[ 1]-[ 3]-[ 5]x[ 7]-[ 8]
         """
         subtracks = s.splitter.split(s.track2, n=3)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 3), (3, 5)},
-                {(2, 4), (4, 6), (6, 7), (7, 8)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks, [{(0, 1), (1, 3), (3, 5)}, {(2, 4), (4, 6), (6, 7), (7, 8)},]
+        )
+
 
 class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
     """Splitting into three branches, which remerge in two steps."""
@@ -486,16 +509,16 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
         DF = DummyFeature
 
         features_ts = [
-                #   id ts  type
-                [DF( 0, 0, "ge")],
-                [DF( 1, 1, "sp")],
-                [DF( 2, 2, "co"), DF( 3, 2, "co"), DF( 4, 2, "co")],
-                [DF( 5, 3, "co"), DF( 6, 3, "co"), DF( 7, 3, "co")],
-                [DF( 8, 4, "co"), DF( 9, 4, "co"), DF(10, 4, "co")],
-                [DF(11, 5, "co"), DF(12, 5, "me")],
-                [DF(13, 6, "me")],
-                [DF(14, 7, "ly")],
-            ]
+            #   id ts  type
+            [DF(0, 0, "ge")],
+            [DF(1, 1, "sp")],
+            [DF(2, 2, "co"), DF(3, 2, "co"), DF(4, 2, "co")],
+            [DF(5, 3, "co"), DF(6, 3, "co"), DF(7, 3, "co")],
+            [DF(8, 4, "co"), DF(9, 4, "co"), DF(10, 4, "co")],
+            [DF(11, 5, "co"), DF(12, 5, "me")],
+            [DF(13, 6, "me")],
+            [DF(14, 7, "ly")],
+        ]
         #
         #             [ 2]-[ 5]-[ 8]-[11]
         #            x                   x
@@ -504,23 +527,23 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
         #             [ 4]-[ 7]-[10]
         #
         edges_attrs1 = {
-                ( 0,  1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 1,  2): dict(p_share=0.3, n_overlap=0, p_tot=0.0),
-                ( 1,  3): dict(p_share=0.5, n_overlap=0, p_tot=0.0),
-                ( 1,  4): dict(p_share=0.2, n_overlap=0, p_tot=0.0),
-                ( 2,  5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 3,  6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 4,  7): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 5,  8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 6,  9): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 7, 10): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 8, 11): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 9, 12): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
-                (10, 12): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
-                (11, 13): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
-                (12, 13): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
-                (13, 14): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-            }
+            (0, 1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (1, 2): dict(p_share=0.3, n_overlap=0, p_tot=0.0),
+            (1, 3): dict(p_share=0.5, n_overlap=0, p_tot=0.0),
+            (1, 4): dict(p_share=0.2, n_overlap=0, p_tot=0.0),
+            (2, 5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (3, 6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (4, 7): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (5, 8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (6, 9): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (7, 10): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (8, 11): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (9, 12): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
+            (10, 12): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
+            (11, 13): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
+            (12, 13): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
+            (13, 14): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+        }
         s.track1 = s.init_track(1, features_ts, edges_attrs1)
         #
         #             [ 2]-[ 5]-[ 8]-[11]
@@ -530,23 +553,23 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
         #             [ 4]-[ 7]-[10]
         #
         edges_attrs2 = {
-                ( 0,  1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 1,  2): dict(p_share=0.5, n_overlap=0, p_tot=0.0),
-                ( 1,  3): dict(p_share=0.3, n_overlap=0, p_tot=0.0),
-                ( 1,  4): dict(p_share=0.2, n_overlap=0, p_tot=0.0),
-                ( 2,  5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 3,  6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 4,  7): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 5,  8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 6,  9): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 7, 10): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 8, 11): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-                ( 9, 12): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
-                (10, 12): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
-                (11, 13): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
-                (12, 13): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
-                (13, 14): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
-            }
+            (0, 1): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (1, 2): dict(p_share=0.5, n_overlap=0, p_tot=0.0),
+            (1, 3): dict(p_share=0.3, n_overlap=0, p_tot=0.0),
+            (1, 4): dict(p_share=0.2, n_overlap=0, p_tot=0.0),
+            (2, 5): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (3, 6): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (4, 7): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (5, 8): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (6, 9): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (7, 10): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (8, 11): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+            (9, 12): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
+            (10, 12): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
+            (11, 13): dict(p_share=0.4, n_overlap=0, p_tot=0.0),
+            (12, 13): dict(p_share=0.6, n_overlap=0, p_tot=0.0),
+            (13, 14): dict(p_share=1.0, n_overlap=0, p_tot=0.0),
+        }
         s.track2 = s.init_track(2, features_ts, edges_attrs2)
 
         used_tids = {1, 2}
@@ -562,11 +585,29 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
 
         """
         subtracks = s.splitter.split(s.track1, n=5)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 2), (1, 3), (1, 4), (2, 5), (3, 6), (4, 7),
-                    (5, 8), (6, 9), (7, 10), (8, 11), (9, 12), (10, 12),
-                    (11, 13), (12, 13), (13, 14)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [
+                {
+                    (0, 1),
+                    (1, 2),
+                    (1, 3),
+                    (1, 4),
+                    (2, 5),
+                    (3, 6),
+                    (4, 7),
+                    (5, 8),
+                    (6, 9),
+                    (7, 10),
+                    (8, 11),
+                    (9, 12),
+                    (10, 12),
+                    (11, 13),
+                    (12, 13),
+                    (13, 14),
+                },
+            ],
+        )
 
     def test_track1_n4_split2(s):
         """ nt=4
@@ -578,11 +619,25 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
 
         """
         subtracks = s.splitter.split(s.track1, n=4)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 3), (1, 4), (3, 6), (4, 7), (6, 9), (7, 10),
-                    (9, 12), (10, 12), (12, 13), (13, 14)},
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [
+                {
+                    (0, 1),
+                    (1, 3),
+                    (1, 4),
+                    (3, 6),
+                    (4, 7),
+                    (6, 9),
+                    (7, 10),
+                    (9, 12),
+                    (10, 12),
+                    (12, 13),
+                    (13, 14),
+                },
                 {(2, 5), (5, 8), (8, 11)},
-            ])
+            ],
+        )
 
     def test_track1_n3_split4(s):
         """ nt=3
@@ -594,11 +649,14 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
 
         """
         subtracks = s.splitter.split(s.track1, n=3)
-        s.assertTracksEdgesEqual(subtracks, [
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [
                 {(0, 1), (1, 3), (3, 6), (6, 9)},
                 {(2, 5), (5, 8), (8, 11)},
                 {(4, 7), (7, 10), (10, 12), (12, 13), (13, 14)},
-            ])
+            ],
+        )
 
     def test_track2_n5_nosplit(s):
         """ nt=5
@@ -610,11 +668,29 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
 
         """
         subtracks = s.splitter.split(s.track2, n=5)
-        s.assertTracksEdgesEqual(subtracks, [
-                {(0, 1), (1, 2), (1, 3), (1, 4), (2, 5), (3, 6), (4, 7),
-                    (5, 8), (6, 9), (7, 10), (8, 11), (9, 12), (10, 12),
-                    (11, 13), (12, 13), (13, 14)},
-            ])
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [
+                {
+                    (0, 1),
+                    (1, 2),
+                    (1, 3),
+                    (1, 4),
+                    (2, 5),
+                    (3, 6),
+                    (4, 7),
+                    (5, 8),
+                    (6, 9),
+                    (7, 10),
+                    (8, 11),
+                    (9, 12),
+                    (10, 12),
+                    (11, 13),
+                    (12, 13),
+                    (13, 14),
+                },
+            ],
+        )
 
     def test_track2_n4_split3(s):
         """ nt=4
@@ -626,11 +702,22 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
 
         """
         subtracks = s.splitter.split(s.track2, n=4)
-        s.assertTracksEdgesEqual(subtracks, [
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [
                 {(0, 1), (1, 2), (2, 5), (5, 8), (8, 11)},
-                {(3, 6), (6, 9), (9, 12), (4, 7), (7, 10), (10, 12), (12, 13),
-                    (13, 14)},
-            ])
+                {
+                    (3, 6),
+                    (6, 9),
+                    (9, 12),
+                    (4, 7),
+                    (7, 10),
+                    (10, 12),
+                    (12, 13),
+                    (13, 14),
+                },
+            ],
+        )
 
     def test_track2_n3_split4(s):
         """ nt=3
@@ -641,27 +728,31 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
                       [ 4]-[ 7]-[10]
         """
         subtracks = s.splitter.split(s.track2, n=3)
-        s.assertTracksEdgesEqual(subtracks, [
+        s.assertTracksEdgesEqual(
+            subtracks,
+            [
                 {(0, 1), (1, 2), (2, 5), (5, 8), (8, 11)},
                 {(3, 6), (6, 9)},
                 {(4, 7), (7, 10), (10, 12), (12, 13), (13, 14)},
-            ])
+            ],
+        )
 
-#==============================================================================
 
 class SplitTrack_Probabilities_Simple(TestCase):
     """Split very simple track and check tracking probabilities."""
 
     def setUp(s):
-
         def feature_rect(fid, llc, urc, ts):
             pxs = np.arange(llc[0], urc[0] + 1)
             pys = np.arange(llc[1], urc[1] + 1)
             pixels = np.array([(x, y) for x in pxs for y in pys], np.int32)
-            shell = np.array([(px, pys[0]) for px in pxs] +
-                    [(pxs[-1], py) for py in pys[1:-1]] +
-                    [(px, pys[-1]) for px in pxs[::-1]] +
-                    [(pxs[0], py) for py in pys[-2:0:-1]], np.int32)
+            shell = np.array(
+                [(px, pys[0]) for px in pxs]
+                + [(pxs[-1], py) for py in pys[1:-1]]
+                + [(px, pys[-1]) for px in pxs[::-1]]
+                + [(pxs[0], py) for py in pys[-2:0:-1]],
+                np.int32,
+            )
 
             return Feature(id_=fid, timestep=ts, pixels=pixels, shells=[shell])
 
@@ -678,7 +769,7 @@ class SplitTrack_Probabilities_Simple(TestCase):
         # 2 0 0 -  2 2 2 - - -  2 - - - -  2 - 8 8 8  2 - - Y Y  2 - - Z Z
         # 1 0 0 -  1 - - - - -  1 - - - -  1 - - - 9  1 - - Y Y  1 - - - -
         # 0 - - 1  0 - - 4 4 -  0 - - - 6  0 - - - 9  0 - - Y Y  0 - - - -
-        #(0)0 1 2 (1)0 1 2 3 4 (2)0 1 2 3 (3)0 1 2 3 (4)0 1 2 3 (5)0 1 2 3
+        # (0)0 1 2 (1)0 1 2 3 4 (2)0 1 2 3 (3)0 1 2 3 (4)0 1 2 3 (5)0 1 2 3
         #
         #
         # (0)   [0]       [1]
@@ -695,72 +786,87 @@ class SplitTrack_Probabilities_Simple(TestCase):
         #
         s.features_tss = odict()
         s.features_tss[0] = [
-                feature_rect(0, (0, 1), (1, 3), 0),
-                feature_rect(1, (2, 0), (2, 0), 0),
-            ]
+            feature_rect(0, (0, 1), (1, 3), 0),
+            feature_rect(1, (2, 0), (2, 0), 0),
+        ]
         s.features_tss[1] = [
-                feature_rect(2, (0, 2), (1, 4), 1),
-                feature_rect(3, (3, 3), (4, 4), 1),
-                feature_rect(4, (2, 0), (3, 0), 1),
-            ]
+            feature_rect(2, (0, 2), (1, 4), 1),
+            feature_rect(3, (3, 3), (4, 4), 1),
+            feature_rect(4, (2, 0), (3, 0), 1),
+        ]
         s.features_tss[2] = [
-                feature_rect(5, (1, 3), (3, 5), 2),
-                feature_rect(6, (3, 0), (3, 0), 2),
-            ]
+            feature_rect(5, (1, 3), (3, 5), 2),
+            feature_rect(6, (3, 0), (3, 0), 2),
+        ]
         s.features_tss[3] = [
-                feature_rect(7, (0, 4), (2, 5), 3),
-                feature_rect(8, (1, 2), (3, 3), 3),
-                feature_rect(9, (3, 0), (3, 1), 3),
-            ]
+            feature_rect(7, (0, 4), (2, 5), 3),
+            feature_rect(8, (1, 2), (3, 3), 3),
+            feature_rect(9, (3, 0), (3, 1), 3),
+        ]
         s.features_tss[4] = [
-                feature_rect(X, (2, 4), (2, 5), 4),
-                feature_rect(Y, (2, 0), (3, 2), 4),
-            ]
+            feature_rect(X, (2, 4), (2, 5), 4),
+            feature_rect(Y, (2, 0), (3, 2), 4),
+        ]
         s.features_tss[5] = [
-                feature_rect(Z, (2, 2), (3, 5), 5),
-            ]
+            feature_rect(Z, (2, 2), (3, 5), 5),
+        ]
         s.features_fid = {f.id: f for fs in s.features_tss.values() for f in fs}
 
         # Define overlaps (in both directions)
         s.overlaps = {
-                (0, 2): 4, (1, 4): 1,
-                (2, 5): 2, (3, 5): 2, (4, 6): 1,
-                (5, 7): 4, (5, 8): 3, (6, 9): 1,
-                (7, X): 2, (8, Y): 2, (9, Y): 2,
-                (X, Z): 2, (Y, Z): 2,
-            }
+            (0, 2): 4,
+            (1, 4): 1,
+            (2, 5): 2,
+            (3, 5): 2,
+            (4, 6): 1,
+            (5, 7): 4,
+            (5, 8): 3,
+            (6, 9): 1,
+            (7, X): 2,
+            (8, Y): 2,
+            (9, Y): 2,
+            (X, Z): 2,
+            (Y, Z): 2,
+        }
         s.overlaps.update({(b, a): o for (a, b), o in s.overlaps.items()})
 
         # Helper functions to compute tracking probabilities
         O = lambda fa, fb: s.overlaps.get((fa, fb), 0)
         S = lambda f: s.features_fid[f].n
+
         def PS(fids1, fids2):
             """p_size"""
             size1 = sum([S(i) for i in fids1])
             size2 = sum([S(i) for i in fids2])
-            return min([size1, size2])/max([size1, size2])
+            return min([size1, size2]) / max([size1, size2])
+
         def PO(fids1, fids2):
             """p_overlap"""
             ovlp = sum([O(f1, f2) for f1 in fids1 for f2 in fids2])
             size1 = sum([S(i) for i in fids1])
             size2 = sum([S(i) for i in fids2])
-            return 2*ovlp/(size1 + size2)
+            return 2 * ovlp / (size1 + size2)
+
         def PT(fids1, fids2):
             """p_tot"""
-            return f_size*PS(fids1, fids2) + f_overlap*PO(fids1, fids2)
+            return f_size * PS(fids1, fids2) + f_overlap * PO(fids1, fids2)
+
         def PR(fid1, fids1, fid2):
             """p_share"""
             pt1 = PT([fid1], [fid2])
-            ptt = sum([PT([i], [fid2]) for i in [fid1]+fids1])
-            return pt1/ptt
-        s.Ps = lambda fids1, fids2: dict(p_tot=PT(fids1, [fid2]),
-                p_size=PS(fids1, fids2), p_ovlp=PO(fids1, [fid2]))
+            ptt = sum([PT([i], [fid2]) for i in [fid1] + fids1])
+            return pt1 / ptt
+
+        s.Ps = lambda fids1, fids2: dict(
+            p_tot=PT(fids1, [fid2]), p_size=PS(fids1, fids2), p_ovlp=PO(fids1, [fid2])
+        )
+
         def PTSO(fids1, fids2):
             return dict(
-                    p_tot     = PT(fids1, fids2),
-                    p_size    = PS(fids1, fids2),
-                    p_overlap = PO(fids1, fids2),
-                )
+                p_tot=PT(fids1, fids2),
+                p_size=PS(fids1, fids2),
+                p_overlap=PO(fids1, fids2),
+            )
 
         def merge(dict1, dict2):
             dict_out = {k: v for k, v in dict1.items()}
@@ -769,36 +875,36 @@ class SplitTrack_Probabilities_Simple(TestCase):
 
         # Define tracking probabilities for n=-1 (original track)
         s.probs_ini = {
-                (0, 2): merge(PTSO([0],    [2]), dict(p_share=1.0)),
-                (1, 4): merge(PTSO([1],    [4]), dict(p_share=1.0)),
-                (2, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(2, [3], 5))),
-                (3, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(3, [2], 5))),
-                (4, 6): merge(PTSO([4],    [6]), dict(p_share=1.0)),
-                (5, 7): merge(PTSO([5], [7, 8]), dict(p_share=PR(7, [8], 5))),
-                (5, 8): merge(PTSO([5], [7, 8]), dict(p_share=PR(8, [7], 5))),
-                (6, 9): merge(PTSO([6],    [9]), dict(p_share=1.0)),
-                (7, X): merge(PTSO([7],    [X]), dict(p_share=1.0)),
-                (8, Y): merge(PTSO([8, 9], [Y]), dict(p_share=PR(8, [9], Y))),
-                (9, Y): merge(PTSO([8, 9], [Y]), dict(p_share=PR(9, [8], Y))),
-                (X, Z): merge(PTSO([X, Y], [Z]), dict(p_share=PR(X, [Y], Z))),
-                (Y, Z): merge(PTSO([X, Y], [Z]), dict(p_share=PR(Y, [X], Z))),
-            }
+            (0, 2): merge(PTSO([0], [2]), dict(p_share=1.0)),
+            (1, 4): merge(PTSO([1], [4]), dict(p_share=1.0)),
+            (2, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(2, [3], 5))),
+            (3, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(3, [2], 5))),
+            (4, 6): merge(PTSO([4], [6]), dict(p_share=1.0)),
+            (5, 7): merge(PTSO([5], [7, 8]), dict(p_share=PR(7, [8], 5))),
+            (5, 8): merge(PTSO([5], [7, 8]), dict(p_share=PR(8, [7], 5))),
+            (6, 9): merge(PTSO([6], [9]), dict(p_share=1.0)),
+            (7, X): merge(PTSO([7], [X]), dict(p_share=1.0)),
+            (8, Y): merge(PTSO([8, 9], [Y]), dict(p_share=PR(8, [9], Y))),
+            (9, Y): merge(PTSO([8, 9], [Y]), dict(p_share=PR(9, [8], Y))),
+            (X, Z): merge(PTSO([X, Y], [Z]), dict(p_share=PR(X, [Y], Z))),
+            (Y, Z): merge(PTSO([X, Y], [Z]), dict(p_share=PR(Y, [X], Z))),
+        }
         for (v0, v1), attrs in s.probs_ini.items():
             attrs["n_overlap"] = O(v0, v1)
 
         # Define tracking probabilities for n=0 (linear tracks)
         s.n_subtracks_n0 = 4
         s.probs_n0 = {
-                (0, 2): merge(PTSO([0],    [2]), dict(p_share=1.0)),
-                (1, 4): merge(PTSO([1],    [4]), dict(p_share=1.0)),
-                (2, 5): merge(PTSO([2],    [5]), dict(p_share=1.0)),
-                (5, 7): merge(PTSO([5],    [7]), dict(p_share=1.0)),
-                (4, 6): merge(PTSO([4],    [6]), dict(p_share=1.0)),
-                (6, 9): merge(PTSO([6],    [9]), dict(p_share=1.0)),
-                (7, X): merge(PTSO([7],    [X]), dict(p_share=1.0)),
-                (8, Y): merge(PTSO([8],    [Y]), dict(p_share=1.0)),
-                (Y, Z): merge(PTSO([Y],    [Z]), dict(p_share=1.0)),
-            }
+            (0, 2): merge(PTSO([0], [2]), dict(p_share=1.0)),
+            (1, 4): merge(PTSO([1], [4]), dict(p_share=1.0)),
+            (2, 5): merge(PTSO([2], [5]), dict(p_share=1.0)),
+            (5, 7): merge(PTSO([5], [7]), dict(p_share=1.0)),
+            (4, 6): merge(PTSO([4], [6]), dict(p_share=1.0)),
+            (6, 9): merge(PTSO([6], [9]), dict(p_share=1.0)),
+            (7, X): merge(PTSO([7], [X]), dict(p_share=1.0)),
+            (8, Y): merge(PTSO([8], [Y]), dict(p_share=1.0)),
+            (Y, Z): merge(PTSO([Y], [Z]), dict(p_share=1.0)),
+        }
 
         # Define tracking probabilities for n=1
         s.n_subtracks_n1 = 4
@@ -807,34 +913,34 @@ class SplitTrack_Probabilities_Simple(TestCase):
         # Define tracking probabilities for n=2
         s.n_subtracks_n2 = 3
         s.probs_n2 = {
-                (0, 2): merge(PTSO([0],    [2]), dict(p_share=1.0)),
-                (1, 4): merge(PTSO([1],    [4]), dict(p_share=1.0)),
-                (2, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(2, [3], 5))),
-                (3, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(3, [2], 5))),
-                (4, 6): merge(PTSO([4],    [6]), dict(p_share=1.0)),
-                (5, 7): merge(PTSO([5],    [7]), dict(p_share=1.0)),
-                (6, 9): merge(PTSO([6],    [9]), dict(p_share=1.0)),
-                (7, X): merge(PTSO([7],    [X]), dict(p_share=1.0)),
-                (8, Y): merge(PTSO([8],    [Y]), dict(p_share=1.0)),
-                (Y, Z): merge(PTSO([Y],    [Z]), dict(p_share=1.0)),
-            }
+            (0, 2): merge(PTSO([0], [2]), dict(p_share=1.0)),
+            (1, 4): merge(PTSO([1], [4]), dict(p_share=1.0)),
+            (2, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(2, [3], 5))),
+            (3, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(3, [2], 5))),
+            (4, 6): merge(PTSO([4], [6]), dict(p_share=1.0)),
+            (5, 7): merge(PTSO([5], [7]), dict(p_share=1.0)),
+            (6, 9): merge(PTSO([6], [9]), dict(p_share=1.0)),
+            (7, X): merge(PTSO([7], [X]), dict(p_share=1.0)),
+            (8, Y): merge(PTSO([8], [Y]), dict(p_share=1.0)),
+            (Y, Z): merge(PTSO([Y], [Z]), dict(p_share=1.0)),
+        }
 
         # Define tracking probabilities for n=3
         s.n_subtracks_n3 = 2
         s.probs_n3 = {
-                (0, 2): merge(PTSO([0],    [2]), dict(p_share=1.0)),
-                (1, 4): merge(PTSO([1],    [4]), dict(p_share=1.0)),
-                (2, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(2, [3], 5))),
-                (3, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(3, [2], 5))),
-                (4, 6): merge(PTSO([4],    [6]), dict(p_share=1.0)),
-                (5, 7): merge(PTSO([5], [7, 8]), dict(p_share=PR(7, [8], 5))),
-                (5, 8): merge(PTSO([5], [7, 8]), dict(p_share=PR(8, [7], 5))),
-                (6, 9): merge(PTSO([6],    [9]), dict(p_share=1.0)),
-                (7, X): merge(PTSO([7],    [X]), dict(p_share=1.0)),
-                (8, Y): merge(PTSO([8],    [Y]), dict(p_share=1.0)),
-                (X, Z): merge(PTSO([X, Y], [Z]), dict(p_share=PR(X, [Y], Z))),
-                (Y, Z): merge(PTSO([X, Y], [Z]), dict(p_share=PR(Y, [X], Z))),
-            }
+            (0, 2): merge(PTSO([0], [2]), dict(p_share=1.0)),
+            (1, 4): merge(PTSO([1], [4]), dict(p_share=1.0)),
+            (2, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(2, [3], 5))),
+            (3, 5): merge(PTSO([2, 3], [5]), dict(p_share=PR(3, [2], 5))),
+            (4, 6): merge(PTSO([4], [6]), dict(p_share=1.0)),
+            (5, 7): merge(PTSO([5], [7, 8]), dict(p_share=PR(7, [8], 5))),
+            (5, 8): merge(PTSO([5], [7, 8]), dict(p_share=PR(8, [7], 5))),
+            (6, 9): merge(PTSO([6], [9]), dict(p_share=1.0)),
+            (7, X): merge(PTSO([7], [X]), dict(p_share=1.0)),
+            (8, Y): merge(PTSO([8], [Y]), dict(p_share=1.0)),
+            (X, Z): merge(PTSO([X, Y], [Z]), dict(p_share=PR(X, [Y], Z))),
+            (Y, Z): merge(PTSO([X, Y], [Z]), dict(p_share=PR(Y, [X], Z))),
+        }
 
         # Define tracking probabilities for n=4
         s.n_subtracks_n4 = 2
@@ -846,16 +952,16 @@ class SplitTrack_Probabilities_Simple(TestCase):
 
         # Initialize feature tracker
         s.tracker = FeatureTracker(
-                f_overlap      = f_overlap,
-                f_size         = f_size,
-                min_p_tot      = 0.0,
-                min_p_overlap  = 0.0,
-                min_p_size     = 0.0,
-                connectivity   = 4,
-                split_tracks_n = -1,
-                nx             = 9,
-                ny             = 9,
-            )
+            f_overlap=f_overlap,
+            f_size=f_size,
+            min_p_tot=0.0,
+            min_p_overlap=0.0,
+            min_p_size=0.0,
+            connectivity=4,
+            split_tracks_n=-1,
+            nx=9,
+            ny=9,
+        )
 
     def track_features(s, features_tss):
         for ts, features in sorted(features_tss.items()):
@@ -888,10 +994,9 @@ class SplitTrack_Probabilities_Simple(TestCase):
                 v_res = attrs_res[edge][key]
                 if not np.isclose(v_sol, v_res):
                     err = "edge {}: {}: expected {}, got {}".format(
-                            edge, key, v_sol, v_res)
+                        edge, key, v_sol, v_res
+                    )
                     raise AssertionError(err)
-
-    #--------------------------------------------------------------------------
 
     def test_nosplit(s):
         """Don't split the track."""
@@ -947,11 +1052,11 @@ class SplitTrack_Probabilities_Simple(TestCase):
         s.assertEqual(len(subtracks), s.n_subtracks_n5)
         s.assert_edges_equal(subtracks, s.probs_n5)
 
-#==============================================================================
 
 if __name__ == "__main__":
 
     import logging as log
+
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
     log.getLogger().setLevel(log.DEBUG)
 

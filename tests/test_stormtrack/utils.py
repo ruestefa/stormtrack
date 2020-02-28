@@ -12,12 +12,11 @@ import numpy as np
 from stormtrack.core.typedefs import Constants
 from stormtrack.core.identification import Feature
 
-#==============================================================================
+
 # Test Features
-#==============================================================================
+
 
 class TestFeatures_Base(TestCase):
-
     def setUp(s):
         pass
 
@@ -33,28 +32,33 @@ class TestFeatures_Base(TestCase):
             return
 
         # Prepare indices of pixels, shells, and holes
-        #SR_TMP<
+        # SR_TMP<
         try:
             obj_ids = getattr(self, "obj_ids_{}".format(suffix))
         except AttributeError:
-            obj_ids = getattr(self, "obj_ids_{}".format(
-                    suffix.replace("out", "in")))
-        #SR_TMP>
+            obj_ids = getattr(self, "obj_ids_{}".format(suffix.replace("out", "in")))
+        # SR_TMP>
         inds_features = getattr(self, "inds_features_{}".format(suffix))
         if hasattr(self, "shells_{}".format(suffix)):
             shells_lst = getattr(self, "shells_{}".format(suffix))
             if len(shells_lst) != len(inds_features):
-                raise Exception("{}: wrong number of shells: {} != {}".format(
-                        suffix, len(shells_lst), len(inds_features)))
+                raise Exception(
+                    "{}: wrong number of shells: {} != {}".format(
+                        suffix, len(shells_lst), len(inds_features)
+                    )
+                )
         else:
-            shells_lst = [None]*len(inds_features)
+            shells_lst = [None] * len(inds_features)
         if hasattr(self, "holes_{}".format(suffix)):
             holes_lst = getattr(self, "holes_{}".format(suffix))
             if len(holes_lst) != len(inds_features):
-                raise Exception("{}: wrong number of holes: {} != {}".format(
-                        suffix, len(holes_lst), len(inds_features)))
+                raise Exception(
+                    "{}: wrong number of holes: {} != {}".format(
+                        suffix, len(holes_lst), len(inds_features)
+                    )
+                )
         else:
-            holes_lst = [None]*len(inds_features)
+            holes_lst = [None] * len(inds_features)
 
         # Create features
         features = []
@@ -62,12 +66,12 @@ class TestFeatures_Base(TestCase):
             pixels = self.select_pixels(obj_ids, inds)
             connectivity = {"_4c": 4, "_8c": 8}.get(suffix[-3:])
             feature = self.create_feature(
-                    pixels       = pixels,
-                    id_          = self.fid,
-                    shells       = shells,
-                    holes        = holes,
-                    connectivity = connectivity,
-                )
+                pixels=pixels,
+                id_=self.fid,
+                shells=shells,
+                holes=holes,
+                connectivity=connectivity,
+            )
             self.fid += 1
             feature._shared_boundary_pixels = None
             feature._shared_boundary_pixels_unique = None
@@ -112,26 +116,27 @@ class TestFeatures_Base(TestCase):
         # Add features to test class
         setattr(self, "features_{}".format(suffix), features)
 
-    def create_feature(self, pixels, id_, shells=None, holes=None,
-            connectivity=None):
+    def create_feature(self, pixels, id_, shells=None, holes=None, connectivity=None):
         values = self.fld[(pixels.T[0], pixels.T[1])]
         dummy_center = [0, 0]
         dummy_extrema = [[0, 0]]
+
         def arr(lst, dt=np.int32):
             if lst is None:
                 lst = []
             return np.asarray(lst, dtype=dt)
+
         if shells is not None:
             shells = [arr(shell) for shell in shells]
         if holes is not None:
             holes = [arr(hole) for hole in holes]
         feature = Feature(
-                values  = arr(values, np.float32),
-                pixels  = arr(pixels),
-                shells  = shells,
-                holes   = holes,
-                id_     = id_,
-            )
+            values=arr(values, np.float32),
+            pixels=arr(pixels),
+            shells=shells,
+            holes=holes,
+            id_=id_,
+        )
         if shells is None or holes is None:
             if connectivity is None:
                 raise ValueError("no connectivity but shells or holes is None")
@@ -146,16 +151,25 @@ class TestFeatures_Base(TestCase):
         return feature
 
     def select_pixels(self, fld, inds_regions):
-        return np.array([(x, y) for inds in inds_regions
-                        for x, y in np.array(np.where(fld == inds)).T])
+        return np.array(
+            [
+                (x, y)
+                for inds in inds_regions
+                for x, y in np.array(np.where(fld == inds)).T
+            ]
+        )
 
-    #SR_TODO Split up into multiple assert functions (keep this one, though)
-    def assertFeaturesEqual(self, features1, features2, msg=None,
-            check_boundaries        = True,
-            check_neighbors         = True,
-            check_shared_pixels     = True,
-            sort_by_size            = False,
-        ):
+    # SR_TODO Split up into multiple assert functions (keep this one, though)
+    def assertFeaturesEqual(
+        self,
+        features1,
+        features2,
+        msg=None,
+        check_boundaries=True,
+        check_neighbors=True,
+        check_shared_pixels=True,
+        sort_by_size=False,
+    ):
         if sort_by_size:
             features1.sort(key=lambda f: tuple(f.pixels.min(axis=0)))
             features2.sort(key=lambda f: tuple(f.pixels.min(axis=0)))
@@ -172,7 +186,8 @@ class TestFeatures_Base(TestCase):
             for i, ((fid1, n1), (fid2, n2)) in enumerate(zip(sizes1, sizes2)):
                 if n1 != n2:
                     err += "({}) [{:2}] {:4} {:4} [{:2}]\n".format(
-                            i, fid1, n1, n2, fid2)
+                        i, fid1, n1, n2, fid2
+                    )
             err += "\nPixels in one but not the other:\n"
             pxs1 = [(f.id, [(x, y) for x, y in f.pixels]) for f in features1]
             pxs2 = [(f.id, [(x, y) for x, y in f.pixels]) for f in features2]
@@ -215,19 +230,22 @@ class TestFeatures_Base(TestCase):
             for feature1, feature2 in zip(features1, features2):
                 neighbors1 = feature1.neighbors
                 neighbors2 = feature2.neighbors
-                msg = ("features {} and {} differ in neighbors:\n"
-                        "[{}] v. [{}]").format(feature1.id, feature2.id,
-                        ", ".join(["{:2}".format(f.id) for f in neighbors1]),
-                        ", ".join(["{:2}".format(f.id) for f in neighbors2]),
-                    )
+                msg = (
+                    "features {} and {} differ in neighbors:\n" "[{}] v. [{}]"
+                ).format(
+                    feature1.id,
+                    feature2.id,
+                    ", ".join(["{:2}".format(f.id) for f in neighbors1]),
+                    ", ".join(["{:2}".format(f.id) for f in neighbors2]),
+                )
                 self.assertFeaturesEqual(
-                        neighbors1,
-                        neighbors2,
-                        msg                 = msg,
-                        check_neighbors     = False,
-                        check_boundaries    = False,
-                        check_shared_pixels = False
-                    )
+                    neighbors1,
+                    neighbors2,
+                    msg=msg,
+                    check_neighbors=False,
+                    check_boundaries=False,
+                    check_shared_pixels=False,
+                )
 
         # Check shared pixels
         if check_shared_pixels:
@@ -236,34 +254,29 @@ class TestFeatures_Base(TestCase):
                 raise Exception(err)
             for feature1, feature2 in zip(features1, features2):
                 for mode in ["complete", "unique"]:
-                    self.assertFeaturesEqual_SharedPixels(
-                            feature1, feature2, mode)
+                    self.assertFeaturesEqual_SharedPixels(feature1, feature2, mode)
 
     def assertFeaturesEqual_SharedPixels(self, feature1, feature2, mode):
 
         # Check background boundary pixels
         pixels1 = feature1.shared_boundary_pixels("bg", mode)
         pixels2 = feature2.shared_boundary_pixels("bg", mode)
-        err = ("number of shared_boundary_pixels({}, {}) differs"
-                ).format("bg", mode)
+        err = ("number of shared_boundary_pixels({}, {}) differs").format("bg", mode)
         self.assertEqual(len(pixels1), len(pixels2), err)
         pixels1 = set([(x, y) for x, y in pixels1])
         pixels2 = set([(x, y) for x, y in pixels2])
-        err = "shared_boundary_pixels differ ({}, {})".format(
-                "bg", mode)
+        err = "shared_boundary_pixels differ ({}, {})".format("bg", mode)
         self.assertSetEqual(pixels1, pixels2, err)
 
         # Check interior boundary pixels ("complete" mode)
         # (only relevant for 4-connectivity)
         pixels1 = feature1.shared_boundary_pixels("in", mode)
         pixels2 = feature2.shared_boundary_pixels("in", mode)
-        err = ("number of shared_boundary_pixels({}, {}) differs"
-                ).format("in", mode)
+        err = ("number of shared_boundary_pixels({}, {}) differs").format("in", mode)
         self.assertEqual(len(pixels1), len(pixels2), err)
         pixels1 = set([(x, y) for x, y in pixels1])
         pixels2 = set([(x, y) for x, y in pixels2])
-        err = "shared_boundary_pixels({}, {}) differ".format(
-                "in", mode)
+        err = "shared_boundary_pixels({}, {}) differ".format("in", mode)
         self.assertSetEqual(pixels1, pixels2, err)
 
         # Check neighbors
@@ -272,17 +285,17 @@ class TestFeatures_Base(TestCase):
         for neighbor1, neighbor2 in zip(neighbors1, neighbors2):
             pixels1 = feature1.shared_boundary_pixels(neighbor1, mode)
             pixels2 = feature2.shared_boundary_pixels(neighbor2, mode)
-            err = ("number of shared_boundary_pixels({}/{}, {}) "
-                    "differs").format(neighbor1.id, neighbor2.id,
-                    mode)
+            err = ("number of shared_boundary_pixels({}/{}, {}) " "differs").format(
+                neighbor1.id, neighbor2.id, mode
+            )
             self.assertEqual(len(pixels1), len(pixels2), err)
             pixels1 = set([(x, y) for x, y in pixels1])
             pixels2 = set([(x, y) for x, y in pixels2])
-            err = ("shared_boundary_pixels({}/{}, {}) differ"
-                    ).format(neighbor1.id, neighbor2.id, mode)
+            err = ("shared_boundary_pixels({}/{}, {}) differ").format(
+                neighbor1.id, neighbor2.id, mode
+            )
             self.assertSetEqual(pixels1, pixels2, err)
 
-#------------------------------------------------------------------------------
 
 def assertListShiftedEqual(self, list1, list2, msg=None):
     """Check that the elements of two list are in the same relative order.
@@ -296,39 +309,46 @@ def assertListShiftedEqual(self, list1, list2, msg=None):
     else:
         msg = "{}: ".format(msg)
 
-    #SR_TODO use ndarray asserts
-    self.assertEqual(len(list1), len(list2),
-            "{}lists differ in length".format(msg))
+    # SR_TODO use ndarray asserts
+    self.assertEqual(len(list1), len(list2), "{}lists differ in length".format(msg))
     try:
-        #SR_TMP
-        #self.assertEqual(list1[0], list1[-1], "edge elements of list 1 differ")
-        #self.assertEqual(list2[0], list2[-1], "edge elements of list 2 differ")
-        self.assertEqual(list(list1[0]), list(list1[-1]),
-                "{}edge elements of list 1 differ".format(msg))
-        self.assertEqual(list(list2[0]), list(list2[-1]),
-                "{}edge elements of list 2 differ".format(msg))
+        # SR_TMP
+        # self.assertEqual(list1[0], list1[-1], "edge elements of list 1 differ")
+        # self.assertEqual(list2[0], list2[-1], "edge elements of list 2 differ")
+        self.assertEqual(
+            list(list1[0]),
+            list(list1[-1]),
+            "{}edge elements of list 1 differ".format(msg),
+        )
+        self.assertEqual(
+            list(list2[0]),
+            list(list2[-1]),
+            "{}edge elements of list 2 differ".format(msg),
+        )
     except AssertionError:
         pass
     else:
         list1 = list1[:-1]
         list2 = list2[:-1]
-    #SR_TMP
-    #self.assertSetEqual(set(list1), set(list2), "list elements differ")
+    # SR_TMP
+    # self.assertSetEqual(set(list1), set(list2), "list elements differ")
     self.assertSetEqual(
-            set([tuple(i) for i in list1]),
-            set([tuple(i) for i in list2]),
-            "{}list elements differ".format(msg))
+        set([tuple(i) for i in list1]),
+        set([tuple(i) for i in list2]),
+        "{}list elements differ".format(msg),
+    )
     list1 = [i for i in list1]
-    for i in range(2*len(list1)):
+    for i in range(2 * len(list1)):
         try:
-            #SR_TMP
-            #self.assertEqual(list1, list2)
+            # SR_TMP
+            # self.assertEqual(list1, list2)
             self.assertEqual(
-                    [list(i) for i in list1],
-                    [list(i) for i in list2],
-                    "{}list elements differ".format(msg))
+                [list(i) for i in list1],
+                [list(i) for i in list2],
+                "{}list elements differ".format(msg),
+            )
         except AssertionError:
-            if i+1 == len(list1):
+            if i + 1 == len(list1):
                 list1 = list1[::-1]
             else:
                 list1.append(list1.pop(0))
@@ -336,6 +356,7 @@ def assertListShiftedEqual(self, list1, list2, msg=None):
             return
     else:
         raise AssertionError("{}list element order differs".format(msg))
+
 
 def assertBoundaries(self, inds_lst1, inds_lst2, name="inds"):
     """Chech that two sets of boundaries (shells, holes) are the same."""
@@ -345,7 +366,7 @@ def assertBoundaries(self, inds_lst1, inds_lst2, name="inds"):
     def sort_inds_lst(inds_lst):
         inds_lst = sorted(inds_lst, key=lambda i: min(i[:, 0]))
         inds_lst = sorted(inds_lst, key=lambda i: max(i[:, 1]), reverse=True)
-        inds_lst = sorted(inds_lst, key=lambda i: len(i),       reverse=True)
+        inds_lst = sorted(inds_lst, key=lambda i: len(i), reverse=True)
         return inds_lst
 
     inds_lst1 = sort_inds_lst(inds_lst1)
@@ -356,20 +377,20 @@ def assertBoundaries(self, inds_lst1, inds_lst2, name="inds"):
         try:
             assertListShiftedEqual(self, inds1, inds2)
         except AssertionError as e:
-            err = ("shifted list assertion failed for {n} "
-                    "{i}: {e}\n").format(n=name, i=i, e=e)
-            err += "\n {:^8s} {:^8s}\n".format(name+"1", name+"2")
+            err = ("shifted list assertion failed for {n} " "{i}: {e}\n").format(
+                n=name, i=i, e=e
+            )
+            err += "\n {:^8s} {:^8s}\n".format(name + "1", name + "2")
             for j in range(max([len(inds1), len(inds2)])):
                 x1, y1 = inds1[j] if j < len(inds1) else (-1, -1)
                 x2, y2 = inds2[j] if j < len(inds2) else (-1, -1)
-                err += " ({:2d}, {:2d}) ({:2d}, {:2d})\n".format(
-                        x1, y1, x2, y2)
+                err += " ({:2d}, {:2d}) ({:2d}, {:2d})\n".format(x1, y1, x2, y2)
             err += "\n"
             raise AssertionError(err)
 
-#==============================================================================
+
 # Test Tracks
-#==============================================================================
+
 
 class TestTracks_Base(TestCase):
     """Base class for tracks tests."""
@@ -385,8 +406,10 @@ class TestTracks_Base(TestCase):
 
         # Sort by combined size of features
         tracks = sorted(tracks, key=lambda t: sum([f.n for f in t.features()]))
-        features_tracks = sorted(features_tracks, key=lambda ft: sum(
-                [f.n for ff in ft for f in ff if f is not None]))
+        features_tracks = sorted(
+            features_tracks,
+            key=lambda ft: sum([f.n for ff in ft for f in ff if f is not None]),
+        )
 
         # Make sure ignore_ts is a list
         try:
@@ -407,11 +430,9 @@ class TestTracks_Base(TestCase):
             try:
                 s.assertEqual(sorted(res), sorted(sol))
             except AssertionError:
-                err = ("Features don't match:\n\nSolution:\n{}\n\nResult:\n{}"
-                        ).format(
-                        "\n".join([str(f) for f in sol]),
-                        "\n".join([str(f) for f in res])
-                    )
+                err = ("Features don't match:\n\nSolution:\n{}\n\nResult:\n{}").format(
+                    "\n".join([str(f) for f in sol]), "\n".join([str(f) for f in res])
+                )
                 raise AssertionError(err)
 
     def run_tracking(s, objs_all, *, event_id=0, tracker=None):
@@ -423,11 +444,9 @@ class TestTracks_Base(TestCase):
         tracks = tracker.pop_finished_tracks()
         return tracks
 
-#------------------------------------------------------------------------------
 
-#SR_TODO merge with TestTracks_Base (or pull out common base class)
+# SR_TODO merge with TestTracks_Base (or pull out common base class)
 class TestTrackFeatures_Base(TestCase):
-
     def run_test(s, grouped_features, n_exp=None):
         """Run tracking and fetch tracks."""
         for ts, typed_features in grouped_features:
@@ -452,8 +471,13 @@ class TestTrackFeatures_Base(TestCase):
         for ts, typed_features in grouped_features:
             res = set(track.vertices_ts(ts)["type"])
             sol = set([type for feature, type in typed_features])
-            s.assertSetEqual(res, sol, ("feature types as timestep {} differ:"
-                    "\n\nres: {}\n\nsol: {}").format(ts, pformat(res), pformat(sol)))
+            s.assertSetEqual(
+                res,
+                sol,
+                (
+                    "feature types as timestep {} differ:" "\n\nres: {}\n\nsol: {}"
+                ).format(ts, pformat(res), pformat(sol)),
+            )
 
         # Check the number of neighbors of all vertices
         for vertex in track.graph.vs:
@@ -472,16 +496,14 @@ class TestTrackFeatures_Base(TestCase):
                 if all(i in type for i in ["merging", "splitting"]):
                     s.assertTrue(len(vertex.neighbors()) >= 4)
                 elif "splitting" in type and any(
-                        i in type for i in ["start", "genesis"]):
+                    i in type for i in ["start", "genesis"]
+                ):
                     s.assertTrue(len(vertex.neighbors()) >= 3)
-                elif "merging" in type and any(
-                        i in type for i in ["stop", "lysis"]):
+                elif "merging" in type and any(i in type for i in ["stop", "lysis"]):
                     s.assertTrue(len(vertex.neighbors()) >= 3)
                 else:
                     err = "vertex type '{}'".format(type)
                     raise NotImplementedError(err)
-
-    #--------------------------------------------------------------------------
 
     def group_by_timestep(s, segments, dts=1):
         timesteps = sorted(set([seg[0] for seg in segments]))
@@ -498,7 +520,7 @@ class TestTrackFeatures_Base(TestCase):
         bw = []
         for i in range(len(features_grouped_fw)):
             features_ts = []
-            for feature, type_fw in fw[-(i+1)][1]:
+            for feature, type_fw in fw[-(i + 1)][1]:
                 type_bw = s.revert_type(type_fw)
                 features_ts.append((feature, type_bw))
             bw.append((fw[i][0], features_ts))
@@ -506,20 +528,20 @@ class TestTrackFeatures_Base(TestCase):
 
     def revert_type(s, type_fw):
         fw2bw = {
-                "start"         : "stop",
-                "stop"          : "start",
-                "genesis"       : "lysis",
-                "lysis"         : "genesis",
-                "merging"       : "splitting",
-                "splitting"     : "merging",
-            }
+            "start": "stop",
+            "stop": "start",
+            "genesis": "lysis",
+            "lysis": "genesis",
+            "merging": "splitting",
+            "splitting": "merging",
+        }
         if isinstance(type_fw, str):
             return fw2bw.get(type_fw, type_fw)
         return (fw2bw.get(fw, fw) for fw in type_fw)
 
-#------------------------------------------------------------------------------
+
 # Some utility functions/classes
-#------------------------------------------------------------------------------
+
 
 def circle(px, py, rad, shell=None, connectivity=8):
     """Compute the coordinates of a circle with radius rad around (px, py).
@@ -528,8 +550,7 @@ def circle(px, py, rad, shell=None, connectivity=8):
     shell pixels.
     """
     _name_ = "circle"
-    if shell is not None and (
-            not isinstance(shell, list) or len(shell) > 0):
+    if shell is not None and (not isinstance(shell, list) or len(shell) > 0):
         raise ValueError("{}: shell must be None or []".format(_name_))
     if connectivity != 8:
         raise NotImplementedError("{}: connectivity != 8".format(_name_))
@@ -540,7 +561,7 @@ def circle(px, py, rad, shell=None, connectivity=8):
     pts = []
     for i in range(pllc[0], purc[0] + 1):
         for j in range(pllc[1], purc[1] + 1):
-            dist = np.sqrt((px - i)**2 + (py - j)**2)
+            dist = np.sqrt((px - i) ** 2 + (py - j) ** 2)
             if dist <= rad:
                 fld[i, j] = 1
                 pts.append((i, j))
@@ -549,13 +570,20 @@ def circle(px, py, rad, shell=None, connectivity=8):
             for j in range(purc[1] + 1):
                 if fld[i, j] == 1:
                     try:
-                        if any(v == 0 for v in (
-                                fld[i-1, j], fld[i, j-1],
-                                fld[i, j+1], fld[i+1, j])):
+                        if any(
+                            v == 0
+                            for v in (
+                                fld[i - 1, j],
+                                fld[i, j - 1],
+                                fld[i, j + 1],
+                                fld[i + 1, j],
+                            )
+                        ):
                             shell.append((i, j))
                     except IndexError:
                         shell.append((i, j))
     return pts
+
 
 def feature_circle(px, py, rad, id_, ts):
     shell_points = []
@@ -565,20 +593,24 @@ def feature_circle(px, py, rad, id_, ts):
     feature = Feature(pixels=pixels, shells=[shell], id_=id_, timestep=ts)
     return feature
 
+
 def feature_rectangle(xymin, xymax, id, ts=0):
 
     # Create feature pixels
-    x = np.arange(xymin[0], xymax[0]+1)
-    y = np.arange(xymin[1], xymax[1]+1)
+    x = np.arange(xymin[0], xymax[0] + 1)
+    y = np.arange(xymin[1], xymax[1] + 1)
     nx, ny = len(x), len(y)
     pixels = np.array([(i, j) for i in x for j in y], np.int32)
 
     # Create shell pixels
     xl, yl = x.tolist(), y.tolist()
     shell_xy = np.array(
-            [xl + [xymax[0]]*(ny-2) + xl[::-1] + ([xymin[0]]*(ny-2)),
-            [xymax[1]]*nx + yl[1:-1][::-1] + [xymin[1]]*nx + yl[1:-1]],
-            np.int32)
+        [
+            xl + [xymax[0]] * (ny - 2) + xl[::-1] + ([xymin[0]] * (ny - 2)),
+            [xymax[1]] * nx + yl[1:-1][::-1] + [xymin[1]] * nx + yl[1:-1],
+        ],
+        np.int32,
+    )
     shell = shell_xy.T
 
     # Create feature
@@ -586,11 +618,9 @@ def feature_rectangle(xymin, xymax, id, ts=0):
     return feature
 
 
-#==============================================================================
-
 if __name__ == "__main__":
 
     import logging as log
+
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
     log.getLogger().setLevel(log.DEBUG)
-
