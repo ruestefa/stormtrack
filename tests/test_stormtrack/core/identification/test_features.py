@@ -278,6 +278,7 @@ obj_ids_ge1_from_ge3_minsize6 = np.array(
 ).T[:, ::-1]
 # fmt: on
 
+
 class SplitRegiongrow_Basic_GE1FromGE3(TestFeaturesSeeds_Base):
 
     make_plot = False
@@ -335,6 +336,7 @@ obj_ids_ge1_from_ge2_raw = np.array(
     ] #  0 1 2 3 4  5 6 7 8 9 10 1 2 3 4 15 6 7 8 9 20 1 2 3 4 25 6 7 8 9 30 1 2 3 4
 ).T[:, ::-1]
 # fmt: on
+
 
 class SplitRegiongrow_Basic_GE1FromGE2Raw(TestFeaturesSeeds_Base):
     """Split the GE1 region using raw GE2 seeds (no pre-splitting)."""
@@ -394,6 +396,7 @@ obj_ids_ge1_from_ge2_from_ge3 = np.array(
     ] #  0 1 2 3 4  5 6 7 8 9 10 1 2 3 4 15 6 7 8 9 20 1 2 3 4 25 6 7 8 9 30 1 2 3 4
 ).T[:, ::-1]
 # fmt: on
+
 
 class SplitRegiongrow_Basic_GE1FromGE2FromGE3(TestFeaturesSeeds_Base):
     """Split the GE1 region using GE2 seeds, pre-split from (3)."""
@@ -937,8 +940,6 @@ class SplitRegiongrow_Neighbors(TestFeatures_Base):
                 ],
             ],
         ]
-        # fmt: on
-        # fmt: off
         s.shared_boundary_pixels_out_4c = [
             [
                 [  # 0 -> 1
@@ -1114,8 +1115,6 @@ class SplitRegiongrow_Neighbors(TestFeatures_Base):
                 ],
             ],
         ]
-        # fmt: on
-        # fmt: off
         s.shared_boundary_pixels_unique_out_4c = [
             [
                 [  # 0 -> 1
@@ -1257,8 +1256,6 @@ class SplitRegiongrow_Neighbors(TestFeatures_Base):
                 ),
             ],
         ]
-        # fmt: on
-        # fmt: off
         s.shells_out_8c = [
             [
                 np.array(  # [0, 9]
@@ -1364,12 +1361,14 @@ class MergeFeatures(TestFeatures_Base):
         s.inds_features_in_4c = [[i] for i in range(10)]
         s.inds_features_in_8c = [[i] for i in range(10)]
 
+        # fmt: off
         s.inds_neighbors_in_4c = [
             [1], [0, 2, 3], [1, 3], [1, 2], [5], [4], [7], [6], [], [],
         ]
         s.inds_neighbors_in_8c = [
             [1], [0, 2, 3], [1, 3, 4], [1, 2, 4], [2, 3, 5], [4], [7], [6, 8], [7], [],
         ]
+        # fmt: on
 
         s.inds_features_out_4c = [[0, 1, 2, 3], [4, 5], [6, 7], [8], [9]]
         s.inds_features_out_8c = [[0, 1, 2, 3, 4, 5], [6, 7, 8], [9]]
@@ -1552,8 +1551,6 @@ class GrowFeatures(TestFeatures_Base):
             [],         # 6
             [],         # 7
         ]
-        # fmt: on
-        # fmt: off
         s.inds_neighbors_in_8c = [
             [1],        # 0
             [0, 2, 3],  # 1
@@ -1926,8 +1923,6 @@ class FindBoundaries_OneHole_FarInside(TestBoundaries_Base):
                 ]
             ),
         ]
-        # fmt: on
-        # fmt: off
         s.holes4 = [
             np.array(
                 [
@@ -1949,8 +1944,6 @@ class FindBoundaries_OneHole_FarInside(TestBoundaries_Base):
                 ]
             ),
         ]
-        # fmt: on
-        # fmt: off
         s.holes8 = [
             np.array(
                 [
@@ -2020,8 +2013,6 @@ class FindBoundaries_OneHole_NearShell(TestBoundaries_Base):
                 ]
             ),
         ]
-        # fmt: on
-        # fmt: off
         s.holes8 = [
             np.array(
                 [
@@ -2092,8 +2083,6 @@ class FindBoundaries_OneHole_Width1(TestBoundaries_Base):
                 ]
             ),
         ]
-        # fmt: on
-        # fmt: off
         s.holes8 = [
             np.array(
                 [
@@ -2102,7 +2091,7 @@ class FindBoundaries_OneHole_Width1(TestBoundaries_Base):
                 ]
             ),
         ]
-        # fmt: off
+        # fmt: on
 
     def test_4c(s):
         const = Constants.default(nx=s.nx, ny=s.ny, connectivity=4)
@@ -2179,12 +2168,10 @@ class FindBoundaries_ManyHoles(TestBoundaries_Base):
                     ( 0,  4), ( 1,  4), ( 2,  4), ( 2,  5), ( 3,  5), ( 3,  6),
                     ( 4,  6), ( 4,  7), ( 4,  8), ( 4,  9), ( 4, 10), ( 3, 10),
                     ( 3, 11), ( 4, 11), ( 4, 12), ( 4, 13), ( 3, 13), ( 3, 14),
-                    ( 3, 15), ( 3, 16), ( 2, 16)
+                    ( 3, 15), ( 3, 16), ( 2, 16),
                 ]
             ),
         ]
-        # fmt: on
-        # fmt: off
         s.holes4 = [
             np.array(
                 [
@@ -2192,13 +2179,13 @@ class FindBoundaries_ManyHoles(TestBoundaries_Base):
                     ( 8,  9), ( 8,  8), ( 8,  7), ( 9,  7), ( 9,  6), ( 9,  5),
                     ( 9,  4), ( 8,  4), ( 7,  4), ( 7,  5), ( 7,  6), ( 6,  6),
                     ( 6,  7), ( 6,  8), ( 5,  8), ( 5,  9), ( 5, 10), ( 5, 11),
-                    ( 5, 12)
+                    ( 5, 12),
                 ]
             ),
             np.array(
                 [
                     ( 4,  7), ( 5,  7), ( 6,  7), ( 6,  6), ( 6,  5), ( 5,  5),
-                    ( 4,  5), ( 4,  6), ( 4,  7)
+                    ( 4,  5), ( 4,  6), ( 4,  7),
                 ]
             ),
         ]
@@ -2219,12 +2206,10 @@ class FindBoundaries_ManyHoles(TestBoundaries_Base):
                     ( 7,  2), ( 7,  3), ( 6,  4), ( 5,  4), ( 4,  4), ( 3,  3),
                     ( 3,  2), ( 2,  3), ( 1,  4), ( 0,  4), ( 1,  4), ( 2,  5),
                     ( 3,  6), ( 4,  7), ( 4,  8), ( 4,  9), ( 3, 10), ( 3, 11),
-                    ( 4, 12), ( 3, 13), ( 3, 14), ( 3, 15), ( 2, 16)
+                    ( 4, 12), ( 3, 13), ( 3, 14), ( 3, 15), ( 2, 16),
                 ]
             ),
         ]
-        # fmt: on
-        # fmt: off
         s.holes8 = [
             np.array(
                 [
@@ -2275,7 +2260,7 @@ class FindBoundaries_ManyHoles(TestBoundaries_Base):
     def test_8c(s):
         const = Constants.default(nx=s.nx, ny=s.ny, connectivity=8)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
-        # ?holes = sorted(holes, key=lambda i: len(i), reverse=True)
+        # ? holes = sorted(holes, key=lambda i: len(i), reverse=True)
         s.assertBoundaries(shells, s.shells8, holes, s.holes8)
 
 
@@ -2339,6 +2324,7 @@ class TestFindMinimaNeighborhoodSize(TestCase):
 
 if __name__ == "__main__":
     import logging as log
+
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
     log.getLogger().setLevel(log.DEBUG)
     unittest.main()
