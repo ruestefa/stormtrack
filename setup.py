@@ -25,7 +25,7 @@ description_files = ["README.rst", "HISTORY.rst"]
 
 metadata = {
     "name": "stormtrack",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Track two-dimensional features over time in high-resolution weather/climate data.",
     "long_description": "\n\n".join([read_file(f) for f in description_files]),
     "author": "Stefan Ruedisuehli",
