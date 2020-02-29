@@ -3,18 +3,14 @@
 """
 The setup script.
 """
-# Standard library
-from pathlib import Path
-
 # Third-party
 import numpy
-from setuptools import Extension
 from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 
 # Import Cython AFTER setuptools
-from Cython.Build import cythonize
+from Cython.Build import cythonize  # isort: skip
 from Cython import Compiler  # isort:skip
 
 def read_file(path):
@@ -63,11 +59,6 @@ scripts = [
     "track-features=stormtrack.track_features:pre_main",
 ]
 
-module_paths = Path("src").rglob(".pyx")
-extensions = [
-    Extension(p.name[: -len(p.suffix)], [p]) for p in module_paths
-]
-
 # https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#compiler-options
 Compiler.Options.annotate = True
 
@@ -75,8 +66,7 @@ Compiler.Options.annotate = True
 compiler_directives={"embedsignature": True}
 
 cython_setup = {
-    # "ext_modules": cythonize(extensions),
-    "ext_modules": extensions,
+    "ext_modules": cythonize("src/**/*.pyx"),
     "cmdclass": {"build_ext": build_ext},
     "include_dirs": [numpy.get_include()],
     "compiler_directives": compiler_directives,
