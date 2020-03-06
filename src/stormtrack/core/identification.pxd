@@ -232,5 +232,6 @@ cdef class Feature:
 
 cpdef void features_reset_cregion(list features, bint warn=?) except *
 
-#==============================================================================
-
+cpdef void features_find_neighbors(
+        list features, Constants constants=?, np.int32_t nx=?, np.int32_t ny=?,
+    )

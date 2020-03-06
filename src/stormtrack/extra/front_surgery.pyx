@@ -2,17 +2,13 @@
 
 from __future__ import print_function
 
-cimport cython
-cimport numpy as np
-from cython.parallel cimport prange
-from libc.math cimport pow
-from libc.math cimport sqrt
+# C: C libraries
 from libc.stdlib cimport exit
 from libc.stdlib cimport free
 from libc.stdlib cimport malloc
-from libcpp cimport bool
 
-#------------------------------------------------------------------------------
+# C: Third-party
+cimport numpy as np
 
 # Standard library
 import logging as log
@@ -26,20 +22,15 @@ from pprint import pformat
 import numpy as np
 
 # Local
-from ..core.identification import Feature
-from ..core.identification import features_find_neighbors
 from ..core.identification import identify_features
 from ..core.io import read_feature_file
 from ..core.io import write_feature_file
-from ..core.typedefs import Constants
 from ..utils.netcdf import nc_read_var_list
 
-#==============================================================================
 
 cdef list CATEGORIES = ["clutter0", "clutter1", "small", "medium", "large"]
 cdef int N_CATEGORIES = len(CATEGORIES)
 
-#==============================================================================
 
 cpdef void run_front_surgery_main(
         list timesteps,
@@ -132,7 +123,6 @@ cpdef void run_front_surgery_main(
             ]:
             info_dict["{}_{}".format("surgery", key)] = conf_surgery[key]
 
-    cdef cRegions* cfronts_old_tmp #SR_TMP
     cdef str sts
     cdef Feature front
     cdef np.ndarray[np.float32_t, ndim=2] rlon = conf_grid.get("rlon")
@@ -460,31 +450,6 @@ cdef void _update_queue(
     timesteps_ts["now"] = timesteps_ts["new"]
     timesteps_ts["new"] = None
 
-#=================================================================================
-
-#SR_TODO add support for wildcards (?, *)
-def filename_extract_timestep(file, template, format="str"):
-    filename = os.path.basename(file)
-    groups = ["{YYYY}", "{MM}", "{DD}", "{HH}"]
-    if any(i not in template for i in groups):
-        err = "invalid infile template '{}' (must contain all of {})".format(
-                template, ", ".join(groups))
-        raise ValueError(err)
-    rx = re.compile(template.replace(
-            "{YYYY}", "(?P<year>[0-9]{4})").replace(
-            "{MM}", "(?P<month>[0-9]{2})").replace(
-            "{DD}", "(?P<day>[0-9]{2})").replace(
-            "{HH}", "(?P<hour>[0-9]{2})"))
-    match = rx.match(filename)
-    if not match:
-        err = "filename '{}' does not match template '{}'".format(
-                filename, template)
-        raise Exception(err)
-    if format == "str":
-        return "{year}{month}{day}{hour}".format(**match.groupdict())
-    else:
-        err = "[filename_extract_timestep] format == '{}'".format(format)
-        raise NotImplementedError(err)
 
 def import_fronts(infile, feature_name, timestep, conf_grid):
 
@@ -504,8 +469,6 @@ def import_fronts(infile, feature_name, timestep, conf_grid):
     #SR_TMP>
     return fronts, info
 
-#==============================================================================
-#==============================================================================
 
 cdef void _run_front_surgery_core(
         dict timesteps_ts,
@@ -673,7 +636,6 @@ cdef void _run_front_surgery_core(
         log.debug("")
     #DBG_BLOCK>
 
-#==============================================================================
 
 cpdef dict front_surgery_isolated(
         list fronts,
@@ -980,7 +942,6 @@ cdef void identify_obvious_clutter(
     for i in range(n_categories):
         cregions_find_connected(&cfronts_cat[i], reset_existing, constants)
 
-#------------------------------------------------------------------------------
 
 cdef int categorize_fronts(
         cRegions* cfronts_raw,
@@ -1254,7 +1215,6 @@ cdef tuple dict2lists(
         vals.append([v for v in val])
     return keys, vals
 
-#-----------------------------------------------------------------------------
 
 cdef void identify_clutter_neighbors(
         cRegions* cfronts_cat,
@@ -1328,7 +1288,6 @@ cdef void identify_clutter_neighbors(
     log.info(("discard {}/{} {} front clusters with no bigger neighbors (mark "
             "as clutter)").format(nold - nnew, nold, CATEGORIES[i_source]))
 
-#-----------------------------------------------------------------------------
 
 cdef separate_big_clutter_clusters(
         cRegions* cfronts_cat,
@@ -1371,7 +1330,6 @@ cdef separate_big_clutter_clusters(
             "(n >= {})").format(n_clut1_old - n_clut1_new, n_clut1_old,
             thresholds[1]))
 
-#==============================================================================
 
 cpdef dict front_surgery_temporal(
         dict fronts_new,
@@ -1649,7 +1607,6 @@ cdef void _front_surgery_temporal_core(
             reset_connections=True
         )
 
-#==============================================================================
 
 cdef void _front_surgery_temporal_core_core(
         str info,
@@ -1748,9 +1705,3 @@ cdef void _front_surgery_temporal_core_core(
 
     if logging:
         flog.close()
-
-#==============================================================================
-
-if __name__ == "__main__":
-    raise Exception("{} cannot be run directly".format(
-            os.path.basename(sys.argv[0])))

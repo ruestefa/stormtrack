@@ -125,7 +125,7 @@ class SplitTracks_Base(TestCase):
 # SR_TODO check subtracks, not just their number
 class SplitTracks_TwoBranches_SplitReMerge(SplitTracks_Base):
     def setUp(s):
-        """
+        r"""
                       [ 2]-[ 4]-[ 6]-[ 8]
                      /                   \
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 9]-[10]-[11]-[12]
@@ -168,7 +168,7 @@ class SplitTracks_TwoBranches_SplitReMerge(SplitTracks_Base):
         s.splitter = FeatureTrackSplitter(used_tids)
 
     def test_n6_nosplit(s):
-        """ nt=6
+        r""" nt=6
                       [ 2]-[ 4]-[ 6]-[ 8]
                      /                   \
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 9]-[10]-[11]-[12]
@@ -196,7 +196,7 @@ class SplitTracks_TwoBranches_SplitReMerge(SplitTracks_Base):
         )
 
     def test_n5_nosplit(s):
-        """ nt=5
+        r""" nt=5
                       [ 2]-[ 4]-[ 6]-[ 8]
                      /                   \
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 9]-[10]-[11]-[12]
@@ -224,7 +224,7 @@ class SplitTracks_TwoBranches_SplitReMerge(SplitTracks_Base):
         )
 
     def test_n4_split(s):
-        """ nt=4
+        r""" nt=4
                       [ 2]-[ 4]-[ 6]-[ 8]
                      x                   \
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 9]x[10]-[11]-[12]
@@ -242,7 +242,7 @@ class SplitTracks_TwoBranches_SplitReMerge(SplitTracks_Base):
 # SR_TODO check subtracks, not just their number
 class SplitTracks_TwoBranches_Split(SplitTracks_Base):
     def setUp(s):
-        """
+        r"""
                       [ 2]-[ 4]-[ 6]-[ 8]
                      /
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
@@ -293,7 +293,7 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
         s.splitter = FeatureTrackSplitter(used_tids)
 
     def test_track1_n5_nosplit(s):
-        """ nt=5
+        r""" nt=5
                        [ 2]-[ 4]-[ 6]-[ 8]
                       /
              [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
@@ -316,7 +316,7 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
         )
 
     def test_track1_n3_split(s):
-        """ nt=3
+        r""" nt=3
                        [ 2]-[ 4]-[ 6]-[ 8]
                       x
              [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
@@ -339,7 +339,7 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
         )
 
     def test_track2_n4_nosplit(s):
-        """ nt=4
+        r""" nt=4
                        [ 2]-[ 4]-[ 6]-[ 8]
                       /
              [ 0]-[ 1]-[ 3]-[ 5]-[ 7]
@@ -351,7 +351,7 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
         )
 
     def test_track2_n3_split(s):
-        """ nt=2
+        r""" nt=2
                        [ 2]-[ 4]-[ 6]-[ 8]
                       /
              [ 0]-[ 1]x[ 3]-[ 5]-[ 7]
@@ -365,7 +365,7 @@ class SplitTracks_TwoBranches_Split(SplitTracks_Base):
 # SR_TODO check subtracks, not just their number
 class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
     def setUp(s):
-        """
+        r"""
                  [ 2]-[ 4]-[ 6]
                                \
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
@@ -415,7 +415,7 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
         s.splitter = FeatureTrackSplitter(used_tids)
 
     def test_track1_n5_nosplit(s):
-        """ nt=5
+        r""" nt=5
                  [ 2]-[ 4]-[ 6]
                                \
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
@@ -427,7 +427,7 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
         )
 
     def test_track1_n4_nosplit(s):
-        """ nt=4
+        r""" nt=4
                  [ 2]-[ 4]-[ 6]
                                \
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
@@ -439,7 +439,7 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
         )
 
     def test_track1_n3_split(s):
-        """ nt=3
+        r""" nt=3
                  [ 2]-[ 4]-[ 6]
                                x
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
@@ -450,7 +450,7 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
         )
 
     def test_track1_n2_split(s):
-        """ nt=2
+        r""" nt=2
                  [ 2]-[ 4]-[ 6]
                                x
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
@@ -461,7 +461,7 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
         )
 
     def test_track2_n5_nosplit(s):
-        """ nt=5
+        r""" nt=5
                  [ 2]-[ 4]-[ 6]
                                \
             [ 0]-[ 1]-[ 3]-[ 5]-[ 7]-[ 8]
@@ -473,7 +473,7 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
         )
 
     def test_track2_n4_split(s):
-        """ nt=4
+        r""" nt=4
                  [ 2]-[ 4]-[ 6]
                                \
             [ 0]-[ 1]-[ 3]-[ 5]x[ 7]-[ 8]
@@ -484,7 +484,7 @@ class SplitTracks_TwoBranches_Merge(SplitTracks_Base):
         )
 
     def test_track2_n3_split(s):
-        """ nt=3
+        r""" nt=3
                  [ 2]-[ 4]-[ 6]
                                \
             [ 0]-[ 1]-[ 3]-[ 5]x[ 7]-[ 8]
@@ -499,7 +499,7 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
     """Splitting into three branches, which remerge in two steps."""
 
     def setUp(s):
-        """
+        r"""
                       [ 2]-[ 5]-[ 8]-[10]
                      /                   \
             [ 0]-[ 1]-[ 3]-[ 6]-[ 9]-[11]-[12]-[13]
@@ -576,7 +576,7 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
         s.splitter = FeatureTrackSplitter(used_tids)
 
     def test_track1_n5_nosplit(s):
-        """ nt=5
+        r""" nt=5
                       [ 2]-[ 5]-[ 8]-[11]
                      /                   \
             [ 0]-[ 1]-[ 3]-[ 6]-[ 9]-[12]-[13]-[14]
@@ -610,7 +610,7 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
         )
 
     def test_track1_n4_split2(s):
-        """ nt=4
+        r""" nt=4
                       [ 2]-[ 5]-[ 8]-[11]
                      x                   x
             [ 0]-[ 1]-[ 3]-[ 6]-[ 9]-[12]-[13]-[14]
@@ -640,7 +640,7 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
         )
 
     def test_track1_n3_split4(s):
-        """ nt=3
+        r""" nt=3
                       [ 2]-[ 5]-[ 8]-[11]
                      x                   x
             [ 0]-[ 1]-[ 3]-[ 6]-[ 9]x[12]-[13]-[14]
@@ -659,7 +659,7 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
         )
 
     def test_track2_n5_nosplit(s):
-        """ nt=5
+        r""" nt=5
                       [ 2]-[ 5]-[ 8]-[11]
                      /                   \
             [ 0]-[ 1]-[ 3]-[ 6]-[ 9]-[12]-[13]-[14]
@@ -693,7 +693,7 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
         )
 
     def test_track2_n4_split3(s):
-        """ nt=4
+        r""" nt=4
                       [ 2]-[ 5]-[ 8]-[11]
                      /                   x
             [ 0]-[ 1]x[ 3]-[ 6]-[ 9]-[12]-[13]-[14]
@@ -720,7 +720,7 @@ class SplitTracks_ThreeBranches_SplitReMergeReMerge(SplitTracks_Base):
         )
 
     def test_track2_n3_split4(s):
-        """ nt=3
+        r""" nt=3
                       [ 2]-[ 5]-[ 8]-[11]
                      /                   x
             [ 0]-[ 1]x[ 3]-[ 6]-[ 9]x[12]-[13]-[14]
@@ -1054,10 +1054,8 @@ class SplitTrack_Probabilities_Simple(TestCase):
 
 
 if __name__ == "__main__":
-
     import logging as log
 
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
     log.getLogger().setLevel(log.DEBUG)
-
     unittest.main()
