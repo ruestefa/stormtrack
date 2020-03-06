@@ -336,7 +336,7 @@ test-cov-html: ${_INSTALL_TEST} #CMD Check code coverage of tests and show resul
 	${browser} htmlcov/index.html
 
 .PHONY: test-all
-test-all: #CMD Run tests on all specified Python versions with tox.
+test-all: ${_INSTALL} #CMD Run tests on all specified Python versions with tox.
 	@echo -e "${ECHO_PREFIX}running tests in isolated environments"
 	${PREFIX}python -m pip install tox
 	${PREFIX}tox
