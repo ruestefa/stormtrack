@@ -38,16 +38,25 @@ cdef inline int sign(int num):
 # Constants
 #=============================================================================
 
-#SR_TODO move nx, ny out of Constants (use from Grid)
+# SR_TODO remove nx, ny (use from Grid)
+cpdef Constants default_constants(
+    int nx, int ny, int connectivity=4, int n_neighbors_max=8,
+):
+    return Constants(
+        nx=nx, ny=ny, connectivity=connectivity, n_neighbors_max=n_neighbors_max,
+    )
+
+# SR_TODO move nx, ny out of Constants (use from Grid)
 cdef class Constants:
 
     def __cinit__(self,
-            #SR_TMP<
-            int nx, int ny,
-            #SR_TMP>
-            int connectivity,
-            int n_neighbors_max,
-        ):
+        # SR_TMP < TODO remove
+        int nx,
+        int ny,
+        # SR_TMP >
+        int connectivity,
+        int n_neighbors_max,
+    ):
         self.nx = nx
         self.ny = ny
         self.connectivity = connectivity
@@ -59,21 +68,6 @@ cdef class Constants:
     cdef cConstants* to_c(self):
         return &(self._cconstants)
 
-    #SR_TODO remove nx, ny
-    @classmethod
-    def default(cls,
-            #SR_TMP< TODO remove (use from Grid)
-            nx, ny,
-            #SR_TMP>
-            *,
-            connectivity=4,
-            n_neighbors_max=8,
-        ):
-        return cls(
-                nx=nx, ny=ny,
-                connectivity    = connectivity,
-                n_neighbors_max = n_neighbors_max,
-            )
 
 #==============================================================================
 # Grid

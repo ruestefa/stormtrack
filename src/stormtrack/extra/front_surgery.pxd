@@ -8,7 +8,7 @@ from ..core.identification cimport features_reset_cregion
 from ..core.identification cimport features_to_cregions
 from ..core.identification cimport features_find_neighbors
 from ..core.structs cimport cConstants
-from ..core.typedefs cimport Constants
+from ..core.typedefs cimport default_constants
 from ..core.structs cimport cGrid
 from ..core.tables cimport neighbor_link_stat_table_alloc
 from ..core.tables cimport pixel_region_table_alloc_grid

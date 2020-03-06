@@ -158,12 +158,12 @@ cdef np.float64_t _feature_area_lonlat__core(
     # this made no difference, even for nk=100... There might be cases
     # where this actually works, but non have been encountered so far.
     # (Of course, there might also be an algorithm/implementation issue!)
-    cdef int nk=1
-    #cdef int nk=5
-    #cdef int nk=10
-    #cdef int nk=100
+    cdef int nk = 1
+    #cdef int nk = 5
+    #cdef int nk = 10
+    #cdef int nk = 100
 
-    cdef int nkh=(nk - 1)/2
+    cdef int nkh = int((nk - 1)/2)
     cdef np.ndarray[np.float64_t, ndim=1] _areas_km2_j = np.empty(nk, np.float64)
 
     cdef np.float64_t[:] areas_km2_j = _areas_km2_j

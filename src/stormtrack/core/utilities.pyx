@@ -136,9 +136,9 @@ def _reduce_grid_resolution_1d__core(
         int              stride,
         int              imode,
     ):
-    cdef int half_stride = (stride - 1)/2
-    cdef int nxi=fld_in.shape[0]
-    cdef int nxo=fld_out.shape[0]
+    cdef int half_stride = int((stride - 1)/2)
+    cdef int nxi = fld_in.shape[0]
+    cdef int nxo = fld_out.shape[0]
     cdef np.float32_t box_size = stride
     cdef int io, ii, iis, iie
     for io in range(nxo):
@@ -161,7 +161,7 @@ def _reduce_grid_resolution_2d__core(
         int                 stride,
         int                 imode,
     ):
-    cdef int half_stride = (stride - 1)/2
+    cdef int half_stride = int((stride - 1)/2)
     cdef int nxi=fld_in.shape[0], nyi=fld_in.shape[1]
     cdef int nxo=fld_out.shape[0], nyo=fld_out.shape[1]
     cdef np.float32_t box_size = stride*stride

@@ -1,5 +1,14 @@
-#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Front surgery.
 
+Algorithms to split, categorize, and remerge front fragments, developed in
+order to separate large-scale fronts from small-scale noise.
+
+Ultimately not a success, but retained given it's good test coverage that
+complement and add to the tests of ``stormtrack.core``.
+
+"""
 from __future__ import print_function
 
 # C: C libraries
@@ -463,7 +472,7 @@ def import_fronts(infile, feature_name, timestep, conf_grid):
     if not any(f.neighbors for f in fronts):
         log.info("find neighbors of {} '{}' features".format(
                 len(fronts), feature_name))
-        const = Constants.default(nx=conf_grid["nx"], ny=conf_grid["ny"],
+        const = default_constants(nx=conf_grid["nx"], ny=conf_grid["ny"],
                 connectivity=conf_grid["connectivity"])
         features_find_neighbors(fronts, const)
     #SR_TMP>

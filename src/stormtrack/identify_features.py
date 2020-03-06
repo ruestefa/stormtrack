@@ -26,7 +26,7 @@ from .core.identification import cyclones_to_features
 from .core.identification import features_grow
 from .core.identification import identify_features as identify_features_core
 from .core.io import write_feature_file
-from .core.typedefs import Constants
+from .core.typedefs import default_constants
 from .core.typedefs import Grid
 from .core.utilities import reduce_grid_resolution
 from .core.utilities import threshold_at_timestep
@@ -583,7 +583,7 @@ def identify_features(
     postproc_features(new_features, flds_named, infile, lon, lat, conf_in)
 
     if conf_idfy["grow_features_n"]:
-        const = Constants.default(nx=conf_in["nx"], ny=conf_in["ny"])
+        const = default_constants(nx=conf_in["nx"], ny=conf_in["ny"])
         features_grow(
             conf_idfy["grow_features_n"],
             new_features,

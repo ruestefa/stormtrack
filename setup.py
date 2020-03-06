@@ -5,6 +5,7 @@ The setup script.
 """
 # Third-party
 import numpy
+from setuptools.extension import Extension
 from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
@@ -65,8 +66,13 @@ Compiler.Options.annotate = True
 # https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#compiler-directives
 compiler_directives={"embedsignature": True}
 
+extensions = [
+    # Extension("*", ["src/**/*.pyx"], extra_compile_args=["-O0"]),
+    Extension("*", ["src/**/*.pyx"], extra_compile_args=["-O3"]),
+]
+
 cython_setup = {
-    "ext_modules": cythonize("src/**/*.pyx"),
+    "ext_modules": cythonize(extensions, compiler_directives={"language_level": 3}),
     "cmdclass": {"build_ext": build_ext},
     "include_dirs": [numpy.get_include()],
     "compiler_directives": compiler_directives,

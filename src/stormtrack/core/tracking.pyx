@@ -2,14 +2,15 @@
 
 from __future__ import print_function
 
-cimport cython
-cimport numpy as np
+# C: Standard library
 from cpython.object cimport Py_EQ
 from cpython.object cimport Py_GE
 from cpython.object cimport Py_GT
 from cpython.object cimport Py_LE
 from cpython.object cimport Py_LT
 from cpython.object cimport Py_NE
+
+# C: C libraries
 from libc.math cimport pow
 from libc.math cimport sqrt
 from libc.stdlib cimport exit
@@ -17,8 +18,11 @@ from libc.stdlib cimport free
 from libc.stdlib cimport malloc
 from libcpp cimport bool
 
-#------------------------------------------------------------------------------
+# C: Third-party
+cimport numpy as np
+cimport cython
 
+# Standard library
 import itertools
 import logging as log
 import os
@@ -30,26 +34,21 @@ from datetime import datetime
 from pprint import pformat
 from pprint import pprint
 
+# Third-party
 import cython
 import igraph as ig
 import numpy as np
 import shapely.geometry as geo
 
-from .typedefs import Constants
-from .identification import merge_adjacent_features
+# Local
 from .identification import features_grow
+from .identification import merge_adjacent_features
+from .typedefs import Constants
 
-try:
-    from ..utils.various import ipython
-except ImportError:
-    pass
-
-#==============================================================================
 
 #TS_FMT_DEFAULT = "%Y%m%d%H"
 TS_FMT_DEFAULT = None
 
-#==============================================================================
 
 cdef class FeatureTracker:
 
@@ -203,7 +202,6 @@ cdef class FeatureTracker:
     #def __repr__(self):
     #    return "{}".format(self.__class__.__name__)
 
-    #--------------------------------------------------------------------------
 
     def check_setup(self, ref, action="raise"):
         if action not in ["raise", "warn"]:
@@ -251,7 +249,6 @@ cdef class FeatureTracker:
             log.info("{} left-over reference setup parameters: {}".format(
                     len(leftovers), ", ".join(leftovers)))
 
-    #--------------------------------------------------------------------------
 
     cpdef void reset(self):
 
@@ -283,7 +280,6 @@ cdef class FeatureTracker:
             return None
         return min([t.ts_start() for t in self.active_tracks])
 
-    #--------------------------------------------------------------------------
 
     def restart(self, tracks, timestep):
         """Restart tracker from track file.
@@ -309,7 +305,6 @@ cdef class FeatureTracker:
             else:
                 self.finished_tracks.append(track)
 
-    #==========================================================================
 
     cpdef void extend_tracks(self, list features, np.uint64_t timestep,
         ) except *:
@@ -579,7 +574,6 @@ cdef class FeatureTracker:
             free(combinations.candidates[i].n_overlaps)
         free(combinations.candidates)
 
-    #--------------------------------------------------------------------------
 
     cdef void _find_successor_candidates(self, cRegion* parent,
             cRegions* cfeatures, cRegions *candidates, int direction):
@@ -610,7 +604,6 @@ cdef class FeatureTracker:
             else:
                 if debug: log.debug(" - [/{}](/{}) doesn't overlap [/{}](/{})".format(parent.id, parent.pixels_n, cfeature.id, cfeature.pixels_n))
 
-    #--------------------------------------------------------------------------
 
     cdef void _find_successor_candidate_combinations(self, cRegions* parents,
             cRegions* cfeatures, SuccessorCandidates *combinations,
@@ -649,7 +642,6 @@ cdef class FeatureTracker:
                     if debug: log.debug("     - {}".format(", ".join([str(x) for x in indices])))
             #DBG_BLOCK>
 
-    #--------------------------------------------------------------------------
 
     cdef int _combine_candidates(self, cRegion* parent,
             cRegions* candidates, SuccessorCandidates *combinations,
@@ -698,7 +690,6 @@ cdef class FeatureTracker:
             n_new += 1
         return n_new
 
-    #--------------------------------------------------------------------------
 
     cdef void _compute_successor_probabilities(self,
             SuccessorCandidates* combinations) except *:
@@ -969,7 +960,6 @@ cdef class FeatureTracker:
 
         return features_todo
 
-    #==========================================================================
 
     cpdef int split_active_tracks(self) except *:
         cdef bint debug = self.debug
@@ -993,7 +983,6 @@ cdef class FeatureTracker:
                     nnew += 1
         return nnew
 
-    #--------------------------------------------------------------------------
 
     cdef object _merge_tracks(self, list tracks):
         """Merge tracks and return the merged track."""
@@ -1001,7 +990,6 @@ cdef class FeatureTracker:
         if debug: log.debug("{}._merge_tracks: {}".format(self.__class__.__name__, ", ".join([str(t.id) for t in tracks])))
         return merge_tracks(tracks, self.active_tracks)
 
-    #--------------------------------------------------------------------------
 
     cpdef object head_vertices(self):
         return [h for t in self.active_tracks for h in t.head_vertices()]
@@ -1009,7 +997,6 @@ cdef class FeatureTracker:
     cpdef list head_features(self):
         return [h for t in self.active_tracks for h in t.head_features()]
 
-    #--------------------------------------------------------------------------
 
     cdef FeatureTrack _start_track(self, cRegion* cfeature):
         cdef bint debug = self.debug
@@ -1123,7 +1110,6 @@ cdef class FeatureTracker:
             combinations.candidates[i] = tmp[j]
         free(tmp)
 
-#------------------------------------------------------------------------------
 
 cdef void compute_tracking_probabilities(
         float* p_tot,
@@ -1226,7 +1212,6 @@ cpdef void dbg_check_features_cregion_pixels(list features) except *:
                 with open(outfile, "a") as fo:
                     fo.write(err+"\n")
 
-#------------------------------------------------------------------------------
 
 def new_track_id(np.uint64_t ts, set used_ids):
     cdef np.uint64_t new_id
@@ -1238,7 +1223,6 @@ def new_track_id(np.uint64_t ts, set used_ids):
             raise Exception(err)
     return new_id
 
-#------------------------------------------------------------------------------
 
 cdef class FeatureTrackSplitter:
 
@@ -1822,7 +1806,6 @@ cdef class FeatureTrackSplitter:
                 nlimit, nlimit))
         return edges
 
-#------------------------------------------------------------------------------
 
 #DBG_PERMANENT<
 def vertex2str(vertex):
@@ -1844,7 +1827,6 @@ def edge2str(edge):
         )
 #DBG_PERMANENT>
 
-#------------------------------------------------------------------------------
 
 cdef list all_combinations(list elements, int nmin, int nmax):
     return list(itertools.chain.from_iterable(itertools.combinations(
@@ -1901,7 +1883,6 @@ cdef void successor_combinations_extend(SuccessorCandidates* combinations,
         combinations.candidates[i].p_overlap = 0.0
     combinations.max = nmax_new
 
-#==============================================================================
 
 cpdef FeatureTrack FeatureTrack_rebuild(np.uint64_t id_, object graph,
         dict config
@@ -2158,7 +2139,6 @@ cdef class FeatureTrack:
         elif key in self._cache:
             del self._cache[key]
 
-    #--------------------------------------------------------------------------
 
     @classmethod
     def from_features_linear(cls, features_ts, id_, config=None,
@@ -2209,7 +2189,6 @@ cdef class FeatureTrack:
 
         return track
 
-    #--------------------------------------------------------------------------
 
     def _init_total_track_stats_keys_fcts(self, cache=False):
         self._total_track_stats_keys_fcts_lst = [
@@ -2425,7 +2404,6 @@ cdef class FeatureTrack:
         self._missing_features_stats_lst = [
                 (k, v) for k, v in stats_self.items()]
 
-    #--------------------------------------------------------------------------
 
     def unlink_features(self):
         features = self.graph.vs["feature"]
@@ -2737,8 +2715,6 @@ cdef class FeatureTrack:
 
         return vs, es
 
-    #==========================================================================
-    #SR_TMP<
 
     def values_med_abs_med(self):
         """Compute median of absolute medians of feature values."""
@@ -2775,7 +2751,6 @@ cdef class FeatureTrack:
             means += self.missing_features_stats["absmed"]
         return np.median(means)
 
-    #--------------------------------------------------------------------------
 
     def is_associated(self, nmin, *, **kwas):
         na = self.n_associated(**kwas)
@@ -2861,7 +2836,6 @@ cdef class FeatureTrack:
 
         return n_tot
 
-    #==========================================================================
 
     def centers_ts(self, total=True, cache=False):
         """Return all centers, grouped by timestep."""
@@ -2999,7 +2973,6 @@ cdef class FeatureTrack:
 
         return path
 
-    #==========================================================================
 
     def velocity__mean_centers(self):
         """Velocity based on mean center distances.
@@ -3020,7 +2993,6 @@ cdef class FeatureTrack:
             return 0
         return dist/duration
 
-    #==========================================================================
 
     def footprint(self, nx=None, ny=None, *,
             ts_start=None, ts_end=None, timesteps=None, flatten=True,
@@ -3184,7 +3156,6 @@ cdef class FeatureTrack:
         return self.footprint_n_rel(op="max_ts", cache=True)
     #SR_TMP>
 
-    #==========================================================================
 
     cpdef void merge_features(self, Constants constants) except *:
         """Merge all adjacent features at each timestep."""
@@ -3359,7 +3330,6 @@ cdef class FeatureTrack:
                     for ts in self.get_timesteps(total=False)]
         return self.graph.vs.select(lambda v: v["ts"] == ts)
 
-    #==========================================================================
 
     def cut_off(self, *, until, compute_footprint=True):
         """Cut off part of the track in order to save it to disk.
@@ -3573,7 +3543,6 @@ cdef class FeatureTrack:
 
         return track
 
-#------------------------------------------------------------------------------
 
 def track_graph_add_feature(graph, feature, attrs=None):
     if attrs is None:
@@ -3618,7 +3587,6 @@ def track_graph_add_edge(graph, vertex1, vertex2, attrs=None):
 
     return graph.es[-1]
 
-#==============================================================================
 
 def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
     """Reconstruct partial tracks.
@@ -3680,7 +3648,6 @@ def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
 
     return tracks_mended
 
-#==============================================================================
 
 cdef class TrackFeatureMerger:
 
@@ -3745,7 +3712,6 @@ cdef class TrackFeatureMerger:
         while len(features_todo) > 0:
             self.merge_feature(all_features, features_todo)
 
-    #--------------------------------------------------------------------------
 
     cpdef void merge_feature(self, list features, list features_todo) except *:
         cdef bint debug = self.debug
@@ -3809,7 +3775,6 @@ cdef class TrackFeatureMerger:
                 vs_prev, vs_next, es_prev, es_next, vx_attrs,es_attrs_prev,
                 es_attrs_next)
 
-    #--------------------------------------------------------------------------
 
     cpdef void collect_neighbors(self, Feature feature, list features_todo,
             list features_orig, list external_neighbors) except *:
@@ -3848,7 +3813,6 @@ cdef class TrackFeatureMerger:
             self.collect_neighbors(neighbor, features_todo, features_orig,
                     external_neighbors)
 
-    #--------------------------------------------------------------------------
 
     cpdef void collect_vertices_edges(self, list features_orig, list vs_orig,
             list vs_prev, list vs_next, list es_prev, list es_next) except *:
@@ -4198,9 +4162,7 @@ cdef class TrackFeatureMerger:
                 raise Exception(err)
             vertex["type"] = new_type
 
-#==============================================================================
 # Feature wrapper class for compatibility with old-style tracking
-#==============================================================================
 
 class TrackableFeature_Oldstyle(Feature):
     """Wrapper class for Feature which is compatible with the old-style tracking."""
@@ -4315,7 +4277,6 @@ class TrackableFeature_Oldstyle(Feature):
     def is_unassigned(self):
         return self.event() is None
 
-#------------------------------------------------------------------------------
 
 class TrackableFeatureCombination_Oldstyle(TrackableFeature_Oldstyle):
 
@@ -4374,6 +4335,3 @@ class TrackableFeatureCombination_Oldstyle(TrackableFeature_Oldstyle):
         raise Exception(err)
 
 TrackableFeature_Oldstyle.cls_combination = TrackableFeatureCombination_Oldstyle
-
-#==============================================================================
-

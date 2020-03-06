@@ -27,7 +27,7 @@ from .utils.various import extract_args
 from .utils.various import print_args
 from .utils.various import TimestepGenerator
 from .utils.various import TimestepStringFormatter
-from .core.typedefs import Constants
+from .core.typedefs import default_constants
 from .core.typedefs import Grid
 from .core.tracking import FeatureTracker
 from .core.io import read_feature_file
@@ -131,7 +131,7 @@ def main(
     if conf_exe["overlay_identification_tracking"]:
         grid = None
     else:
-        const = Constants.default(nx=nx, ny=ny)
+        const = default_constants(nx=nx, ny=ny)
         grid = Grid(const)
 
     # Prepare input and output files
@@ -428,7 +428,7 @@ def _run_feature_input__tss__seq(
 ):
     # if grid is None:
     #    nx, ny = lon2d.shape
-    #    const = Constants.default(nx=nx, ny=ny)
+    #    const = default_constants(nx=nx, ny=ny)
     #    grid = Grid(const)
 
     for timesteps_i, infile in infiles_tss_sorted_i:
@@ -476,7 +476,7 @@ def _run_feature_tracking__tss(
 ):
     # if grid is None:
     #    nx, ny = lon2d.shape
-    #    const = Constants.default(nx=nx, ny=ny)
+    #    const = default_constants(nx=nx, ny=ny)
     #    grid = Grid(const)
 
     for timesteps_in, infile in infiles_tss_sorted_i:

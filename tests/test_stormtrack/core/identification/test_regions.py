@@ -6,7 +6,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from stormtrack.core.typedefs import Constants
+from stormtrack.core.typedefs import default_constants
 
 from stormtrack.core.identification import find_features_2d_threshold
 from stormtrack.core.identification import find_features_2d_threshold_seeded
@@ -113,7 +113,7 @@ class IdentifyRegions2D(IdentifyRegions2D_Base):
 
     def test_1_8c(s):
         nx, ny = s.fld_raw.shape[:2]
-        const = Constants.default(nx=nx, ny=ny, connectivity=8)
+        const = default_constants(nx=nx, ny=ny, connectivity=8)
         regions = find_features_2d_threshold(
             s.fld_raw[:, :, 0], lower=s.threshold, constants=const,
         )
@@ -123,7 +123,7 @@ class IdentifyRegions2D(IdentifyRegions2D_Base):
 
     def test_2_8c(s):
         nx, ny = s.fld_raw.shape[:2]
-        const = Constants.default(nx=nx, ny=ny, connectivity=8)
+        const = default_constants(nx=nx, ny=ny, connectivity=8)
         regions = find_features_2d_threshold(
             s.fld_raw[:, :, 1], lower=s.threshold, constants=const,
         )
@@ -133,7 +133,7 @@ class IdentifyRegions2D(IdentifyRegions2D_Base):
 
     def test_3_8c(s):
         nx, ny = s.fld_raw.shape[:2]
-        const = Constants.default(nx=nx, ny=ny, connectivity=8)
+        const = default_constants(nx=nx, ny=ny, connectivity=8)
         regions = find_features_2d_threshold(
             s.fld_raw[:, :, 2], lower=s.threshold, constants=const,
         )

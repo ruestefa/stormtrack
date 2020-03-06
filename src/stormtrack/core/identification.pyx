@@ -2,14 +2,15 @@
 
 from __future__ import print_function
 
-cimport cython
-cimport numpy as np
+# C: Standard library
 from cpython.object cimport Py_EQ
 from cpython.object cimport Py_GE
 from cpython.object cimport Py_GT
 from cpython.object cimport Py_LE
 from cpython.object cimport Py_LT
 from cpython.object cimport Py_NE
+
+# C: C libraries
 from libc.math cimport pow
 from libc.math cimport sqrt
 from libc.stdlib cimport RAND_MAX
@@ -19,8 +20,11 @@ from libc.stdlib cimport malloc
 from libc.stdlib cimport rand
 from libc.stdlib cimport srand
 
-#------------------------------------------------------------------------------
+# C: Third-party
+cimport cython
+cimport numpy as np
 
+# Standard library
 import logging as log
 import os
 import sys
@@ -30,15 +34,16 @@ from copy import deepcopy
 from pprint import pprint
 from pprint import pformat
 
+# Third-party
 import PIL
 import cython
 import numpy as np
 import scipy as sp
 from cython.parallel import prange
 
+# Local
 from ..utils.spatial import points_area_lonlat_reg
 from ..utils.spatial import paths_lonlat_to_mask
-
 try:
     from ..utils.various import NoIndent
 except ImportError:
@@ -46,12 +51,6 @@ except ImportError:
     def NoIndent(arg):
         return arg
 
-try:
-    from ..utils.various import ipython
-except ImportError:
-    pass
-
-#==============================================================================
 
 # Default type codes for feature id for common feature types
 DEFAULT_TYPE_CODES = dict(
@@ -84,7 +83,6 @@ DEFAULT_TYPE_CODES = dict(
         anticyclone700  = 630,
     )
 
-#==============================================================================
 
 def identify_features(fld, feature_name, nx, ny, lower, upper, minsize,
         maxsize, base_id, timestep, split_levels, split_seed_minsize,
@@ -106,7 +104,7 @@ def identify_features(fld, feature_name, nx, ny, lower, upper, minsize,
             fld = np.where(topo_mask > 0, 0.0, fld).astype(np.float32)
 
     if grid is None:
-        const = Constants.default(nx=nx, ny=ny)
+        const = default_constants.default(nx=nx, ny=ny)
         grid = Grid(const)
     grid.set_values(fld)
 
@@ -155,7 +153,6 @@ def identify_features(fld, feature_name, nx, ny, lower, upper, minsize,
 
     return features
 
-#==============================================================================
 
 def find_features_2d_threshold_seeded(
         field_raw,
@@ -205,7 +202,7 @@ def find_features_2d_threshold_seeded(
     # Set up constants
     if constants is None:
         nx, ny = field_raw.shape
-        constants = Constants.default(nx=nx, ny=ny) #SR_TMP
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -251,7 +248,6 @@ def find_features_2d_threshold_seeded(
                 cconstants,
             )
 
-#------------------------------------------------------------------------------
 
 cdef list _find_features_threshold_random_seeds(
         np.float32_t [:, :] field_raw,
@@ -359,7 +355,6 @@ cdef list _find_features_threshold_random_seeds(
 
     return features
 
-#------------------------------------------------------------------------------
 
 cdef list c_find_features_2d_threshold_seeds(
         np.float32_t [:, :] field_raw,
@@ -463,7 +458,6 @@ cdef list c_find_features_2d_threshold_seeds(
 
     return features
 
-#==============================================================================
 
 cdef void c_find_features_2d_threshold_seeds_core(
         np.float32_t[:, :] field_raw,
@@ -577,7 +571,6 @@ cdef void c_find_features_2d_threshold_seeds_core(
 
     if debug: log.debug("> c_find_features_2d_threshold_seeds_core")
 
-#==============================================================================
 
 cdef void grow_cregion_rec(
         cPixel*         cpixel_center,
@@ -669,7 +662,6 @@ cdef void grow_cregion_rec(
                     )
     if debug: log.debug("> grow_cregion_rec")
 
-#==============================================================================
 
 cdef np.ndarray[np.int32_t, ndim=2] init_random_seeds(cGrid* grid):
     cdef np.ndarray[np.int32_t, ndim=2] inds = np.empty(
@@ -682,7 +674,6 @@ cdef np.ndarray[np.int32_t, ndim=2] init_random_seeds(cGrid* grid):
     inds = np.random.permutation(inds)
     return inds
 
-#------------------------------------------------------------------------------
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -710,14 +701,12 @@ cdef cPixel* pop_random_unassigned_pixel(
     err = "no random unassigned pixel found"
     raise Exception(err)
 
-#------------------------------------------------------------------------------
 
 @cython.cdivision(True)
 cdef inline int random_int(int min, int max):
     #srand(42) # for testing
     return int(rand()/(RAND_MAX)*(max - 1))
 
-#==============================================================================
 
 cdef void cregions_merge_connected_inplace(
         cRegions*   cregions,
@@ -903,7 +892,6 @@ cdef void _cregions_merge_connected_core(
         raise Exception(err)
     if debug: log.debug("\n+++ LOOP DONE +++ in {} iterations".format(iter_i))
 
-#------------------------------------------------------------------------------
 
 cdef int collect_pixels(
         cRegion** connected_regions,
@@ -937,7 +925,6 @@ cdef int collect_pixels(
 
     return i_pixels_feature
 
-#------------------------------------------------------------------------------
 
 #SR_TODO eliminate (only used in old cyclone id code)
 cdef Feature create_feature(
@@ -974,7 +961,6 @@ cdef Feature create_feature(
     #print("> create_feature {}".format(feature_id))
     return feature
 
-#------------------------------------------------------------------------------
 
 cdef int cregion_collect_connected_regions(
         cRegions* cregions,
@@ -1041,7 +1027,6 @@ cdef void _cregion_collect_connected_regions_rec(
                 connected_region,
             )
 
-#==============================================================================
 
 cdef void assign_cpixel(
         cPixel*      cpixel,
@@ -1072,9 +1057,6 @@ cdef void assign_cpixel(
     cregion_insert_pixel(cregion, cpixel, link_region, unlink_pixel)
     if debug: log.debug("> assign_cpixel ({}, {}) FEATURE {}".format(cpixel.x, cpixel.y, cregion.id))
 
-#==============================================================================
-#==============================================================================
-#==============================================================================
 
 def find_features_2d_threshold(
         np.float32_t[:, :] field_raw,
@@ -1129,7 +1111,7 @@ def find_features_2d_threshold(
 
     # Set up constants and grid
     if constants is None:
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     if grid is None:
         grid = Grid(constants)
         grid.set_values(np.asarray(field_raw))
@@ -1244,7 +1226,6 @@ cdef void eliminate_regions_by_size(
     free(tmp)
     #print("> eliminate_regions_by_size ({} -> {})".format(nold, nnew))
 
-#------------------------------------------------------------------------------
 
 #SR_TODO: Consider 4 vs. 8 connectivity
 cdef inline cRegion* find_existing_region(
@@ -1338,7 +1319,6 @@ cdef inline cRegion* find_existing_region(
 
     return cregion
 
-#==============================================================================
 
 #SR_TODO add option to only merge features of the connecting pixels exceed
 #SR_TODO a certaion threshold (requires passing the field/values, obviously)
@@ -1372,7 +1352,7 @@ def merge_adjacent_features(
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -1446,7 +1426,6 @@ def merge_adjacent_features(
 
     return merged_features
 
-#==============================================================================
 
 cpdef list split_regiongrow_points(
         Feature feature,
@@ -1464,7 +1443,7 @@ cpdef list split_regiongrow_points(
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -1574,7 +1553,7 @@ cpdef list feature_split_regiongrow(
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -1705,7 +1684,6 @@ cpdef list feature_split_regiongrow(
     if debug: log.debug("> csplit_regiongrow")
     return subfeatures
 
-#==============================================================================
 
 cpdef list features_grow(
         int         n,
@@ -1989,7 +1967,6 @@ cdef void cfeatures_grow_core(
 
     if debug: log.debug("> cfeatures_grow_core")
 
-#==============================================================================
 
 cpdef void _replace_feature_associations(Feature feature,
         list seed_features, list subfeatures) except *:
@@ -2101,7 +2078,6 @@ cpdef void _replace_feature_associations(Feature feature,
                         break
                     break
 
-#==============================================================================
 
 def split_regiongrow_levels(
         features,
@@ -2123,7 +2099,7 @@ def split_regiongrow_levels(
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -2458,7 +2434,6 @@ cdef void csplit_regiongrow_levels_core(
     cregions_cleanup(&subfeatures_new, cleanup_regions=True)
     #print("> csplit_regiongrow_levels_core")
 
-#------------------------------------------------------------------------------
 
 cdef void extract_subregions_level(
         cRegion*     cregion,
@@ -2585,7 +2560,6 @@ cdef void extract_subregions_level(
 
     if debug: log.debug("> extract_subregions_level {}".format(cregions_sub.n))
 
-#------------------------------------------------------------------------------
 
 cdef void collect_adjacent_pixels(
         cPixel*  cpixel,
@@ -2650,7 +2624,6 @@ cdef void collect_adjacent_pixels(
         )
     #print("> collect_adjacent_pixels")
 
-#==============================================================================
 
 cdef void csplit_regiongrow_core(
         cRegion*  cfeature,
@@ -2790,7 +2763,6 @@ cdef void assert_no_unambiguously_assigned_pixels(
             err = "pixel_status_table[{}][{}] == 2".format(x, y)
             raise Exception(err)
 
-#------------------------------------------------------------------------------
 
 cdef void regiongrow_advance_boundary(
         cRegions* subfeatures_iteration_seeds,
@@ -3006,7 +2978,6 @@ cdef void regiongrow_advance_boundary(
 
     if debug: log.debug("> regiongrow_advance_boundary")
 
-#------------------------------------------------------------------------------
 
 cdef void regiongrow_resolve_multi_assignments(
         cRegion* cregion_multi_assigned,
@@ -3076,7 +3047,6 @@ cdef void regiongrow_resolve_multi_assignments(
 
     if debug: log.debug("> regiongrow_resolve_multi_assignments")
 
-#------------------------------------------------------------------------------
 
 cdef cRegionRankSlot* resolve_multi_assignment(
         cPixel*           cpixel,
@@ -3225,7 +3195,6 @@ cdef void resolve_multi_assignment_best_connected_region(
 
     if debug: log.debug("> resolve_multi_assignment_best_connected_region: {} region{}".format(selected_regions.n, "" if selected_regions.n == 1 else "s"))
 
-#------------------------------------------------------------------------------
 
 cdef void resolve_multi_assignment_biggest_region(
         cPixel*           cpixel,
@@ -3348,7 +3317,6 @@ cdef void resolve_multi_assignment_mean_strongest_region(
 
     #print("< resolve_multi_assignment_mean_strongest_region: {} region{}".format(selected_regions.n, "" if selected_regions.n == 1 else "s"))
 
-#------------------------------------------------------------------------------
 
 cdef void cpixel_count_neighbors_in_cregion(
         cPixel*  cpixel,
@@ -3396,7 +3364,6 @@ cdef void cpixel_count_neighbors_in_cregion(
                 n_indirect_neighbors[0] += 1
                 if debug: log.debug(" => indirect neighbor no. {}".format(n_direct_neighbors[0]))
 
-#------------------------------------------------------------------------------
 
 @cython.profile(False)
 cdef bint regiongrow_assign_pixel(
@@ -3473,7 +3440,6 @@ cdef bint regiongrow_assign_pixel(
 
     return newly_assigned
 
-#==============================================================================
 
 cpdef find_minima_2d(fld, n=4, nmax_extrema=100):
     if n not in [4, 8, 12, 20]:
@@ -3565,7 +3531,6 @@ cdef int _c_find_extrema_2d_core(
             raise Exception("maximum number of extrema reached")
     return n_extrema
 
-#==============================================================================
 
 cdef void features_to_cregions(
         list        features,
@@ -3819,9 +3784,6 @@ cdef void feature_to_cregion(
 
     if debug: log.debug("> feature_to_cregion ({})".format(feature.id))
 
-#==============================================================================
-# FIND FEATURE BOUNDARIES
-#==============================================================================
 
 cpdef tuple pixels_find_boundaries(
         np.ndarray[np.int32_t, ndim=2] pixels,
@@ -3842,7 +3804,7 @@ cpdef tuple pixels_find_boundaries(
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -3913,9 +3875,6 @@ cpdef tuple pixels_find_boundaries(
 
     return shells, holes
 
-#==============================================================================
-# Python extension classes
-#==============================================================================
 
 cdef class Pixel:
 
@@ -3938,7 +3897,6 @@ cdef class Pixel:
             return []
         return self.fld.get_neighbors(self)
 
-#------------------------------------------------------------------------------
 
 cdef class Field2D:
 
@@ -3973,7 +3931,6 @@ cdef class Field2D:
     cpdef list pixels(Field2D self):
         return list(iter(self))
 
-#------------------------------------------------------------------------------
 
 _TRACK_REGISTER = {}
 
@@ -4443,7 +4400,7 @@ cdef class Feature:
         self._check_pixels_present("derive boundaries")
         if constants is None:
             nx, ny = self.pixels[:, 0].max()+1, self.pixels[:, 1].max()+1
-            constants = Constants.default(nx=nx, ny=ny)
+            constants = default_constants(nx=nx, ny=ny)
         x0, y0, x1, y1 = self.bbox()
         ll = np.array([x0, y0])
         pixels_rel = self.pixels - ll
@@ -4455,7 +4412,7 @@ cdef class Feature:
         self._check_pixels_present("derive shells")
         if constants is None:
             nx, ny = self.pixels[:, 0].max()+1, self.pixels[:, 1].max()+1
-            constants = Constants.default(nx=nx, ny=ny)
+            constants = default_constants(nx=nx, ny=ny)
         x0, y0, x1, y1 = self.bbox()
         ll = np.array([x0, y0])
         pixels_rel = self.pixels - ll
@@ -4466,7 +4423,7 @@ cdef class Feature:
         self._check_pixels_present("derive holes")
         if constants is None:
             nx, ny = self.pixels[:, 0].max()+1, self.pixels[:, 1].max()+1
-            constants = Constants.default(nx=nx, ny=ny)
+            constants = default_constants(nx=nx, ny=ny)
         x0, y0, x1, y1 = self.bbox()
         ll = np.array([x0, y0])
         pixels_rel = self.pixels - ll
@@ -4962,7 +4919,6 @@ cdef class Feature:
         hull = sp.spatial.ConvexHull(self.shell)
         return self.shell[hull.vertices]
 
-#------------------------------------------------------------------------------
 
 cpdef tuple _feature__from_jdat__pixels_from_tables(
         dict jdat,
@@ -5035,7 +4991,6 @@ cpdef tuple _feature__from_jdat__pixels_from_tables(
 
     return pixels, values, shells, holes
 
-#------------------------------------------------------------------------------
 
 cpdef feature2d_from_jdat(
         dict jdat,
@@ -5095,7 +5050,7 @@ cpdef void features_find_neighbors(
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -5694,7 +5649,6 @@ cdef Feature cregion_find_corresponding_feature(
     #print("> cregion_find_corresponding_feature {} {}".format(cregion.id, feature.id))
     return feature
 
-#==============================================================================
 
 cdef np.ndarray[np.int32_t, ndim=2] cpixel2arr(
         cPixel** pixels,
@@ -5708,9 +5662,6 @@ cdef np.ndarray[np.int32_t, ndim=2] cpixel2arr(
         arr[i, 1] = pixels[i][0].y
     return arr
 
-#==============================================================================
-#SR_TODO consider moving this into a new module
-#==============================================================================
 
 def features_neighbors_id2obj(features, missing_action="error"):
     _name_ = "features_neighbors_id2obj"
@@ -5977,7 +5928,6 @@ def features_associates_id2obj(features_named, names=None,
                                 in sorted(missing_ids.items(),
                                         key=lambda i: len(i[1]))])))
 
-#==============================================================================
 
 def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
     """Extract pixels, center, and extrema from old-style cyclone feature."""
@@ -6043,9 +5993,3 @@ def cyclones_to_features(ts, cyclones, slp, lon, lat, vb=True, out=None):
             out.append(feature)
 
     return out
-
-#==============================================================================
-
-if __name__ == "__main__":
-    raise Exception("{} cannot be run directly".format(
-            os.path.basename(sys.argv[0])))

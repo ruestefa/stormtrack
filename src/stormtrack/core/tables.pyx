@@ -2,31 +2,28 @@
 
 from __future__ import print_function
 
-cimport cython
-cimport numpy as np
-from cython.parallel cimport prange
+# C: C libraries
 from libc.math cimport pow
 from libc.math cimport sqrt
 from libc.stdlib cimport exit
 from libc.stdlib cimport free
 from libc.stdlib cimport malloc
 
-#------------------------------------------------------------------------------
+# C: Third-party
+cimport cython
+cimport numpy as np
+from cython.parallel cimport prange
 
+# Standard library
 import logging as log
 import os
 import sys
 
+# Third-party
+import cython
 import numpy as np
 
-try:
-    from ..utils.various import ipython
-except ImportError:
-    pass
-
-#==============================================================================
 # pixel_done_table
-#==============================================================================
 
 cdef void pixel_done_table_alloc(
         PixelDoneTable* table,
@@ -75,9 +72,7 @@ cdef void pixel_done_table_cleanup(
         free(table[i])
     free(table)
 
-#==============================================================================
 # pixel_region_table
-#==============================================================================
 
 cdef void pixel_region_table_alloc(
         PixelRegionTable* table,
@@ -378,9 +373,7 @@ cdef void pixel_region_table_cleanup(
         free(table)
     #print("> pixel_region_table_cleanup")
 
-#==============================================================================
 # pixel_status_table
-#==============================================================================
 
 cdef void pixel_status_table_init_feature(
         PixelStatusTable table,
@@ -472,9 +465,7 @@ cdef void pixel_status_table_cleanup(
         free(table[i])
     free(table)
 
-#==============================================================================
 # neighbor_link_stat_table
-#==============================================================================
 
 cdef void neighbor_link_stat_table_alloc(
         NeighborLinkStatTable* table,
@@ -673,7 +664,6 @@ cdef void neighbor_link_stat_table_init(
                     table[x][y][ind] = 0
                     continue
 
-#==============================================================================
 
 cdef inline int get_direct_neighbor_index(
         int direction,
@@ -701,5 +691,3 @@ cdef inline int get_direct_neighbor_index(
     with gil:
         log.error("direct neighbor index not found")
     exit(44)
-
-#==============================================================================

@@ -9,7 +9,7 @@ from pprint import pformat
 import numpy as np
 
 # from IPython.terminal.embed import embed; embed()  # SR_DBG
-from stormtrack.core.typedefs import Constants
+from stormtrack.core.typedefs import default_constants
 from stormtrack.core.identification import Feature
 
 
@@ -141,7 +141,7 @@ class TestFeatures_Base(TestCase):
             if connectivity is None:
                 raise ValueError("no connectivity but shells or holes is None")
             nx, ny = self.nxy
-            const = Constants.default(nx=nx, ny=ny, connectivity=connectivity)
+            const = default_constants(nx=nx, ny=ny, connectivity=connectivity)
             if (shells, holes) is (None, None):
                 feature.derive_boundaries_from_pixels(const)
             elif shells is None:

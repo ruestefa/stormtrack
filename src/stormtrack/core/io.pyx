@@ -2,12 +2,13 @@
 
 from __future__ import print_function
 
+# C: Third-party
 cimport cython
 cimport numpy as np
 
-#------------------------------------------------------------------------------
-
+# Standard library
 import errno
+import json
 import logging as log
 import os
 import re
@@ -18,17 +19,17 @@ from copy import deepcopy
 from functools import total_ordering
 from pprint import pprint
 
-import PIL
+# Third-party
 import cython
 import h5py
-import json
 import numpy as np
-
+import PIL
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
 
+# Local
 from ..utils.netcdf import points_lonlat_to_inds
 from ..utils.various import NoIndent
 from ..utils.various import NoIndentEncoder
@@ -37,12 +38,6 @@ from .identification import feature2d_from_jdat
 from .tracking import FeatureTrack
 from .tracking import remerge_partial_tracks
 
-try:
-    from ..utils.various import ipython
-except ImportError:
-    pass
-
-#==============================================================================
 
 #SR_TMP< SR_TODO if retained, move into more appropriate module
 #@cython.boundscheck(False)
@@ -56,6 +51,7 @@ cpdef int mask_sum(np.ndarray[np.uint8_t, ndim=2] mask):
                 sum += 1
     return sum
 #SR_TMP>
+
 
 #SR_TMP< SR_TODO if retained, move into more appropriate module
 @cython.boundscheck(False)
@@ -79,6 +75,7 @@ cpdef np.ndarray[np.float32_t, ndim=1] sum_hist_bins(
     return sums
 #SR_TMP>
 
+
 #SR_TMP< SR_TODO if retained, move into more appropriate module
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
@@ -101,7 +98,6 @@ cpdef np.ndarray[np.int32_t, ndim=1] count_hist_bins(
     return counts
 #SR_TMP>
 
-#==============================================================================
 
 def write_feature_file(
         outfile,
@@ -134,9 +130,7 @@ def write_feature_file(
     TODO
 
     """
-    #--------------------------------------------------------------------------
     # Prepare Arguments - Shared
-    #--------------------------------------------------------------------------
 
     # Features v. tracks
     if features is not None and tracks is not None:
@@ -167,9 +161,7 @@ def write_feature_file(
         if e.errno != errno.EEXIST:
             raise
 
-    #--------------------------------------------------------------------------
     # Prepare Arguments - Tracks Only
-    #--------------------------------------------------------------------------
 
     # Track graphs file
     if tracks is None:
@@ -199,7 +191,6 @@ def write_feature_file(
             feature_files_tss = [[tss, fs] for tss, fs
                             in sorted(feature_files_tss.items())]
 
-    #--------------------------------------------------------------------------
 
     if not silent:
         if tracks is None:
@@ -210,12 +201,9 @@ def write_feature_file(
                     len(tracks), feature_name, outfile)
         log.info(msg)
 
-    #--------------------------------------------------------------------------
     jdat = odict()
 
-    #--------------------------------------------------------------------------
     # Header
-    #--------------------------------------------------------------------------
 
     # Initialize header
     jdat["header"] = odict([("nx", nx), ("ny", ny)])
@@ -251,9 +239,7 @@ def write_feature_file(
         jdat["header"]["link_features"]     = link_features
         jdat["header"]["feature_files_tss"] = feature_files_tss
 
-    #--------------------------------------------------------------------------
     # Feature (and Track) Info
-    #--------------------------------------------------------------------------
 
     # Add pixel store mode to info blocks
     info_features["pixel_store_mode"] = pixel_store_mode
@@ -265,7 +251,6 @@ def write_feature_file(
         # Add tracks info
         jdat["info_tracks"] = info_tracks
 
-    #--------------------------------------------------------------------------
     #SR_TMP< TODO properly integrate graph-based track storage
     if tracks is not None:
         if track_store_mode == "json":
@@ -290,9 +275,7 @@ def write_feature_file(
             err = "invalid track store mode '{}'".format(track_store_mode)
             raise ValueError(err)
     #SR_TMP>
-    #--------------------------------------------------------------------------
     # Feature (and Track) Data
-    #--------------------------------------------------------------------------
 
     # Add features data
     if tracks is None:
@@ -315,7 +298,6 @@ def write_feature_file(
             jdat_track = track.json_dict()
             jdat["tracks"].append(jdat_track)
 
-    #--------------------------------------------------------------------------
 
     if jdat_old:
         # Merge in old jdat dict
@@ -356,7 +338,6 @@ def write_feature_file(
                 # Remove feature files from old jdat
                 del jdat_old["header"]["feature_files_tss"]
 
-    #--------------------------------------------------------------------------
 
     # Write json data to disk
     if outfile.endswith(".json"):
@@ -400,7 +381,6 @@ def write_feature_file(
             with open(outfile_graphs, "wb") as fo:
                 pickle.dump(graphs_table, fo)
 
-#------------------------------------------------------------------------------
 
 def write_feature_pixels(outfile, *, feature_name, features, mode,
         silent=False):
@@ -447,7 +427,6 @@ def write_feature_pixels(outfile, *, feature_name, features, mode,
         err = "unknown file format: {}".format(outfile)
         raise Exception(err)
 
-#------------------------------------------------------------------------------
 
 def _collect_jdat_features(features, timesteps, pixel_store_mode):
     """Collect data of features and add it to json data dict."""
@@ -484,7 +463,6 @@ def _collect_jdat_features(features, timesteps, pixel_store_mode):
 
     return jdat_features
 
-#==============================================================================
 
 def __tmp__write_tracks_features_as_graphs(outfile, tracks, feature_name, *,
         header, info_tracks, info_features,
@@ -628,7 +606,6 @@ def track_to_graph(track, *, separate_pixels=False, store_values=False):
             output["values_by_fid"] = values_by_fid
     return output
 
-#==============================================================================
 
 def distribute_tracks_across_outfiles(tracks, timesteps_outfiles, jdats,
         args_methods=None, group_names=None, features_have_pixels=True,
@@ -800,7 +777,6 @@ def distribute_tracks_across_outfiles(tracks, timesteps_outfiles, jdats,
 
     return outfiles_tracks
 
-#------------------------------------------------------------------------------
 
 def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
         counter=False, counter_core=False, extra_tracks=None,
@@ -808,8 +784,8 @@ def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
     """Read multiple feature files; remerge partial tracks if necessary.
 
     See 'read_feature_file' for a detailed parameter description.
-    """
 
+    """
     if silent_core is None:
         silent_core = silent
     if counter_core is None:
@@ -859,7 +835,7 @@ def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
             else:
                 print(msg[:w], end="\r", flush=True)
 
-        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        #++++++++++++++++++++++++++++++++++++++++++++++++++
         _r = read_feature_file(
                 infile,
                 feature_name             = feature_name,
@@ -870,7 +846,7 @@ def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
         new_features        = _r["features"]
         new_pixelfiles_fids = _r["pixelfiles_fids"]
         new_timesteps       = _r["timesteps"]
-        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        #++++++++++++++++++++++++++++++++++++++++++++++++++
 
         if not silent and not counter:
             log.info(" -> {:,} tracks and {:,} features".format(
@@ -1894,7 +1870,6 @@ def __tmp__rebuild_tracks_from_graphs(
             header         = header,
         )
 
-#==============================================================================
 
 def rebuild_features(*,
         pixelfile,
@@ -2599,7 +2574,7 @@ def select_tracks_features(*,
     if discard_untracked_features:
         # Only keep features linked to a track
         for feature in [f for f in features]:
-            if f.track() is None:
+            if feature.track() is None:
                 nskip_features += 1
                 features.remove(feature)
 
@@ -2623,7 +2598,6 @@ def select_tracks_features(*,
             nskip_features = nskip_features,
         )
 
-#==============================================================================
 
 def read_masks(infile, lon, lat, silent=False, dtype=bool):
     """Read mask shells and holes and turn them into mask fields."""
@@ -2669,6 +2643,3 @@ def read_masks(infile, lon, lat, silent=False, dtype=bool):
         masks[name] = mask
 
     return masks
-
-#==============================================================================
-
