@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from __future__ import print_function
 
@@ -10,7 +10,7 @@ from libc.math cimport cos
 from libc.math cimport sin
 from libc.math cimport sqrt
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 import os
 import subprocess
@@ -32,7 +32,7 @@ try:
 except ImportError:
     pass
 
-#==============================================================================
+# ==============================================================================
 
 def circle_lonlat_mask(clon, clat, rad_km, dlon, dlat, method="dyntools",
         **kwas):
@@ -67,7 +67,7 @@ def circle_lonlat_mask(clon, clat, rad_km, dlon, dlat, method="dyntools",
                 ).format(method, ", ".join(method_choices))
         raise ValueError(err)
 
-#==============================================================================
+# ==============================================================================
 
 def circle_lonlat_mask_pyproj(clon, clat, rad_km, dlon, dlat, *,
         lon_range=None, lat_range=None, trim_pad=None, silent=True):
@@ -146,9 +146,9 @@ def circle_lonlat_path(clon, clat, rad_km):
 
     return path
 
-#==============================================================================
+# ==============================================================================
 # Use Fortran tool from dyntools
-#==============================================================================
+# ==============================================================================
 
 def circle_lonlat_mask_dyntools(clon, clat, rad_km, dlon, dlat,
         lon_range, lat_range, *, trim_pad=None):
@@ -226,4 +226,4 @@ def read_circle_file(infile, swap_latlon=False):
 
     return mask, grid
 
-#==============================================================================
+# ==============================================================================

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from __future__ import print_function
 
@@ -9,7 +9,7 @@ import re
 import sys
 import warnings
 
-#==============================================================================
+# ==============================================================================
 
 def ipython(__globals__, __locals__, __msg__=None, __err__=66):
     """Drop into an iPython shell with all global and local variables.
@@ -485,9 +485,9 @@ class TimestepStringFormatter:
         else:
             return sorted(files_ts.values())
 
-#==============================================================================
+# ==============================================================================
 # Custon Json encoder to write lists on single lines
-#==============================================================================
+# ==============================================================================
 # src: http://stackoverflow.com/a/25935321
 import uuid
 import json
@@ -517,4 +517,4 @@ class NoIndentEncoder(json.JSONEncoder):
             result = result.replace('"@@%s@@"' % (k,), v)
         return result
 
-#==============================================================================
+# ==============================================================================

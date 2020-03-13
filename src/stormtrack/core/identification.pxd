@@ -183,7 +183,7 @@ cdef class Feature:
 
     cdef public:
         np.uint64_t timestep
-        dict properties #SR_TODO rename to attributes
+        dict properties # SR_TODO rename to attributes
         dict associates
         list _stats_lst
         list neighbors

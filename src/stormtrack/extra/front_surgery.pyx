@@ -117,8 +117,8 @@ cpdef void run_front_surgery_main(
     # Construct info block in case of netcdf input
     cdef dict info_dict = None, info_dict_prev = None
     if input_format.startswith("netcdf"):
-        #SR_TODO equivalent code block also in identify_features.py
-        #SR_TODO remove duplicate code!
+        # SR_TODO equivalent code block also in identify_features.py
+        # SR_TODO remove duplicate code!
         # Construct info dict
         info_dict = dict(varname=feature_name_base)
         info_dict["thresholds"] = [
@@ -128,7 +128,7 @@ cpdef void run_front_surgery_main(
                 "topo_filter_mode", "topo_filter_min_overlap"]:
             info_dict[key] = conf_identification[key]
         for key in ["thresholds", "min_overlap", "max_size_temporal_step",
-                #"threshold_boundary_neighbors", "threshold_boundary_all",
+                # "threshold_boundary_neighbors", "threshold_boundary_all",
             ]:
             info_dict["{}_{}".format("surgery", key)] = conf_surgery[key]
 
@@ -167,7 +167,7 @@ cpdef void run_front_surgery_main(
                 log.info("read field {} from file {}".format(varname, infile))
                 fld = nc_read_var_list(infile, varname, rlon, rlat)
                 if trim_bnd_n > 0:
-                    #SR_TODO add value to which to trim to interface
+                    # SR_TODO add value to which to trim to interface
                     fld[:trim_bnd_n, :] = 0
                     fld[:, :trim_bnd_n] = 0
                     fld[-trim_bnd_n:, :] = 0
@@ -217,8 +217,8 @@ cpdef void run_front_surgery_main(
                 info_dict_prev = info_dict.copy()
                 for key in ["thresholds", "min_overlap",
                         "max_size_temporal_step",
-                        #"threshold_boundary_neighbors",
-                        #"threshold_boundary_all",
+                        # "threshold_boundary_neighbors",
+                        # "threshold_boundary_all",
                     ]:
                     info_dict["{}_{}".format("surgery", key)
                             ] = conf_surgery[key]
@@ -246,9 +246,9 @@ cpdef void run_front_surgery_main(
                 for i in range(n_categories):
                     categories_new_n[i] = 0
 
-        #+++++++++++++++++++++++++++++++++++++++++++++++
+        # +++++++++++++++++++++++++++++++++++++++++++++++
         log.info("\n{}\n".format("<"*50))
-        #-----------------------------------------------
+        # -----------------------------------------------
         _run_front_surgery_core(
                 timesteps_ts,
                 fronts_raw,
@@ -265,9 +265,9 @@ cpdef void run_front_surgery_main(
                 &constants,
                 conf_surgery,
             )
-        #-----------------------------------------------
+        # -----------------------------------------------
         log.info("\n{}\n".format(">"*50))
-        #+++++++++++++++++++++++++++++++++++++++++++++++
+        # +++++++++++++++++++++++++++++++++++++++++++++++
 
         # Finish fully processed features and write them to disk
         silent = True
@@ -293,7 +293,7 @@ cpdef void run_front_surgery_main(
                     reset_connections=False,
                 )
 
-            #SR_TODO remove hard-coded limit (not really pressing, though)
+            # SR_TODO remove hard-coded limit (not really pressing, though)
             # Make sure we have enough id; in case of too many features, abort
             for i in range(n_categories):
                 if categories_old_n[i] >= int(1e5):
@@ -362,7 +362,7 @@ cpdef void run_front_surgery_main(
                 &constants,
             )
 
-    #SR_TODO Activate!!! Properly clean up all regions!!!
+    # SR_TODO Activate!!! Properly clean up all regions!!!
     # Clean up cregions
     if cfronts_new is not NULL:
         for i in range(n_categories):
@@ -406,7 +406,7 @@ cdef void _update_queue(
     ):
     cdef cGrid* grid_tmp
 
-    #SR_TODO exchange the whold cGrid objects (not only the pixels)
+    # SR_TODO exchange the whold cGrid objects (not only the pixels)
 
     # NOW -> OLD
     if cfronts_now[0] is not NULL:
@@ -468,14 +468,14 @@ def import_fronts(infile, feature_name, timestep, conf_grid):
 
     name_info = feature_name.replace("features_", "info_")
     info = jdat[name_info]
-    #SR_TMP<
+    # SR_TMP <
     if not any(f.neighbors for f in fronts):
         log.info("find neighbors of {} '{}' features".format(
                 len(fronts), feature_name))
         const = default_constants(nx=conf_grid["nx"], ny=conf_grid["ny"],
                 connectivity=conf_grid["connectivity"])
         features_find_neighbors(fronts, const)
-    #SR_TMP>
+    # SR_TMP >
     return fronts, info
 
 
@@ -504,12 +504,12 @@ cdef void _run_front_surgery_core(
     cdef bint ignore_missing_neighbors = False
     cdef cRegions cfronts_raw
 
-    global CATEGORIES #SR_TMP
+    global CATEGORIES # SR_TMP
 
     # Deal with new fronts (always except last two timesteps)
     if fronts_raw is not None:
 
-        #SR_TMP<
+        # SR_TMP <
         # Convert features to cregions
         if debug: log.debug("<<< fronts_raw -> cfronts_raw")
         n_features = len(fronts_raw)
@@ -523,7 +523,7 @@ cdef void _run_front_surgery_core(
                 grid_new,
                 constants,
             )
-        #SR_TMP>
+        # SR_TMP >
 
         # Categorize fronts by size
         categorize_fronts(
@@ -534,7 +534,7 @@ cdef void _run_front_surgery_core(
                 thresholds,
             )
 
-        #DBG_BLOCK<
+        # DBG_BLOCK <
         if debug:
             log.debug("\n++++ NEW ++++")
             n = 0
@@ -545,7 +545,7 @@ cdef void _run_front_surgery_core(
             log.debug("{:10}{:3}".format("sum", n))
             log.debug("="*14)
             log.debug("")
-        #DBG_BLOCK>
+        # DBG_BLOCK >
 
         # Run first front surgery step in isolation (spatial and temporal)
         # Get rid of obvious clutter and re-merge features inside categories
@@ -559,7 +559,7 @@ cdef void _run_front_surgery_core(
                 constants,
             )
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         if cfronts_new is not NULL:
             log.debug("\n++++ NEW ++++")
@@ -589,7 +589,7 @@ cdef void _run_front_surgery_core(
             log.debug("{:10}{:3}".format("sum", n))
             log.debug("="*14)
         log.debug("")
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     if cfronts_now is not NULL:
 
@@ -613,7 +613,7 @@ cdef void _run_front_surgery_core(
                 conf,
             )
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         if cfronts_new is not NULL:
             log.debug("\n++++ NEW ++++")
@@ -643,7 +643,7 @@ cdef void _run_front_surgery_core(
             log.debug("{:10}{:3}".format("sum", n))
             log.debug("="*14)
         log.debug("")
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
 
 cpdef dict front_surgery_isolated(
@@ -686,8 +686,8 @@ cpdef dict front_surgery_isolated(
     pixel_status_table_alloc(&grid.pixel_status_table, &constants)
     neighbor_link_stat_table_alloc(&grid.neighbor_link_stat_table, &constants)
 
-#SR_TODO pack all the usual conversion stuff from python to cython in
-#SR_TODO separate functions (conversion/back-conversion) to reduce overhead!
+# SR_TODO pack all the usual conversion stuff from python to cython in
+# SR_TODO separate functions (conversion/back-conversion) to reduce overhead!
 
     # Turn features into cregions
     cdef int n_fronts = len(fronts)
@@ -781,7 +781,7 @@ cdef void _front_surgery_isolated_core(
             categories_n,
             grid,
             constants,
-            reset_connections=True, #SR_TODO test whether necessary
+            reset_connections=True, # SR_TODO test whether necessary
         )
 
     # Merge small into medium category
@@ -1048,7 +1048,7 @@ cdef void merge_features_in_categories(
             log.info("merged '{}' features: {} -> {}".format(CATEGORIES[i], nold, nnew))
             categories_n[i] = nnew
 
-    #SR_TODO Test whether this is actually necessary (I think it shouldn't be)!
+    # SR_TODO Test whether this is actually necessary (I think it shouldn't be)!
     # Re-compute fresh boundaries of categories of size 1
     for i in range(n_categories):
         if cfronts_cat[i].n == 1:
@@ -1079,7 +1079,7 @@ cdef void find_neighbors_across_categories(
 
     cregions_cleanup(&cfronts_all, cleanup_regions=False)
 
-#SR_TMP<
+# SR_TMP <
 cdef void features_cat_to_cregions_arr(
         dict fronts_cat,
         cRegions* cfronts_cat,
@@ -1128,7 +1128,7 @@ cdef dict cfronts2fronts(
         cGrid* grid,
         cConstants* constants,
     ):
-    #log.info("< cfronts2fronts")
+    # log.info("< cfronts2fronts")
     cdef dict fronts_cat = {}
     cdef int i, j, k
     cdef cRegions cfronts_all = flatten_cfronts_arr(cfronts_cat, n_categories)
@@ -1142,15 +1142,15 @@ cdef dict cfronts2fronts(
             constants,
         )
 
-    #SR_TMP< SR_TODO Move into cregions_create_features (timestep should ALWAYS be set)
+    # SR_TMP < SR_TODO Move into cregions_create_features (timestep should ALWAYS be set)
     cdef Feature front
     for front in merged_features:
         front.timestep = timestep
-    #SR_TMP>
+    # SR_TMP >
 
     cregions_cleanup(&cfronts_all, cleanup_regions=True)
 
-    #SR_TMP>
+    # SR_TMP >
     for i in range(n_categories):
         cregions_cleanup(&cfronts_cat[i], cleanup_regions=False)
     free(cfronts_cat)
@@ -1164,14 +1164,14 @@ cdef dict cfronts2fronts(
         for j in range(categories_n[i]):
             fronts_cat[category].append(merged_features[k])
             k += 1
-    #log.info("> cfronts2fronts")
+    # log.info("> cfronts2fronts")
     return fronts_cat
 
 cdef cRegions flatten_cfronts_arr(
         cRegions* cfronts_cat,
         int n_categories,
     ):
-    #log.info("< flatten_cfronts_arr")
+    # log.info("< flatten_cfronts_arr")
     cdef int i, j, n_fronts = 0
     for i in range(n_categories):
         n_fronts += cfronts_cat[i].n
@@ -1185,7 +1185,7 @@ cdef cRegions flatten_cfronts_arr(
                     cleanup = False,
                     unlink_pixels = False,
                 )
-    #log.info("> flatten_cfronts_arr")
+    # log.info("> flatten_cfronts_arr")
     return cfronts_all
 
 cdef void unflatten_cfronts_all(
@@ -1194,7 +1194,7 @@ cdef void unflatten_cfronts_all(
         int* categories_n,
         cRegions* cfronts_cat,
     ):
-    #log.info("< unflatten_cfronts_all")
+    # log.info("< unflatten_cfronts_all")
     cdef int i, j, k, n
     cdef cRegions* cfronts
     k = 0
@@ -1211,8 +1211,8 @@ cdef void unflatten_cfronts_all(
                     unlink_pixels = False,
                 )
             k += 1
-    #log.info("> unflatten_cfronts_all")
-#SR_TMP>
+    # log.info("> unflatten_cfronts_all")
+# SR_TMP >
 
 cdef tuple dict2lists(
         dict dict_,

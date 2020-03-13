@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from __future__ import print_function
 
@@ -78,10 +78,10 @@ def closest_feature(features, lon=None, lat=None, great_circle=True, *,
     domain.
     """
 
-    #SR_TMP<
+    # SR_TMP <
     if return_ids:
         raise NotImplementedError("return feature ids")
-    #SR_TMP>
+    # SR_TMP >
 
     if len(features) == 0:
         dists = np.empty(lon.shape, np.float32)

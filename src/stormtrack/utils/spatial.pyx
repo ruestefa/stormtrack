@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from __future__ import print_function
 
@@ -10,7 +10,7 @@ from libc.math cimport cos
 from libc.math cimport sin
 from libc.math cimport sqrt
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 import math
 
@@ -25,9 +25,9 @@ try:
 except ImportError:
     pass
 
-#==============================================================================
+# ==============================================================================
 # Path to domain
-#==============================================================================
+# ==============================================================================
 
 def path_lonlat_to_mask(path, *args, **kwas):
     """Create a 2D mask from a path of (lon, lat) tuples.
@@ -75,9 +75,9 @@ def paths_lonlat_to_mask(paths, lon, lat, *, return_tree=False, silent=False,
         return mask, tree
     return mask
 
-#==============================================================================
+# ==============================================================================
 # Area of points set on lon/lat grid
-#==============================================================================
+# ==============================================================================
 
 def points_area_lonlat_reg(pxs, pys, lon1d, lat1d):
     """Compute total area of a set of points on a regular lon/lat grid."""
@@ -139,7 +139,7 @@ cdef np.float64_t _feature_area_lonlat__core(
 
     cdef int p, j, k
 
-    #-- Compute length of a degree longitude (m) at a given latitude
+    # -- Compute length of a degree longitude (m) at a given latitude
     #   src: https://en.wikipedia.org/wiki/Longitude (2019-04-02)
 
     cdef np.float64_t rad = 6378100.0       # Earth radius (m)
@@ -149,7 +149,7 @@ cdef np.float64_t _feature_area_lonlat__core(
     cdef np.ndarray[np.float64_t, ndim=1] _areas_km2 = np.empty(nlat, np.float64)
     cdef np.float64_t[:] areas_km2 = _areas_km2
 
-    #-- Compute the area at each latitude on the grid
+    # -- Compute the area at each latitude on the grid
 
     # Subdivide each grid box into nk subboxes in latitudinal direction to
     # try and account for the non-linear decrease in longitudinal distance.
@@ -159,9 +159,9 @@ cdef np.float64_t _feature_area_lonlat__core(
     # where this actually works, but non have been encountered so far.
     # (Of course, there might also be an algorithm/implementation issue!)
     cdef int nk = 1
-    #cdef int nk = 5
-    #cdef int nk = 10
-    #cdef int nk = 100
+    # cdef int nk = 5
+    # cdef int nk = 10
+    # cdef int nk = 100
 
     cdef int nkh = int((nk - 1)/2)
     cdef np.ndarray[np.float64_t, ndim=1] _areas_km2_j = np.empty(nk, np.float64)
@@ -203,9 +203,9 @@ cdef np.float64_t _feature_area_lonlat__core(
 
     return area_km2
 
-#==============================================================================
+# ==============================================================================
 # Various
-#==============================================================================
+# ==============================================================================
 
 def path_along_domain_boundary(lon, lat, nbnd=0):
     """Construct a path parallel to the domain boundary.
@@ -292,7 +292,7 @@ def derive_lonlat_1d(lon2d, lat2d, *, nonreg_ok=False):
                 "need to be transposed").format(lon1d[0], lat1d[0])
         raise Exception(err)
 
-    #-- Check if grid is indeed regular
+    # -- Check if grid is indeed regular
 
     lat2d_check, lon2d_check = np.meshgrid(lat1d, lon1d)
 
@@ -319,5 +319,5 @@ def derive_lonlat_1d(lon2d, lat2d, *, nonreg_ok=False):
     else:
         raise ValueError("non-regular lon/lat grid")
 
-#==============================================================================
+# ==============================================================================
 

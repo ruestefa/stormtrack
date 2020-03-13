@@ -8,7 +8,7 @@ cdef struct cConstants:
     np.int32_t nx
     np.int32_t ny
     np.uint8_t connectivity
-    np.uint8_t n_neighbors_max #SR_TODO rename to pixel_neighbors_max
+    np.uint8_t n_neighbors_max # SR_TODO rename to pixel_neighbors_max
 
 
 cdef enum pixeltype:
@@ -19,7 +19,7 @@ cdef enum pixeltype:
 
 cdef struct cPixel:
     np.uint64_t id
-    #SR_TODO merge x, y and xy
+    # SR_TODO merge x, y and xy
     np.int32_t x
     np.int32_t y
     np.float32_t v

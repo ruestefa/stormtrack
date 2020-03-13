@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 import datetime as dt
 import logging as log
@@ -13,13 +13,13 @@ try:
 except ImportError:
     pass
 
-#==============================================================================
+# ==============================================================================
 # Input
-#==============================================================================
+# ==============================================================================
 
-#SR_TODO need to add a check whether _tree is still usable when reused
-#SR_TODO e.g. store lon/lat as well in argument lists and check whether
-#SR_TODO the ones passed in are the same as the previous ones
+# SR_TODO need to add a check whether _tree is still usable when reused
+# SR_TODO e.g. store lon/lat as well in argument lists and check whether
+# SR_TODO the ones passed in are the same as the previous ones
 def nc_read_var_list(infile, varname, lon, lat, dim_name="list", _tree=[]):
     """Read a field stored in point list form from a netcdf file."""
 
@@ -36,22 +36,22 @@ def nc_read_var_list(infile, varname, lon, lat, dim_name="list", _tree=[]):
         return np.zeros(lon.shape)
 
     # General case: non-empty list
-    #SR_TMP<
+    # SR_TMP <
     err = ("read list with netCDF4: what about the option "
             "'aggdim=\"list\"' to dypy.netcdf.read_var? "
             "TODO: drop in with ipython() and check how to do this!")
     raise NotImplementedError(err)
-    #SR_TMP>
+    # SR_TMP >
     try:
-        #SR_TMP<
-        #-pt_lon, pt_lat, pt_fld = nc.read_var(infile, ["lon", "lat", varname],
-        #-        aggdim="list")
-        #SR_TMP-
+        # SR_TMP <
+        # -pt_lon, pt_lat, pt_fld = nc.read_var(infile, ["lon", "lat", varname],
+        # -        aggdim="list")
+        # SR_TMP -
         with nc4.Dataset(infile, "r") as fi:
             pt_lon = fi["lon"][:]
             pt_lat = fi["lat"][:]
-            pt_fld = fi[varname][:] #???
-        #SR_TMP>
+            pt_fld = fi[varname][:] # ???
+        # SR_TMP >
     except Exception as e:
         err = "error reading field '{}' from file '{}':\n{}({})".format(
                 varname, infile, e.__class__.__name__, e)
@@ -82,9 +82,9 @@ def points_lonlat_to_inds(pt_lon, pt_lat, lon, lat, _tree=[]):
     inds = np.column_stack(np.unravel_index(inds_raw, lon.shape))
     return np.array([(x, y) for x, y in inds])
 
-#==============================================================================
+# ==============================================================================
 # Output
-#==============================================================================
+# ==============================================================================
 
 def nc_prepare_file(fo, dims, *, lon=None, lat=None, rlon=None, rlat=None,
         timesteps=None, timestep_bnd0=None, rotpollat=43.0, rotpollon=-170.0):
@@ -93,7 +93,7 @@ def nc_prepare_file(fo, dims, *, lon=None, lat=None, rlon=None, rlat=None,
     # Global attributes
     # TODO
 
-    #-- Dimensions
+    # -- Dimensions
 
     # Determine whether to add timestep bounds
     add_bnds = (
@@ -141,7 +141,7 @@ def nc_prepare_file(fo, dims, *, lon=None, lat=None, rlon=None, rlat=None,
 
     rotated = (rlat is not None or rlon is not None)
 
-    #-- Variables
+    # -- Variables
 
     # Timestamps
     if "time" in dims and timesteps is not None:
@@ -250,5 +250,5 @@ def timestep2timestamp(timestep, fmt=None):
     else:
         return timestamp
 
-#==============================================================================
+# ==============================================================================
 
