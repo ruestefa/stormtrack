@@ -13,6 +13,7 @@ from datetime import datetime
 from multiprocessing import Pool
 from timeit import default_timer as timer
 from pprint import pprint, pformat
+from warnings import warn
 
 # Thirt-party
 import h5py
@@ -44,9 +45,9 @@ try:
     from .fronts.fronts import identify_fronts
     from .identify_fronts import read_fields as fronts_read_raw_fields
 except ImportError as e:
-    print(
-        "warning: fronts-related import failed: {}; cannot identify fronts!".format(e)
-    )
+    warn(f"fronts-related import failed; cannot identify fronts! ({e})")
+    identify_fronts = None
+    fronts_read_raw_fields = None
 # SR_TMP>
 
 log.basicConfig(format="%(message)s", level=log.INFO)
@@ -57,15 +58,15 @@ try:
     from cyclone_identification_old.identify import (
         identify_features as identify_cyclones_core,
     )
-    import cyclone_identification_old.config as cfg
+    import cyclone_identification_old.config as cycl_cfg
     from utilities.io_old import plot_cyclones_depressions_extrema
     from utilities.utilities_old import Field2D
 except ImportError as e:
-    print(
-        "warning: cyclones-related import failed: {}; cannot identify cyclones!".format(
-            e
-        )
-    )
+    warn(f"cyclones-related import failed; cannot identify cyclones! ({e})")
+    identify_cyclones_core = None
+    cycl_cfg = None
+    plot_cyclones_depressions_extrema = None
+    Field2D = None
 # SR_TMP>
 
 
@@ -925,9 +926,9 @@ def identify_cyclones(infile, name, conf_in, conf_preproc, timestep, anti=False)
     # SR_TMP>
 
     # Set up config: merge inifile config into default config
-    conf_def = cfg.get_config_default()
-    conf_ini = cfg.get_config_inifile(inifile)
-    conf = cfg.merge_configs([conf_def, conf_ini])
+    conf_def = cycl_cfg.get_config_default()
+    conf_ini = cycl_cfg.get_config_inifile(inifile)
+    conf = cycl_cfg.merge_configs([conf_def, conf_ini])
     conf["IDENTIFY"]["timings-identify"] = None
     conf["IDENTIFY"]["datetime"] = timestep
 
