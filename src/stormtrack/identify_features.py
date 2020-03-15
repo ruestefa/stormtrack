@@ -55,12 +55,10 @@ log.basicConfig(format="%(message)s", level=log.INFO)
 # SR_TMP< TODO clean up
 # Cyclones
 try:
-    from cyclone_identification_old.identify import (
-        identify_features as identify_cyclones_core,
-    )
-    import cyclone_identification_old.config as cycl_cfg
-    from utilities.io_old import plot_cyclones_depressions_extrema
-    from utilities.utilities_old import Field2D
+    from .extras.cyclone_id.identify import identify_features as identify_cyclones_core
+    from .extras.cyclone_id import config as cycl_cfg
+    from .extras.io_misc import plot_cyclones_depressions_extrema
+    from .extras.utilities_misc import Field2D
 except ImportError as e:
     warn(f"cyclones-related import failed; cannot identify cyclones! ({e})")
     identify_cyclones_core = None
@@ -479,7 +477,7 @@ def identify_features(
     grid=None,
     silent=False,
     its=None,
-    nts=None
+    nts=None,
 ):
     timings = {}
 

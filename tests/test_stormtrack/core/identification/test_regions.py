@@ -1,15 +1,18 @@
 #!/usr/bin/env
 
-import unittest
+# STandard library
+import pytest
 import sys
+import unittest
 from unittest import TestCase
 
+# Third-party
 import numpy as np
 
-from stormtrack.core.typedefs import default_constants
-
+# First-party
 from stormtrack.core.identification import find_features_2d_threshold
 from stormtrack.core.identification import find_features_2d_threshold_seeded
+from stormtrack.core.typedefs import default_constants
 
 
 class IdentifyRegions_Base(TestCase):
@@ -219,7 +222,7 @@ class IdentifyRegions2DSeeds(IdentifyRegions2D_Base):
         s.assertEqual(len(features_px), 2, "should find exactly two regions")
         s.assert_regions(features_px, s.regions_xy[0])
 
-    @unittest.skip("TODO")
+    @pytest.mark.skip("TODO")
     def test_lvl1(s):
         """Multiple seed points in one region."""
         seeds = s.seed_points_xy[1, :]
@@ -234,7 +237,7 @@ class IdentifyRegions2DSeeds(IdentifyRegions2D_Base):
         s.assertSetEqual(set(seeds_px[0]), sol)
         s.assert_regions(features_px, s.regions_xy[1])
 
-    @unittest.skip("TODO")
+    @pytest.mark.skip("TODO")
     def test_lvl2(s):
         pass
 

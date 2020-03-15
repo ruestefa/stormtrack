@@ -42,12 +42,15 @@ metadata = {
 python = ">=3.7"
 
 dependencies = [
+    "basemap @ git+https://github.com/matplotlib/basemap.git",
     "cython",
     "click >= 6.0",
+    "descartes",
     "h5py",
     "python-igraph",
     "netcdf4",
     "numpy",
+    "matplotlib",
     "scipy",
     "shapely",
     "pillow",

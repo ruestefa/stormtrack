@@ -48,9 +48,32 @@ class Isolated(TestFeatures_Base):
     def setUp(self):
 
         # fmt: on
-        A =  0; B =  1; C =  2; D =  3; E =  4; F =  5; G =  6; H =  7; I =  8; J =  9;
-        K = 10; L = 11; M = 12; N = 13; O = 14; P = 15; Q = 16; R = 17; S = 18; T = 19;
-        U = 20; V = 21; W = 22; X = 23; Y = 24; Z = 25;
+        A = 0
+        B = 1
+        C = 2
+        D = 3
+        E = 4
+        F = 5
+        G = 6
+        H = 7
+        I = 8
+        J = 9
+        K = 10
+        L = 11
+        M = 12
+        N = 13
+        O = 14
+        P = 15
+        Q = 16
+        R = 17
+        S = 18
+        T = 19
+        U = 20
+        V = 21
+        W = 22
+        X = 23
+        Y = 24
+        Z = 25
         # fmt: on
 
         _ = np.nan
@@ -89,7 +112,7 @@ class Isolated(TestFeatures_Base):
         # fmt: on
         fld = self.obj_ids_in_8c
         lens_check = [len(fld[fld == i]) for i in range(26)]
-        assert(lens == lens_check) # double-check manual counts
+        assert lens == lens_check  # double-check manual counts
         # +----+------------------------+---------------+
         # |  N | FEATURES               | RANGE         |
         # +----+------------------------+---------------|
@@ -192,30 +215,26 @@ class Isolated(TestFeatures_Base):
 
         # Categorize output features
         self.features_out_cat = {
-                "clutter0": [self.features_out_8c[i] for i in (0, 1, 2, 3)],
-                "clutter1":  [],
-                "small":     [],
-                "medium":    [],
-                "large":     [self.features_out_8c[i] for i in (4, 5, 6, 7, 8)],
-            }
+            "clutter0": [self.features_out_8c[i] for i in (0, 1, 2, 3)],
+            "clutter1": [],
+            "small": [],
+            "medium": [],
+            "large": [self.features_out_8c[i] for i in (4, 5, 6, 7, 8)],
+        }
 
     def test_8c(self):
         features_cat = front_surgery_isolated(
-                self.features_in_8c,
-                self.thresholds,
-                self.nx, self.ny,
-                connectivity=8,
-            )
+            self.features_in_8c, self.thresholds, self.nx, self.ny, connectivity=8,
+        )
         for category, sol in sorted(self.features_out_cat.items()):
             res = features_cat[category]
             # SR_TMP < sort by size because order of IDs is not equivalent...
             sol = sorted(sol, key=lambda f: f.n)
             res = sorted(res, key=lambda f: f.n)
             # SR_TMP >
-            self.assertFeaturesEqual(res, sol,
-                    check_boundaries=False,
-                    check_shared_pixels=False,
-                )
+            self.assertFeaturesEqual(
+                res, sol, check_boundaries=False, check_shared_pixels=False,
+            )
 
 
 class Temporal_Base(TestFeatures_Base):
@@ -341,34 +360,35 @@ class Temporal_Base(TestFeatures_Base):
         # Categorize features
         f = self.features_in_old_8c
         self.features_in_cat_old_8c = {
-                "clutter0" : [f[4]],
-                "clutter1" : [],
-                "small"    : [],
-                "medium"   : [],
-                "large"    : [f[0], f[1], f[2], f[3]],
-            }
+            "clutter0": [f[4]],
+            "clutter1": [],
+            "small": [],
+            "medium": [],
+            "large": [f[0], f[1], f[2], f[3]],
+        }
         f = self.features_in_now_8c
         self.features_in_cat_now_8c = {
-                "clutter0" : [f[4], f[5]],
-                "clutter1" : [f[3], f[6]],
-                "small"    : [],
-                "medium"   : [],
-                "large"    : [f[0], f[1], f[2]],
-            }
+            "clutter0": [f[4], f[5]],
+            "clutter1": [f[3], f[6]],
+            "small": [],
+            "medium": [],
+            "large": [f[0], f[1], f[2]],
+        }
         f = self.features_in_new_8c
         self.features_in_cat_new_8c = {
-                "clutter0" : [],
-                "clutter1" : [f[6]],
-                "small"    : [],
-                "medium"   : [],
-                "large"    : [f[0], f[1], f[2], f[3], f[4], f[5]],
-            }
+            "clutter0": [],
+            "clutter1": [f[6]],
+            "small": [],
+            "medium": [],
+            "large": [f[0], f[1], f[2], f[3], f[4], f[5]],
+        }
 
-#SR_TODO Turn one of the big clutter clusters (OLD or NEW) into non-clutter
-#SR_TODO and set max_size for this test such that the results don't change,
-#SR_TODO and then add another test (with min_overlap==0.8 just to change
-#SR_TODO things up on that front as well) with max_size=-1 where the big
-#SR_TODO clutter feature is unclutterized!
+
+# SR_TODO Turn one of the big clutter clusters (OLD or NEW) into non-clutter
+# SR_TODO and set max_size for this test such that the results don't change,
+# SR_TODO and then add another test (with min_overlap==0.8 just to change
+# SR_TODO things up on that front as well) with max_size=-1 where the big
+# SR_TODO clutter feature is unclutterized!
 class Temporal_MinOverlap05_MaxSize12(Temporal_Base):
     """ Setup: min_overlap == 0.5 and max_size == 12 """
 
@@ -416,83 +436,90 @@ class Temporal_MinOverlap05_MaxSize12(Temporal_Base):
         # Categorize output features
         f = self.features_out_now_old_8c
         self.features_out_cat_now_old_8c = {
-                "clutter0" : [f[0], f[1]],
-                "clutter1" : [f[2]],
-                "small"    : [],
-                "medium"   : [],
-                "large"    : [f[3], f[4]],
-            }
+            "clutter0": [f[0], f[1]],
+            "clutter1": [f[2]],
+            "small": [],
+            "medium": [],
+            "large": [f[3], f[4]],
+        }
         f = self.features_out_now_new_8c
         self.features_out_cat_now_new_8c = {
-                "clutter0" : [f[0]],
-                "clutter1" : [f[1]],
-                "small"    : [],
-                "medium"   : [],
-                "large"    : [f[2], f[3], f[4], f[5], f[6]],
-            }
+            "clutter0": [f[0]],
+            "clutter1": [f[1]],
+            "small": [],
+            "medium": [],
+            "large": [f[2], f[3], f[4], f[5], f[6]],
+        }
         f = self.features_out_now_all_8c
         self.features_out_cat_now_all_8c = {
-                "clutter0" : [f[0]],
-                "clutter1" : [],
-                "small"    : [],
-                "medium"   : [],
-                "large"    : [f[1], f[2], f[3], f[4]],
-            }
+            "clutter0": [f[0]],
+            "clutter1": [],
+            "small": [],
+            "medium": [],
+            "large": [f[1], f[2], f[3], f[4]],
+        }
 
         # Keyword arguments for front_surgery_temporal
         self.kwargs = {
-                "nx"               : self.nx,
-                "ny"               : self.ny,
-                "min_overlap"      : 0.5,
-                "max_size"         : 12,
-                "connectivity"     : 8,
-                "merge_nonclutter" : True,
-            }
+            "nx": self.nx,
+            "ny": self.ny,
+            "min_overlap": 0.5,
+            "max_size": 12,
+            "connectivity": 8,
+            "merge_nonclutter": True,
+        }
 
     def test_both_8c(self):
         features_cat = front_surgery_temporal(
-                self.features_in_cat_new_8c,
-                self.features_in_cat_now_8c,
-                self.features_in_cat_old_8c,
-                **self.kwargs
-            )
+            self.features_in_cat_new_8c,
+            self.features_in_cat_now_8c,
+            self.features_in_cat_old_8c,
+            **self.kwargs
+        )
         features_sol = self.features_out_cat_now_all_8c
         for category, sol in sorted(features_sol.items()):
-            self.assertFeaturesEqual(features_cat[category], sol,
-                    check_boundaries=False,
-                    check_neighbors=False,
-                    check_shared_pixels=False,
-                )
+            self.assertFeaturesEqual(
+                features_cat[category],
+                sol,
+                check_boundaries=False,
+                check_neighbors=False,
+                check_shared_pixels=False,
+            )
 
     def test_new_8c(self):
         features_cat = front_surgery_temporal(
-                self.features_in_cat_new_8c,
-                self.features_in_cat_now_8c,
-                None,
-                **self.kwargs
-            )
+            self.features_in_cat_new_8c,
+            self.features_in_cat_now_8c,
+            None,
+            **self.kwargs
+        )
         features_sol = self.features_out_cat_now_new_8c
         for category, sol in sorted(features_sol.items()):
-            self.assertFeaturesEqual(features_cat[category], sol,
-                    check_boundaries=False,
-                    check_neighbors=False,
-                    check_shared_pixels=False,
-                )
+            self.assertFeaturesEqual(
+                features_cat[category],
+                sol,
+                check_boundaries=False,
+                check_neighbors=False,
+                check_shared_pixels=False,
+            )
 
     def test_old_8c(self):
         features_cat = front_surgery_temporal(
-                None,
-                self.features_in_cat_now_8c,
-                self.features_in_cat_old_8c,
-                **self.kwargs
-                    )
+            None,
+            self.features_in_cat_now_8c,
+            self.features_in_cat_old_8c,
+            **self.kwargs
+        )
         features_sol = self.features_out_cat_now_old_8c
         for category, sol in sorted(features_sol.items()):
-            self.assertFeaturesEqual(features_cat[category], sol,
-                    check_boundaries=False,
-                    check_neighbors=False,
-                    check_shared_pixels=False,
-                )
+            self.assertFeaturesEqual(
+                features_cat[category],
+                sol,
+                check_boundaries=False,
+                check_neighbors=False,
+                check_shared_pixels=False,
+            )
+
 
 class Temporal_MinOverlap08_MaxSizeM1(Temporal_Base):
     """ Setup: min_overlap == 0.8 and max_size == -1 """
@@ -541,83 +568,89 @@ class Temporal_MinOverlap08_MaxSizeM1(Temporal_Base):
         # Categorize output features
         f = self.features_out_now_old_8c
         self.features_out_cat_now_old_8c = {
-                "clutter0" : [f[0], f[1]],
-                "clutter1" : [f[2], f[3]],
-                "small"    : [],
-                "medium"   : [],
-                "large"    : [f[4], f[5], f[6]],
-            }
+            "clutter0": [f[0], f[1]],
+            "clutter1": [f[2], f[3]],
+            "small": [],
+            "medium": [],
+            "large": [f[4], f[5], f[6]],
+        }
         f = self.features_out_now_new_8c
         self.features_out_cat_now_new_8c = {
-                "clutter1" : [f[0]],
-                "small"    : [],
-                "medium"   : [],
-                "large"    : [f[1], f[2], f[3], f[4], f[5], f[6]],
-            }
+            "clutter1": [f[0]],
+            "small": [],
+            "medium": [],
+            "large": [f[1], f[2], f[3], f[4], f[5], f[6]],
+        }
         f = self.features_out_now_all_8c
         self.features_out_cat_now_all_8c = {
-                "clutter0" : [],
-                "clutter1" : [f[0]],
-                "small"    : [],
-                "medium"   : [],
-                "large"    : [f[1], f[2], f[3], f[4], f[5], f[6]],
-            }
+            "clutter0": [],
+            "clutter1": [f[0]],
+            "small": [],
+            "medium": [],
+            "large": [f[1], f[2], f[3], f[4], f[5], f[6]],
+        }
 
         # Keyword arguments for front_surgery_temporal
         # Regarding merge_nonclutter: ...
         self.kwargs = {
-                "nx"               : self.nx,
-                "ny"               : self.ny,
-                "min_overlap"      : 0.8,
-                "max_size"         : -1,
-                "connectivity"     : 8,
-                "merge_nonclutter" : True,
-            }
+            "nx": self.nx,
+            "ny": self.ny,
+            "min_overlap": 0.8,
+            "max_size": -1,
+            "connectivity": 8,
+            "merge_nonclutter": True,
+        }
 
     def test_both_8c(self):
         features_cat = front_surgery_temporal(
-                self.features_in_cat_new_8c,
-                self.features_in_cat_now_8c,
-                self.features_in_cat_old_8c,
-                **self.kwargs
-            )
+            self.features_in_cat_new_8c,
+            self.features_in_cat_now_8c,
+            self.features_in_cat_old_8c,
+            **self.kwargs
+        )
         features_sol = self.features_out_cat_now_all_8c
         for category, sol in sorted(features_sol.items()):
-            self.assertFeaturesEqual(features_cat[category], sol,
-                    check_boundaries=False,
-                    check_neighbors=False,
-                    check_shared_pixels=False,
-                )
+            self.assertFeaturesEqual(
+                features_cat[category],
+                sol,
+                check_boundaries=False,
+                check_neighbors=False,
+                check_shared_pixels=False,
+            )
 
     def test_new_8c(self):
         features_cat = front_surgery_temporal(
-                self.features_in_cat_new_8c,
-                self.features_in_cat_now_8c,
-                None,
-                **self.kwargs
-            )
+            self.features_in_cat_new_8c,
+            self.features_in_cat_now_8c,
+            None,
+            **self.kwargs
+        )
         features_sol = self.features_out_cat_now_new_8c
         for category, sol in sorted(features_sol.items()):
-            self.assertFeaturesEqual(features_cat[category], sol,
-                    check_boundaries=False,
-                    check_neighbors=False,
-                    check_shared_pixels=False,
-                )
+            self.assertFeaturesEqual(
+                features_cat[category],
+                sol,
+                check_boundaries=False,
+                check_neighbors=False,
+                check_shared_pixels=False,
+            )
 
     def test_old_8c(self):
         features_cat = front_surgery_temporal(
-                None,
-                self.features_in_cat_now_8c,
-                self.features_in_cat_old_8c,
-                **self.kwargs
-            )
+            None,
+            self.features_in_cat_now_8c,
+            self.features_in_cat_old_8c,
+            **self.kwargs
+        )
         features_sol = self.features_out_cat_now_old_8c
         for category, sol in sorted(features_sol.items()):
-            self.assertFeaturesEqual(features_cat[category], sol,
-                    check_boundaries=False,
-                    check_neighbors=False,
-                    check_shared_pixels=False,
-                )
+            self.assertFeaturesEqual(
+                features_cat[category],
+                sol,
+                check_boundaries=False,
+                check_neighbors=False,
+                check_shared_pixels=False,
+            )
 
 
 if __name__ == "__main__":

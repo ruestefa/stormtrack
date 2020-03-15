@@ -7,6 +7,10 @@ __author__ = """Stefan Ruedisuehli"""
 __email__ = "stefan.ruedisuehli@env.ethz.ch"
 __version__ = "0.2.0"
 
+import matplotlib as mpl  # isort:skip
+
+mpl.use("Agg")
+
 # SR_DEV < Shorthand to embed IPython shell
 try:
     import IPython  # isort:skip

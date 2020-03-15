@@ -246,9 +246,7 @@ cpdef void run_front_surgery_main(
                 for i in range(n_categories):
                     categories_new_n[i] = 0
 
-        # +++++++++++++++++++++++++++++++++++++++++++++++
         log.info("\n{}\n".format("<"*50))
-        # -----------------------------------------------
         _run_front_surgery_core(
                 timesteps_ts,
                 fronts_raw,
@@ -265,9 +263,7 @@ cpdef void run_front_surgery_main(
                 &constants,
                 conf_surgery,
             )
-        # -----------------------------------------------
         log.info("\n{}\n".format(">"*50))
-        # +++++++++++++++++++++++++++++++++++++++++++++++
 
         # Finish fully processed features and write them to disk
         silent = True
