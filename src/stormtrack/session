@@ -2,30 +2,8 @@ __init__.py
 identify_features.py
 track_features.py
 -/-
-core/__init__.py
-core/distance.pxd
-core/distance.pyx
-core/identification.pxd
-core/identification.pyx
-core/io.pxd
-core/io.pyx
-core/structs.pxd
-core/tables.pxd
-core/tables.pyx
-core/tracking.pxd
-core/tracking.pyx
-core/typedefs.pxd
-core/typedefs.pyx
-core/utilities.pxd
-core/utilities.pyx
+< core/session
 -/--
-extra/__init__.py
-extra/front_surgery.pxd
-extra/front_surgery.pyx
+< extra/session
 -/---
-utils/__init__.py
-utils/array.pyx
-utils/netcdf.pyx
-utils/proj_lonlat.pyx
-utils/spatial.pyx
-utils/various.pyx
+< utils/session

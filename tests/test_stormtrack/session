@@ -2,17 +2,6 @@ __init__.py
 test_utils.py
 utils.py
 --/-
-core/__init__.py
-core/identification/__init__.py
-core/identification/test_area_lonlat.py
-core/identification/test_features.py
-core/identification/test_regions.py
---/--
-core/tracking/__init__.py
-core/tracking/test_branched_tracks.py
-core/tracking/test_merge_features.py
-core/tracking/test_simple_tracks.py
-core/tracking/test_split_tracks.py
+< test_core/session
 --/---
-extra/__init__.py
-extra/test_front_surgery.py
+< test_extra/session
