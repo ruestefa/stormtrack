@@ -15,9 +15,8 @@ from shapely.geometry import Point, Polygon
 # Fist-party
 from stormtrack.extra.utilities_misc import FieldPoint
 
-# ==============================================================================
+
 # CLASSES
-# ==============================================================================
 
 
 class ContourSimple(Polygon):
@@ -77,9 +76,6 @@ class ContourSimple(Polygon):
         pass
 
 
-# ------------------------------------------------------------------------------
-
-
 class PointSimple(Point):
     def __init__(self, lon, lat, lvl, id=-1):
         Point.__init__(self, lon, lat, lvl)
@@ -127,18 +123,16 @@ class PointSimple(Point):
         return pt.get_info()
 
 
-# ==============================================================================
 # SETUP
-# ==============================================================================
+
 
 CLS_POINT = PointSimple
 CLS_CONTOUR = ContourSimple
 
 CONTOUR_RESOLUTION = 3
 
-# ==============================================================================
+
 # HELPER FUNCTIONS
-# ==============================================================================
 
 
 def contours_are_sorted(contours, reverse=False):
@@ -157,6 +151,7 @@ def shuffle_contours_assert(cont, n=10):
     To avoid an AssertionError in case a sorted array is produced by chance
     (can very well happen given the small array size), the shuffling is
     repeated <n> times until no AssertionError is raised.
+
     """
     for i in range(n):
         random.shuffle(cont)
@@ -202,7 +197,7 @@ def create_nested_circular_contours(
      - cls_contour: Contour class.
      - cls_point: Point class.
      - contour_resolution: Resolution of contours.
-    default is False.
+
     """
     res = contour_resolution
     lvl, dlvl = [float(l) for l in lvl]
@@ -217,9 +212,7 @@ def create_nested_circular_contours(
     return [cont, []] if no_min else [cont, [center]]
 
 
-# ==============================================================================
 # ASSERT FUNCTIONS
-# ==============================================================================
 
 
 def assert_dict_contained(full, partial):
@@ -252,8 +245,6 @@ def assert_dict_contained(full, partial):
 
     _assert_dict_contained_rec(full, partial, err)
 
-
-# ==============================================================================
 
 if __name__ == "__main__":
     pass

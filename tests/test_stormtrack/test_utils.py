@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-import sys
+# Standard library
 import unittest
+import sys
 from unittest import TestCase
 
+# Third-party
 import numpy as np
 
 sys.path.append(".tox/unittest/lib/python3.7/site-packages")
-# import os; print(os.getcwd())  # SR_DBG
-# exit(1)
 
+# Local
 from .utils import circle
 
 

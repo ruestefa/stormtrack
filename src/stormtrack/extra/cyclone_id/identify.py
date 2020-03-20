@@ -6,14 +6,14 @@ import logging as log
 import numpy as np
 
 # Local
-from .. import timing
-from ...utils.spatial import path_along_domain_boundary
-from ..utilities_misc import Contour
-from ..utilities_misc import DOMAIN_BOUNDARY_CONTOUR
 from .cyclone import Cyclone
 from .cyclone import CycloneIOReaderBinary
 from .cyclone import CycloneIOWriterBinary
 from .cyclone import Depression
+from .. import timing
+from ..utilities_misc import Contour
+from ..utilities_misc import DOMAIN_BOUNDARY_CONTOUR
+from ...utils.spatial import path_along_domain_boundary
 
 
 __all__ = []

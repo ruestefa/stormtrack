@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
+# Standard library
 import unittest
 import sys
 from unittest import TestCase
 
+# Third-party
 import numpy as np
 
+# First-party
 from stormtrack.core.identification import Feature
 from stormtrack.core.identification import feature_split_regiongrow
 from stormtrack.core.identification import features_find_neighbors
@@ -16,6 +19,7 @@ from stormtrack.core.identification import pixels_find_boundaries
 from stormtrack.core.identification import split_regiongrow_levels
 from stormtrack.core.typedefs import default_constants
 
+# Local
 from ...utils import assertBoundaries
 from ...utils import TestFeatures_Base
 

@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 
+# Standard library
 import itertools
 import os
 import sys
 import unittest
 from unittest import TestCase
 
+# Third-party
 import numpy as np
 
+# First-party
 from stormtrack.core.identification import Feature
 from stormtrack.utils.various import import_module
 
@@ -16,18 +19,18 @@ from stormtrack.utils.various import import_module
 # They are defined by increasing specificity and later searched inversely
 
 tol_pct_by_setup = [
-    (dict(), 1.0),
-    (dict(method="dyntools", delta=0.5, clat=0), 1.1),
-    (dict(method="dyntools", delta=0.5, clat=10), 1.1),
-    (dict(method="dyntools", delta=0.5, clat=90), 1.7),
-    (dict(method="dyntools", delta=1.0, clat=40), 2.1),
-    (dict(method="pyproj"), 10.0),
-    (dict(method="pyproj", clat=40), 8.0),
-    (dict(method="pyproj", clat=80), 30.0),
-    (dict(method="pyproj", delta=0.5, clat=60), 15.0),
-    (dict(method="pyproj", delta=0.5, clat=70), 20.0),
-    (dict(method="pyproj", delta=0.5, clat=90), 60.0),
-    (dict(method="pyproj", delta=1.0, clat=0), 20.0),
+    ({}, 1.0),
+    ({"method": "dyntools", "delta": 0.5, "clat": 0}, 1.1),
+    ({"method": "dyntools", "delta": 0.5, "clat": 10}, 1.1),
+    ({"method": "dyntools", "delta": 0.5, "clat": 90}, 1.7),
+    ({"method": "dyntools", "delta": 1.0, "clat": 40}, 2.1),
+    ({"method": "pyproj"}, 10.0),
+    ({"method": "pyproj", "clat": 40}, 8.0),
+    ({"method": "pyproj", "clat": 80}, 30.0),
+    ({"method": "pyproj", "delta": 0.5, "clat": 60}, 15.0),
+    ({"method": "pyproj", "delta": 0.5, "clat": 70}, 20.0),
+    ({"method": "pyproj", "delta": 0.5, "clat": 90}, 60.0),
+    ({"method": "pyproj", "delta": 1.0, "clat": 0}, 20.0),
 ]
 
 

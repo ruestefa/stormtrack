@@ -22,15 +22,15 @@ from ..io_misc import IOWriterBinaryBase
 from ..io_misc import IOWriterJsonBase
 from ..tracking_old.tracking import FeatureCombination
 from ..tracking_old.tracking import FeatureTrackBase
+from ..tracking_old.tracking import FeatureTrackerBase
 from ..tracking_old.tracking import FeatureTrackFactory
 from ..tracking_old.tracking import FeatureTrackIOReaderJson
 from ..tracking_old.tracking import FeatureTrackIOWriterJson
-from ..tracking_old.tracking import FeatureTrackerBase
 from ..tracking_old.tracking import TrackableFeatureBase
 from ..tracking_old.tracking import TrackableFeatureMean
+from ..utilities_misc import area_lonlat
 from ..utilities_misc import Contour
 from ..utilities_misc import FieldPoint
-from ..utilities_misc import area_lonlat
 from ..utilities_misc import path_is_insignificant
 
 

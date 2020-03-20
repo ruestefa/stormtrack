@@ -2,32 +2,27 @@
 
 from __future__ import print_function
 
-cimport cython
-cimport numpy as np
+# C: C libraries
 from libc.math cimport M_PI
 from libc.math cimport atan2
 from libc.math cimport cos
 from libc.math cimport sin
 from libc.math cimport sqrt
 
-# ------------------------------------------------------------------------------
+# C: Third-party
+cimport cython
+cimport numpy as np
 
+# Standard library
 import math
 
+# Third-party
 import PIL.Image
 import PIL.ImageDraw
 import numpy as np
 import scipy as sp
 import scipy.spatial
 
-try:
-    from .various import ipython
-except ImportError:
-    pass
-
-# ==============================================================================
-# Path to domain
-# ==============================================================================
 
 def path_lonlat_to_mask(path, *args, **kwas):
     """Create a 2D mask from a path of (lon, lat) tuples.
@@ -35,6 +30,7 @@ def path_lonlat_to_mask(path, *args, **kwas):
     See paths_lonlat_to_mask for arguments.
     """
     return paths_lonlat_to_mask([path], *args, **kwas)
+
 
 def paths_lonlat_to_mask(paths, lon, lat, *, return_tree=False, silent=False,
         _tree=[]):
@@ -75,9 +71,6 @@ def paths_lonlat_to_mask(paths, lon, lat, *, return_tree=False, silent=False,
         return mask, tree
     return mask
 
-# ==============================================================================
-# Area of points set on lon/lat grid
-# ==============================================================================
 
 def points_area_lonlat_reg(pxs, pys, lon1d, lat1d):
     """Compute total area of a set of points on a regular lon/lat grid."""
@@ -203,11 +196,8 @@ cdef np.float64_t _feature_area_lonlat__core(
 
     return area_km2
 
-# ==============================================================================
-# Various
-# ==============================================================================
 
-def path_along_domain_boundary(lon, lat, nbnd=0):
+def path_along_domain_boundary(lon, lat, nbnd=0, bnd_nan=False, fld=None):
     """Construct a path parallel to the domain boundary.
 
     Slice the lon and lat arrays. The distance to the boundary is given in
@@ -218,25 +208,38 @@ def path_along_domain_boundary(lon, lat, nbnd=0):
      x coordinates of path: array
      y coordinates of path: array
     """
-    # SR_TODO: Find out why e.g. the first is not the southern boundary!
-    # SR_TODO: Somehow the values in lon,lat are stored as (y,x)...
-    ns, ne = nbnd, -(nbnd + 1)
+    if not bnd_nan:
+        nx, ny = lon.shape
+        xs, xe, ys, ye = 0, nx, 0, ny
+    else:
+        if fld is None:
+            raise ValueError("must pass fld for bnd_nan=T")
+        xs, xe, ys, ye = locate_domain_in_nans(fld)
+
+    xs += nbnd
+    xe -= nbnd
+    ys += nbnd
+    ye -= nbnd
+
     pxs = (
-            lon[ns:ne, ns].tolist()    +  # west
-            lon[ne, ns:ne].tolist()    +  # north
-            lon[ne:ns:-1, ne].tolist() +  # east
-            lon[ns, ne:ns:-1].tolist()    # south
-        )
+        lon[xs:xe, ys].tolist()
+        + lon[xe - 1, ys:ye].tolist()  # west
+        + lon[xe:xs:-1, ye - 1].tolist()  # north
+        + lon[xs, ye:ys:-1].tolist()  # east  # south
+    )
     pys = (
-            lat[ns:ne, ns].tolist()    +  # west
-            lat[ne, ns:ne].tolist()    +  # north
-            lat[ne:ns:-1, ne].tolist() +  # east
-            lat[ns, ne:ns:-1].tolist()    # south
-        )
+        lat[xs:xe, ys].tolist()
+        + lat[xe - 1, ys:ye].tolist()  # west
+        + lat[xe:xs:-1, ye - 1].tolist()  # north
+        + lat[xs, ye:ys:-1].tolist()  # east  # south
+    )
+
     if (pxs[-1], pys[-1]) != (pxs[0], pys[0]):
         pxs.append(pxs[0])
         pys.append(pys[0])
+
     return pxs, pys
+
 
 def great_circle_distance(lon1, lat1, lon2, lat2):
     """Calculate the great circle distance between two points
@@ -280,6 +283,7 @@ def great_circle_distance(lon1, lat1, lon2, lat2):
 
     return distance / 1000
 
+
 def derive_lonlat_1d(lon2d, lat2d, *, nonreg_ok=False):
     """Derive 1D lon/lat from 2D regular lon/lat fields."""
 
@@ -319,5 +323,27 @@ def derive_lonlat_1d(lon2d, lat2d, *, nonreg_ok=False):
     else:
         raise ValueError("non-regular lon/lat grid")
 
-# ==============================================================================
 
+def locate_domain_in_nans(field):
+    """"Determine the extent a rectangular domain nested in NaNs.
+
+    Note: A slightly different version of this function is available in DyPy:
+    https://git.iac.ethz.ch/atmosdyn/DyPy/-/blob/master/src/dypy/small_tools.py
+
+    """
+    fld = np.asarray(field)
+    xs, ys = 0, 0
+    xe, ye = fld.shape
+    while np.isnan(fld[xs, :]).all():
+        assert xs < xe
+        xs += 1
+    while np.isnan(fld[xe - 1, :]).all():
+        assert xe > xs
+        xe -= 1
+    while np.isnan(fld[:, ys]).all():
+        assert ys < ye
+        ys += 1
+    while np.isnan(fld[:, ye - 1]).all():
+        assert ye > ys
+        ye -= 1
+    return xs, xe, ys, ye

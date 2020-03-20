@@ -1,6 +1,6 @@
 #!/usr/bin/env
 
-# STandard library
+# Standard library
 import pytest
 import sys
 import unittest
@@ -243,10 +243,8 @@ class IdentifyRegions2DSeeds(IdentifyRegions2D_Base):
 
 
 if __name__ == "__main__":
-
     import logging as log
 
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
     log.getLogger().setLevel(log.DEBUG)
-
     unittest.main()

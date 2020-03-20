@@ -22,8 +22,9 @@ import shapely.geometry as geo
 from scipy.ndimage import filters
 
 # Local
-from ..utils.spatial import path_along_domain_boundary
 from ..utils.spatial import great_circle_distance
+from ..utils.spatial import locate_domain_in_nans
+from ..utils.spatial import path_along_domain_boundary
 
 sys.setrecursionlimit(10000)
 
@@ -157,14 +158,14 @@ class FieldPoint(geo.Point):
 
     def get_info(self):
         """Return the most important properties as a dict."""
-        info = OrderedDict()
-        info["id"] = self.id
-        info["level"] = self.lvl
-        info["lon"] = self.lon
-        info["lat"] = self.lat
-        info["i"] = self.i
-        info["j"] = self.j
-        return info
+        return {
+            "id": self.id,
+            "level": self.lvl,
+            "lon": self.lon,
+            "lat": self.lat,
+            "i": self.i,
+            "j": self.j,
+        }
 
     @property
     def xy(self):
@@ -369,20 +370,19 @@ class Field2D(np.ndarray):
         to close contours that leave the domain.
         """
 
-        # Get start and end indices of domain (potentially) nested in NaNs
-        raise NotImplementedError("function 'locate_domain_in_nans' has gone missing!")
-        # xs, xe, ys, ye = locate_domain_in_nans(self)
+        # Get start and end indices of domain (potentially) nested in NaNs.
+        xs, xe, ys, ye = locate_domain_in_nans(self)
 
-        # Get the outer indices of the boundary hack zone
-        # Eat into the NaN boundary as far as possible, if there is one
-        # If there is none, or if it's thin, (also) eat into the domain
+        # Get the outer indices of the boundary hack zone.
+        # Eat into the NaN boundary as far as possible, if there is one.
+        # If there is none, or if it's thin, (also) eat into the domain.
         nx, ny = self.shape
         xss = max([xs - n, 0])
         xee = min([xe + n, nx])
         yss = max([ys - n, 0])
         yee = min([ye + n, ny])
 
-        # Get the inner indices of the boundary hack zone
+        # Get the inner indices of the boundary hack zone.
         xse = xss + n
         xes = xee - n
         yse = yss + n
@@ -415,8 +415,8 @@ class Field2D(np.ndarray):
          - conf: Configuration dict (section "IDENTIFY").
         """
 
-        # 'size' denotes the width of a box around a point in which all points
-        # can have the same value for the center still to be considered extreme
+        # `size` denotes the width of a box around a point in which all points
+        # may have the same value for the center still to be considered extreme
         # (cf. documentation of e.g. scipy.ndimage.filters.minimum_filter).
         # In this rectangle, all points are set to the value of the exetremum.
         size = conf["extrema-identification-size"]
@@ -426,7 +426,7 @@ class Field2D(np.ndarray):
         fld_areas = fct(self, size=size, mode="constant", cval=np.nan)
         fld_points = np.where(fld_areas == self, self, np.nan)
 
-        # Set base ID (optionally based on datetime)
+        # Set base ID (optionally based on datetime).
         id0 = 0
         if conf.get("ids-datetime", False):
             id0 = conf["datetime"] * 10 ** (conf["ids-datetime-digits"] + 1)

@@ -11,6 +11,10 @@ import matplotlib as mpl  # isort:skip
 
 mpl.use("Agg")
 
+# Import netCDF4 BEFORE h5py to prevent error
+import netCDF4  # isort:skip
+import h5py  # isort:skip
+
 # SR_DEV < Shorthand to embed IPython shell
 try:
     import IPython  # isort:skip

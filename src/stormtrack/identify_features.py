@@ -1023,18 +1023,17 @@ def read_input_field_lonlat(
      - conv_fact: Conversion factor applied to the field.
      - crop: cut N pixels off around the domain
     """
-    # Read the raw field from file, alonw with lon/lat fields
-    var_list = [fld_name, lon_name, lat_name]
+    # Read the raw field from file, along with lon/lat fields
     try:
         with nc4.Dataset(input_file, "r") as fi:
-            lon = fi[var_list[lon_name]][:]
-            lat = fi[var_list[lat_name]][:]
-            fld_raw = fi[var_list[fld_name]][0]  # strip leading time dimension
+            lon = fi[lon_name][:]
+            lat = fi[lat_name][:]
+            fld_raw = fi[fld_name][0]  # strip leading time dimension
     except Exception as e:
         err = "Cannot read '{}' from {}\n{}: {}".format(
             fld_name, input_file, e.__class__.__name__, str(e).strip()
         )
-        raise IOError(err) from None
+        raise IOError(err)
 
     # Shrink domain
     if crop is not None and crop > 0:

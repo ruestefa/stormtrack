@@ -616,10 +616,8 @@ class MergeSplit_Complex_TempRes(MergeSplit_Complex_Mixed_base):
 
 
 if __name__ == "__main__":
-
     import logging as log
 
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
     log.getLogger().setLevel(log.DEBUG)
-
     unittest.main()

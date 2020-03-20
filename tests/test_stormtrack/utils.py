@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-import sys
+# Standard library
 import logging as log
-from unittest import TestCase
-from pprint import pprint
+import sys
 from pprint import pformat
+from unittest import TestCase
 
+# Third-party
 import numpy as np
 
-# from IPython.terminal.embed import embed; embed()  # SR_DBG
+# First-party
 from stormtrack.core.typedefs import default_constants
 from stormtrack.core.identification import Feature
 
@@ -619,7 +620,6 @@ def feature_rectangle(xymin, xymax, id, ts=0):
 
 
 if __name__ == "__main__":
-
     import logging as log
 
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
