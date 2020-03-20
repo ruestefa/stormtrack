@@ -11,6 +11,7 @@ import warnings
 
 # ==============================================================================
 
+
 def ipython(__globals__, __locals__, __msg__=None, __err__=66):
     """Drop into an iPython shell with all global and local variables.
 
@@ -33,7 +34,8 @@ def ipython(__globals__, __locals__, __msg__=None, __err__=66):
         warnings.filterwarnings("ignore", category=DeprecationWarning)
         warnings.filterwarnings("ignore", category=PendingDeprecationWarning)
         import IPython
-        print('\n----------\n')
+
+        print("\n----------\n")
         globals().update(__globals__)
         locals().update(__locals__)
         if __msg__ is not None:
@@ -41,6 +43,7 @@ def ipython(__globals__, __locals__, __msg__=None, __err__=66):
         IPython.embed(display_banner=None)
         if __err__ is not None:
             sys.exit(__err__)
+
 
 def import_module(filename, setenv=None):
     """Import a Python module from file.
@@ -71,6 +74,7 @@ def import_module(filename, setenv=None):
         err = "Cannot import file as module: {}".format(filename)
         raise Exception(err)
 
+
 def extract_args(kwas, prefix):
     """Extract arguments from keyword argument dict by prefix.
 
@@ -99,8 +103,9 @@ def extract_args(kwas, prefix):
     for key, val in kwas.copy().items():
         if key.startswith(prefix):
             del kwas[key]
-            conf[key.replace(prefix, '')] = val
+            conf[key.replace(prefix, "")] = val
     return conf
+
 
 def print_args(args, *, skip=None, nt=40):
     """Print input arguments obtained by argparse (or any dict).
@@ -127,10 +132,11 @@ def print_args(args, *, skip=None, nt=40):
     if nt > 0:
         print("=" * nt)
 
-class TimestepGenerator:
 
-    def __init__(self, start, end, stride, format=None, mode="int",
-            n_before=0, n_after=0):
+class TimestepGenerator:
+    def __init__(
+        self, start, end, stride, format=None, mode="int", n_before=0, n_after=0
+    ):
         """Create timesteps from range arguments (start, end, stride).
 
         Parameters
@@ -155,8 +161,9 @@ class TimestepGenerator:
         # Check arguments
         modes = ["int", "str", "datetime"]
         if mode not in modes:
-            raise ValueError("Invalid mode {}; must be one of: {}".format(
-                    mode, ", ".join(modes)))
+            raise ValueError(
+                "Invalid mode {}; must be one of: {}".format(mode, ", ".join(modes))
+            )
 
         if format is None:
             # Determine format
@@ -172,8 +179,7 @@ class TimestepGenerator:
             try:
                 datetime.datetime.strptime(sts, format)
             except Exception as e:
-                err = "cannot derive timestep format from {}: {}".format(
-                        sts, e)
+                err = "cannot derive timestep format from {}: {}".format(sts, e)
                 raise ValueError(err)
 
         # Determine frequency
@@ -188,7 +194,7 @@ class TimestepGenerator:
             if n_before != 0 or n_after != 0:
                 raise NotImplementedError("n_before/n_after for monthly")
         else:
-            raise ValueError("unknown format: "+format)
+            raise ValueError("unknown format: " + format)
         self.frequency = frequency
 
         # Initialize parameters
@@ -209,13 +215,13 @@ class TimestepGenerator:
         else:
             self.start = datetime.datetime.strptime(str(start), format)
         if n_before != 0:
-            self.start -= n_before*self.stride
+            self.start -= n_before * self.stride
         if isinstance(end, datetime.datetime):
             self.end = end
         else:
             self.end = datetime.datetime.strptime(str(end), format)
         if n_after != 0:
-            self.end += n_after*self.stride
+            self.end += n_after * self.stride
         self.format = format
         self.mode = mode
 
@@ -249,7 +255,7 @@ class TimestepGenerator:
         mm = mm + self.stride
         if mm > 12:
             yyyy += 1
-            mm = mm%12
+            mm = mm % 12
         sts_new = "{:04}{:02}{}".format(yyyy, mm, sts_old[6:])
         ts_new = datetime.datetime.strptime(sts_new, self.format)
         return ts_new
@@ -259,7 +265,8 @@ class TimestepGenerator:
 
     def __repr__(self):
         return "TimestepsGenerator({}, {}, {})".format(
-                self.start, self.end, self.stride)
+            self.start, self.end, self.stride
+        )
 
     def tolist(self):
         """Return timesteps as list."""
@@ -307,16 +314,18 @@ class TimestepGenerator:
         for yyyymm in sorted(yyyymms):
             yyyy, mm = str(yyyymm)[:4], str(yyyymm)[4:]
             ts0 = int("{}0100".format(yyyymm))
-            ts1 = int("{:4}{:02}0100".format(
-                    int(yyyy)+1 if int(mm) == 12 else int(yyyy),
-                    1 if int(mm) == 12 else int(mm)+1,
-                ))
+            ts1 = int(
+                "{:4}{:02}0100".format(
+                    int(yyyy) + 1 if int(mm) == 12 else int(yyyy),
+                    1 if int(mm) == 12 else int(mm) + 1,
+                )
+            )
             tss = cls.from_args(None, [(ts0, ts1, 1)])[:-1]
             tss_all.extend(tss)
         return tss_all
 
-class TimestepStringFormatter:
 
+class TimestepStringFormatter:
     def __init__(self, format_string, return_timesteps=True, freq=None):
         """Create strings by inserting timesteps into a format string.
 
@@ -357,22 +366,22 @@ class TimestepStringFormatter:
         try:
             ind = inds[freq]
         except KeyError:
-            err = "invalid freq '{}'; must be one of {}".format(freq,
-                    sorted(inds.keys()))
+            err = "invalid freq '{}'; must be one of {}".format(
+                freq, sorted(inds.keys())
+            )
             raise ValueError(err)
 
         # Check presence of necessary keys (and absence of others)
         keys = ["{YYYY}", "{MM}", "{DD}", "{HH}", "{NN}"]
-        if (not all(k in fmt for k in keys[:ind]) or
-                any(k in fmt for k in keys[ind:])):
+        if not all(k in fmt for k in keys[:ind]) or any(k in fmt for k in keys[ind:]):
             err = "format string not {} frequency: {}".format(freq, fmt)
             raise ValueError(err)
 
     def protect_other_keys(self, format_string):
         """Replace non-timestep {KEY}s by {{KEY}}s to protect them."""
-        for key in set(re.findall(r'{[^}]+}', format_string)):
+        for key in set(re.findall(r"{[^}]+}", format_string)):
             if key not in self.ts_keys:
-                format_string = format_string.replace(key, "{"+key+"}")
+                format_string = format_string.replace(key, "{" + key + "}")
         return format_string
 
     def run(self, timesteps, extra_keys=None):
@@ -399,13 +408,13 @@ class TimestepStringFormatter:
             # Replace extra keys
             for key, val in extra_keys.items():
                 while not key.startswith("{{"):
-                    key = "{"+key
+                    key = "{" + key
                 while not key.endswith("}}"):
-                    key = key+"}"
+                    key = key + "}"
                 if val == key:
                     continue
                 while key in tmpl:
-                  tmpl = tmpl.replace(key, str(val))
+                    tmpl = tmpl.replace(key, str(val))
 
         # None
         if not any(key in tmpl for key in self.ts_keys):
@@ -419,7 +428,7 @@ class TimestepStringFormatter:
         # Yearly
         elif not any(key in tmpl for key in self.ts_keys[1:]):
             if not all(key in tmpl for key in self.ts_keys[:1]):
-                raise NotImplementedError("incomplete key set: "+tmpl)
+                raise NotImplementedError("incomplete key set: " + tmpl)
             return self._run(timesteps, 0, 4)
 
         # Monthly
@@ -430,25 +439,25 @@ class TimestepStringFormatter:
                     # TODO find general solution
                     return self._run(timesteps, 4, 6)
                 else:
-                    raise NotImplementedError("incomplete key set: "+tmpl)
+                    raise NotImplementedError("incomplete key set: " + tmpl)
             return self._run(timesteps, 0, 6)
 
         # Daily
         elif not any(key in tmpl for key in self.ts_keys[3:]):
             if not all(key in tmpl for key in self.ts_keys[:3]):
-                raise NotImplementedError("incomplete key set: "+tmpl)
+                raise NotImplementedError("incomplete key set: " + tmpl)
             return self._run(timesteps, 0, 8)
 
         # Hourly
         elif not any(key in tmpl for key in self.ts_keys[4:]):
             if not all(key in tmpl for key in self.ts_keys[:4]):
-                raise NotImplementedError("incomplete key set: "+tmpl)
+                raise NotImplementedError("incomplete key set: " + tmpl)
             return self._run(timesteps, 0, 10)
 
         # Minute
         elif not any(key in tmpl for key in self.ts_keys[5:]):
             if not all(key in tmpl for key in self.ts_keys[:5]):
-                raise NotImplementedError("incomplete key set: "+tmpl)
+                raise NotImplementedError("incomplete key set: " + tmpl)
             return self._run(timesteps, 0, 12)
 
         # None
@@ -463,27 +472,28 @@ class TimestepStringFormatter:
                 if str(ts)[i:j] == str(tss[0])[i:j]:
                     del files_ts[tss]
                     files_ts[tss + (ts,)] = self._tmpl.format(
-                            YYYY = str(ts)[ 0: 4],
-                            MM   = str(ts)[ 4: 6],
-                            DD   = str(ts)[ 6: 8],
-                            HH   = str(ts)[ 8:10],
-                            NN   = str(ts)[10:12],
-                        )
+                        YYYY=str(ts)[0:4],
+                        MM=str(ts)[4:6],
+                        DD=str(ts)[6:8],
+                        HH=str(ts)[8:10],
+                        NN=str(ts)[10:12],
+                    )
                     break
             else:
                 files_ts[(ts,)] = self._tmpl.format(
-                        YYYY = str(ts)[ 0: 4],
-                        MM   = str(ts)[ 4: 6],
-                        DD   = str(ts)[ 6: 8],
-                        HH   = str(ts)[ 8:10],
-                        NN   = str(ts)[10:12],
-                    )
+                    YYYY=str(ts)[0:4],
+                    MM=str(ts)[4:6],
+                    DD=str(ts)[6:8],
+                    HH=str(ts)[8:10],
+                    NN=str(ts)[10:12],
+                )
         if self.return_timesteps:
             return files_ts
         elif self.single_file:
             return next(iter(files_ts.values()))
         else:
             return sorted(files_ts.values())
+
 
 # ==============================================================================
 # Custon Json encoder to write lists on single lines
@@ -492,15 +502,17 @@ class TimestepStringFormatter:
 import uuid
 import json
 
+
 class NoIndent(object):
     def __init__(self, value):
         self.value = value
+
 
 class NoIndentEncoder(json.JSONEncoder):
     def __init__(self, *args, **kwas):
         super(NoIndentEncoder, self).__init__(*args, **kwas)
         self.kwas = dict(kwas)
-        del self.kwas['indent']
+        del self.kwas["indent"]
         self._replacement_map = {}
 
     def default(self, o):
@@ -516,5 +528,6 @@ class NoIndentEncoder(json.JSONEncoder):
         for k, v in self._replacement_map.iteritems():
             result = result.replace('"@@%s@@"' % (k,), v)
         return result
+
 
 # ==============================================================================

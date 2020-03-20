@@ -157,8 +157,12 @@ help:
 #==============================================================================
 
 .PHONY: clean-all
-clean-all: clean-venv clean-test clean-build clean-cython clean-pyc #CMD Remove all build, test, coverage and Python artifacts.
-	@echo -e "${ECHO_PREFIX}cleaning up"
+clean-all: clean clean-venv clean-test #CMD Remove all build, test, coverage and Python artifacts.
+	@echo -e "${ECHO_PREFIX}cleaning up everything"
+
+.PHONY: clean
+clean: clean-build clean-cython clean-pyc #CMD Remove all build and Python artifacts.
+	@echo -e "${ECHO_PREFIX}cleaning up code artifacts"
 
 .PHONY: clean-build
 clean-build: #CMD Remove Python build artifacts.
@@ -182,6 +186,8 @@ clean-pyc: #CMD Remove Python file artifacts.
 	\find . -not -path "${VENV_DIR}" -name '*.pyo' -exec rm -f {} \+
 	\find . -not -path "${VENV_DIR}" -name '*~' -exec rm -f {} \+
 	\find . -not -path "${VENV_DIR}" -name '__pycache__' -exec rm -rf {} \+
+
+.PHONY: clean-code
 
 .PHONY: clean-test
 clean-test: #CMD Remove testing artifacts.

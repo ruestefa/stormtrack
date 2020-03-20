@@ -8,6 +8,8 @@ cyclone_id/__init__.py
 cyclone_id/config.py
 cyclone_id/cyclone.py
 cyclone_id/identify.py
+fronts/fronts.py
+fronts/libfronts.py
 tracking_old/__init__.py
 tracking_old/generic_feature.py
 tracking_old/tracking.py

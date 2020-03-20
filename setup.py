@@ -5,6 +5,7 @@ The setup script.
 """
 # Third-party
 import numpy
+from numpy import f2py
 from setuptools.extension import Extension
 from setuptools import find_packages
 from setuptools import setup
@@ -62,6 +63,13 @@ scripts = [
     "identify-features=stormtrack.identify_features:pre_main",
     "track-features=stormtrack.track_features:pre_main",
 ]
+
+# Compile FORTRAN files
+with open("src/stormtrack/extra/fronts/_libfronts.f77", "rb") as f:
+    code = f.read()
+stat = f2py.compile(code, modulename="src/stormtrack.extra.fronts._libfronts")
+if stat != 0:
+    raise Exception("f2py failed", stat)
 
 # https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#compiler-options
 Compiler.Options.annotate = True

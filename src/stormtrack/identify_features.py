@@ -22,8 +22,8 @@ import numpy as np
 import scipy as sp
 
 # Local
-from .core.identification import DEFAULT_TYPE_CODES
 from .core.identification import cyclones_to_features
+from .core.identification import DEFAULT_TYPE_CODES
 from .core.identification import features_grow
 from .core.identification import identify_features as identify_features_core
 from .core.io import write_feature_file
@@ -31,41 +31,22 @@ from .core.typedefs import default_constants
 from .core.typedefs import Grid
 from .core.utilities import reduce_grid_resolution
 from .core.utilities import threshold_at_timestep
+from .extra.cyclone_id.identify import identify_features as identify_cyclones_core
+from .extra.cyclone_id import config as cycl_cfg
+from .extra.fronts.fronts import identify_fronts
+from .extra.io_misc import plot_cyclones_depressions_extrema
+from .extra.utilities_misc import Field2D
+from .identify_fronts import read_fields as fronts_read_raw_fields
 from .utils.netcdf import nc_read_var_list
 from .utils.netcdf import point_list_to_field
-from .utils.various import TimestepGenerator
-from .utils.various import TimestepStringFormatter
 from .utils.various import extract_args
 from .utils.various import ipython
 from .utils.various import print_args
+from .utils.various import TimestepGenerator
+from .utils.various import TimestepStringFormatter
 
-# SR_TMP< TODO solve issue with compiling fronts._libfronts on daint
-# Fronts
-try:
-    from .fronts.fronts import identify_fronts
-    from .identify_fronts import read_fields as fronts_read_raw_fields
-except ImportError as e:
-    warn(f"fronts-related import failed; cannot identify fronts! ({e})")
-    identify_fronts = None
-    fronts_read_raw_fields = None
-# SR_TMP>
 
 log.basicConfig(format="%(message)s", level=log.INFO)
-
-# SR_TMP< TODO clean up
-# Cyclones
-try:
-    from .extra.cyclone_id.identify import identify_features as identify_cyclones_core
-    from .extra.cyclone_id import config as cycl_cfg
-    from .extra.io_misc import plot_cyclones_depressions_extrema
-    from .extra.utilities_misc import Field2D
-except ImportError as e:
-    warn(f"cyclones-related import failed; cannot identify cyclones! ({e})")
-    identify_cyclones_core = None
-    cycl_cfg = None
-    plot_cyclones_depressions_extrema = None
-    Field2D = None
-# SR_TMP>
 
 
 def main(
