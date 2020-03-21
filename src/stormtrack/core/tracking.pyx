@@ -53,31 +53,31 @@ TS_FMT_DEFAULT = None
 cdef class FeatureTracker:
 
     def __cinit__(self, *,
-            float       f_overlap,
-            float       f_size,
-            float       min_p_tot,
-            float       min_p_overlap,
-            float       min_p_size,
-            int         minsize                     = 1,
-            int         maxsize                     = -1,
-            int         max_children                = 6,
-            int         split_tracks_n              = -1,
-            int         grow_features_n             = 0,
-            bint        reshrink_tracked_features   = False,
-            bint        merge_features              = False,
-            int         connectivity                = 8,
-            bint        size_lonlat                 = False,
-            str         area_lonlat_method          = "grid",
-            int         nx                          = -1,
-            int         ny                          = -1,
-            np.ndarray  lon2d                       = None,
-            np.ndarray  lat2d                       = None,
-            np.ndarray  lon1d                       = None,
-            np.ndarray  lat1d                       = None,
-            str         ts_fmt                      = None,
-            bint        debug                       = False,
-            dict        _cache                      = None,
-        ):
+        float f_overlap,
+        float f_size,
+        float min_p_tot,
+        float min_p_overlap,
+        float min_p_size,
+        int minsize = 1,
+        int maxsize = -1,
+        int max_children = 6,
+        int split_tracks_n = -1,
+        int grow_features_n = 0,
+        bint reshrink_tracked_features = False,
+        bint merge_features = False,
+        int connectivity = 8,
+        bint size_lonlat = False,
+        str area_lonlat_method = "grid",
+        int nx = -1,
+        int ny = -1,
+        np.ndarray lon2d = None,
+        np.ndarray lat2d = None,
+        np.ndarray lon1d = None,
+        np.ndarray lat1d = None,
+        str ts_fmt = None,
+        bint debug = False,
+        dict _cache = None,
+    ):
         if max_children < 1:
             raise ValueError("max_children < 1")
 
@@ -86,21 +86,21 @@ cdef class FeatureTracker:
         elif grow_features_n > 0:
             reshrink_tracked_features = True
 
-        self.f_overlap                  = f_overlap
-        self.f_size                     = f_size
-        self.min_p_tot                  = min_p_tot
-        self.min_p_overlap              = min_p_overlap
-        self.min_p_size                 = min_p_size
-        self.minsize                    = minsize
-        self.maxsize                    = maxsize
-        self.size_lonlat                = size_lonlat
-        self.area_lonlat_method         = area_lonlat_method
-        self.max_children               = max_children
-        self.split_tracks_n             = split_tracks_n
-        self.grow_features_n            = grow_features_n
-        self.reshrink_tracked_features  = reshrink_tracked_features
-        self.merge_features             = merge_features
-        self.ts_fmt                     = ts_fmt
+        self.f_overlap = f_overlap
+        self.f_size = f_size
+        self.min_p_tot = min_p_tot
+        self.min_p_overlap = min_p_overlap
+        self.min_p_size = min_p_size
+        self.minsize = minsize
+        self.maxsize = maxsize
+        self.size_lonlat = size_lonlat
+        self.area_lonlat_method = area_lonlat_method
+        self.max_children = max_children
+        self.split_tracks_n = split_tracks_n
+        self.grow_features_n = grow_features_n
+        self.reshrink_tracked_features = reshrink_tracked_features
+        self.merge_features = merge_features
+        self.ts_fmt = ts_fmt
 
         # Check/set grid size and lon/lat arrays
         if lon2d is not None and lat2d is not None:
@@ -108,19 +108,21 @@ cdef class FeatureTracker:
             lat2d_shape = np.asarray(lat2d).shape
 
             if lon2d_shape != lat2d_shape:
-                err = ("lon2d and lat2d differ in shape: {} != {}"
-                        ).format(lon2d_shape, lat2d_shape)
-                raise ValueError(err)
+                raise ValueError(
+                    f"lon2d and lat2d differ in shape: {lon2d_shape} != {lat2d_shape}"
+                )
 
             if len(lon2d_shape) != 2:
-                err = "lon2d/lat2d not 2D: {}".format(lon2d_shape)
-                raise ValueError(err)
+                raise ValueError(
+                    f"lon2d/lat2d not 2D: {lon2d_shape}"
+                )
 
             if nx > 0 and ny > 0:
                 if (nx, ny) != lon2d_shape:
-                    err = ("inconsistent grid sizes (nx, ny) v. lon2d/lat2d: "
-                            "({}, {}) != {}").format(nx, ny, lon2d_shape)
-                    raise ValueError(err)
+                    raise ValueError(
+                        f"inconsistent grid sizes (nx, ny) v. lon2d/lat2d: "
+                        f"({nx}, {ny}) != {lon2d_shape}"
+                    )
             else:
                 nx, ny = lon2d_shape
 
@@ -131,23 +133,21 @@ cdef class FeatureTracker:
             lat1d_size = np.asarray(lat1d).size
 
             if len(lon1d_shape) != 1 or len(lat1d_shape) != 1:
-                err = ("lon1d/lat1d not 1D: {}, {}"
-                        ).format(lon1d_shape, lat1d_shape)
-                raise ValueError(err)
+                raise ValueError(f"lon1d/lat1d not 1D: {lon1d_shape}, {lat1d_shape}")
 
             if nx > 0:
                 if nx != lon1d_size:
-                    err = ("inconsistent grid sizes nx v. lon1d: {} != {}"
-                            ).format(nx, lon1d_size)
-                    raise ValueError(err)
+                    raise ValueError(
+                        f"inconsistent grid sizes nx v. lon1d: {nx} != {lon1d_size}"
+                    )
             else:
                 nx = lon1d_size
 
             if ny > 0:
                 if ny != lat1d_size:
-                    err = ("inconsistent grid sizes ny v. lat1d: {} != {}"
-                            ).format(ny, lat1d_size)
-                    raise ValueError(err)
+                    raise ValueError(
+                        f"inconsistent grid sizes ny v. lat1d: {ny} != {lat1d_size}"
+                    )
             else:
                 nx = lat1d_size
 
@@ -155,14 +155,14 @@ cdef class FeatureTracker:
             err = "must pass one of (nx, ny), (lon2d, lat2d), (lon1d, lat1d)!"
             raise ValueError(err)
 
-        self.nx                         = nx
-        self.ny                         = ny
-        self.lon2d                      = lon2d
-        self.lat2d                      = lat2d
-        self.lon1d                      = lon1d
-        self.lat1d                      = lat1d
+        self.nx = nx
+        self.ny = ny
+        self.lon2d = lon2d
+        self.lat2d = lat2d
+        self.lon1d = lon1d
+        self.lat1d = lat1d
 
-        self.debug                      = debug
+        self.debug = debug
 
         if debug:
             log.debug("initialize FeatureTracker with debug output")
@@ -180,11 +180,8 @@ cdef class FeatureTracker:
 
         # Initialize constants
         self.constants = Constants(
-                nx = nx,
-                ny = ny,
-                connectivity = connectivity,
-                n_neighbors_max = 8,
-            )
+            nx=nx, ny=ny, connectivity=connectivity, n_neighbors_max=8,
+        )
 
         # Initialize grids
         self._grid_new = Grid(self.constants, alloc_tables=True, n_slots=1)
@@ -199,30 +196,26 @@ cdef class FeatureTracker:
     def __dealloc__(self):
         pass
 
-    # def __repr__(self):
-    #    return "{}".format(self.__class__.__name__)
-
-
     def check_setup(self, ref, action="raise"):
         if action not in ["raise", "warn"]:
-            raise ValueError("invalid action: {}".format(action))
+            raise ValueError(f"invalid action: {action}")
 
         setup = {
-                "f_overlap"      : self.f_overlap,
-                "f_size"         : self.f_size,
-                "min_p_tot"      : self.min_p_tot,
-                "min_p_overlap"  : self.min_p_overlap,
-                "min_p_size"     : self.min_p_size,
-                "minsize"        : self.minsize,
-                "maxsize"        : self.maxsize,
-                "max_children"   : self.max_children,
-                "nx"             : self.nx,
-                "ny"             : self.ny,
-                "size_lonlat"    : self.size_lonlat,
-                "split_tracks_n" : self.split_tracks_n,
-                "merge_features" : self.merge_features,
-                "ts_fmt"         : self.ts_fmt,
-            }
+            "f_overlap": self.f_overlap,
+            "f_size": self.f_size,
+            "min_p_tot": self.min_p_tot,
+            "min_p_overlap": self.min_p_overlap,
+            "min_p_size": self.min_p_size,
+            "minsize": self.minsize,
+            "maxsize": self.maxsize,
+            "max_children": self.max_children,
+            "nx": self.nx,
+            "ny": self.ny,
+            "size_lonlat": self.size_lonlat,
+            "split_tracks_n": self.split_tracks_n,
+            "merge_features": self.merge_features,
+            "ts_fmt": self.ts_fmt,
+        }
 
         unchecked = sorted(setup.keys())
         leftovers = []
@@ -233,8 +226,7 @@ cdef class FeatureTracker:
                 leftovers.append(key)
             else:
                 if not ok:
-                    err = "inconsistent option {}: {} != {}".format(
-                            key, setup[key], val)
+                    err = f"inconsistent option {key}: {setup[key]} != {val}"
                     if action == "raise":
                         raise Exception(err)
                     elif action == "warn":
@@ -242,16 +234,17 @@ cdef class FeatureTracker:
                 unchecked.remove(key)
 
         if unchecked:
-            log.info("{} unchecked setup parameters: {}".format(len(unchecked),
-                    ", ".join(unchecked)))
+            log.info(
+                f"{len(unchecked)} unchecked setup parameters: {', '.join(unchecked)}"
+            )
 
         if leftovers:
-            log.info("{} left-over reference setup parameters: {}".format(
-                    len(leftovers), ", ".join(leftovers)))
-
+            log.info(
+                f"{len(leftovers)} left-over reference setup parameters: "
+                f"{', '.join(leftovers)}"
+            )
 
     cpdef void reset(self):
-
         self.previous_timestep = self._ts_nan
         self.current_timestep = self._ts_nan
 
@@ -270,8 +263,7 @@ cdef class FeatureTracker:
     # cpdef void register_id(self, np.uint64_t id_) except *:
     def register_id(self, id_):
         if self.id_in_use(id):
-            err = "track id already in use: {}".format(id_)
-            raise ValueError(id_)
+            raise ValueError("track id already in use: {id_}")
         self.used_ids.add(id_)
 
     def min_ts_start(self):
@@ -280,13 +272,12 @@ cdef class FeatureTracker:
             return None
         return min([t.ts_start() for t in self.active_tracks])
 
-
     def restart(self, tracks, timestep):
         """Restart tracker from track file.
 
         All unfinished tracks are inserted as active tracks.
-        """
 
+        """
         self.previous_timestep = self._ts_nan
         self.current_timestep = timestep
 
@@ -305,7 +296,6 @@ cdef class FeatureTracker:
             else:
                 self.finished_tracks.append(track)
 
-
     cpdef void extend_tracks(self, list features, np.uint64_t timestep,
         ) except *:
         """Extend all active track branches with a new set of features.
@@ -315,9 +305,11 @@ cdef class FeatureTracker:
         found after a certain number of timsteps) are terminated.
 
         Tracks with no active branches left are terminated.
+
         """
         cdef bint debug = self.debug
-        if debug: log.debug("{}.extend_tracks: timestep {}".format(self.__class__.__name__, timestep))
+        if debug:
+            log.debug(f"{type(self).__name__}.extend_tracks: timestep {timestep}")
         cdef int i, j, n
         self.previous_timestep = self.current_timestep
         self.current_timestep = timestep
@@ -326,7 +318,7 @@ cdef class FeatureTracker:
         self._grid_new.reset()
 
         # Select features in size range
-        cdef int n_features_old=len(features)
+        cdef int n_features_old = len(features)
         cdef Feature feature, neighbor
         cdef np.float32_t area
         cdef list features_old
@@ -336,11 +328,13 @@ cdef class FeatureTracker:
                 features = []
                 for feature in features_old:
                     if self.area_lonlat_method == "grid":
-                        area = feature.area_lonlat(self.lon1d, self.lat1d,
-                                method=self.area_lonlat_method)
+                        area = feature.area_lonlat(
+                            self.lon1d, self.lat1d, method=self.area_lonlat_method,
+                        )
                     else:
-                        area = feature.area_lonlat(self.lon2d, self.lat2d,
-                                method=self.area_lonlat_method)
+                        area = feature.area_lonlat(
+                            self.lon2d, self.lat2d, method=self.area_lonlat_method,
+                        )
                     if self.minsize <= area <= self.maxsize:
                         features.append(feature)
             else:
@@ -349,30 +343,44 @@ cdef class FeatureTracker:
                 for feature in features_old:
                     if self.minsize <= feature.n <= self.maxsize:
                         features.append(feature)
-            if debug: log.debug("select {}/{} features in size range ({}..{})".format(len(features), n_features_old, self.minsize, self.maxsize))
+            if debug:
+                log.debug(
+                    f"select {len(features)}/{n_features_old} features in size range "
+                    f"({self.minsize}..{self.maxsize})"
+                )
         elif self.minsize > 0:
             if self.size_lonlat:
                 features_old = features
                 features = []
                 for feature in features_old:
                     if self.area_lonlat_method == "grid":
-                        area = feature.area_lonlat(self.lon1d, self.lat1d,
-                                method=self.area_lonlat_method)
+                        area = feature.area_lonlat(
+                            self.lon1d, self.lat1d, method=self.area_lonlat_method,
+                        )
                     else:
-                        area = feature.area_lonlat(self.lon2d, self.lat2d,
-                                method=self.area_lonlat_method)
+                        area = feature.area_lonlat(
+                            self.lon2d, self.lat2d, method=self.area_lonlat_method,
+                        )
                     if self.minsize <= area:
                         features.append(feature)
             else:
                 features = [feature for feature in features
                         if self.minsize <= feature.n]
-            if debug: log.debug("select {}/{} features in size range ({}..)".format(len(features), n_features_old, self.minsize))
+            if debug:
+                log.debug(
+                    f"select {len(features)}/{n_features_old} features in size range "
+                    f"({self.minsize}..)"
+                )
 
         if self.grow_features_n > 0:
             # Grow features
-            # self._grid_grow.reset()
-            features_grow(self.grow_features_n, features, self.constants,
-                    inplace=True, retain_orig=True)# , grid=self._grid_grow)
+            features_grow(
+                self.grow_features_n,
+                features,
+                self.constants,
+                inplace=True,
+                retain_orig=True,
+            )
 
         # Remove some neighbors TODO appropriate comment
         cdef int n_features=len(features)
@@ -380,7 +388,10 @@ cdef class FeatureTracker:
             for feature in features:
                 for neighbor in feature.neighbors.copy():
                     if neighbor not in features:
-                        if debug: log.debug("feature {}: remove neighbor {}".format(feature.id, neighbor.id))
+                        if debug:
+                            log.debug(
+                                f"feature {feature.id}: remove neighbor {neighbor.id}"
+                            )
                         feature.neighbors.remove(neighbor)
 
         # Convert features to cfeatures
@@ -388,14 +399,14 @@ cdef class FeatureTracker:
         cdef bint ignore_missing_neighbors = False
         dbg_check_features_cregion_pixels(features)
         features_to_cregions(
-                features,
-                n_features,
-                &cfeatures,
-                cregion_conf_default(),
-                ignore_missing_neighbors,
-                self._grid_new.to_c(),
-                self.constants.to_c(),
-            )
+            features,
+            n_features,
+            &cfeatures,
+            cregion_conf_default(),
+            ignore_missing_neighbors,
+            self._grid_new.to_c(),
+            self.constants.to_c(),
+        )
         dbg_check_features_cregion_pixels(features)
         self._feature_dict_new = {}
         for i in range(n_features):
@@ -403,32 +414,28 @@ cdef class FeatureTracker:
 
         # Initialize pixel region table
         pixel_region_table_init_regions(
-                self._grid_new.to_c().pixel_region_table,
-                &cfeatures,
-                &cfeatures,
-                n_slots_max=1,
-            )
+            self._grid_new.to_c().pixel_region_table,
+            &cfeatures,
+            &cfeatures,
+            n_slots_max=1,
+        )
 
-        # =============================================
-        if debug: log.debug("\n" + "<"*40 + "\n")
-        # ---------------------------------------------
+        if debug:
+            log.debug("\n" + "<"*40 + "\n")
         self._extend_tracks_core(features, &cfeatures)
-        # ---------------------------------------------
-        if debug: log.debug("\n" + ">"*40 + "\n")
-        # =============================================
+        if debug:
+            log.debug("\n" + ">"*40 + "\n")
 
         # Swap grids
         self._swap_grids()
 
     cdef void _swap_grids(self) except *:
-
         # Unlink cregions from features
         cdef FeatureTrack track
         cdef Feature feature
         for track in self.active_tracks:
             for feature in track.features_ts(self.previous_timestep):
                 feature.reset_cregion(warn=False)
-
         # Swap grids
         cdef Grid grid_tmp
         grid_tmp = self._grid_now
@@ -436,10 +443,12 @@ cdef class FeatureTracker:
         self._grid_new = grid_tmp
 
     # SR_TODO move to separate class TrackExtender
-    cdef void _extend_tracks_core(self, list features, cRegions* cfeatures
-            ) except *:
+    cdef void _extend_tracks_core(self, list features, cRegions* cfeatures) except *:
         cdef bint debug = self.debug
-        cdef int i, j, k, n
+        cdef int i
+        cdef int j
+        cdef int k
+        cdef int n
         cdef Feature feature
         cdef cRegion cfeature
         cdef FeatureTrack track
@@ -454,14 +463,25 @@ cdef class FeatureTracker:
 
         # DBG_BLOCK <
         if debug:
-            log.debug("\nSTATUS: finished/active/features {:3} {:3} {:3}\n".format(len(self.finished_tracks), len(self.active_tracks), len(features)))
-            log.debug("{} heads:".format(len(self.head_features())))
+            log.debug(
+                f"\nSTATUS: finished/active/features {len(self.finished_tracks):3} "
+                f"{len(self.active_tracks):3} {len(features):3}\n"
+            )
+            log.debug(f"{len(self.head_features())} heads:")
             for vertex in self.head_vertices():
-                log.debug(" - [{}/{}]({}/{}) {}".format(vertex["feature"].id, (<Feature>vertex["feature"]).cregion.id, vertex["feature"].n, (<Feature>vertex["feature"]).cregion.pixels_n, vertex["type"]))
+                rid = (<Feature>vertex["feature"]).cregion.id
+                npx = (<Feature>vertex["feature"]).cregion.pixels_n
+                log.debug(
+                    f" - [{vertex['feature'].id}/{rid}]({vertex['feature'].n}/{npx}) "
+                    f"{vertex['type']}"
+                )
             log.debug("")
-            log.debug("{} features:".format(len(features)))
+            log.debug(f"{len(features)} features:")
             for i in range(cfeatures.n):
-                log.debug(" - [{}/{}]({}/{})".format(features[i].id, cfeatures.regions[i].id, features[i].n, cfeatures.regions[i].pixels_n))
+                log.debug(
+                    f" - [{features[i].id}/{cfeatures.regions[i].id}]"
+                    f"({features[i].n}/{cfeatures.regions[i].pixels_n})"
+                )
             log.debug("")
         # DBG_BLOCK >
 
@@ -470,7 +490,8 @@ cdef class FeatureTracker:
         combinations.n = 0
         combinations.max = 20
         combinations.candidates = <SuccessorCandidate*>malloc(
-                combinations.max*sizeof(SuccessorCandidate))
+            combinations.max*sizeof(SuccessorCandidate)
+        )
         for i in range(combinations.max):
             combinations.candidates[i].n = 0
             combinations.candidates[i].max = self.max_children
@@ -478,11 +499,14 @@ cdef class FeatureTracker:
             combinations.candidates[i].p_size = 0.0
             combinations.candidates[i].p_overlap = 0.0
             combinations.candidates[i].children = <cRegion**>malloc(
-                    self.max_children*sizeof(cRegion*))
+                self.max_children*sizeof(cRegion*)
+            )
             combinations.candidates[i].p_shares = <np.float32_t*>malloc(
-                    self.max_children*sizeof(np.float32_t))
+                self.max_children*sizeof(np.float32_t)
+            )
             combinations.candidates[i].n_overlaps = <np.int32_t*>malloc(
-                    self.max_children*sizeof(np.int32_t))
+                self.max_children*sizeof(np.int32_t)
+            )
             for j in range(self.max_children):
                 combinations.candidates[i].children[j] = NULL
                 combinations.candidates[i].p_shares[j] = 0.0
@@ -492,17 +516,22 @@ cdef class FeatureTracker:
         cdef int n_heads = len(self.head_features())
         cdef cGrid* dummy_grid = NULL
         cdef cRegions heads = cregions_create(n_heads)
-        cdef bint cleanup=False, unlink=False
-        cdef int forward=1, backward=-1
+        cdef bint cleanup = False
+        cdef bint unlink = False
+        cdef int forward = 1
+        cdef int backward = -1
         for feature in self.head_features():
             cregions_link_region(&heads, feature.cregion, cleanup, unlink)
-        self._find_successor_candidate_combinations(&heads, cfeatures,
-                &combinations, direction=forward)
+        self._find_successor_candidate_combinations(
+            &heads, cfeatures, &combinations, direction=forward,
+        )
         # SR_TODO restrict backward search to combinations w/ multiple children
         # SR_TODO (one-to-one combinations all already found forward)
-        self._find_successor_candidate_combinations(cfeatures, &heads,
-                &combinations, direction=backward)
-        if debug: log.debug("found {} successor candidate combinations".format(combinations.n))
+        self._find_successor_candidate_combinations(
+            cfeatures, &heads, &combinations, direction=backward,
+        )
+        if debug:
+            log.debug(f"found {combinations.n} successor candidate combinations")
 
         # Compute successor probabilities for all combinations
         self._compute_successor_probabilities(&combinations)
@@ -512,42 +541,64 @@ cdef class FeatureTracker:
 
         # DBG_BLOCK <
         if debug:
-            log.debug("\n{} successor candidate combinations (tot/size/overlap):".format(combinations.n))
+            log.debug(
+                f"\n{combinations.n} successor candidate combinations "
+                f"(tot/size/overlap):"
+            )
             for i in range(combinations.n):
                 child_ids = []
                 for j in range(combinations.candidates[i].n):
-                    child_ids.append(str(
-                            combinations.candidates[i].children[j].id))
-                log.debug(" {:4.2f} {:4.2f} {:4.2f} [{}]{}[{}] ({})".format(combinations.candidates[i].p_tot, combinations.candidates[i].p_size, combinations.candidates[i].p_overlap, combinations.candidates[i].parent.id, "->" if combinations.candidates[i].direction > 0 else "<-", "/".join(child_ids), combinations.candidates[i].direction))
+                    child_ids.append(str(combinations.candidates[i].children[j].id))
+                log.debug(
+                    f" {combinations.candidates[i].p_tot:4.2f} "
+                    f"{combinations.candidates[i].p_size:4.2f} "
+                    f"{combinations.candidates[i].p_overlap:4.2f} "
+                    f"[{combinations.candidates[i].parent.id}]"
+                    f"{'->' if combinations.candidates[i].direction > 0 else '<-'}"
+                    f"[{'/'.join(child_ids)}] ({combinations.candidates[i].direction})"
+                )
             log.debug("")
         # DBG_BLOCK >
 
         # Assign successors
-        cdef list features_todo = self._assign_successors(features, cfeatures,
-                &combinations)
+        cdef list features_todo = self._assign_successors(
+            features, cfeatures, &combinations,
+        )
 
         # Start tracks (left-over features)
         n = 0
         for feature in features_todo:
             n += 1
             new_track = self._start_track(feature.cregion)
-            if debug: log.debug("started new track {} with feature {}".format(new_track.id, feature.cregion.id))
-        if debug: log.debug("started {} new tracks".format(n))
+            if debug:
+                log.debug(
+                    f"started new track {new_track.id} with feature "
+                    f"{feature.cregion.id}"
+                )
+        if debug:
+            log.debug(f"started {n} new tracks")
 
         # Finish branches
         n = 0
         for vertex in self.head_vertices():
             if vertex["ts"] < self.current_timestep:
                 n += 1
-                if debug: log.debug("finish branch of track {} at feature [{}/{}]".format(vertex["feature"].track().id, vertex["feature"].id, (<Feature>vertex["feature"]).cregion.id))
+                if debug:
+                    rid = (<Feature>vertex["feature"]).cregion.id
+                    log.debug(
+                        f"finish branch of track {vertex['feature'].track().id} at "
+                        f"feature [{vertex['feature'].id}/{rid}]"
+                    )
                 self._finish_branch(vertex)
-        if debug: log.debug("finished {} branches".format(n))
+        if debug:
+            log.debug(f"finished {n} branches")
 
         # SR_TMP <
         # Count tracks to be finished to get an idea whether parallelization
         # might be worth-while and above which threshold
         n = sum([1 for t in self.active_tracks if not any(t.graph.vs["active_head"])])
-        if debug: log.debug("[{}] {} tracks about to be finished ++++".format(self.current_timestep, n))
+        if debug:
+            log.debug(f"[{self.current_timestep}] {n} tracks about to be finished ++++")
         # SR_TMP >
 
         # Finish tracks (no heads left)
@@ -556,15 +607,19 @@ cdef class FeatureTracker:
             if track.is_finished():
                 n += 1
                 self._finish_track(track, force=False)
-        if n > 0:
-            if debug: log.debug("finished {}/{} active tracks".format(n, len(self.active_tracks) + n))
-        if debug: log.debug("finished {} tracks".format(n))
+        if debug:
+            if n > 0:
+                log.debug(f"finished {n}/{len(self.active_tracks) + n} active tracks")
+            log.debug("finished {n} tracks")
 
         # DBG_BLOCK <
         if debug:
-            log.debug("\n{} heads:".format(len(self.head_features())))
+            log.debug(f"\n{len(self.head_features())} heads:")
             for feature in self.head_features():
-                log.debug(" - track {} feature {}/{} ({}/{})".format(feature.track().id, feature.id, feature.cregion.id, feature.n, feature.cregion.pixels_n))
+                log.debug(
+                    f" - track {feature.track().id} feature {feature.id}/"
+                    f"{feature.cregion.id} ({feature.n}/{feature.cregion.pixels_n})"
+                )
         # DBG_BLOCK >
 
         # Clean up arrays
@@ -574,13 +629,14 @@ cdef class FeatureTracker:
             free(combinations.candidates[i].n_overlaps)
         free(combinations.candidates)
 
-
-    cdef void _find_successor_candidates(self, cRegion* parent,
-            cRegions* cfeatures, cRegions *candidates, int direction):
+    cdef void _find_successor_candidates(
+        self, cRegion* parent, cRegions* cfeatures, cRegions *candidates, int direction,
+    ):
         cdef bint debug = self.debug
         cdef int i
         cdef cRegion* cfeature
-        cdef bint cleanup=False, unlink=False
+        cdef bint cleanup = False
+        cdef bint unlink = False
         cdef PixelRegionTable table_parent
         cdef PixelRegionTable table_child
         if direction > 0:
@@ -590,28 +646,52 @@ cdef class FeatureTracker:
             table_parent = self._grid_new.to_c().pixel_region_table
             table_child = self._grid_now.to_c().pixel_region_table
         candidates.n = 0
-        if debug: log.debug("find successor candidates for [/{}] (up to {})".format(parent.id, cfeatures.n))
+        if debug:
+            log.debug(
+                f"find successor candidates for [/{parent.id}] (up to {cfeatures.n})"
+            )
         for i in range(cfeatures.n):
             cfeature = cfeatures.regions[i]
             # SR_TMP <
-            if debug: log.debug("[/{}](/{}) <-> [/{}](/{})".format(parent.id, parent.pixels_n, cfeature.id, cfeature.pixels_n))
-            if cregion_overlaps_tables(parent, cfeature,
-                    table_parent, table_child):
+            if debug:
+                log.debug(
+                    f"[/{parent.id}](/{parent.pixels_n}) <-> "
+                    f"[/{cfeature.id}](/{cfeature.pixels_n})"
+                )
+            if cregion_overlaps_tables(parent, cfeature, table_parent, table_child):
             # if cregion_overlaps(parent, cfeature):
             # SR_TMP >
-                if debug: log.debug(" - [/{}](/{}) overlaps [/{}](/{})".format(parent.id, parent.pixels_n, cfeature.id, cfeature.pixels_n))
+                if debug:
+                    log.debug(
+                        f" - [/{parent.id}](/{parent.pixels_n}) "
+                        f"overlaps [/{cfeature.id}](/{cfeature.pixels_n})"
+                    )
                 cregions_link_region(candidates, cfeature, cleanup, unlink)
             else:
-                if debug: log.debug(" - [/{}](/{}) doesn't overlap [/{}](/{})".format(parent.id, parent.pixels_n, cfeature.id, cfeature.pixels_n))
+                if debug:
+                    log.debug(
+                        f" - [/{parent.id}](/{parent.pixels_n}) doesn't overlap "
+                        f"[/{cfeature.id}](/{cfeature.pixels_n})"
+                    )
 
-
-    cdef void _find_successor_candidate_combinations(self, cRegions* parents,
-            cRegions* cfeatures, SuccessorCandidates *combinations,
-            int direction) except *:
+    cdef void _find_successor_candidate_combinations(
+        self,
+        cRegions* parents,
+        cRegions* cfeatures,
+        SuccessorCandidates *combinations,
+        int direction,
+    ) except *:
         cdef bint debug = self.debug
-        cdef str _name_ = "{}._find_successor_candidate_combinations".format(self.__class__.__name__)
-        if debug: log.debug("< {}: {} parents, {} candidates, {} existing combinations, direction {}".format(_name_, parents.n, cfeatures.n, combinations.n, direction))
-        cdef int i, j
+        cdef str _name_ = (
+            f"{type(self).__name__}._find_successor_candidate_combinations"
+        )
+        if debug:
+            log.debug(
+                f"< {_name_}: {parents.n} parents, {cfeatures.n} candidates, "
+                f"{combinations.n} existing combinations, direction {direction}"
+            )
+        cdef int i
+        cdef int j
         cdef cRegion* parent
         cdef cRegion* child
         cdef cGrid* dummy_grid = NULL
@@ -619,39 +699,46 @@ cdef class FeatureTracker:
         cdef int n_new_combinations
         for i in range(parents.n):
             parent = parents.regions[i]
-            if debug: log.debug("parent [{}]({})".format(parent.id, parent.pixels_n))
+            if debug:
+                log.debug(f"parent [{parent.id}]({parent.pixels_n})")
 
             # Find all successor candidates (non-zero overlap)
-            self._find_successor_candidates(parent, cfeatures, &candidates,
-                    direction)
-            if debug: log.debug(" -> found {} candidates".format(candidates.n))
+            self._find_successor_candidates(parent, cfeatures, &candidates, direction)
+            if debug:
+                log.debug(f" -> found {candidates.n} candidates")
 
             # Find all combinations of candidates
             n_new_combinations = self._combine_candidates(
-                    parent, &candidates, combinations, direction)
+                parent, &candidates, combinations, direction,
+            )
 
             # DBG_BLOCK <
             if debug:
-                if debug: log.debug(" -> found {} new candidate combinations:".format(n_new_combinations))
+                log.debug(f" -> found {n_new_combinations} new candidate combinations:")
                 for i in range(combinations.n - n_new_combinations, combinations.n):
                     indices = []
                     for j in range(combinations.candidates[i].n):
                         child = combinations.candidates[i].children[j]
                         if child is not NULL:
                             indices.append(child.id)
-                    if debug: log.debug("     - {}".format(", ".join([str(x) for x in indices])))
+                        log.debug(f"     - {', '.join([str(x) for x in indices])}")
             # DBG_BLOCK >
 
-
-    cdef int _combine_candidates(self, cRegion* parent,
-            cRegions* candidates, SuccessorCandidates *combinations,
-            int direction) except -1:
+    cdef int _combine_candidates(
+        self,
+        cRegion* parent,
+        cRegions* candidates,
+        SuccessorCandidates *combinations,
+        int direction,
+    ) except -1:
         cdef bint debug = self.debug
-        cdef str _name_
-        if debug: _name_ = "{}._combine_candidates".format(self.__class__.__name__)
-        if debug: log.debug("< {}: {} candidates, direction {}".format(_name_, candidates.n, direction))
-        cdef int i, j, k, n
-
+        cdef str _name_ = f"{type(self).__name__}._combine_candidates"
+        if debug:
+            log.debug("< {_name_}: {candidates.n} candidates, direction {direction}")
+        cdef int i
+        cdef int j
+        cdef int k
+        cdef int n
         # Find all combinations of indices
         # SR_TMP < Python implementation (might be slow)
         cdef list indices = []
@@ -662,8 +749,12 @@ cdef class FeatureTracker:
             nmin = 2
         indices = all_combinations(indices, nmin, self.max_children)
         cdef int n_combinations = len(indices)
-        # if debug: log.debug("found {} combinations: {}".format(n_combinations, ", ".join(["/".join([str(i) for i in ii]) for ii in indices])))
-        if debug: log.debug("found {} combinations: {}".format(n_combinations, pformat(indices)))
+        if debug:
+            log.debug(
+                f"found {n_combinations} combinations: "
+                # f"{', '.join(['/'.join([str(i) for i in ii]) for ii in indices]))}}"
+                f"{pformat(indices)}"
+            )
         # SR_TMP >
 
         # Collect cfeatures of all combinations
@@ -681,7 +772,10 @@ cdef class FeatureTracker:
                     if candidate.id == candidate_id:
                         break
                 else:
-                    log.error("{}: candidate not found with id {}".format("_combine_candidates", candidate_id))
+                    log.error(
+                        f"_combine_candidates: candidate not found with id "
+                        f"{candidate_id}"
+                    )
                 combinations.candidates[combinations.n].children[j] = candidate
             combinations.candidates[combinations.n].n = n
             combinations.candidates[combinations.n].parent = parent
@@ -690,18 +784,26 @@ cdef class FeatureTracker:
             n_new += 1
         return n_new
 
-
-    cdef void _compute_successor_probabilities(self,
-            SuccessorCandidates* combinations) except *:
+    cdef void _compute_successor_probabilities(
+        self, SuccessorCandidates* combinations,
+    ) except *:
         """Compute overlap, area, and total successor probabilities,"""
         cdef bint debug = self.debug
-        if debug: log.debug("compute successor probabilities of {} combinations".format(combinations.n))
+        if debug:
+            log.debug(
+                f"compute successor probabilities of {combinations.n} combinations"
+            )
 
         # Compute probabilities
-        cdef int i, j
+        cdef int i
+        cdef int j
         cdef cRegion* child
-        cdef int tot_size, tot_overlap, n_overlap
-        cdef float p_size, p_overlap, p_tot
+        cdef int tot_size
+        cdef int tot_overlap
+        cdef int n_overlap
+        cdef float p_size
+        cdef float p_overlap
+        cdef float p_tot
         cdef cRegion* parent
         cdef PixelRegionTable pixel_region_table_parent = NULL
         cdef PixelRegionTable pixel_region_table_child = NULL
@@ -720,17 +822,25 @@ cdef class FeatureTracker:
                 child = combinations.candidates[i].children[j]
                 if debug: child_ids.append(child.id)
                 tot_size += child.pixels_n
-                n_overlap = cregion_overlap_n_tables(parent, child,
-                        pixel_region_table_parent, pixel_region_table_child)
+                n_overlap = cregion_overlap_n_tables(
+                    parent, child, pixel_region_table_parent, pixel_region_table_child,
+                )
                 combinations.candidates[i].n_overlaps[j] = n_overlap
                 tot_overlap += n_overlap
 
                 # Branchings: compute inididual successor probabilities
-                compute_tracking_probabilities(&p_tot, &p_size, &p_overlap,
-                        parent.pixels_n, child.pixels_n, n_overlap,
-                        self.f_size, self.f_overlap,
-                        min_p_size=0, min_p_overlap=0,
-                    )
+                compute_tracking_probabilities(
+                    &p_tot,
+                    &p_size,
+                    &p_overlap,
+                    parent.pixels_n,
+                    child.pixels_n,
+                    n_overlap,
+                    self.f_size,
+                    self.f_overlap,
+                    min_p_size=0,
+                    min_p_overlap=0,
+                )
                 combinations.candidates[i].p_shares[j] = p_tot
 
             # Compute probability shares (only relevant for branchings)
@@ -749,35 +859,54 @@ cdef class FeatureTracker:
                             combinations.candidates[i].p_shares[j] /= p_tot
 
             # Compute successor probabilities
-            compute_tracking_probabilities(&p_tot, &p_size, &p_overlap,
-                    parent.pixels_n, tot_size, tot_overlap,
-                    self.f_size, self.f_overlap,
-                    self.min_p_size, self.min_p_overlap)
+            compute_tracking_probabilities(
+                &p_tot,
+                &p_size,
+                &p_overlap,
+                parent.pixels_n,
+                tot_size,
+                tot_overlap,
+                self.f_size,
+                self.f_overlap,
+                self.min_p_size,
+                self.min_p_overlap,
+            )
 
-            if debug: log.debug(" - [{}]{}[{}] tot/size/overlap {:4.2f} {:4.2f} {:4.2f}".format(parent.id, "->" if combinations.candidates[i].direction > 0 else "<-", "/".join([str(x) for x in child_ids]), p_tot, p_size, p_overlap))
+            if debug:
+                log.debug(
+                    f" - [{parent.id}]"
+                    f"{'->' if combinations.candidates[i].direction > 0 else '<-'}"
+                    f"[{'/'.join([str(x) for x in child_ids])}] "
+                    f"tot/size/overlap {p_tot:4.2f} {p_size:4.2f} {p_overlap:4.2f}"
+                )
 
             combinations.candidates[i].p_tot = p_tot
             combinations.candidates[i].p_size = p_size
             combinations.candidates[i].p_overlap = p_overlap
 
-    cdef list _assign_successors(self, list features, cRegions* cfeatures,
-            SuccessorCandidates* combinations):
-        cdef str _name_ = "{}._assign_successors".format(
-                self.__class__.__name__)
+    cdef list _assign_successors(
+        self, list features, cRegions* cfeatures, SuccessorCandidates* combinations,
+    ):
         cdef bint debug = self.debug
-        cdef int i, j, k
+        cdef str _name_ = f"{type(self).__name__}._assign_successors"
+        cdef int i
+        cdef int j
+        cdef int k
         cdef list features_todo = features.copy()
         cdef int i_feature
         cdef FeatureTrack track
         cdef int n_children
-        cdef Feature parent_feature, child_feature
-        cdef list child_features, child_features_p_shares
-        cdef list vertices_now, vertices_new
+        cdef Feature parent_feature
+        cdef Feature child_feature
+        cdef list child_features
+        cdef list child_features_p_shares
+        cdef list vertices_now
+        cdef list vertices_new
         cdef list tracks
         cdef Feature head # SR_TMP
         cdef list already_assigned = []
         cdef bint skip
-        cdef str type
+        cdef str type_
         cdef int direction
         cdef dict attrs
 
@@ -791,7 +920,11 @@ cdef class FeatureTracker:
                 child_ids = []
                 for j in range(combinations.candidates[i].n):
                     child_ids.append(str(combinations.candidates[i].children[j].id))
-                log.debug("\nCOMBINATION: {} {} {}".format(combinations.candidates[i].parent.id, "->" if combinations.candidates[i].direction > 0 else "<-", "/".join(child_ids)))
+                log.debug(
+                    f"\nCOMBINATION: {combinations.candidates[i].parent.id} "
+                    f"{'->' if combinations.candidates[i].direction > 0 else '<-'} "
+                    f"{'/'.join(child_ids)}"
+                )
             # DBG_BLOCK <
 
             # SR_TMP < TODO implement with less Python overhead
@@ -805,11 +938,16 @@ cdef class FeatureTracker:
                 for j in range(n_children):
                     child = combinations.candidates[i].children[j]
                     child_features_p_shares.append(
-                            combinations.candidates[i].p_shares[j])
+                        combinations.candidates[i].p_shares[j],
+                    )
                     child_features_n_overlaps.append(
-                            combinations.candidates[i].n_overlaps[j])
+                            combinations.candidates[i].n_overlaps[j],
+                    )
                     if child.id in already_assigned:
-                        if debug: log.debug("[{}] already assigned -> skip combination".format(child.id))
+                        if debug:
+                            log.debug(
+                                f"[{child.id}] already assigned -> skip combination"
+                            )
                         skip = True
                         break
                     for k in range(cfeatures.n):
@@ -817,17 +955,22 @@ cdef class FeatureTracker:
                             child_features.append(features[k])
                             break
                     else:
-                        log.error("cregion [{}] not found".format(child.id))
+                        log.error(f"cregion [{child.id}] not found")
                         exit(4)
             else:
                 for j in range(n_children):
                     child = combinations.candidates[i].children[j]
                     child_features_p_shares.append(
-                            combinations.candidates[i].p_shares[j])
+                        combinations.candidates[i].p_shares[j],
+                    )
                     child_features_n_overlaps.append(
-                            combinations.candidates[i].n_overlaps[j])
+                        combinations.candidates[i].n_overlaps[j],
+                    )
                     if child.id in already_assigned:
-                        if debug: log.debug("[{}] already assigned -> skip combination".format(child.id))
+                        if debug:
+                            log.debug(
+                                f"[{child.id}] already assigned -> skip combination"
+                            )
                         skip = True
                         break
                     for child_feature in self.head_features():
@@ -835,7 +978,7 @@ cdef class FeatureTracker:
                             child_features.append(child_feature)
                             break
                     else:
-                        log.error("cregion [{}] not found".format(child.id))
+                        log.error(f"cregion [{child.id}] not found")
                         exit(4)
             if skip:
                 continue
@@ -844,7 +987,10 @@ cdef class FeatureTracker:
             # Get parent feature
             parent = combinations.candidates[i].parent
             if parent.id in already_assigned: # SR_TMP
-                if debug: log.debug("[{}] already assigned -> skip combination".format(parent_feature.id))
+                if debug:
+                    log.debug(
+                        f"[{parent_feature.id}] already assigned -> skip combination"
+                    )
                 continue
             if direction > 0:
                 for head in self.head_features():
@@ -852,17 +998,27 @@ cdef class FeatureTracker:
                         parent_feature = head
                         break
                 else:
-                    log.error("feature corresponding to [{}]({}) not found among heads".format(parent.id, parent.pixels_n))
+                    log.error(
+                        f"feature corresponding to [{parent.id}]({parent.pixels_n}) "
+                        f"not found among heads"
+                    )
                     exit(4)
                 track = parent_feature.track()
-                if debug: log.debug("select track [{}]({}) of parent feature {}".format(track.id, track.n, parent_feature.id))
+                if debug:
+                    log.debug(
+                        f"select track [{track.id}]({track.n}) of parent feature "
+                        f"{parent_feature.id}"
+                    )
             else:
                 for j in range(cfeatures.n):
                     if cfeatures.regions[j].id == parent.id:
                         parent_feature = features[j]
                         break
                 else:
-                    log.error("feature corresponding to [{}]({}) not found".format(parent.id, parent.pixels_n))
+                    log.error(
+                        f"feature corresponding to [{parent.id}]({parent.pixels_n}) "
+                        f"not found"
+                    )
                     exit(4)
 
             # In case of a merging, merge the incoming tracks
@@ -872,7 +1028,11 @@ cdef class FeatureTracker:
                     if child_feature.track() not in tracks:
                         tracks.append(child_feature.track())
                 track = self._merge_tracks(tracks)
-                if debug: log.debug("merged tracks {} into {}".format(", ".join([str(t.id) for t in tracks]), track.id))
+                if debug:
+                    log.debug(
+                        f"merged tracks {', '.join([str(t.id) for t in tracks])} "
+                        f"into {track.id}"
+                    )
 
             # Get/add parent vertex
             if direction > 0:
@@ -884,11 +1044,10 @@ cdef class FeatureTracker:
 
             # Adapt parent type in case of splitting
             if direction > 0 and n_children > 1:
-                type = vertex_parent["type"]
-                if not "splitting" in type:
-                    if type in ("start", "genesis", "merging"):
-                        vertex_parent["type"] = "{}/{}".format(
-                                type, "splitting")
+                type_ = vertex_parent["type"]
+                if not "splitting" in type_:
+                    if type_ in ("start", "genesis", "merging"):
+                        vertex_parent["type"] = f"{type_}/splitting"
                     else:
                         vertex_parent["type"] = "splitting"
 
@@ -899,9 +1058,19 @@ cdef class FeatureTracker:
                 # DBG_BLOCK <
                 if debug:
                     if direction > 0:
-                        log.debug("continue track {} after [{}]({}/{}) with [{}]({}/{}) (->)".format(track.id, parent_feature.id, parent_feature.n, parent_feature.cregion.pixels_n, child_feature.id, child_feature.n, child_feature.cregion.pixels_n))
+                        log.debug(
+                            f"continue track {track.id} after [{parent_feature.id}]"
+                            f"({parent_feature.n}/{parent_feature.cregion.pixels_n}) "
+                            f"with [{child_feature.id}]({child_feature.n}/"
+                            f"{child_feature.cregion.pixels_n}) (->)"
+                        )
                     else:
-                        log.debug("continue track {} after [{}]({}/{}) with [{}]({}/{}) (<-)".format(track.id, child_feature.id, child_feature.n, child_feature.cregion.pixels_n, parent_feature.id, parent_feature.n, parent_feature.cregion.pixels_n))
+                        log.debug(
+                            f"continue track {track.id} after [{child_feature.id}]"
+                            f"({child_feature.n}/{child_feature.cregion.pixels_n}) "
+                            f"with [{parent_feature.id}]({parent_feature.n}/"
+                            f"{parent_feature.cregion.pixels_n}) (<-)"
+                        )
                 # DBG_BLOCK >
 
                 # SR_TMP <
@@ -935,21 +1104,23 @@ cdef class FeatureTracker:
                         vertex_parent["type"] = "merging"
 
                 # Add edge between parent and child
-                attrs = dict(
-                        p_tot     = combinations.candidates[i].p_tot,
-                        p_size    = combinations.candidates[i].p_size,
-                        p_overlap = combinations.candidates[i].p_overlap,
-                        p_share   = child_features_p_shares[j],
-                        n_overlap = child_features_n_overlaps[j],
-                    )
+                attrs = {
+                    "p_tot": combinations.candidates[i].p_tot,
+                    "p_size": combinations.candidates[i].p_size,
+                    "p_overlap": combinations.candidates[i].p_overlap,
+                    "p_share": child_features_p_shares[j],
+                    "n_overlap": child_features_n_overlaps[j],
+                }
                 # SR_TMP < SR_DIRECTED
                 if vertex_parent["ts"] > vertex_child["ts"]:
-                    edge = track_graph_add_edge(track.graph,
-                            vertex_child, vertex_parent, attrs)
+                    edge = track_graph_add_edge(
+                        track.graph, vertex_child, vertex_parent, attrs,
+                    )
                 else:
                 # SR_TMP >
-                    edge = track_graph_add_edge(track.graph,
-                            vertex_parent, vertex_child, attrs)
+                    edge = track_graph_add_edge(
+                        track.graph, vertex_parent, vertex_child, attrs,
+                    )
 
                 # SR_TMP <
                 if direction > 0:
@@ -960,36 +1131,46 @@ cdef class FeatureTracker:
 
         return features_todo
 
-
     cpdef int split_active_tracks(self) except *:
         cdef bint debug = self.debug
-        if debug: log.debug("try to split {} active tracks".format(len(self.active_tracks)))
+        if debug:
+            log.debug(f"try to split {len(self.active_tracks)} active tracks")
         if self.split_tracks_n < 0:
             return 0
         nnew = 0
         for track in self.active_tracks.copy():
             self.active_tracks.remove(track)
             subtracks = track.split(self.split_tracks_n)
-            if debug: log.debug(" -> [{}] {}".format(track.id, "not split" if len(subtracks) == 1 else "split into {} subtracks ({} active)".format(len(subtracks), len([t for t in subtracks if t.is_active()]))))
+            if debug:
+                msg = f" -> [{track.id}] "
+                if len(subtracks) == 1:
+                    msg += "not split"
+                else:
+                    _n = len([t for t in subtracks if t.is_active()])
+                    msg += f"split into {len(subtracks)} subtracks ({_n} active)"
+                log.debug(msg)
             del track
             for subtrack in subtracks:
                 if subtrack.is_active():
                     self.active_tracks.append(subtrack)
                 else:
                     del subtrack.graph.vs["active_head"]
-                    subtrack.finish(force=False, split_n=-1,
-                            merge_features=self.merge_features)
+                    subtrack.finish(
+                        force=False, split_n=-1, merge_features=self.merge_features,
+                    )
                     self.finished_tracks.append(subtrack)
                     nnew += 1
         return nnew
 
-
     cdef object _merge_tracks(self, list tracks):
         """Merge tracks and return the merged track."""
         cdef bint debug = self.debug
-        if debug: log.debug("{}._merge_tracks: {}".format(self.__class__.__name__, ", ".join([str(t.id) for t in tracks])))
+        if debug:
+            log.debug(
+                f"{type(self).__name__}._merge_tracks: "
+                f"{', '.join([str(t.id) for t in tracks])}"
+            )
         return merge_tracks(tracks, self.active_tracks)
-
 
     cpdef object head_vertices(self):
         return [h for t in self.active_tracks for h in t.head_vertices()]
@@ -997,42 +1178,38 @@ cdef class FeatureTracker:
     cpdef list head_features(self):
         return [h for t in self.active_tracks for h in t.head_features()]
 
-
     cdef FeatureTrack _start_track(self, cRegion* cfeature):
         cdef bint debug = self.debug
-        if debug: log.debug("{}._start_track([{}])".format(self.__class__.__name__, cfeature.id))
+        if debug:
+            log.debug(f"{type(self).__name__}._start_track([{cfeature.id}])")
         cdef Feature feature = self._feature_dict_new[cfeature.id]
         # SR_TMP <
         feature.timestep = self.current_timestep
         # SR_TMP >
-        cdef str type
+        cdef str type_
         if self.previous_timestep == self._ts_nan:
-            type = "start"
+            type_ = "start"
         else:
-            type = "genesis"
+            type_ = "genesis"
         # SR_TMP <
-        cdef dict config = dict(
-                f_overlap       = self.f_overlap,
-                f_size          = self.f_size,
-                min_p_tot       = self.min_p_tot,
-                min_p_overlap   = self.min_p_overlap,
-                min_p_size      = self.min_p_size,
-                minsize         = self.minsize,
-                maxsize         = self.maxsize,
-                size_lonlat     = self.size_lonlat,
-                max_children    = self.max_children,
-                merge_features  = self.merge_features,
-                ts_fmt          = self.ts_fmt,
-            )
+        cdef dict config = {
+            "f_overlap": self.f_overlap,
+            "f_size": self.f_size,
+            "min_p_tot": self.min_p_tot,
+            "min_p_overlap": self.min_p_overlap,
+            "min_p_size": self.min_p_size,
+            "minsize": self.minsize,
+            "maxsize": self.maxsize,
+            "size_lonlat": self.size_lonlat,
+            "max_children": self.max_children,
+            "merge_features": self.merge_features,
+            "ts_fmt": self.ts_fmt,
+        }
         # SR_TMP >
         fid = self.new_track_id(self.current_timestep)
         cdef FeatureTrack new_track = FeatureTrack(
-                id_     = fid,
-                feature = feature,
-                type    = type,
-                config  = config,
-                tracker = self,
-            )
+            id_=fid, feature=feature, type=type_, config=config, tracker=self,
+        )
         new_track.graph.vs["active_head"] = True
         self.active_tracks.append(new_track)
         return new_track
@@ -1043,7 +1220,8 @@ cdef class FeatureTracker:
     cpdef void finish_tracks(self) except *:
         """Force-finish all still active branches/tracks."""
         cdef bint debug = self.debug
-        if debug: log.debug("force-finish {} active tracks".format(len(self.active_tracks)))
+        if debug:
+            log.debug(f"force-finish {len(self.active_tracks)} active tracks")
         cdef FeatureTrack track
         for track in self.active_tracks.copy():
             self._finish_track(track, force=True)
@@ -1051,24 +1229,24 @@ cdef class FeatureTracker:
     cdef void _finish_branch(self, object vertex):
         cdef str type = vertex["type"]
         if type in ("start", "genesis", "merging"):
-            vertex["type"] = "{}/{}".format(type, "lysis")
+            vertex["type"] = f"{type}/lysis"
         else:
             vertex["type"] = "lysis"
         vertex["active_head"] = False
 
     cdef void _finish_track(self, FeatureTrack track, bint force) except *:
-
         # SR_DBG <
         dbg_check_features_cregion_pixels(track.features())
         # SR_DBG >
-
         self.active_tracks.remove(track)
         cdef list subtracks
-        subtracks = track.finish(force=force, split_n=self.split_tracks_n,
-                merge_features=self.merge_features)
+        subtracks = track.finish(
+            force=force,
+            split_n=self.split_tracks_n,
+            merge_features=self.merge_features,
+        )
         del track
         self.finished_tracks.extend(subtracks)
-
         cdef FeatureTrack subtrack
         cdef Feature feature
         cdef dict data_orig
@@ -1093,8 +1271,9 @@ cdef class FeatureTracker:
         self.finished_tracks = []
         return finished_tracks
 
-    cdef void _sort_successor_candidates(self,
-            SuccessorCandidates* combinations) except *:
+    cdef void _sort_successor_candidates(
+        self, SuccessorCandidates* combinations,
+    ) except *:
         """Sort successor candidates by total successor probability."""
         cdef list combinations_list = []
         cdef int i, j
@@ -1102,7 +1281,8 @@ cdef class FeatureTracker:
             combinations_list.append((combinations.candidates[i].p_tot, i))
         combinations_list.sort(reverse=True)
         cdef SuccessorCandidate* tmp = <SuccessorCandidate*>malloc(
-                combinations.n*sizeof(SuccessorCandidate))
+            combinations.n*sizeof(SuccessorCandidate),
+        )
         for i in range(combinations.n):
             tmp[i] = combinations.candidates[i]
         for i in range(combinations.n):
@@ -1112,17 +1292,17 @@ cdef class FeatureTracker:
 
 
 cdef void compute_tracking_probabilities(
-        float* p_tot,
-        float* p_size,
-        float* p_overlap,
-        int n_parent,
-        int n_child,
-        int n_overlap,
-        float f_size,
-        float f_overlap,
-        float min_p_size,
-        float min_p_overlap,
-    ) except *:
+    float* p_tot,
+    float* p_size,
+    float* p_overlap,
+    int n_parent,
+    int n_child,
+    int n_overlap,
+    float f_size,
+    float f_overlap,
+    float min_p_size,
+    float min_p_overlap,
+) except *:
 
     # Size probability
     p_size[0] = min(<float>n_parent, n_child)/max(<float>n_parent, n_child)
@@ -1137,10 +1317,11 @@ cdef void compute_tracking_probabilities(
     if p_overlap[0] >= min_p_overlap:
         p_tot[0] += f_overlap*p_overlap[0]
 
+
 def merge_tracks(tracks, active_tracks=None):
     cdef bint debug = False
-    if debug: log.debug("merge_tracks: {} tracks".format(len(tracks)))
-
+    if debug:
+        log.debug("merge_tracks: {len(tracks)} tracks")
     target_track = tracks.pop(0)
     new_fids = []
     for track in tracks:
@@ -1150,7 +1331,8 @@ def merge_tracks(tracks, active_tracks=None):
             feature = vertex["feature"]
             if feature is not None:
                 new_fids.append(feature.id)
-                if debug: log.debug("move feature {} to track {}".format(feature.id, target_track.id))
+                if debug:
+                    log.debug(f"move feature {feature.id} to track {target_track.id}")
 
             target_track.graph.add_vertex(**vertex.attributes())
             new_vertex = target_track.graph.vs[-1]
@@ -1161,54 +1343,61 @@ def merge_tracks(tracks, active_tracks=None):
 
         # Add existing edges
         for edge in track.graph.es:
-
             source_vertex_old = track.graph.vs.find(edge.source)
             target_vertex_old = track.graph.vs.find(edge.target)
-
             source_feature = source_vertex_old["feature"]
             target_feature = target_vertex_old["feature"]
-
-            if debug: log.debug("add edge between features {} and {} to track {}".format(source_feature.id, target_feature.id, target_track.id))
-
+            if debug:
+                log.debug(
+                    f"add edge between features {source_feature.id} and "
+                    f"{target_feature.id} to track {target_track.id}"
+                )
             source_vertex = target_track.graph.vs.find(feature=source_feature)
             target_vertex = target_track.graph.vs.find(feature=target_feature)
 
             # SR_TMP < SR_DIRECTED
             if source_vertex["ts"] > target_vertex["ts"]:
-                target_track.graph.add_edge(target_vertex.index,
-                        source_vertex.index, **edge.attributes())
+                target_track.graph.add_edge(
+                    target_vertex.index, source_vertex.index, **edge.attributes(),
+                )
             else:
             # SR_TMP >
-                target_track.graph.add_edge(source_vertex.index,
-                        target_vertex.index, **edge.attributes())
+                target_track.graph.add_edge(
+                    source_vertex.index, target_vertex.index, **edge.attributes(),
+                )
 
-            new_edge = target_track.graph.es.find(_between=(
-                    (source_vertex.index,), (target_vertex.index,)))
+            new_edge = target_track.graph.es.find(
+                _between=((source_vertex.index,), (target_vertex.index,)),
+            )
 
         if active_tracks is not None:
             active_tracks.remove(track)
 
     if target_track.missing_features_stats is not None:
         # Remove obsolete missing features stats
-        inds = [i for i, fid in enumerate(
-                target_track.missing_features_stats["id"]) if fid not in new_fids]
+        inds = [
+            i
+            for i, fid in enumerate(target_track.missing_features_stats["id"])
+            if fid not in new_fids
+        ]
         for key, vals in target_track.missing_features_stats.items():
             target_track.missing_features_stats[key] = [vals[i] for i in inds]
-
     return target_track
+
 
 cpdef void dbg_check_features_cregion_pixels(list features) except *:
     cdef Feature feature
     for feature in features:
         if feature.cregion is not NULL:
             if feature.n != feature.cregion.pixels_n:
-                err = "feature [{}/{}]: inconsistent pixels: ({}/{})".format(
-                        feature.id, feature.cregion.id,
-                        feature.n, feature.cregion.pixels_n)
+                err = (
+                    f"feature [{feature.id}/{feature.cregion.id}]: "
+                    f"inconsistent pixels: ({feature.n}/{feature.cregion.pixels_n})"
+                )
                 print("warning: "+err)
                 # raise Exception(err)
                 outfile = "cyclone_tracking_debug_feature_inconsistent_pixels.txt"
-                print("debug: write feature info to {}".format(outfile))
+                print(f"debug: write feature info to {outfile}")
                 with open(outfile, "a") as fo:
                     fo.write(err+"\n")
 
@@ -1219,8 +1408,7 @@ def new_track_id(np.uint64_t ts, set used_ids):
     while new_id in used_ids:
         new_id += 1
         if new_id == (ts+1)*1000:
-            err = "all 9999 track ids for timestep {} used up!".format(ts)
-            raise Exception(err)
+            raise Exception(f"all 9999 track ids for timestep {ts} used up!")
     return new_id
 
 
@@ -1257,21 +1445,31 @@ cdef class FeatureTrackSplitter:
         else:
             graph = track.graph
 
-        if debug: log.debug("")
-        if debug: log.debug("split track {} ({} vertices, {} edges)".format(track.id, len(graph.vs), len(graph.es)))
-        if debug: log.debug("{} vertices:\n{}".format(len(graph.vs), "\n  ".join([vertex2str(v) for v in graph.vs])))
-        if debug: log.debug("{} edges:\n{}".format(len(graph.vs), "\n  ".join([edge2str(e) for e in graph.es])))
-        if debug: log.debug("")
+        if debug:
+            log.debug("")
+            log.debug(
+                f"split track {track.id} ({len(graph.vs)} vertices, "
+                f"{len(graph.es)} edges)"
+            )
+            log.debug(
+                f"{len(graph.vs)} vertices:\n"
+                + "\n  ".join([vertex2str(v) for v in graph.vs])
+            )
+            log.debug(
+                f"{len(graph.vs)} edges:\n"
+                + "\n  ".join([edge2str(e) for e in graph.es])
+            )
+            log.debug("")
 
         retained_edges = set()
 
         # Process all splittings
         splittings = graph.vs.select(lambda v: "splitting" in v["type"])
-        if debug: log.debug("process {} splittings".format(len(splittings)))
+        if debug:
+            log.debug(f"process {len(splittings)} splittings")
         for vertex in splittings:
             direction=1
-            self._process_branching_vertex(graph, vertex, n, direction,
-                    retained_edges)
+            self._process_branching_vertex(graph, vertex, n, direction, retained_edges)
 
         # Process all mergings
         # Note: mergings must be here, determined after the splittings have
@@ -1279,11 +1477,11 @@ cdef class FeatureTrackSplitter:
         # been removed above (cases where a merging with only two children
         # immediately follows a splitting along a detached branch)
         mergings = graph.vs.select(lambda v: "merging" in v["type"])
-        if debug: log.debug("process {} mergings".format(len(mergings)))
+        if debug:
+            log.debug(f"process {len(mergings)} mergings")
         for vertex in mergings:
             direction = -1
-            self._process_branching_vertex(graph, vertex, n, direction,
-                    retained_edges)
+            self._process_branching_vertex(graph, vertex, n, direction, retained_edges)
 
         # Recompute tracking probabilities and remove edges
         # with too low probabilities (iterative approach)
@@ -1294,13 +1492,15 @@ cdef class FeatureTrackSplitter:
             if n_rm == 0:
                 break
         else:
-            err = ("timeout while recomputing tracking probabilities "
-                    "(aborted after {} iterations)").format(iter_i)
-            raise Exception(err)
+            raise Exception(
+                f"timeout while recomputing tracking probabilities "
+                f"(aborted after {iter_i} iterations)"
+            )
 
         # Split into subgraphs
         subgraphs = self._split_graph(graph)
-        if debug: log.debug("split into {} subgraphs".format(len(subgraphs)))
+        if debug:
+            log.debug(f"split into {len(subgraphs)} subgraphs")
 
         # Remove all vertices from the old graph, now
         # that all features are linked to new graphs
@@ -1316,10 +1516,10 @@ cdef class FeatureTrackSplitter:
             kwas = dict(graph=subgraph, config=track.config)
             if tracker is None:
                 if self.used_ids is None:
-                    err = ("if feature tracks are not linked to a tracker, "
-                            "{} must be initialized with used_ids").format(
-                            self.__class__.__name__)
-                    raise Exception(err)
+                    raise Exception(
+                        f"if feature tracks are not linked to a tracker, "
+                        f"{type(self).__name__} must be initialized with used_ids"
+                    )
                 id_ = new_track_id(ts_start, self.used_ids)
                 self.used_ids.add(id_)
                 kwas["id_"] = id_
@@ -1328,12 +1528,15 @@ cdef class FeatureTrackSplitter:
                 kwas["timestep"] = ts_start
             subtrack = FeatureTrack(**kwas)
             subtracks.append(subtrack)
-            if debug: log.debug(" -> create new track {} (n={})".format(subtrack.id, subtrack.n))
+            if debug:
+                log.debug(f" -> create new track {subtrack.id} (n={subtrack.n})")
 
         return subtracks
 
     def recompute_tracking_probabilities(self, graph, retained_edges):
-        cdef float p_tot, p_size, p_overlap
+        cdef float p_tot
+        cdef float p_size
+        cdef float p_overlap
         while retained_edges:
             name_source, name_target = retained_edges.pop()
             vxi_source = graph.vs.find(name_source).index
@@ -1354,10 +1557,11 @@ cdef class FeatureTrackSplitter:
                 direction = -1
                 parent = vs_new[0]
             else:
-                err = "invalid vertices: {}x OLD ({}), {}x NEW ({})".format(
-                        len(vis_old), [v["feature"].id for v in vs_old],
-                        len(vis_new), [v["feature"].id for v in vs_new])
-                raise Exception(err)
+                raise Exception(
+                    f"invalid vertices: "
+                    f"{len(vis_old)}x OLD ({[v['feature'].id for v in vs_old]}), "
+                    f"{len(vis_new)}x NEW ({[v['feature'].id for v in vs_new]})"
+                )
 
             # Collect sizes and overlaps of children
             size_parent = parent["feature"].n
@@ -1382,25 +1586,33 @@ cdef class FeatureTrackSplitter:
 
                 # Compute individual p_tot to later compute p_shares
                 compute_tracking_probabilities(
-                        &p_tot, &p_size, &p_overlap,
-                        size_parent, size_child, edge["n_overlap"],
-                        self.track_config["f_size"],
-                        self.track_config["f_overlap"],
-                        self.track_config["min_p_size"],
-                        self.track_config["min_p_overlap"],
-                    )
-                edge["p_share"] = p_tot
-                p_shares_tot += p_tot
-
-            # Compute overall tracking probabilities
-            compute_tracking_probabilities(
-                    &p_tot, &p_size, &p_overlap,
-                    size_parent, size_children, overlap_children,
+                    &p_tot,
+                    &p_size,
+                    &p_overlap,
+                    size_parent,
+                    size_child,
+                    edge["n_overlap"],
                     self.track_config["f_size"],
                     self.track_config["f_overlap"],
                     self.track_config["min_p_size"],
                     self.track_config["min_p_overlap"],
                 )
+                edge["p_share"] = p_tot
+                p_shares_tot += p_tot
+
+            # Compute overall tracking probabilities
+            compute_tracking_probabilities(
+                &p_tot,
+                &p_size,
+                &p_overlap,
+                size_parent,
+                size_children,
+                overlap_children,
+                self.track_config["f_size"],
+                self.track_config["f_overlap"],
+                self.track_config["min_p_size"],
+                self.track_config["min_p_overlap"],
+            )
             edge["p_tot"] = p_tot
             edge["p_size"] = p_size
             edge["p_overlap"] = p_overlap
@@ -1411,7 +1623,6 @@ cdef class FeatureTrackSplitter:
                     edge["p_share"] /= p_shares_tot
 
     def remove_low_probability_edges(self, graph, retained_edges):
-
         n_rm = 0
         vs_source = set()
         vs_target = set()
@@ -1421,8 +1632,9 @@ cdef class FeatureTrackSplitter:
         for name_source, name_target in copy(retained_edges):
             vx_source = graph.vs.find(name_source)
             vx_target = graph.vs.find(name_target)
-            edge = graph.es.find(_between=(
-                    (vx_source.index,), (vx_target.index,)))
+            edge = graph.es.find(
+                _between=((vx_source.index,), (vx_target.index,)),
+            )
             if edge["p_tot"] < self.track_config["min_p_tot"]:
                 vs_source.add(vx_source)
                 vs_target.add(vx_target)
@@ -1441,11 +1653,9 @@ cdef class FeatureTrackSplitter:
             for vx_target in vs_target:
                 if len(vx_target.predecessors()) == 1:
                     self._adapt_vertex_type_parent(vx_target, direction=-1)
-
         return n_rm
 
     def _split_graph(self, graph):
-
         # Unfortunately, decomposing a directed graph currently doesn't work..
         # WEAK mode should work (STRONG is not implemented), yet doesn't!
         # Use workaround below instead (likely much slower)
@@ -1471,8 +1681,9 @@ cdef class FeatureTrackSplitter:
             # Add all edges twice (both backwards and forwards in time)
             # and remove the half that point backwards in time
             subgraph.to_directed(mutual=True)
-            es_del = subgraph.es.select(lambda e: (
-                    e.graph.vs[e.source]["ts"] > e.graph.vs[e.target]["ts"]))
+            es_del = subgraph.es.select(
+                lambda e: e.graph.vs[e.source]["ts"] > e.graph.vs[e.target]["ts"],
+            )
             subgraph.delete_edges(es_del)
 
             # Insert edge attributes
@@ -1492,25 +1703,32 @@ cdef class FeatureTrackSplitter:
 
         return subgraphs
 
-    def _process_branching_vertex(self, graph, vertex, n, direction,
-            retained_edges):
+    def _process_branching_vertex(self, graph, vertex, n, direction, retained_edges):
         debug = self.debug
         _name_ = "_process_branching_vertex"
-        if debug: log.debug("> {}: vertex ({}@{}: {}), n {}, direction {}".format(_name_, vertex["feature"].id, vertex["ts"], vertex["type"], n, direction))
+        if debug:
+            log.debug(
+                f"> {_name_}: vertex ({vertex['feature'].id}@{vertex['ts']}: "
+                f"{vertex['type']}), n {n}, direction {direction}"
+            )
 
         # Collect all edges involved in the branching
         edges_del = self._collect_edges(vertex, direction)
-        if debug: log.debug("collected {} branching edges".format(len(edges_del)))
+        if debug:
+            log.debug(f"collected {len(edges_del)} branching edges")
         if len(edges_del) == 0:
-            err = "{}: len(edges_del) == 0: {} {} {}".format(_name_,
-                    vertex, vertex.neighbors(), direction)
-            raise Exception(err)
+            raise Exception(
+                f"{_name_}: len(edges_del) == 0: {vertex} {vertex.neighbors()} "
+                f"{direction}"
+            )
 
         # Select winner by successor probability/-ies
-        edges_del = self._sort_edges_unambiguously(vertex, edges_del,
-                direction, nlimit=120)
+        edges_del = self._sort_edges_unambiguously(
+            vertex, edges_del, direction, nlimit=120,
+        )
         edge_winner = edges_del.pop(0)
-        if debug: log.debug("select major edge {}".format(edge2str(edge_winner)))
+        if debug:
+            log.debug(f"select major edge {edge2str(edge_winner)}")
         edges_keep = [edge_winner]
         vertex_winner = self._get_other_vertex(vertex, edge_winner)
 
@@ -1522,23 +1740,35 @@ cdef class FeatureTrackSplitter:
 
             # Retain all edges whose branches finish in the timestep window
             if n > 1:
-               self._retain_edges_short_branch(graph, edges_del, edges_keep,
-                       direction, n-2)
+                self._retain_edges_short_branch(
+                    graph, edges_del, edges_keep, direction, n-2,
+                )
 
             # Starting from the main edge, collect all reverse branchings
             # in the given timestep window defined by n
             branchings_winner = set()
             self._collect_reverse_branchings(
-                    vertex_winner, direction, n-1, branchings_winner)
+                vertex_winner, direction, n-1, branchings_winner,
+            )
 
             # If there are any reverse branchings in reach of the main branch,
             # then check whether any of these is in reach of any of the other
             # edges, and retain those edges (because the branches remerge)
             if len(branchings_winner) > 0:
-                self._find_edges_to_keep(vertex, edge_winner, branchings_winner,
-                        edges_del, edges_keep, direction, n)
+                self._find_edges_to_keep(
+                    vertex,
+                    edge_winner,
+                    branchings_winner,
+                    edges_del,
+                    edges_keep,
+                    direction,
+                    n,
+                )
 
-        if debug: log.debug("keep {}/{} edges".format(len(edges_keep), len(edges_keep) + len(edges_del)))
+        if debug:
+            log.debug(
+                f"keep {len(edges_keep)}/{len(edges_keep) + len(edges_del)} edges"
+            )
 
         # If only one branch is to be kept, eliminate the branching,
         # i.e., adapt the vertex type of the parent (rest done below)
@@ -1555,9 +1785,9 @@ cdef class FeatureTrackSplitter:
             assert edge not in edges_keep # SR_DBG
             other_vertex = self._get_other_vertex(vertex, edge)
             self._adapt_vertex_type_child(other_vertex, direction)
-            edges_del_named.append((
-                    graph.vs[edge.source]["name"],
-                    graph.vs[edge.target]["name"]))
+            edges_del_named.append(
+                (graph.vs[edge.source]["name"], graph.vs[edge.target]["name"]),
+            )
 
         # Collect names of edges to be kept; must be done before deleting
         # edges because deleting from the graph changes edge indices
@@ -1566,7 +1796,8 @@ cdef class FeatureTrackSplitter:
             retained_edges.add(key)
 
         # Delete edges from graph
-        if debug: log.debug("delete {} edges from graph".format(len(edges_del_named)))
+        if debug:
+            log.debug(f"delete {len(edges_del_named)} edges from graph")
         graph.delete_edges(edges_del_named)
 
     def _get_other_vertex(self, vertex, edge):
@@ -1579,13 +1810,18 @@ cdef class FeatureTrackSplitter:
 
     def _collect_edges(self, vertex, direction):
         if direction > 0:
-            return [vertex.graph.es.find(_between=((vertex.index,), (s.index,))
-                    ) for s in vertex.successors()]
-        return [vertex.graph.es.find(_between=((vertex.index,), (p.index,))
-                ) for p in vertex.predecessors()]
+            return [
+                vertex.graph.es.find(_between=((vertex.index,), (s.index,)))
+                for s in vertex.successors()
+            ]
+        return [
+            vertex.graph.es.find(_between=((vertex.index,), (p.index,)))
+            for p in vertex.predecessors()
+        ]
 
-    def _retain_edges_short_branch(self, graph, edges_del, edges_keep,
-            direction, n):
+    def _retain_edges_short_branch(
+        self, graph, edges_del, edges_keep, direction, n,
+    ):
         """Retain all edges whose branches finish in the given window."""
 
         # Select all ends vertices of the track in the respective direction
@@ -1598,7 +1834,6 @@ cdef class FeatureTrackSplitter:
                 for vx in vs_heads:
                     if vx not in vs_ends:
                         vs_ends.append(vx)
-
         elif direction < 0:
             vs_ends = list(graph.vs.select(type_in=("genesis", "start")))
 
@@ -1615,10 +1850,11 @@ cdef class FeatureTrackSplitter:
                 edges_keep.append(edge)
 
     def _collect_reverse_branchings(self, vertex, direction, n, branchings):
-
         # Add to list if reverse branching
-        if (direction > 0 and "merging" in vertex["type"] or
-                direction < 0 and "splitting" in vertex["type"]):
+        if (
+            direction > 0 and "merging" in vertex["type"]
+            or direction < 0 and "splitting" in vertex["type"]
+        ):
             branchings.add(vertex)
 
         # Check if we're done
@@ -1629,11 +1865,11 @@ cdef class FeatureTrackSplitter:
         edges = self._collect_edges(vertex, direction)
         for edge in edges:
             other_vertex = self._get_other_vertex(vertex, edge)
-            self._collect_reverse_branchings(
-                    other_vertex, direction, n-1, branchings)
+            self._collect_reverse_branchings(other_vertex, direction, n-1, branchings)
 
-    def _find_edges_to_keep(self, vertex, edge_main, branchings_main,
-            edges_del, edges_keep, direction, n):
+    def _find_edges_to_keep(
+        self, vertex, edge_main, branchings_main, edges_del, edges_keep, direction, n,
+    ):
         edges_keep_new = []
         branchings_edges = {}
         for edge in edges_del.copy():
@@ -1643,7 +1879,8 @@ cdef class FeatureTrackSplitter:
             # Collect all branchings in the opposite direction
             # in the given timestep window defined by n
             self._collect_reverse_branchings(
-                    other_vertex, direction, n-1, branchings_edge)
+                other_vertex, direction, n-1, branchings_edge,
+            )
 
             # If any of these branchings in reach of this edge is
             # also in reach of the main edge, then retain this edge
@@ -1655,14 +1892,22 @@ cdef class FeatureTrackSplitter:
                 edges_keep_new.append(edge)
 
         for edge in edges_keep_new:
-            self._find_edges_to_keep(vertex, edge, branchings_edges[edge],
-                    edges_del, edges_keep, direction, n)
+            self._find_edges_to_keep(
+                vertex,
+                edge,
+                branchings_edges[edge],
+                edges_del,
+                edges_keep,
+                direction,
+                n,
+            )
 
     # SR_TODO better name that expresses edge elimination
     def _adapt_vertex_type_parent(self, vertex, direction):
         debug = self.debug
         _name_ = "_adapt_vertex_type_parent"
-        if debug: log.debug("< {}: {} (direction {})".format(_name_, vertex2str(vertex), direction))
+        if debug:
+            log.debug(f"< {_name_}: {vertex2str(vertex)} (direction {direction})")
         type = vertex["type"]
         if direction > 0:
             if type == "splitting":
@@ -1674,9 +1919,9 @@ cdef class FeatureTrackSplitter:
             elif type == "merging/splitting":
                 vertex["type"] = "merging"
             else:
-                err = "{}.{}: merging: child type {}".format(
-                        self.__class__.__name__, _name_, type)
-                raise NotImplementedError(err)
+                raise NotImplementedError(
+                    f"{type(self).__name__}.{_name_}: merging: child type {type}"
+                )
         elif direction < 0:
             if type == "merging":
                 vertex["type"] = "continuation"
@@ -1687,29 +1932,28 @@ cdef class FeatureTrackSplitter:
             elif type == "merging/splitting":
                 vertex["type"] = "splitting"
             else:
-                err = "{}.{}: merging: child type {}".format(
-                        self.__class__.__name__, _name_, type)
-                raise NotImplementedError(err)
+                raise NotImplementedError(
+                    f"{type(self).__name__}.{_name_}: merging: child type {type}"
+                )
         else:
-            raise ValueError("invalid direction: {}".format(direction))
-        if debug: log.debug(" -> {}".format(vertex2str(vertex)))
+            raise ValueError(f"invalid direction: {direction}")
+        if debug:
+            log.debug(f" -> {vertex2str(vertex)}")
 
     # SR_TODO better name that expresses edge elimination
     def _adapt_vertex_type_child(self, vertex, direction):
         debug = self.debug
         _name_ = "_adapt_vertex_type_child"
-        if debug: log.debug("< {}: {} (direction {})".format(_name_, vertex2str(vertex), direction))
+        if debug:
+            log.debug(f"< {_name_}: {vertex2str(vertex)} (direction {direction})")
         type = vertex["type"]
 
         # Forward in time
         if direction > 0:
-
             if type == "continuation":
                 vertex["type"] = "genesis"
-
             elif type in ["stop", "lysis", "splitting"]:
-                vertex["type"] = "genesis/{}".format(type)
-
+                vertex["type"] = f"genesis/{type}"
             elif "merging" in type:
                 if len(vertex.predecessors()) == 1:
                     if type == "merging":
@@ -1718,21 +1962,17 @@ cdef class FeatureTrackSplitter:
                         vertex["type"] = type.replace("merging/", "")
                     else:
                         raise NotImplementedError("child/merging")
-
             else:
-                err = "{}.{}: merging: child type {}".format(
-                        self.__class__.__name__, _name_, type)
-                raise NotImplementedError(err)
+                raise NotImplementedError(
+                    f"{type(self).__name__}.{_name_}: merging: child type {type}"
+                )
 
         # Backward in time
         elif direction < 0:
-
             if type == "continuation":
                 vertex["type"] = "lysis"
-
             elif type in ["start", "genesis", "merging"]:
-                vertex["type"] = "{}/lysis".format(type)
-
+                vertex["type"] = "{type}/lysis"
             elif "splitting" in type:
                 if len(vertex.successors()) == 1:
                     if type == "splitting":
@@ -1741,15 +1981,14 @@ cdef class FeatureTrackSplitter:
                         vertex["type"] = type.replace("splitting/", "")
                     else:
                         raise NotImplementedError("child/splitting")
-
             else:
-                err = "{}.{}: merging: child type {}".format(
-                        self.__class__.__name__, _name_, type)
-                raise NotImplementedError(err)
-
+                raise NotImplementedError(
+                    f"{type(self).__name__}.{_name_}: merging: child type {type}"
+                )
         else:
-            raise ValueError("invalid direction: {}".format(direction))
-        if debug: log.debug(" -> {}".format(vertex2str(vertex)))
+            raise ValueError(f"invalid direction: {direction}")
+        if debug:
+            log.debug(f" -> {vertex2str(vertex)}")
 
     def _sort_edges_unambiguously(self, vertex, edges, direction, nlimit):
         _name_ = "_sort_edges_unambiguously"
@@ -1791,52 +2030,59 @@ cdef class FeatureTrackSplitter:
         # Ambiguity could not be resolved
         # Abort if 'other feature' is above size threshold
         n = vx_other_feature(edges[0]).n
-        log.warning(("{}: ambiguous 'winning edge': multiple edges have same "
-                " biggest value for p_share/p_tot: {}/{}").format(_name_,
-                edges[0]["p_share"], edges[0]["p_tot"]))
+        log.warning(
+            f"{_name_}: ambiguous 'winning edge': multiple edges have same biggest "
+            f"value for p_share/p_tot: {edges[0]['p_share']}/{edges[0]['p_tot']}"
+        )
         if n > nlimit:
-            err = ("{}: feature adjacent to 'winning edge' too big to ignore "
-                    "ambiguity ({} > {}); if {} is still acceptably small, "
-                    "consider increasing nlimit={}").format(_name_, n, nlimit,
-                    n, nlimit)
-            raise Exception(err)
-        log.warning(("{}: feature adjacent to 'winning edge' small enough "
-                "to ignore ambiguity ({} <= {}); if {} is unacceptably big, "
-                "consider decreasing nlimit={}").format(_name_, n, nlimit,
-                nlimit, nlimit))
+            raise Exception(
+                f"{_name_}: feature adjacent to 'winning edge' too big to ignore "
+                f"ambiguity ({n} > {nlimit}); if {n} is still acceptably small, "
+                f"consider increasing nlimit={nlimit}"
+            )
+        log.warning(
+            f"{_name_}: feature adjacent to 'winning edge' small enough to ignore "
+            f"ambiguity ({n} <= {nlimit}); if {nlimit} is unacceptably big, consider "
+            f"decreasing nlimit={nlimit}"
+        )
         return edges
 
 
 # DBG_PERMANENT <
 def vertex2str(vertex):
-    return "[{}@{}: {}]".format(
-            vertex["feature"].id,
-            vertex["ts"],
-            vertex["type"],
-        )
+    return "[{vertex['feature'].id}@{vertex['ts']}: {vertex['type']}]"
+
+
 def edge2str(edge):
-    graph = edge.graph
-    return "([{}]<({:5.3f}/{:5.3f}/{:5.3f}/{:5.3f}/{:5.3f})>[{}])".format(
-            graph.vs[edge.source]["feature"].id,
-            edge["n_overlap"]   if edge["n_overlap"]    else -1,
-            edge["p_tot"]       if edge["p_tot"]        else -1,
-            edge["p_share"]     if edge["p_share"]      else -1,
-            edge["p_size"]      if edge["p_size"]       else -1,
-            edge["p_overlap"]   if edge["p_overlap"]    else -1,
-            graph.vs[edge.target]["feature"].id,
-        )
+    return (
+        f"[{edge.graph.vs[edge.source]['feature'].id}]<("
+        f"{edge['n_overlap'] or -1:5.3f}/"
+        f"{edge['p_tot'] or -1:5.3f}/"
+        f"{edge['p_share'] or -1:5.3f}/"
+        f"{edge['p_size'] or -1:5.3f}/"
+        f"{edge['p_overlap'] or -1:5.3f})>"
+        f"[{edge.graph.vs[edge.target]['feature'].id}]"
+    )
 # DBG_PERMANENT >
 
 
 cdef list all_combinations(list elements, int nmin, int nmax):
-    return list(itertools.chain.from_iterable(itertools.combinations(
-            elements, r) for r in range(nmin, nmax + 1)))
+    return list(
+        itertools.chain.from_iterable(
+            itertools.combinations(elements, r)
+            for r in range(nmin, nmax + 1)
+        )
+    )
 
-cdef void successor_combinations_extend(SuccessorCandidates* combinations,
-        int max_children):
-    cdef int i, nmax_old = combinations.max, nmax_new = 5*nmax_old
+cdef void successor_combinations_extend(
+    SuccessorCandidates* combinations, int max_children,
+):
+    cdef int i
+    cdef int nmax_old = combinations.max
+    cdef int nmax_new = 5 * nmax_old
     cdef SuccessorCandidate* tmp = <SuccessorCandidate*>malloc(
-            nmax_old*sizeof(SuccessorCandidate))
+        nmax_old*sizeof(SuccessorCandidate)
+    )
     for i in range(nmax_old):
         tmp[i].n = combinations.candidates[i].n
         tmp[i].max = combinations.candidates[i].max
@@ -1850,7 +2096,8 @@ cdef void successor_combinations_extend(SuccessorCandidates* combinations,
         tmp[i].p_overlap = combinations.candidates[i].p_overlap
     free(combinations.candidates)
     combinations.candidates = <SuccessorCandidate*>malloc(
-            nmax_new*sizeof(SuccessorCandidate))
+        nmax_new*sizeof(SuccessorCandidate)
+    )
     for i in range(nmax_old):
         combinations.candidates[i].n = tmp[i].n
         combinations.candidates[i].max = tmp[i].max
@@ -1867,11 +2114,14 @@ cdef void successor_combinations_extend(SuccessorCandidates* combinations,
         combinations.candidates[i].n = 0
         combinations.candidates[i].max = max_children
         combinations.candidates[i].children = <cRegion**>malloc(
-                max_children*sizeof(cRegion*))
+            max_children*sizeof(cRegion*)
+        )
         combinations.candidates[i].p_shares = <np.float32_t*>malloc(
-                max_children*sizeof(np.float32_t))
+            max_children*sizeof(np.float32_t)
+        )
         combinations.candidates[i].n_overlaps = <np.int32_t*>malloc(
-                max_children*sizeof(np.int32_t))
+            max_children*sizeof(np.int32_t)
+        )
         for j in range(max_children):
             combinations.candidates[i].children[j] = NULL
             combinations.candidates[i].p_shares[j] = 0.0
@@ -1884,32 +2134,30 @@ cdef void successor_combinations_extend(SuccessorCandidates* combinations,
     combinations.max = nmax_new
 
 
-cpdef FeatureTrack FeatureTrack_rebuild(np.uint64_t id_, object graph,
-        dict config
-    ):
-    track = FeatureTrack(id_=id_, graph=graph, config=config)
-    return track
+cpdef FeatureTrack FeatureTrack_rebuild(np.uint64_t id_, object graph, dict config):
+    return FeatureTrack(id_=id_, graph=graph, config=config)
+
 
 # SR_TODO turn into proper extension class (i.e. cythonize methods etc.)
 cdef class FeatureTrack:
-
     gr_attrs = set()
-    vs_attrs = set(["feature", "name", "ts", "type",
-            "missing_successors", "missing_predecessors"])
+    vs_attrs = set(
+        ["feature", "name", "ts", "type", "missing_successors", "missing_predecessors"]
+    )
     vs_attrs_opt = set(["active_head", "feature_id"])
     es_attrs = set(["n_overlap", "p_tot", "p_size", "p_overlap", "p_share"])
 
     def __cinit__(self, *,
-            id_         = None,
-            feature     = None,
-            type        = "genesis",
-            features    = None,
-            graph       = None,
-            config      = None,
-            tracker     = None,
-            timestep    = None,
-            _cache      = None,
-        ):
+        id_=None,
+        feature=None,
+        type="genesis",
+        features=None,
+        graph=None,
+        config=None,
+        tracker=None,
+        timestep=None,
+        _cache=None,
+    ):
         if id_ is None:
             if tracker is None or timestep is None:
                 err = "either id_ must be pass, or tracker along with timestep"
@@ -1918,11 +2166,8 @@ cdef class FeatureTrack:
         if tracker is not None:
             tracker.register_id(id_)
         self.id = id_
-
         self.tracker = tracker
-
         self.debug = False
-
         self.config = {} if config is None else dict(config)
 
         # Initialize graph: either empty, create from features, or passed in
@@ -1960,10 +2205,8 @@ cdef class FeatureTrack:
         # Add first feature
         if feature is not None:
             vertex = track_graph_add_feature(
-                    self.graph,
-                    feature,
-                    attrs=dict(head=True, type=type),
-                )
+                self.graph, feature, attrs=dict(head=True, type=type),
+            )
             feature.set_track(self)
 
         # If the track is incomplete, total track stats and individual
@@ -1985,12 +2228,12 @@ cdef class FeatureTrack:
 
     def __deepcopy__(self, memo):
         other = self.__class__(
-                id_         = self.id,
-                graph       = deepcopy(self.graph),
-                config      = deepcopy(self.config),
-                tracker     = self.tracker,
-                _cache      = deepcopy(self._cache)
-            )
+            id_=self.id,
+            graph=deepcopy(self.graph),
+            config=deepcopy(self.config),
+            tracker=self.tracker,
+            _cache=deepcopy(self._cache)
+        )
         other.set_total_track_stats(deepcopy(self.total_track_stats))
         other.set_missing_features_stats(deepcopy(self.missing_features_stats))
         assert self == other
@@ -2011,35 +2254,38 @@ cdef class FeatureTrack:
 
         # Check graph attributes
         if not set(graph.attributes()) == self.gr_attrs:
-            err = ("track {}: graph attributes:\nexpected:\n    {}\n"
-                    "found:\n    {}").format(self.id,
-                    "\n    ".join([str(a) for a in sorted(self.gr_attrs)]),
-                    "\n    ".join([str(a) for a in sorted(graph.attributes())]))
-            raise Exception(err)
+            s_exp = "\n    ".join([str(a) for a in sorted(self.gr_attrs)])
+            s_fnd = "\n    ".join([str(a) for a in sorted(graph.attributes())])
+            raise Exception(
+                f"track {self.id}: graph attributes:\n"
+                f"expected:\n    {s_exp}\nfound:\n    {s_fnd}"
+            )
 
         # Check vertex attributes
         graph_vs_attrs = graph.vs.attributes()
-        if (any(a not in self.vs_attrs.union(self.vs_attrs_opt)
-                    for a in graph_vs_attrs) or
-                not all(a in graph_vs_attrs for a in self.vs_attrs)):
-            err = ("track {}: vertex attributes:\nexpected:\n    {}\n"
-                    "found:\n    {}").format(self.id,
-                    "\n    ".join([str(a) for a in sorted(self.vs_attrs)]),
-                    "\n    ".join([str(a) for a in sorted(graph.vs.attributes())]))
-            raise Exception(err)
+        if any(
+            a not in self.vs_attrs.union(self.vs_attrs_opt) for a in graph_vs_attrs
+        ) or not all(a in graph_vs_attrs for a in self.vs_attrs):
+            s_exp = "\n    ".join([str(a) for a in sorted(self.vs_attrs)])
+            s_fnd = "\n    ".join([str(a) for a in sorted(graph.vs.attributes())])
+            raise Exception(
+                f"track {self.id}: vertex attributes:\n"
+                f"expected:\n    {s_exp}\nfound:\n    {s_fnd}"
+            )
 
         # Check edge attributes
         # if not set(graph.es.attributes()) == self.es_attrs:
-        #    err = "track {}: edge attributes: expected {}, found {}".format(
-        #            self.id, sorted(self.es_attrs),
-        #            sorted(graph.es.attributes()))
-        #    raise Exception(err)
+        #     raise Exception(
+        #         f"track {self.id}: edge attributes: expected {sorted(self.es_attrs)}, "
+        #         f"found {sorted(graph.es.attributes())}"
+        #     )
 
     def __repr__(self):
         incomplete = "" if self.is_complete() else " !INCOMPLETE!"
-        return "<FeatureTrack[{id0}]: id={id1}, n={n}, d={d}{ic}>".format(
-                id0=id(self), id1=self.id, n=self.n, d=self.duration(),
-                ic=incomplete)
+        return (
+            f"<FeatureTrack[{id(self)}]: id={self.id}, n={self.n}, "
+            f"d={self.duration()}{incomplete}>"
+        )
 
     def __reduce__(self):
         return FeatureTrack_rebuild, (self.id, self.graph, self.config)
@@ -2047,11 +2293,8 @@ cdef class FeatureTrack:
     def __hash__(self):
         """Hash based on select attributes."""
         attrs = (
-                self.id,
-                self.n,
-                self.ts_start(total=False),
-                self.ts_end(total=False),
-            )
+            self.id, self.n, self.ts_start(total=False), self.ts_end(total=False),
+        )
         return hash(attrs)
 
     def __richcmp__(self, FeatureTrack other, int op):
@@ -2064,25 +2307,28 @@ cdef class FeatureTrack:
         if op == Py_EQ:
             if not isinstance(other, self.__class__):
                 return False
-            elif (  self.id == other.id and
-                    self.n == other.n and
-                    set(self.feature_ids()) == set(other.feature_ids())
-                ):
+            elif (
+                self.id == other.id
+                and self.n == other.n
+                and set(self.feature_ids()) == set(other.feature_ids())
+            ):
                 return True
             return False
         elif op == Py_NE:
             return not self == other
         elif op == Py_LT:
             if not isinstance(other, self.__class__):
-                err = "invalid types for comparison: {} < {}".format(
-                        self.__class__.__name__, other.__class__.__name__)
-                raise ValueError(err)
+                raise ValueError(
+                    f"invalid types for comparison: {type(self).__name__} < "
+                    f"{type(other).__name__}"
+                )
             return self.id < other.id
         elif op == Py_GT:
             if not isinstance(other, self.__class__):
-                err = "invalid types for comparison: {} < {}".format(
-                        self.__class__.__name__, other.__class__.__name__)
-                raise ValueError(err)
+                raise ValueError(
+                    f"invalid types for comparison: {type(self).__name__} < "
+                    f"{type(other).__name__}"
+                )
             return self.id > other.id
         elif op == Py_LE:
             if self == other:
@@ -2092,7 +2338,7 @@ cdef class FeatureTrack:
             if self == other:
                 return True
             return self > other
-        raise NotImplementedError("comparison operation {}".format(op))
+        raise NotImplementedError(f"comparison operation {op}")
 
     def is_finished(self):
         if "active_head" not in self.graph.vs.attributes():
@@ -2121,10 +2367,14 @@ cdef class FeatureTrack:
         Argument 'total' is only relevant for partial tracks; if true, missing
         timesteps (i.e. those that belong to other partial tracks of the
         same track) are considered, too.
+
         """
         timesteps = sorted(set(self.graph.vs["ts"]))
-        if (total and not self.is_complete() and
-                self.missing_features_stats is not None):
+        if (
+            total
+            and not self.is_complete()
+            and self.missing_features_stats is not None
+        ):
             missing_timesteps = self.missing_features_stats["timestep"]
             timesteps = sorted(set(timesteps + missing_timesteps))
         if ts_start is not None:
@@ -2139,13 +2389,12 @@ cdef class FeatureTrack:
         elif key in self._cache:
             del self._cache[key]
 
-
     @classmethod
-    def from_features_linear(cls, features_ts, id_, config=None,
-            edge_attrs=None):
+    def from_features_linear(cls, features_ts, id_, config=None, edge_attrs=None):
         """Create linear track from features at equidistant timesteps.
 
         This is particularly useful to create simple tracks for testing.
+
         """
         if edge_attrs is not None:
             raise NotImplementedError("edge_attrs")
@@ -2161,9 +2410,7 @@ cdef class FeatureTrack:
             for i, ts_i in enumerate(timesteps[:-1]):
                 dts_i = timesteps[i+1] - ts_i
                 if dts_i != dts:
-                    err = "timesteps not equidistant: {} != {}".format(
-                            dts_i, dts)
-                    raise ValueError(err)
+                    raise ValueError(f"timesteps not equidistant: {dts_i} != {dts}")
 
         # Set timesteps on features
         for timestep, feature in features_ts.items():
@@ -2189,33 +2436,35 @@ cdef class FeatureTrack:
 
         return track
 
-
     def _init_total_track_stats_keys_fcts(self, cache=False):
         self._total_track_stats_keys_fcts_lst = [
-                ("n"          , lambda t: int(t.n)),
-                ("duration"   , lambda t: int(t.duration())),
-                ("footprint_n", lambda t: int(t.footprint_n(cache=cache))),
-            ]
+            ("n", lambda t: int(t.n)),
+            ("duration", lambda t: int(t.duration())),
+            ("footprint_n", lambda t: int(t.footprint_n(cache=cache))),
+        ]
 
     def _init_missing_features_stats_keys_fcts(self):
+        def fct_stat(op):
+            return lambda f: float(op(f.values)) if f.values.size > 0 else -1.0
+
         self._missing_features_stats_keys_fcts_lst = [
-                ("id"           , lambda f: int(f.id)),
-                ("timestep"     , lambda f: int(f.timestep)),
-                ("center"       , lambda f: [int(i) for i in f.center]),
-                ("n_holes"      , lambda f: 0 if f.holes is None else len(f.holes)),
-                ("associates_n" , lambda f: f.associates_n()),
-                ("n"            , lambda f: int(f.n)),
-                ("sum"          , lambda f: float(np.nansum   (f.values))         if f.values.size > 0 else -1.0),
-                ("min"          , lambda f: float(np.nanmin   (f.values))         if f.values.size > 0 else -1.0),
-                ("max"          , lambda f: float(np.nanmax   (f.values))         if f.values.size > 0 else -1.0),
-                ("mean"         , lambda f: float(np.nanmean  (f.values))         if f.values.size > 0 else -1.0),
-                ("median"       , lambda f: float(np.nanmedian(f.values))         if f.values.size > 0 else -1.0),
-                ("abssum"       , lambda f: float(np.nansum   (np.abs(f.values))) if f.values.size > 0 else -1.0),
-                ("absmin"       , lambda f: float(np.nanmin   (np.abs(f.values))) if f.values.size > 0 else -1.0),
-                ("absmax"       , lambda f: float(np.nanmax   (np.abs(f.values))) if f.values.size > 0 else -1.0),
-                ("absmean"      , lambda f: float(np.nanmean  (np.abs(f.values))) if f.values.size > 0 else -1.0),
-                ("absmedian"    , lambda f: float(np.nanmedian(np.abs(f.values))) if f.values.size > 0 else -1.0),
-            ]
+            ("id", lambda f: int(f.id)),
+            ("timestep", lambda f: int(f.timestep)),
+            ("center", lambda f: [int(i) for i in f.center]),
+            ("n_holes", lambda f: 0 if f.holes is None else len(f.holes)),
+            ("associates_n", lambda f: f.associates_n()),
+            ("n", lambda f: int(f.n)),
+            ("sum", lambda f: fct_stat(np.nansum)),
+            ("min", lambda f: fct_stat(np.nanmin)),
+            ("max", lambda f: fct_stat(np.nanmax)),
+            ("mean", lambda f: fct_stat(np.nanmean)),
+            ("median", lambda f: fct_stat(np.nanmedian)),
+            ("abssum", lambda f: fct_stat(np.nansum)),
+            ("absmin", lambda f: fct_stat(np.nanmin)),
+            ("absmax", lambda f: fct_stat(np.nanmax)),
+            ("absmean", lambda f: fct_stat(np.nanmean)),
+            ("absmedian", lambda f: fct_stat(np.nanmedian)),
+        ]
 
     # SR_TMP < TODO turn into proper getter, or guard against assignment
     @property
@@ -2229,7 +2478,6 @@ cdef class FeatureTrack:
         self.set_total_track_stats(None)
 
     def set_total_track_stats(self, stats, *, ignore_missing=False, skip=None):
-
         if stats is None:
             self._total_track_stats_lst = None
             return
@@ -2242,14 +2490,14 @@ cdef class FeatureTrack:
             found = set(stats.keys())
             missing = expected.difference(found)
             extra = found.difference(expected)
-            err = "invalid total track stats: {} expected: {}".format(
-                    len(expected), ", ".join(sorted(expected)))
+            err = (
+                f"invalid total track stats: {len(expected)} expected: "
+                f"{', '.join(sorted(expected))}"
+            )
             if len(missing) > 0:
-                err += "; {} missing: {}".format(len(missing), ", ".join(
-                        sorted(missing)))
+                err += f"; {len(missing)} missing: {', '.join(sorted(missing))}"
             if len(extra) > 0:
-                err += "; {} extra: {}".format(len(extra), ", ".join(
-                        sorted(extra)))
+                err += f"; {len(extra)} extra: {', '.join(sorted(extra))}"
             raise ValueError(err)
 
         # Transfer argument stats in correct order
@@ -2261,23 +2509,19 @@ cdef class FeatureTrack:
                 self._total_track_stats_lst.append((key, stats[key]))
 
     def n_missing_features(self):
-
         if (self.missing_features_stats is None or
                 len(self.missing_features_stats["id"]) == 0):
             if not self.is_complete():
-                err = ("track {}: incomplete yet lacks missing features stats"
-                        ).format(self.id)
-                raise Exception(err)
+                raise Exception(
+                    f"track {self.id}: incomplete yet lacks missing features stats"
+                )
             return 0
-
         fids = self.missing_features_stats["id"]
-
         if len(fids) > len(set(fids)):
-            err = ("track {}: double entries in missing features stats: {}"
-                    ).format(sorted(set([fid for fid in fids
-                            if fids.count(fid) > 1])))
-            raise Exception(err)
-
+            raise Exception(
+                f"track {self.id}: double entries in missing features stats: "
+                f"{sorted(set([fid for fid in fids if fids.count(fid) > 1]))}"
+            )
         return len(fids)
 
     # SR_TMP < TODO turn into proper getter, or guard against assignment
@@ -2289,16 +2533,13 @@ cdef class FeatureTrack:
     # SR_TMP >
 
     def set_missing_features_stats(self, stats, ignore_missing=False):
-
         if stats is None:
             self._missing_features_stats_lst = None
             return
-
         keys = [k for k, f in self._missing_features_stats_keys_fcts_lst]
 
         # Check argument stats
-        if (not set(keys) == set(stats.keys()) and
-                not ignore_missing):
+        if not set(keys) == set(stats.keys()) and not ignore_missing:
             # Error!
 
             expected = set(keys)
@@ -2306,14 +2547,14 @@ cdef class FeatureTrack:
             missing = expected.difference(found)
             extra = found.difference(expected)
 
-            err = "invalid missing features stats: {} expected: {}".format(
-                    len(expected), ", ".join(sorted(expected)))
+            err = (
+                f"invalid missing features stats: {len(expected)} expected: "
+                f"{', '.join(sorted(expected))}"
+            )
             if len(missing) > 0:
-                err += "; {} missing: {}".format(len(missing), ", ".join(
-                        sorted(missing)))
+                err += f"; {len(missing)} missing: {', '.join(sorted(missing))}"
             if len(extra) > 0:
-                err += "; {} extra: {}".format(len(extra), ", ".join(
-                        sorted(extra)))
+                err += "; {len(extra)} extra: {', '.join(sorted(extra))}"
             raise ValueError(err)
 
         # Transfer argument stats in correct order
@@ -2322,15 +2563,14 @@ cdef class FeatureTrack:
             self._missing_features_stats_lst.append((key, stats[key]))
 
     def update_missing_features_stats(self):
-
         if self.is_complete():
             self.set_missing_features_stats(None)
             return
 
         if self.missing_features_stats is None:
-            err = ("incomplete track ({}) without missing feature stats"
-                    ).format(self.id)
-            raise Exception(err)
+            raise Exception(
+                f"incomplete track ({self.id}) without missing feature stats"
+            )
 
         # IDs of features currently present
         fids_present = [f.id for f in self.features()]
@@ -2339,8 +2579,7 @@ cdef class FeatureTrack:
         fids_old = self.missing_features_stats["id"]
 
         # Indices of missing feature stats entries to be kept
-        inds_keep = [i for i, fid in enumerate(fids_old)
-                if fid not in fids_present]
+        inds_keep = [i for i, fid in enumerate(fids_old) if fid not in fids_present]
 
         # Remove entries of features not missing anymore
         lst_old = copy(self._missing_features_stats_lst)
@@ -2355,19 +2594,17 @@ cdef class FeatureTrack:
         n_missing = len(inds_keep)
         n_tot = self.total_track_stats["n"]
         if n_present + n_missing != n_tot:
-            err = ("inconsistent number of features: "
-                    "{} present + {} missing != {} total"
-                    ).format(n_present, n_missing, n_tot)
-            raise Exception(err)
+            raise Exception(
+                f"inconsistent number of features: {n_present} present + {n_missing} "
+                f"missing != {n_tot} total"
+            )
 
     def compute_total_track_stats(self, skip=None):
-
         if not self.is_complete():
-            err = ("total track stats must be stored as long as a track is "
-                    "still complete, i.e., before breaking it up into "
-                    "partial tracks")
-            raise Exception(err)
-
+            raise Exception(
+                "total track stats must be stored as long as a track is still "
+                "complete, i.e., before breaking it up into partial tracks"
+            )
         keys = [k for k, f in self._total_track_stats_keys_fcts_lst]
         self._total_track_stats_lst = []
         for key, fct in self._total_track_stats_keys_fcts_lst:
@@ -2377,12 +2614,9 @@ cdef class FeatureTrack:
             self._total_track_stats_lst.append((key, fct(self)))
 
     def store_missing_features_stats(self, other):
-
         keys = [k for k, f in self._missing_features_stats_keys_fcts_lst]
-
         stats_self = self.missing_features_stats
         stats_other = other.missing_features_stats
-
         if stats_self is None:
             stats_self = odict([(k, []) for k in keys])
         else:
@@ -2419,7 +2653,6 @@ cdef class FeatureTrack:
         return [f.id for f in self.features()]
 
     def features_ts(self, ts=None, format="list"):
-
         if self.n == 0:
             if format == "list":
                 return []
@@ -2432,8 +2665,10 @@ cdef class FeatureTrack:
         if format == "list":
             if ts is None:
                 timesteps = self.get_timesteps(total=False)
-                return [[vertex["feature"] for vertex in self.vertices_ts(ts)]
-                        for ts in timesteps]
+                return [
+                    [vertex["feature"] for vertex in self.vertices_ts(ts)]
+                    for ts in timesteps
+                ]
             return [vertex["feature"] for vertex in self.vertices_ts(ts)]
 
         elif format == "dict":
@@ -2444,8 +2679,7 @@ cdef class FeatureTrack:
             return {ts: vertex["feature"] for vertex in self.vertices_ts(ts)}
 
         else:
-            err = "invalid format: {}".format(format)
-            raise ValueError(format)
+            raise ValueError("invalid format: {format}")
 
     def features_n(self, total=True):
         """Get a list of all feature sizes."""
@@ -2494,10 +2728,11 @@ cdef class FeatureTrack:
         #        elif ts > ts_end_nontot:
         #            missing_ns_ts_pre.append(ns)
         #        else:
-        #            err = ("track {}: timestep {} should be missing and thus "
-        #                    "outside range [{}..{}] but apparently is not"
-        #                    ).format(self.id, ts, ts_start_nontot, ts_end_nontot)
-        #            raise Exception(err)
+        #             raise Exception(
+        #                 f"track {self.id}: timestep {ts} should be missing and thus "
+        #                 f"outside range [{ts_start}..{ts_start_nontot}] but apparently "
+        #                 f"is not"
+        #             )
 
         #    # Merge all sizes
         #    ns_ts = missing_ns_ts_pre + ns_ts + missing_ns_ts_post
@@ -2509,23 +2744,22 @@ cdef class FeatureTrack:
             ns_ts[ind].append(feature.n)
         if total and not self.is_complete():
             for ts, n in zip(
-                    self.missing_features_stats["timestep"],
-                    self.missing_features_stats["n"]):
+                self.missing_features_stats["timestep"],
+                self.missing_features_stats["n"],
+            ):
                 ind = timesteps.index(ts)
                 ns_ts[ind].append(n)
         # SR_TMP >
 
         if cache:
             self._cache[__name__] = ns_ts
-
         return ns_ts
 
     def _mean_centers_ts_hull(self, weighted=True, total=True, cache=False):
         """Convex hull around centers."""
 
         # Determine the mean center at each timestep (weighted by feature size)
-        mean_centers = self.mean_centers_ts(weighted=weighted, total=total,
-                cache=cache)
+        mean_centers = self.mean_centers_ts(weighted=weighted, total=total, cache=cache)
 
         # Determine the enclosing hullgon of the centers (as a convex hull)
         hull = geo.MultiPoint(mean_centers).convex_hull
@@ -2544,7 +2778,8 @@ cdef class FeatureTrack:
                 cache=cache)
         return hull.area
 
-    # SR_TMP <
+    # SR_TMP <<<
+
     def mean_centers_ts_hull_len__per__distance_mean_centers(self):
         kwas = dict(total=True, weighted=True, cache=True)
         hull = self.mean_centers_ts_hull_len(**kwas)
@@ -2554,6 +2789,7 @@ cdef class FeatureTrack:
             # (ex. 2 points: hull is twice the point distance; there and back)
             return 2.0
         return hull/dist
+
     def mean_centers_ts_hull__area_per_len(self):
         kwas = dict(total=True, weighted=True, cache=True)
         area = self.mean_centers_ts_hull_area(**kwas)
@@ -2561,25 +2797,34 @@ cdef class FeatureTrack:
         if len_ == 0:
             return np.nan
         return area/len_
+
     def features_n__mean(self):
         return np.mean(self.features_n())
+
     def features_n__median(self):
         return np.median(self.features_n())
+
     def features_ts_n__mean(self):
         return np.mean(self.features_ts_n())
+
     def features_ts_n__median(self):
         return np.median(self.features_ts_n())
+
     def features_ts_n__p80(self):
         return np.percentile(self.features_ts_n(), 80)
+
     def features_ts_n__p90(self):
         return np.percentile(self.features_ts_n(), 90)
+
     def features_ts_n__p90_minus_median(self):
         return self.features_ts_n__p90() - self.features_ts_n__median()
-    # SR_TMP >
+
+    # SR_TMP >>>
 
     def get_edge(self, feature1, feature2):
-        return self.graph.es.find(_between=
-                ((feature1.vertex().index,), (feature2.vertex().index,)))
+        return self.graph.es.find(
+            _between=((feature1.vertex().index,), (feature2.vertex().index,))
+        )
 
     def head_vertices(self):
         """Return all active track head vertices."""
@@ -2595,6 +2840,7 @@ cdef class FeatureTrack:
         Argument 'total' is only relevant for partial subtracks; if True,
         missing timesteps (i.e. those that belong to other partial subtracks
         of the same track) are considered, too.
+
         """
         return len(self.timesteps(total=total)) - 1
 
@@ -2621,7 +2867,7 @@ cdef class FeatureTrack:
             if not isinstance(ts, datetime):
                 ts = datetime.strptime(str(ts), ts_fmt)
         else:
-            raise ValueError("unknown format '{}'".format(format))
+            raise ValueError(f"unknown format '{format}'")
         return ts
 
     def ts_start(self, total=True, format="int"):
@@ -2636,8 +2882,7 @@ cdef class FeatureTrack:
             return self._format_ts(timesteps[-1], format)
         return None
 
-    cpdef list finish(self, bint force=False, int split_n=-1,
-            bint merge_features=True):
+    cpdef list finish(self, bint force=False, int split_n=-1, bint merge_features=True):
         """Finish track; split into subtracks if requested."""
 
         # Force-finish track (end of tracking)
@@ -2645,7 +2890,7 @@ cdef class FeatureTrack:
             for vertex in self.head_vertices():
                 type = vertex["type"]
                 if type in ("start", "genesis", "merging"):
-                    vertex["type"] = "{}/{}".format(type, "stop")
+                    vertex["type"] = f"{type}/stop"
                 else:
                     vertex["type"] = "stop"
                 vertex["active_head"] = False
@@ -2667,9 +2912,9 @@ cdef class FeatureTrack:
                 subtrack.compute_total_track_stats()
             else:
                 raise Exception("incomplete track")
-                subtrack.store_missing_features_stats(self)
-                self.store_missing_features_stats(subtrack)
-                subtrack.reset_total_track_stats()
+                # subtrack.store_missing_features_stats(self)
+                # self.store_missing_features_stats(subtrack)
+                # subtrack.reset_total_track_stats()
 
         return subtracks
 
@@ -2687,6 +2932,7 @@ cdef class FeatureTrack:
         The original track is destroyed unless explicitly stated otherwise.
 
         Returns all new tracks.
+
         """
         splitter = FeatureTrackSplitter(used_ids)
         return splitter.split(self, n, preserve=preserve)
@@ -2762,20 +3008,16 @@ cdef class FeatureTrack:
 
     def n_associated(self, *, all_=None, any_=None, total=True, cache=False):
         """Count features with certain associates."""
-        return self._n_associated_core(all_, any_, total=total, ts=False,
-                cache=cache)
+        return self._n_associated_core(all_, any_, total=total, ts=False, cache=cache)
 
     def n_associated_ts(self, *, all_=None, any_=None, total=True, cache=False):
         """Count timesteps with features with certain associates."""
-        return self._n_associated_core(all_, any_, total=total, ts=True,
-                cache=cache)
+        return self._n_associated_core(all_, any_, total=total, ts=True, cache=cache)
 
     def _n_associated_core(self, all_, any_, total, ts, cache):
-
-        key = ("n_associated__ts_{ts}__all_{all}__any_{any}__total_{tot}"
-                ).format(ts=str(ts), tot=str(total),
-                any=("" if all_ is None else "_".join(sorted(all_))),
-                all=("" if any_ is None else "_".join(sorted(any_))))
+        s_any = "" if all_ is None else "_".join(sorted(all_))
+        s_all = "" if any_ is None else "_".join(sorted(any_))
+        key = f"n_associated__ts_{ts}__all_{s_all}__any_{s_any}__total_{total}"
         if cache and key in self._cache:
             return self._cache[key]
 
@@ -2815,8 +3057,7 @@ cdef class FeatureTrack:
                     self.missing_features_stats["associates_n"]):
                 if timestep not in missing_info_ts:
                     missing_info_ts[timestep] = []
-                missing_info_ts[timestep].append(
-                        {name: n for name, n in associates_n})
+                missing_info_ts[timestep].append({name: n for name, n in associates_n})
             for timestep, features_info in missing_info_ts.items():
                 n_ts = 0
                 for asscs in features_info:
@@ -2830,12 +3071,9 @@ cdef class FeatureTrack:
                     n_tot += (1 if n_ts > 0 else 0)
                 else:
                     n_tot += n_ts
-
         if cache:
             self._cache[key] = n_tot
-
         return n_tot
-
 
     def centers_ts(self, total=True, cache=False):
         """Return all centers, grouped by timestep."""
@@ -2855,12 +3093,13 @@ cdef class FeatureTrack:
         # if total and not self.is_complete():
         #    for ts in set(self.missing_features_stats["timestep"]):
         #        if ts in centers_by_ts:
-        #            err = "timestep both present and missing: {}".format(ts)
+        #            err = f"timestep both present and missing: {ts}"
         #            raise Exception(err)
         #        centers_by_ts[ts] = []
         #    for ts, center in zip(
-        #            self.missing_features_stats["timestep"],
-        #            self.missing_features_stats["center"]):
+        #        self.missing_features_stats["timestep"],
+        #        self.missing_features_stats["center"],
+        #    ):
         #        centers_by_ts[ts].append(feature.center)
 
         #    centers = list(odict(sorted(centers_by_ts.items())).values())
@@ -2872,15 +3111,15 @@ cdef class FeatureTrack:
             centers[ind].append(feature.center)
         if total and not self.is_complete():
             for ts, center in zip(
-                    self.missing_features_stats["timestep"],
-                    self.missing_features_stats["center"]):
+                self.missing_features_stats["timestep"],
+                self.missing_features_stats["center"],
+            ):
                 ind = timesteps.index(ts)
                 centers[ind].append(center)
         # SR_TMP >
 
         if cache:
             self._cache[__name__] = centers
-
         return centers
 
     def mean_centers_ts(self, weighted=True, total=True, cache=False):
@@ -2896,25 +3135,18 @@ cdef class FeatureTrack:
 
         mean_centers = []
         for centers, sizes in zip(
-                self.centers_ts(total=total),
-                self.features_ts_ns(total=total),
-            ):
-
+            self.centers_ts(total=total), self.features_ts_ns(total=total),
+        ):
             if len(centers) != len(sizes):
-                err = ("different number of centers ({}) and sizes ({})"
-                        ).format(len(centers), len(sizes))
-                err += "\n\n{}\n{}\n\n{}\n{}".format(
-                        self.centers_ts(total=total),
-                        len(self.centers_ts(total=total)),
-                        self.features_ts_ns(total=total),
-                        len(self.features_ts_ns(total=total)),
-                    )
-                err += "\n\n{}\n{}".format(
-                        sorted([len(i) for i in self.centers_ts(total=total)]),
-                        sorted([len(i) for i in self.features_ts_ns(total=total)]),
-                    )
-                raise Exception(err)
-
+                raise Exception(
+                    f"different number of centers ({len(centers)}) and sizes "
+                    f"({len(sizes)})\n\n{self.centers_ts(total=total)}"
+                    f"\n{len(self.centers_ts(total=total))}"
+                    f"\n\n{self.features_ts_ns(total=total)}"
+                    f"\n{len(self.features_ts_ns(total=total))}"
+                    "\n\n{sorted([len(i) for i in self.centers_ts(total=total)])}"
+                    f"\n{sorted([len(i) for i in self.features_ts_ns(total=total)])}"
+                )
             # Compute mean center
             kwas = dict(axis=0)
             if weighted:
@@ -2922,35 +3154,28 @@ cdef class FeatureTrack:
                 # The mean center is thus closer to bigger features
                 kwas["weights"] = sizes
             mean_center = np.average(centers, **kwas).astype(np.float32)
-
             mean_centers.append(mean_center)
-
         if cache:
             self._cache[__name__] = mean_centers
-
         return mean_centers
 
     def distance_mean_centers(self, N=1, weighted=True, total=True, cache=False):
         """Total distance along mean center at every timestep."""
-
         # Collect path along mean centers
         path = self.mean_centers_ts(total=total, weighted=weighted, cache=cache)
-
         if N > 1:
             # Smooth the path
             path = self._smooth_path(path, N)
-
         # Compute path length
         if len(path) == 1:
             length = 0.0
         else:
             length = geo.LineString(path).length
-
         return length
 
     def _smooth_path(self, path, N):
         if not N > 0 and N%2 == 1:
-            raise ValueError("N not a positive uneven integer: ".format(N))
+            raise ValueError(f"N not a positive uneven integer: {N}")
 
         npts = path.shape[1]
         if npts <= 3 or N == 1:
@@ -2966,44 +3191,52 @@ cdef class FeatureTrack:
 
         # Compute running means for axes of sufficient length
         win = np.ones(N)/float(N) # window
-        path = np.array([
+        path = np.array(
+            [
                 np.convolve(path[0], win, mode="valid"),
-                np.convolve(path[1], win, mode="valid")
-            ]).round().astype(np.int32)
+                np.convolve(path[1], win, mode="valid"),
+            ]
+        ).round().astype(np.int32)
 
         return path
-
 
     def velocity__mean_centers(self):
         """Velocity based on mean center distances.
 
         unit: grid points per timestep
+
         """
         # SR_TMP <
         weighted=True
         total=True
         cache = True
         # SR_TMP >
-
-        dist = self.distance_mean_centers(weighted=weighted, total=total,
-                cache=cache)
+        dist = self.distance_mean_centers(weighted=weighted, total=total, cache=cache)
         duration = float(self.duration(total=total))
-
         if duration == 0:
             return 0
         return dist/duration
 
-
-    def footprint(self, nx=None, ny=None, *,
-            ts_start=None, ts_end=None, timesteps=None, flatten=True,
-            cache=False, cache_feature_masks=False, __warned=[False],
-        ):
+    def footprint(
+        self,
+        nx=None,
+        ny=None,
+        *,
+        ts_start=None,
+        ts_end=None,
+        timesteps=None,
+        flatten=True,
+        cache=False,
+        cache_feature_masks=False,
+        __warned=[False],
+    ):
         """Compute total footprint of track as 2D mask."""
         __name__ = "footprint"
-        _tss_str = ("None" if timesteps is None else
-                        "-".join(str(ts) for ts in timesteps))
-        __key__ = ("{}"+"__{}"*5).format(
-                nx, ny, ts_start, ts_end, _tss_str, flatten)
+        _tss_str = (
+            "None" if timesteps is None else "-".join(str(ts) for ts in timesteps)
+        )
+        vars = [nx, ny, ts_start, ts_end, _tss_str, flatten]
+        __key__ = "__".join([str(v) for v in vars])
 
         if nx is None or ny is None:
             if self.tracker is not None:
@@ -3011,16 +3244,20 @@ cdef class FeatureTrack:
                 ny = self.tracker.constants.ny
                 # SR_DBG <
                 if __warned[0] != 1:
-                    method_name = "Feature.footprint"
-                    log.warning(("{}: dimensions from tracker: nx={}, ny={} !!"
-                            ).format(method_name, nx, ny))
+                    log.warning(
+                        f"{type(self).__name__}.footprint: dimensions from tracker: "
+                        f"nx={nx}, ny={nx} !!"
+                    )
                     __warned[0] = 1 # warn only once
                 # SR_DBG >
             else:
-                nx, ny = [1542]*2
+                nx = 1542
+                ny = 1542
                 if __warned[0] != 2:
-                    log.warning("{}: hard-coded: nx={}, ny={} !!".format(
-                            "Feature.footprint", nx, ny))
+                    log.warning(
+                        "{type(self).__name__}.footprint: hard-coded: "
+                        f"nx={nx}, ny={ny} !!"
+                    )
                     __warned[0] = 2 # warn only once
 
         if timesteps is None:
@@ -3031,9 +3268,10 @@ cdef class FeatureTrack:
         if not self.is_complete():
             timesteps_notot = self.timesteps(total=False)
             if not all(ts in timesteps_notot for ts in timesteps):
-                err = ("partial track {} missing timesteps: not all of {} in {}"
-                        ).format(self.id, timesteps, timesteps_notot)
-                raise Exception(err)
+                raise Exception(
+                    f"partial track {self.id} missing timesteps: not all of "
+                    f"{timesteps} in {timesteps_notot}"
+                )
 
         if cache and __name__ in self._cache:
             return self._cache[__key__]
@@ -3056,6 +3294,7 @@ cdef class FeatureTrack:
         """Create track mask over whole duration or select timesteps.
 
         See method 'footprint' for details on options.
+
         """
         footprint = self.footprint(nx=nx, ny=ny, flatten=True, **kwas)
         return footprint.astype(np.bool)
@@ -3075,16 +3314,15 @@ cdef class FeatureTrack:
         else:
             # Incomplete track: Read precomputed value from total track stats
             if self.total_track_stats is None:
-                err = ("track {}: "
-                        "incomplete, yet lacking missing track stats "
-                        "(self.total_track_stats is None); "
-                        "cannot compute footprint size!").format(self.id)
-                raise Exception(err)
+                raise Exception(
+                    f"track {self.id}: incomplete, yet lacking missing track stats "
+                    f"(self.total_track_stats is None); cannot compute footprint size!"
+                )
             fp_tot = self.total_track_stats["footprint_n"]
             if fp_tot is None:
-                err = ("track {}: footprint_n of total track stats is None"
-                        ).format(self.id)
-                raise Exception(err)
+                raise Exception(
+                    f"track {self.id}: footprint_n of total track stats is None"
+                )
 
         # SR_TODO
         #
@@ -3092,22 +3330,19 @@ cdef class FeatureTrack:
         # and all are part of the complete part of the track, in which case
         # the footprint can be computed even though a track is incomplete!
         #
-
         return fp_tot
 
     # SR_TMP <
     def footprint_n__log10(self):
         n = self.footprint_n(cache=True)
         if n <= 0:
-            err = "track {}: invalid footprint_n <= 0: {}".format(self.id, n)
-            raise Exception(err)
+            raise Exception(f"track {self.id}: invalid footprint_n <= 0: {n}")
         return np.log10(n)
     # SR_TMP >
 
     def footprint_n_rel(self, op="median", total=True, cache=False):
         """Compute track footprint relative to median/... feature size."""
         __name__ = "footprint_n_rel__"+op
-
         if cache and __name__ in self._cache:
             return self._cache[__name__]
 
@@ -3126,7 +3361,7 @@ cdef class FeatureTrack:
             pctl = float(op.split("_")[1])
             fp_ref = np.percentile(sizes, pctl)
         else:
-            raise ValueError("invalid operator: {}".format(op))
+            raise ValueError(f"invalid operator: {op}")
 
         # Compute relative footprint
         fp_tot = self.footprint_n(cache=cache)
@@ -3134,39 +3369,49 @@ cdef class FeatureTrack:
 
         if cache:
             self._cache[__name__] = fp_rel
-
         return fp_rel
 
-    # SR_TMP <
+    # SR_TMP <<<
+
     def footprint_n_rel__median(self):
         return self.footprint_n_rel(op="median", cache=True)
+
     def footprint_n_rel__p80(self):
         return self.footprint_n_rel(op="percentile_80", cache=True)
+
     def footprint_n_rel__mean(self):
         return self.footprint_n_rel(op="mean", cache=True)
+
     def footprint_n_rel__max(self):
         return self.footprint_n_rel(op="max", cache=True)
+
     def footprint_n_ts_rel__median(self):
         return self.footprint_n_rel(op="median_ts", cache=True)
+
     def footprint_n_ts_rel__p80(self):
         return self.footprint_n_rel(op="percentile_80_ts", cache=True)
+
     def footprint_n_ts_rel__mean(self):
         return self.footprint_n_rel(op="mean_ts", cache=True)
+
     def footprint_n_ts_rel__max(self):
         return self.footprint_n_rel(op="max_ts", cache=True)
-    # SR_TMP >
 
+    # SR_TMP >>>
 
     cpdef void merge_features(self, Constants constants) except *:
         """Merge all adjacent features at each timestep."""
-        # log.info("track {}: merge neighbors among {} features".format(
-        #        self.id, self.n))
+        # log.info(f"track {self.id}: merge neighbors among {self.n} features")
         nold = self.n
-        TrackFeatureMerger(self, constants.nx, constants.ny,
-                constants.connectivity, timestep=self.ts_end()).run()
+        TrackFeatureMerger(
+            self,
+            constants.nx,
+            constants.ny,
+            constants.connectivity,
+            timestep=self.ts_end()
+        ).run()
         if self.n < nold:
-            log.info("track {}: merged features: {} -> {}".format(
-                    self.id, nold, self.n))
+            log.info(f"track {self.id}: merged features: {nold} -> {self.n}")
 
     @classmethod
     def from_old_track(cls, old_track, new_features):
@@ -3174,11 +3419,11 @@ cdef class FeatureTrack:
 
         Note that the features must already have been converted to new-style
         and passed as a dictionary with the feature IDs as keys.
+
         """
         graph = ig.Graph(directed=True)
-
         new_features_table = {f.id: f for f in new_features}
-
+        #
         # Idea: Add a class for vertices (basically like Events) which
         # contains variables for both a feature and a corresponding cfeature.
         # When working in Python/Cython, link features accordingly and leave
@@ -3189,7 +3434,6 @@ cdef class FeatureTrack:
         # and internalize the whole cfeature thing (if that's feasible
         # performance-wise).
         #
-
         # Add edges for start features
         ts_start = old_track.ts_start()
         events = old_track.events_ts(ts_start)
@@ -3220,45 +3464,40 @@ cdef class FeatureTrack:
                     else:
                     # SR_TMP >
                         edge = track_graph_add_edge(graph, vertex, next_vertex)
-
             if not next_events:
                 break
             events = next_events
         else:
-            log.error("loop timeout ({} iterations)".format(iter_i))
+            log.error(f"loop timeout ({iter_i} iterations)")
             exit(2)
-
-        return cls(
-                id           = old_track.id(),
-                graph        = graph,
-                features     = new_features,
-            )
+        return cls(id=old_track.id(), graph=graph, features=new_features)
 
     def json_dict(self, format=True):
         """Return track information as a json-compatible dict."""
         timesteps = self.get_timesteps(total=False)
         feature_ids = [f.id for f in self.features()]
-        jdat = odict([
-                ("id", self.id),
-                ("timesteps", timesteps),
-                ("features", feature_ids),
-                ("is_complete", self.is_complete()),
-            ])
-        jdat["stats"] = odict([
-                ("n_features", self.n),
-                ("max_length", self.max_length()),
-                ("duration", self.duration()),
-            ])
+        jdat = {
+            "id": self.id,
+            "timesteps": timesteps,
+            "features": feature_ids,
+            "is_complete": self.is_complete(),
+        }
+        jdat["stats"] = {
+            "n_features": self.n,
+            "max_length": self.max_length(),
+            "duration": self.duration(),
+        }
         if not self.is_complete():
             if self.total_track_stats is None:
-                err = ("track {} is incomplete but lacking total track stats "
-                        "(self.total_track_stats is None)").format(self.id)
-                raise Exception(err)
+                raise Exception(
+                    f"track {self.id} is incomplete but lacking total track stats "
+                    f"(self.total_track_stats is None)"
+                )
             if self.missing_features_stats is None:
-                err = ("track {} is incomplete but lacking missing features "
-                        "stats (self.missing_features_stats is None)").format(
-                        self.id)
-                raise Exception(err)
+                raise Exception(
+                    f"track {self.id} is incomplete but lacking missing features "
+                    f"stats (self.missing_features_stats is None)"
+                )
             jdat["total_track_stats"] = self.total_track_stats
             jdat["missing_features_stats"] = self.missing_features_stats
         return jdat
@@ -3275,26 +3514,29 @@ cdef class FeatureTrack:
         elif op == "median":
             reduce = np.median
         else:
-            raise ValueError("invalid operator: {}".format(op))
+            raise ValueError(f"invalid operator: {op}")
         n_holes_features = [len(f.holes) for f in self.features()]
         if not self.is_complete():
             try:
-                n_holes_features.extend(
-                        self.missing_features_stats["n_holes"])
+                n_holes_features.extend(self.missing_features_stats["n_holes"])
             except KeyError:
-                err = ("track {}: holes missing from missing features stats"
-                        ).format(self.id)
-                raise Exception(err)
+                raise Exception(
+                    f"track {self.id}: holes missing from missing features stats"
+                )
         return reduce(n_holes_features)
 
-    # SR_TMP <
+    # SR_TMP <<<
+
     def n_holes_sum(self, total=True):
         return self.n_holes("sum", total)
+
     def n_holes_mean(self, total=True):
         return self.n_holes("mean", total)
+
     def n_holes_median(self, total=True):
         return self.n_holes("median", total)
-    # SR_TMP >
+
+    # SR_TMP >>>
 
     def max_length(self):
         return -1
@@ -3305,17 +3547,22 @@ cdef class FeatureTrack:
         Argument total is only relevant for partial subtracks; if True,
         missing timesteps (i.e. those that belong to other subtracks of the
         same track) are considered, too.
+
         """
         timesteps = set(self.graph.vs["ts"])
         if not self.is_complete() and total:
             if self.missing_features_stats is None:
-                err = ("track {}: incomplete but no missing_features_stats"
-                        ).format(self.id)
-                raise Exception(err)
+                raise Exception(
+                    f"track {self.id}: incomplete but no missing_features_stats"
+                )
             timesteps |= set(self.missing_features_stats["timestep"])
         timesteps = sorted(timesteps)
-        if (format == "datetime" and not isinstance(timesteps[0], datetime) or
-                format == "int" and not isinstance(timesteps[0], int)):
+        if (
+            format == "datetime"
+            and not isinstance(timesteps[0], datetime)
+            or format == "int"
+            and not isinstance(timesteps[0], int)
+        ):
             timesteps = [self._format_ts(ts, format) for ts in timesteps]
         return timesteps
 
@@ -3326,10 +3573,10 @@ cdef class FeatureTrack:
             ts = self._format_ts(ts, "int")
         # SR_TMP >
         if ts is None:
-            return [list(self.vertices_ts(ts))
-                    for ts in self.get_timesteps(total=False)]
+            return [
+                list(self.vertices_ts(ts)) for ts in self.get_timesteps(total=False)
+            ]
         return self.graph.vs.select(lambda v: v["ts"] == ts)
-
 
     def cut_off(self, *, until, compute_footprint=True):
         """Cut off part of the track in order to save it to disk.
@@ -3342,30 +3589,32 @@ cdef class FeatureTrack:
 
         """
         if not self.is_finished():
-            err = "track {}: cannot cut part off active track".format(self.id)
-            raise Exception(err)
+            raise Exception(f"track {self.id}: cannot cut part off active track")
 
         if not self.ts_start() <= until < self.ts_end():
-            err = ("invalid argument until (until must be in track range {}.."
-                    "{}): {}").format(self.ts_start(), self.ts_end(), until)
-            raise ValueError(err)
+            raise ValueError(
+                f"invalid argument until (until must be in track range "
+                f"{self.ts_start()}..{self.ts_end()}): {until}"
+            )
 
         if self.is_complete():
             _skip = ["footprint_n"] if not compute_footprint else None
             self.compute_total_track_stats(skip=_skip)
         elif self.total_track_stats is None:
-            err = "track {}: incomplete, yet lacking total track stats"
-            raise Exception(err)
+            raise Exception(
+                f"track {self.id}: incomplete, yet lacking total track stats"
+            )
 
         graph_retain = self.graph
         ts_cutoff_edge = until
         _tss_retain = [ts for ts in self.graph.vs["ts"] if ts > until]
         if not _tss_retain:
-            err = ("track {}: full range ({}..{}); non-total range ({}..{}); "
-                    "no timesteps > {} found in graph").format(self.id,
-                    self.ts_start(total=True), self.ts_end(total=True),
-                    self.ts_start(total=False), self.ts_end(total=False))
-            raise Exception(err)
+            raise Exception(
+                f"track {self.id}: full range "
+                f"({self.ts_start(total=True)}..{self.ts_end(total=True)}); non-total "
+                f"range ({self.ts_start(total=False)}..{self.ts_end(total=False)}); "
+                f"no timesteps > {until} found in graph"
+            )
         ts_retain_edge = min(_tss_retain)
 
         # Select vertices and edges involved in the splitting
@@ -3396,21 +3645,24 @@ cdef class FeatureTrack:
         # Extract partial track into separate track
         graph_cutoff = graph_retain.subgraph(vs_cutoff)
         graph_retain.delete_vertices(vs_cutoff.indices)
-        partial_track = FeatureTrack(id_=self.id, graph=graph_cutoff,
-                config=self.config)
+        partial_track = FeatureTrack(
+            id_=self.id, graph=graph_cutoff, config=self.config,
+        )
 
         # Store missing track and features stats
         _skip = ["footprint_n"] if not compute_footprint else None
         partial_track.set_total_track_stats(
-                deepcopy(self.total_track_stats), skip=_skip)
+            deepcopy(self.total_track_stats), skip=_skip,
+        )
         self.store_missing_features_stats(partial_track)
         partial_track.store_missing_features_stats(self)
 
         return partial_track
 
     @classmethod
-    def merge_partial_tracks(cls, subtracks, *,
-            incomplete_period_start=None, incomplete_period_end=None):
+    def merge_partial_tracks(
+        cls, subtracks, *, incomplete_period_start=None, incomplete_period_end=None,
+    ):
         """Merge partial tracks back into a single track."""
 
         if len(subtracks) == 0:
@@ -3422,33 +3674,36 @@ cdef class FeatureTrack:
             _ts_end = _subtrack.ts_end(total=False)
 
             # Only one subtrack: nothing to merge
-            if not (_subtrack.is_complete() or
-                    _ts_start == incomplete_period_start or
-                    _ts_end == incomplete_period_end
-                ):
+            if not (
+                _subtrack.is_complete()
+                or _ts_start == incomplete_period_start
+                or _ts_end == incomplete_period_end
+            ):
                 # Single incomplete track that is not at the start or end
                 # of an incomplete period: we've got ourselves an error!
-                err = ("only single, incomplete track passed: {} "
-                        "({}..{})").format(_subtrack.id, _ts_start, _ts_end)
-                raise ValueError(err)
+                raise ValueError(
+                    f"only single, incomplete track passed: {_subtrack.id} "
+                    f"({_ts_start}..{_ts_end})"
+                )
 
             return _subtrack
 
         # Check that all subtracks share the same track id
         subtracks_ids_str = sorted([str(st.id) for st in subtracks])
         if len(set(subtracks_ids_str)) != 1:
-            err = "subtracks expected to have the same track id: {}".format(
-                    ", ".join(subtracks_ids_str))
+            err = (
+                f"subtracks expected to have the same track id: "
+                f"{', '.join(subtracks_ids_str)}"
+            )
 
         # Check that all total track stats are identical
         for subtrack in subtracks[1:]:
             if subtrack.total_track_stats != subtracks[0].total_track_stats:
-                err = ("tracks {} v. {}: total track stats differ:\n{}\n !=\n{}"
-                        ).format(subtrack.id, subtracks[0].id,
-                                pformat(subtrack.total_track_stats),
-                                pformat(subtracks[0].total_track_stats),
-                            )
-                raise Exception(err)
+                raise Exception(
+                    f"tracks {subtrack.id} v. {subtracks[0].id}: total track stats "
+                    f"differ:\n{pformat(subtrack.total_track_stats)}\n "
+                    f"!=\n{pformat(subtracks[0].total_track_stats)}"
+                )
 
         # Merge subtracks
         subtracks.sort(key=lambda t: t.ts_start())
@@ -3488,55 +3743,52 @@ cdef class FeatureTrack:
 
         # Remove any leftover vertices at start and end of incomplete period
         if incomplete_period_start:
-            vs_target = [v for v in vs_target
-                    if v["ts"] != incomplete_period_start]
+            vs_target = [v for v in vs_target if v["ts"] != incomplete_period_start]
         if incomplete_period_end:
-            vs_source = [v for v in vs_source
-                    if v["ts"] != incomplete_period_end]
+            vs_source = [v for v in vs_source if v["ts"] != incomplete_period_end]
 
         if vs_source or vs_target:
             # Ooop, leftover source/target vertices... That's an error!
             fids_source = [vx["feature"].id for vx in vs_source]
             fids_target = [vx["feature"].id for vx in vs_target]
             ntot = len(fids_source) + len(fids_target)
-            err = " {} left-over {}:".format(ntot,
-                    ("vertices" if ntot > 1 else "vertex"))
+            err = f" {ntot} left-over {'vertices' if ntot > 1 else 'vertex'}:"
             if len(fids_target) > 0:
-                err += "\n {} target {} (beginning): {} [{}]".format(
-                        len(fids_target),
-                        ("vertices" if ntot > 1 else "vertex"),
-                        ", ".join([str(fid) for fid in fids_target]),
-                        "/".join([str(vx["ts"]) for vx in vs_target]),
-                    )
-                raise Exception(err)
+                raise Exception(
+                    f"\n {len(fids_target)} target "
+                    f"{'vertices' if ntot > 1 else 'vertex'} (beginning): "
+                    f"{', '.join([str(fid) for fid in fids_target])} "
+                    f"[{'/'.join([str(vx['ts']) for vx in vs_target])}]"
+                )
             if len(fids_source) > 0:
-                err += "\n {} source {} (end): {} [{}]".format(
-                        len(fids_source),
-                        ("vertices" if ntot > 1 else "vertex"),
-                        ", ".join([str(fid) for fid in fids_source]),
-                        "/".join([str(vx["ts"]) for vx in vs_source]),
-                    )
-                raise Exception(err)
+                raise Exception(
+                    f"\n {len(fids_source)} source "
+                    f"{'vertices' if ntot > 1 else 'vertex'} (end): "
+                    f"{', '.join([str(fid) for fid in fids_source])} "
+                    f"[{'/'.join([str(vx['ts']) for vx in vs_source])}]"
+                )
 
         # Check track start
-        if (incomplete_period_start is not None and
-                track.ts_start(total=False) != incomplete_period_start):
-            if (min(track.timesteps(total=False)) !=
-                    min(track.timesteps(total=True))):
-                err = "start of track {} still incomplete: {} != {}".format(
-                        track.id, track.ts_start(total=False),
-                        incomplete_period_start)
-                raise Exception(err)
+        if (
+            incomplete_period_start is not None
+            and track.ts_start(total=False) != incomplete_period_start
+        ):
+            if min(track.timesteps(total=False)) != min(track.timesteps(total=True)):
+                raise Exception(
+                    f"start of track {track.id} still incomplete: "
+                    f"{track.ts_start(total=False)} != {incomplete_period_start)}"
+                )
 
         # Check track end
-        if (incomplete_period_end is not None and
-                track.ts_end(total=False) != incomplete_period_end):
-            if (max(track.timesteps(total=False)) !=
-                    max(track.timesteps(total=True))):
-                err = ("end of track {} still incomplete: {} != {}").format(
-                        track.id, track.ts_end(total=False),
-                        incomplete_period_end)
-                raise Exception(err)
+        if (
+            incomplete_period_end is not None
+            and track.ts_end(total=False) != incomplete_period_end
+        ):
+            if max(track.timesteps(total=False)) != max(track.timesteps(total=True)):
+                raise Exception(
+                    f"end of track {track.id} still incomplete: "
+                    f"{track.ts_end(total=False)} != {incomplete_period_end)}"
+                )
 
         # Update missing features stats
         track.update_missing_features_stats()
@@ -3548,43 +3800,31 @@ def track_graph_add_feature(graph, feature, attrs=None):
     if attrs is None:
         attrs = {}
     name = str(feature.id)
-    # print("add_vertex {}: {}".format(name, feature.id))
-
+    # print(f"add_vertex {name}: {feature.id}")
     if name in graph.vs.select(name):
-        err = "{}: feature {} already in graph".format("grap_add_vertex", name)
-        log.error(err)
+        log.error(f"track_graph_add_vertex: feature {name} already in graph")
         exit(4)
-
     graph.add_vertex(name)
     vertex = next(iter(graph.vs(name=name)))
-    vertex.update_attributes(
-            feature = feature,
-            ts = feature.timestep,
-            **attrs
-        )
+    vertex.update_attributes(feature = feature, ts = feature.timestep, **attrs)
     feature.set_vertex(vertex)
-
     return vertex
 
+
 def track_graph_add_edge(graph, vertex1, vertex2, attrs=None):
-    # print("add edge: {} -> {}".format(fid1, fid2))
-
+    # print(f"add edge: {fid1} -> {fid2}")
     if vertex1["ts"] == vertex2["ts"]:
-        err = "cannot add edge between vertices of same timestep ({})".format(
-                vertex1["ts"])
-        raise ValueError(err)
-
+        raise ValueError(
+            f"cannot add edge between vertices of same timestep ({vertex1['ts']})"
+        )
     if vertex1["ts"] > vertex2["ts"]:
-        err = ("invalid vertex pair: must be in chronological order "
-                "(i.e. timestep of first vertex smaller than of the second): "
-                " {}, {}").format(vertex1["ts"], vertex2["ts"])
-        raise ValueError(err)
-
+        raise ValueError(
+            f"invalid vertex pair: not in chronological order (i.e. timestep of first "
+            f"vertex smaller than of the second): {vertex1['ts']}, {vertex2['ts']}"
+        )
     if attrs is None:
         attrs = {}
-
     graph.add_edge(vertex1, vertex2, **attrs)
-
     return graph.es[-1]
 
 
@@ -3595,6 +3835,7 @@ def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
     collect all tracks in a single list and pass it to his function.
 
     Tracks which share the same id will be merged.
+
     """
     if not subtracks:
         return []
@@ -3603,8 +3844,7 @@ def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
     tracks_mended = []
 
     # Determine time period
-    _tss = set([ts for track in subtracks
-            for ts in track.timesteps(total=False)])
+    _tss = set([ts for track in subtracks for ts in track.timesteps(total=False)])
     ts_start, ts_end = min(_tss), max(_tss)
 
     # Collect subtracks by id
@@ -3618,9 +3858,8 @@ def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
     n = len(subtracks_grouped)
     for i, (tid, subtracks_i) in enumerate(sorted(subtracks_grouped.items())):
         if counter:
-            frac = i/n
-            msg = " {: 4.1%} {} ({} subtracks)".format(i/n, subtracks_i[0].id,
-                    len(subtracks_i))
+            frac = i / n
+            msg = f" {i / n: 4.1%} {subtracks_i[0].id} ({len(subtracks_i)} subtracks)"
             try:
                 w, h = os.get_terminal_size()
             except OSError:
@@ -3628,8 +3867,8 @@ def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
             else:
                 print(msg[:w], end="\r", flush=True)
 
-        # print("reconstruct track {} from {} subtracks".format(
-        #        next(iter(subtracks_i)).id), len(subtracks_i))
+        # _tid = next(iter(subtracks_i)).id)
+        # print(f"reconstruct track {_tid} from {len(subtracks_i)} subtracks")
         kwas = dict()
         if is_subperiod:
             kwas["incomplete_period_start"] = ts_start
@@ -3645,25 +3884,29 @@ def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
             pass
         else:
             print(" "*w, end="\r", flush=True)
-
     return tracks_mended
 
 
 cdef class TrackFeatureMerger:
 
-    def __cinit__(self, FeatureTrack track, int nx, int ny, int connectivity,
-            np.uint64_t timestep=0):
+    def __cinit__(
+        self,
+        FeatureTrack track,
+        int nx,
+        int ny,
+        int connectivity,
+        np.uint64_t timestep=0,
+    ):
         self.track = track
         self.nx = nx
         self.ny = ny
         self.connectivity = connectivity
         self.timestep = timestep
-
         self.vs_attrs = FeatureTrack.vs_attrs
         self.es_attrs = FeatureTrack.es_attrs
-
         self.debug = False
-        if self.debug: log.debug("\nmerge features in track {} (n={})".format(track.id, track.n))
+        if self.debug:
+            log.debug(f"\nmerge features in track {track.id} (n={track.n})")
 
     cpdef void run(self) except *:
         cdef bint debug = self.debug
@@ -3673,11 +3916,16 @@ cdef class TrackFeatureMerger:
         cdef list all_features = self.track.features();
         cdef Feature feature, neighbor
         cdef list features_todo = []
-        if debug: log.debug("track {}: find features to merge".format(self.track.id))
+        if debug:
+            log.debug(f"track {self.track.id}: find features to merge")
         for i, feature in enumerate(self.track.features()):
             for j, neighbor in enumerate(feature.neighbors):
                 if feature.track().id == neighbor.track().id:
-                    if debug: log.debug(" -> feature {} ({}/{}) due to neighbor {} ({}/{})".format(feature.id, i+1, self.track.n, neighbor.id, j, len(feature.neighbors)))
+                    if debug:
+                        log.debug(
+                            f" -> feature {feature.id} ({i + 1}/{self.track.n}) due "
+                            f"to neighbor {neighbor.id} ({j}/{len(feature.neighbors)})"
+                        )
                     features_todo.append(feature)
                     break
 
@@ -3685,46 +3933,55 @@ cdef class TrackFeatureMerger:
         if len(features_todo) == 0:
             return
 
-        if debug: log.debug("\n ++++ MERGER ++++ TRACK {}\n".format(self.track.id))
+        if debug:
+            log.debug(f"\n ++++ MERGER ++++ TRACK {self.track.id}\n")
 
         # Check that we're not missing any vertex or edge attributes
         if len(self.track.graph.vs) > 0:
             graph_vs_attrs = self.track.graph.vs.attributes()
             if not all([a in graph_vs_attrs for a in self.vs_attrs]):
-                err = ("{}: track {}: graph vertex attributes don't match:\n"
-                        "expected:\n    {}\nfound:\n    {}"
-                        ).format(_name_, self.track.id,
-                        "\n    ".join([str(a) for a in sorted(self.vs_attrs)]),
-                        "\n    ".join([str(a) for a in sorted(graph_vs_attrs)]))
-                log.error(err)
+                s_exp = "\n    ".join([str(a) for a in sorted(self.vs_attrs)])
+                s_fnd = "\n    ".join([str(a) for a in sorted(graph_vs_attrs)])
+                log.error(
+                    f"{_name_}: track {self.track.id}: graph vertex attributes don't "
+                    f"match:\nexpected:\n    {s_exp}\nfound:\n    {s_fnd}"
+                )
                 exit(5)
-        if (len(self.track.graph.es) > 0 and
-                (set(self.track.graph.es.attributes()) != self.es_attrs)):
+        if (
+            len(self.track.graph.es) > 0
+            and set(self.track.graph.es.attributes()) != self.es_attrs
+        ):
             es = self.track.graph.es
-            err = ("{}: track {}: attributes of {} graph edges don't match:\n"
-                    "expected:\n    {}\nfound:\n    {}").format(
-                    _name_, self.track.id, len(es),
-                    "\n    ".join([str(a) for a in sorted(self.es_attrs)]),
-                    "\n    ".join([str(a) for a in sorted(es.attributes())]))
-            raise Exception(err)
+            s_exp = "\n    ".join([str(a) for a in sorted(self.es_attrs)])
+            s_fnd = "\n    ".join([str(a) for a in sorted(es.attributes())])
+            raise Exception(
+                f"{_name_}: track {self.track.id}: attributes of {len(es)} graph edges "
+                f"don't match:\nexpected:\n    {s_exp}\nfound:\n    {s_fnd}"
+            )
 
         # Process these features until none are left
         while len(features_todo) > 0:
             self.merge_feature(all_features, features_todo)
 
-
     cpdef void merge_feature(self, list features, list features_todo) except *:
         cdef bint debug = self.debug
         cdef str _name_ = "TrackFeatureMerger.merge_feature"
-        if debug: log.debug("< {}: {} todo: {}".format(_name_, len(features_todo), [f.id for f in features_todo]))
-
+        if debug:
+            log.debug(
+                f"< {_name_}: {len(features_todo)} todo: "
+                f"{[f.id for f in features_todo]}"
+            )
         cdef Feature feature, neighbor, other_neighbor
         cdef list features_orig, external_neighbors
 
         # Collect all adjacent features to be merged, and collect all
         # external neighbors of these features
         feature = features_todo.pop()
-        if debug: log.debug("feature: {}; {} neighbors: {}".format(feature.id, len(feature.neighbors), [f.id for f in feature.neighbors]))
+        if debug:
+            log.debug(
+                f"feature: {feature.id}; {len(feature.neighbors)} neighbors: "
+                f"{[f.id for f in feature.neighbors]}"
+            )
         features_orig = [feature]
         external_neighbors = []
         self.collect_neighbors(feature, features_todo, features_orig,
@@ -3740,12 +3997,19 @@ cdef class TrackFeatureMerger:
         # Merge the original features into one merged feature
         cdef Feature merged_feature
         cdef list merged_features
-        merged_features = merge_adjacent_features(features_orig, new_fid,
-                find_neighbors=False, ignore_missing_neighbors=True,
-                nx=self.nx, ny=self.ny)
+        merged_features = merge_adjacent_features(
+            features_orig,
+            new_fid,
+            find_neighbors=False,
+            ignore_missing_neighbors=True,
+            nx=self.nx,
+            ny=self.ny,
+        )
         if len(merged_features) > 1:
-            log.error(("{}: merging adjacent features results in more than "
-                    "one features; shouldn't happen!").format(_name_))
+            log.error(
+                f"{_name_}: merging adjacent features results in more than one "
+                f"features; shouldn't happen!"
+            )
             exit(2)
         merged_feature = merged_features[0]
         assert(merged_feature.id == new_fid) # SR_TMP SR_DBG
@@ -3758,8 +4022,9 @@ cdef class TrackFeatureMerger:
 
         # Collect vertices and edges
         cdef list vs_orig=[], vs_prev=[], vs_next=[], es_prev=[], es_next=[]
-        self.collect_vertices_edges(features_orig,
-                vs_orig, vs_prev, vs_next, es_prev, es_next)
+        self.collect_vertices_edges(
+            features_orig, vs_orig, vs_prev, vs_next, es_prev, es_next,
+        )
 
         # Collect and merge original vertex attributes
         cdef dict vx_attrs = {}
@@ -3767,55 +4032,92 @@ cdef class TrackFeatureMerger:
 
         # Collect and merge original edge attributes
         cdef dict es_attrs_prev={}, es_attrs_next={}
-        self.collect_merge_es_attrs(es_attrs_prev, es_attrs_next, vs_orig,
-                vs_prev, vs_next, es_prev, es_next, merged_feature)
+        self.collect_merge_es_attrs(
+            es_attrs_prev,
+            es_attrs_next,
+            vs_orig,
+            vs_prev,
+            vs_next,
+            es_prev,
+            es_next,
+            merged_feature,
+        )
 
         # Replace old vertices and edges
-        self.replace_vertices_edges(merged_feature, features_orig, vs_orig,
-                vs_prev, vs_next, es_prev, es_next, vx_attrs,es_attrs_prev,
-                es_attrs_next)
+        self.replace_vertices_edges(
+            merged_feature,
+            features_orig,
+            vs_orig,
+            vs_prev,
+            vs_next,
+            es_prev,
+            es_next,
+            vx_attrs,
+            es_attrs_prev,
+            es_attrs_next,
+        )
 
-
-    cpdef void collect_neighbors(self, Feature feature, list features_todo,
-            list features_orig, list external_neighbors) except *:
+    cpdef void collect_neighbors(
+        self,
+        Feature feature,
+        list features_todo,
+        list features_orig,
+        list external_neighbors,
+    ) except *:
         cdef str _name_ = "TrackFeatureMerger.collect_neighbors"
         cdef bint debug = self.debug
-
-        cdef Feature neighbor, other_neighbor
+        cdef Feature neighbor
+        cdef Feature other_neighbor
         for neighbor in feature.neighbors.copy():
-            if debug: log.debug(" -> neighbor: {}; {} neighbors: {}".format(neighbor.id, len(neighbor.neighbors), [f.id for f in neighbor.neighbors]))
+            if debug:
+                log.debug(
+                    f" -> neighbor: {neighbor.id}; {len(neighbor.neighbors)} "
+                    f"neighbors: {[f.id for f in neighbor.neighbors]}"
+                )
             if feature in neighbor.neighbors:
-                if debug: log.debug("feature {}: remove neighbor {}".format(feature.id, neighbor.id))
+                if debug:
+                    log.debug(f"feature {feature.id}: remove neighbor {neighbor.id}")
                 neighbor.neighbors.remove(feature)
             else:
-                err = "{}: feature {} missing in neighbors of it's neighbor {}".format(_name_, feature.id, neighbor.id)
-                raise Exception(err)
+                raise Exception(
+                    f"{_name_}: feature {feature.id} missing in neighbors of it's "
+                    f"neighbor {neighbor.id}"
+                )
 
             # Store neighbors that belong to other tracks separately
             if neighbor.track().id != feature.track().id:
-                if debug: log.debug("feature {}: remove neighbor {}".format(feature.id, neighbor.id))
+                if debug:
+                    log.debug(f"feature {feature.id}: remove neighbor {neighbor.id}")
                 feature.neighbors.remove(neighbor)
                 external_neighbors.append(neighbor)
                 continue
 
             if neighbor not in features_todo:
                 log_timestep = "?" if self.timestep is None else self.timestep
-                log.warning(("[{}] warning: track {}: neighbor {} not in "
-                        "features_todo (track size: {}; todo: {})").format(
-                        log_timestep, feature.track().id, neighbor.id,
-                        self.track.n, len(features_todo)))
+                log.warning(
+                    f"[{log_timestep}] warning: track {feature.track().id}: neighbor "
+                    f"{neighbor.id} not in features_todo (track size: {self.track.n}; "
+                    f"todo: {len(features_todo)})"
+                )
                 continue
 
             features_todo.remove(neighbor)
             features_orig.append(neighbor)
 
             # !! Recursive call !!
-            self.collect_neighbors(neighbor, features_todo, features_orig,
-                    external_neighbors)
+            self.collect_neighbors(
+                neighbor, features_todo, features_orig, external_neighbors,
+            )
 
-
-    cpdef void collect_vertices_edges(self, list features_orig, list vs_orig,
-            list vs_prev, list vs_next, list es_prev, list es_next) except *:
+    cpdef void collect_vertices_edges(
+        self,
+        list features_orig,
+        list vs_orig,
+        list vs_prev,
+        list vs_next,
+        list es_prev,
+        list es_next,
+    ) except *:
         cdef str _name_ = "TrackFeatureMerger.collect_vertices_edges"
         cdef Feature feature
         cdef object vertex
@@ -3825,32 +4127,36 @@ cdef class TrackFeatureMerger:
             for other_vertex in vertex.predecessors():
                 if other_vertex not in vs_prev:
                     vs_prev.append(other_vertex)
-                    es_prev.extend(self.track.graph.es.select(_between=(
-                            (other_vertex.index,), (vertex.index,))))
+                    es_prev.extend(
+                        self.track.graph.es.select(
+                            _between=((other_vertex.index,), (vertex.index,)),
+                        ),
+                    )
             for other_vertex in vertex.successors():
                 if other_vertex not in vs_next:
                     vs_next.append(other_vertex)
-                    es_next.extend(self.track.graph.es.select(_between=(
-                            (vertex.index,), (other_vertex.index,))))
-
+                    es_next.extend(
+                        self.track.graph.es.select(
+                            _between=((vertex.index,), (other_vertex.index,)),
+                        ),
+                    )
         if not self.debug:
             return
 
         if len(es_prev) != len(vs_prev) or len(es_next) != len(vs_next):
-            err = ("{}: inconsistent number of vertices ({}+{}) and edges "
-                    "({}+{})").format(_name_, len(vs_prev), len(vs_next),
-                    len(es_prev), len(es_next))
-            raise Exception(err)
+            raise Exception(
+                f"{_name_}: inconsistent number of vertices ({len(vs_prev)}+"
+                f"{len(vs_next)}) and edges ({len(es_prev)}+{len(es_next)})"
+            )
 
-        if (len(set(vs_prev)) != len(vs_prev) or
-                len(set(vs_next)) != len(vs_next)):
-            err = "{}: duplicate vertices: [{}], [{}]".format(_name_,
-                    ", ".join([str(v["name"]) for v in vs_prev]),
-                    ", ".join([str(v["name"]) for v in vs_next]))
-            raise Exception(err)
+        if len(set(vs_prev)) != len(vs_prev) or len(set(vs_next)) != len(vs_next):
+            s1 = ", ".join([str(v["name"]) for v in vs_prev])
+            s2 = ", ".join([str(v["name"]) for v in vs_next])
+            raise Exception(f"{_name_}: duplicate vertices: [{s1}], [{s2}]")
 
-    cpdef void collect_merge_vs_attrs(self, dict vx_attrs, list vs_orig,
-            Feature merged_feature) except *:
+    cpdef void collect_merge_vs_attrs(
+        self, dict vx_attrs, list vs_orig, Feature merged_feature,
+    ) except *:
         cdef str _name_ = "TrackFeatureMerger.collect_merge_vs_attrs"
         vx_attrs["feature"] = merged_feature
         if "active_head" in vs_orig[0].attributes():
@@ -3862,13 +4168,22 @@ cdef class TrackFeatureMerger:
         vx_attrs["missing_predecessors"] = None
         vx_attrs["missing_successors"] = None
         if not all([a in vx_attrs.keys() for a in self.vs_attrs]):
-            err = "forgotten vertex attributes: {}".format(
-                    sorted(self.vs_attrs - vx_attrs.keys()))
-            raise Exception(err)
+            raise Exception(
+                f"forgotten vertex attributes: "
+                f"{sorted(self.vs_attrs - vx_attrs.keys())}"
+            )
 
-    cpdef void collect_merge_es_attrs(self, dict es_attrs_prev,
-            dict es_attrs_next, list vs_orig, list vs_prev, list vs_next,
-            list es_prev, list es_next, Feature merged_feature) except *:
+    cpdef void collect_merge_es_attrs(
+        self,
+        dict es_attrs_prev,
+        dict es_attrs_next,
+        list vs_orig,
+        list vs_prev,
+        list vs_next,
+        list es_prev,
+        list es_next,
+        Feature merged_feature,
+    ) except *:
         """Collect attributes of vertices and edges involved in the merging.
 
         Collect vertices of all features parallel to the merged feature
@@ -3914,71 +4229,91 @@ cdef class TrackFeatureMerger:
               - p_ovlp = 2*ovlp(A*, BM)/(A*.n + BM)
               - p_tot = f_size*p_size + f_ovlp*p_ovlp
               - p_share(i) = p_tot(i)/SUM[i..n](p_tot(i))
+
         """
         cdef str _name_ = "TrackFeatureMerger.collect_merge_es_attrs"
 
-        # Backwards
-        self._collect_merge_es_attrs_core(es_attrs_prev, es_prev, vs_prev,
-                vs_orig, merged_feature, direction=-1)
+        # Backward
+        self._collect_merge_es_attrs_core(
+            es_attrs_prev, es_prev, vs_prev, vs_orig, merged_feature, direction=-1,
+        )
 
-        # Forwards
-        self._collect_merge_es_attrs_core(es_attrs_next, es_next, vs_next,
-                vs_orig, merged_feature, direction=1)
+        # Forward
+        self._collect_merge_es_attrs_core(
+            es_attrs_next, es_next, vs_next, vs_orig, merged_feature, direction=1,
+        )
 
-    cpdef void _collect_merge_es_attrs_core(self, dict es_attrs, list es_dir,
-            list vs_dir, list vs_orig, Feature merged_feature,
-            int direction) except *:
-
+    cpdef void _collect_merge_es_attrs_core(
+        self,
+        dict es_attrs,
+        list es_dir,
+        list vs_dir,
+        list vs_orig,
+        Feature merged_feature,
+        int direction,
+    ) except *:
         cdef bint debug = self.debug
         cdef str _name_ = "TrackFeatureMerger._collect_merge_es_attrs_core"
 
         # Find all edges connected to any unrelated vertices at the timestep
         # of the feature merging and 'disable' those edges
-        cdef object vertex, other_vertex, edge, other_edge
+        cdef object vertex
+        cdef object other_vertex
+        cdef object edge
+        cdef object other_edge
         for vertex in vs_dir:
             for other_vertex in vertex.neighbors():
                 if other_vertex["ts"] != merged_feature.timestep:
                     continue
-                edge = self.track.graph.es.find(_between=(
-                        (vertex.index,), (other_vertex.index,)))
+                edge = self.track.graph.es.find(
+                    _between=((vertex.index,), (other_vertex.index,)),
+                )
                 if edge in es_dir:
                     continue
-                # log.warning(("[{}] warning: track {}: many-to-many "
-                #        "relationships between vertices").format(self.timestep,
-                #        self.track.id))
+                log.warning(
+                    f"[{self.timestep}] warning: track {self.track.id}: many-to-many "
+                    f"relationships between vertices"
+                )
 
         # Select features of involved vertices (minus the merged feature)
         cdef Feature feature
         cdef list features_dir = [vertex["feature"] for vertex in vs_dir]
         # SR_DBG <
-        if (len(features_dir) >
-                len(set([feature.id for feature in features_dir]))):
-            err = "{}: duplicate feature(s): {}".format(_name_, ", ".join(sorted([str(f.id) for f in features_dir])))
-            raise Exception(err)
+        if len(features_dir) > len(set([feature.id for feature in features_dir])):
+            fs = ", ".join(sorted([str(f.id) for f in features_dir]))
+            raise Exception(f"{_name_}: duplicate feature(s): {fs}")
         # SR_DBG >
         # DBG_BLOCK <
         if debug:
             fids = [str(f.id) for f in features_dir]
             if direction < 0:
-                dbg_features = "[{}]->[{}]".format("/".join(fids), merged_feature.id)
+                dbg_features = f"[{'/'.join(fids)}]->[{merged_feature.id}]"
             else:
-                dbg_features = "[{}]->[{}]".format(merged_feature.id, "/".join(fids))
+                dbg_features = f"[{merged_feature.id}]->[{'/'.join(fids)}]"
         # DBG_BLOCK >
 
         # Collect total size and overlap for all feature,
         # and compute individual successor probabilities for p_share
-        cdef list p_size_lst=[], p_ovlp_lst=[], p_tot_lst=[]
-        cdef list n_lst=[], ovlp_lst=[]
+        cdef list p_size_lst = []
+        cdef list p_ovlp_lst = []
+        cdef list p_tot_lst = []
+        cdef list n_lst = []
+        cdef list  ovlp_lst = []
         cdef int ovlp_i
-        cdef float p_size_i, p_ovlp_i, p_tot_i
+        cdef float p_size_i
+        cdef float p_ovlp_i
+        cdef float p_tot_i
         for feature in features_dir:
-
             ovlp_i = merged_feature.overlap_n(feature)
-            p_size_i = (float(min([feature.n, merged_feature.n]))/
-                        float(max([feature.n, merged_feature.n])))
+            p_size_i = (
+                float(min([feature.n, merged_feature.n]))
+                / float(max([feature.n, merged_feature.n]))
+            )
             p_ovlp_i = 2.0*ovlp_i/float(feature.n + merged_feature.n)
-            p_tot_i = (self.track.config["f_size"]*p_size_i +
-                       self.track.config["f_overlap"]*p_ovlp_i)
+            p_tot_i = (
+                self.track.config["f_size"]*p_size_i
+                + self.track.config["f_overlap"]*p_ovlp_i
+            )
 
             n_lst.append(feature.n)
             ovlp_lst.append(ovlp_i)
@@ -3986,43 +4321,61 @@ cdef class TrackFeatureMerger:
             p_ovlp_lst.append(p_ovlp_i)
             p_tot_lst.append(p_tot_i)
 
-        if debug: log.debug(dbg_features+": individual probabilities (for p_share):")
-        if debug: log.debug("  id        : {}".format("  ".join(["{:5}".format(f.id) for f in features_dir])))
-        if debug: log.debug("  n         : {}".format("  ".join(["{:5}".format(n) for n in n_lst])))
-        if debug: log.debug("  ovlp      : {}".format("  ".join(["{:5}".format(n) for n in ovlp_lst])))
-        if debug: log.debug("  p_size    : {}".format("  ".join(["{:5.3f}".format(p) for p in p_size_lst])))
-        if debug: log.debug("  p_overlap : {}".format("  ".join(["{:5.3f}".format(p) for p in p_ovlp_lst])))
-        if debug: log.debug("  p_tot     : {}".format("  ".join(["{:5.3f}".format(p) for p in p_tot_lst])))
+        if debug:
+            log.debug(f"{dbg_features}: individual probabilities (for p_share):")
+            log.debug("  id        : " + "  ".join([f"{f>id:5}" for f in features_dir]))
+            log.debug("  n         : " + "  ".join([f"{n:5}" for n in n_lst]))
+            log.debug("  ovlp      : " + "  ".join([f"{n:5}" for n in ovlp_lst]))
+            log.debug("  p_size    : " + "  ".join([f"{p:5.3f}" for p in p_size_lst]))
+            log.debug("  p_overlap : " + "  ".join([f"{p:5.3f}" for p in p_ovlp_lst]))
+            log.debug("  p_tot     : " + "  ".join([f"{p:5.3f}" for p in p_tot_lst]))
 
         # Compute successor total probabilities over the whole set of features
         cdef float p_tot_sum = sum(p_tot_lst)
-        cdef int   tot_n     = sum(n_lst), tot_ovlp = sum(ovlp_lst)
-        cdef list  p_shares  = [p/p_tot_sum for p in p_tot_lst]
-        cdef float n_min     = min([tot_n, merged_feature.n])
-        cdef float n_max     = max([tot_n, merged_feature.n])
-        cdef float p_size    = n_min/n_max
-        cdef float p_ovlp    = 2*float(tot_ovlp)/float(n_min + n_max)
-        cdef float p_tot = (self.track.config["f_size"]*p_size +
-                            self.track.config["f_overlap"]*p_ovlp)
+        cdef int   tot_n = sum(n_lst)
+        cdef int   tot_ovlp = sum(ovlp_lst)
+        cdef list  p_shares = [p/p_tot_sum for p in p_tot_lst]
+        cdef float n_min = min([tot_n, merged_feature.n])
+        cdef float n_max = max([tot_n, merged_feature.n])
+        cdef float p_size = n_min/n_max
+        cdef float p_ovlp = 2 * float(tot_ovlp) / float(n_min + n_max)
+        cdef float p_tot = (
+            self.track.config["f_size"] * p_size
+            + self.track.config["f_overlap"] * p_ovlp
+        )
 
-        if debug: log.debug(dbg_features+" overall probabilities:")
-        if debug: log.debug(" - p_size    : {:5.3f}".format(p_size))
-        if debug: log.debug(" - p_overlap : {:5.3f}".format(p_ovlp))
-        if debug: log.debug(" - p_tot     : {:5.3f}".format(p_tot))
-        if debug: log.debug(" - p_shares  : [{}]".format(p_size, p_ovlp, p_tot, ", ".join(["{:5.3f}".format(p) for p in p_shares])))
+        if debug:
+            log.debug(f"{dbg_features} overall probabilities:")
+            log.debug(f" - p_size    : {p_size:5.3f}")
+            log.debug(f" - p_overlap : {p_ovlp:5.3f}")
+            log.debug(f" - p_tot     : {p_tot:5.3f}")
+            s_ps = ", ".join([f"{p:5.3f}" for p in p_shares])
+            log.debug(f" - p_shares  : [{s_ps}]")
 
         # Store edge properties, using the vertex name as key
         cdef int i
         for i, feature in enumerate(features_dir):
-            es_attrs[feature.vertex()["name"]] = dict(
-                    n_overlap=ovlp_lst[i], p_size=p_size, p_overlap=p_ovlp,
-                    p_tot=p_tot, p_share=p_shares[i])
+            es_attrs[feature.vertex()["name"]] = {
+                "n_overlap": ovlp_lst[i],
+                "p_size": p_size,
+                "p_overlap": p_ovlp,
+                "p_tot": p_tot,
+                "p_share": p_shares[i]
+            }
 
-    cpdef void replace_vertices_edges(self, Feature merged_feature,
-            list features_orig, list vs_orig, list vs_prev, list vs_next,
-            list es_prev, list es_next, dict vx_attrs, dict es_attrs_prev,
-            dict es_attrs_next) except *:
-
+    cpdef void replace_vertices_edges(
+        self,
+        Feature merged_feature,
+        list features_orig,
+        list vs_orig,
+        list vs_prev,
+        list vs_next,
+        list es_prev,
+        list es_next,
+        dict vx_attrs,
+        dict es_attrs_prev,
+        dict es_attrs_next,
+    ) except *:
         cdef bint debug = self.debug
         cdef str _name_ = "TrackFeatureMerger.replace_vertices_edges"
 
@@ -4057,7 +4410,7 @@ cdef class TrackFeatureMerger:
         merged_feature.set_vertex(new_vertex)
         if (vx_attrs["feature"] != merged_feature or
                 merged_feature.vertex()["feature"] != merged_feature):
-            log.error("{}: error adding merged feature to graph".format(_name_))
+            log.error(f"{_name_}: error adding merged feature to graph")
             exit(4)
 
         # Add edges to predecessor/successor vertices
@@ -4097,12 +4450,17 @@ cdef class TrackFeatureMerger:
 
     cpdef void set_feature_types(self, list features) except *:
         cdef str _name_ = "TrackFeatureMerger.set_feature_types"
-
-        cdef object vertex, other_vertex
-        cdef list vs_prev, vs_next
-        cdef np.uint64_t timestep, other_timestep
-        cdef str type, old_type, new_type
-        cdef int n_prev, n_next
+        cdef object vertex
+        cdef object other_vertex
+        cdef list vs_prev
+        cdef list vs_next
+        cdef np.uint64_t timestep
+        cdef np.uint64_t other_timestep
+        cdef str type
+        cdef str old_type
+        cdef str new_type
+        cdef int n_prev
+        cdef int n_next
         cdef list types
         for feature in features:
             vertex = feature.vertex()
@@ -4120,18 +4478,20 @@ cdef class TrackFeatureMerger:
                 elif other_timestep > timestep:
                     vs_next.append(other_vertex)
                 else:
-                    err = ("{}: link between vertices of same timestep ({}): "
-                            "features {}, {}").format(_name_, vertex["ts"],
-                            vertex["feature"].id, other_vertex["feature"].id)
-                    raise Exception(err)
+                    raise Exception(
+                        f"{_name_}: link between vertices of same timestep "
+                        f"({vertex['ts']}): features {vertex['feature'].id}, "
+                        f"{other_vertex['feature'].id}"
+                    )
             n_prev = len(vs_prev)
             n_next = len(vs_next)
 
             # Determine and set new type
             if n_prev == 0 and n_next == 0:
-                err = "{}: vertex {} has no neighbors (feature {})".format(
-                        _name_, vertex.index, vertex["feature"].id)
-                raise Exception(err)
+                raise Exception(
+                    f"{_name_}: vertex {vertex.index} has no neighbors (feature "
+                    f"{vertex['feature'].id})"
+                )
             elif n_prev == 1 and n_next == 1:
                 new_type = "continuation"
             elif n_prev == 0:
@@ -4141,7 +4501,7 @@ cdef class TrackFeatureMerger:
                 else:
                     new_type = "genesis"
                 if n_next > 1:
-                    new_type = "{}/splitting".format(new_type)
+                    new_type = f"{new_type}/splitting"
             elif n_next == 0:
                 types = self.track.graph.vs.select(ts=timestep)["type"]
                 if any([type and "stop" in type for type in types]):
@@ -4149,7 +4509,7 @@ cdef class TrackFeatureMerger:
                 else:
                     new_type = "lysis"
                 if n_prev > 1:
-                    new_type = "merging/{}".format(new_type)
+                    new_type = f"merging/{new_type}"
             elif 0 < n_prev <= 1 and n_next > 1:
                 new_type = "splitting"
             elif n_prev > 1 and 0 < n_next <= 1:
@@ -4157,9 +4517,9 @@ cdef class TrackFeatureMerger:
             elif n_prev > 1 and n_next > 1:
                 new_type = "merging/splitting"
             else:
-                err = "{}: not implemented: {} next, {} prev".format(
-                        _name_, n_prev, n_next)
-                raise Exception(err)
+                raise Exception(
+                    f"{_name_}: not implemented: {n_prev} prev, {n_next} next"
+                )
             vertex["type"] = new_type
 
 # Feature wrapper class for compatibility with old-style tracking
@@ -4169,7 +4529,16 @@ class TrackableFeature_Oldstyle(Feature):
 
     cls_combination = None # Set below
 
-    def __init__(self, values, pixels, center, extrema, shells, holes, id):
+    def __init__(
+        self,
+        values,
+        pixels,
+        center,
+        extrema,
+        shells,
+        holes,
+        id,
+    ):
         super().__init__(values, pixels, center, extrema, shells, holes, id)
         self._id = id
         self._center = center
@@ -4181,24 +4550,24 @@ class TrackableFeature_Oldstyle(Feature):
         # SR_TMP >
 
     def __repr__(self):
-        return ("<{cls}[{id0}]: id={id1}, area={a}, min={min:5.3f}, "
-                "mean={mean:5.3f}, max={max:5.3f}>").format(
-                cls=self.__class__.__name__, id0=id(self), id1=self.id_str(),
-                a=self.area(), min=np.min(self.values),
-                mean=np.mean(self.values), max=np.max(self.values))
+        return (
+            f"<{type(self).__name__}[{id(self)}]: id={self.id_str()}, "
+            f"area={self.area()}, min={np.min(self.values):5.3f}, "
+            f"mean={np.mean(self.values):5.3f}, max={np.max(self.values):5.3f}>"
+        )
 
     @classmethod
     def from_feature2d(cls, feature):
         """Make a 'new-style' Feature object trackable."""
         return cls(
-                feature.values,
-                feature.pixels,
-                feature.center,
-                feature.extrema,
-                feature.shells,
-                feature.holes,
-                feature.id,
-            )
+            feature.values,
+            feature.pixels,
+            feature.center,
+            feature.extrema,
+            feature.shells,
+            feature.holes,
+            feature.id,
+        )
 
     def id(self):
         return self._id
@@ -4251,25 +4620,28 @@ class TrackableFeature_Oldstyle(Feature):
         return self.overlaps(other)
 
     def radius(self):
-        return np.sqrt(self.area()/np.pi)
+        return np.sqrt(self.area() / np.pi)
 
     def center_distance(self, other):
-        cdef int x0, x1, y0, y1
+        cdef int x0
+        cdef int x1
+        cdef int y0
+        cdef int y1
         x0, y0 = self.center()
         x1, y1 = other.center()
-        return np.sqrt((x1 - x0)**2 + (y1 - y0)**2)
+        return np.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
 
     def overlap(self, other):
         if other.__class__.__name__ == "TrackableFeature_Oldstyle":
             return self.overlap_n(other)
         elif other.__class__.__name__ == "TrackableFeatureCombination_Oldstyle":
             return np.sum([self.overlap_n(o) for o in other.features()])
-        err = "{}.overlap_fraction({})".format(
-                self.__class__.__name__, other.__class__.__name__)
-        raise NotImplementedError(err)
+        raise NotImplementedError(
+            f"{type(self).__name__}.overlap_fraction({type(other).__name__})"
+        )
 
     def overlap_fraction(self, other):
-        return 2*self.overlap(other)/(self.area() + other.area())
+        return 2 * self.overlap(other) / (self.area() + other.area())
 
     def is_periodic(self):
         return False
@@ -4288,20 +4660,22 @@ class TrackableFeatureCombination_Oldstyle(TrackableFeature_Oldstyle):
         return self._features.copy()
 
     def id(self):
-        raise NotImplementedError("{}.id".format(self.__class__.__name__))
+        raise NotImplementedError(f"{type(self).__name__}.id")
 
     def __eq__(self, other):
         return self.id_str() == other.id_str()
 
     def __lt__(self, other):
-        return (sum([int(i) for i in self.id_str().split("/")]) <
-                sum([int(i) for i in self.id_str().split("/")]))
+        return (
+            sum([int(i) for i in self.id_str().split("/")])
+            < sum([int(i) for i in self.id_str().split("/")])
+        )
 
     def __hash__(self):
         return id(self)
 
     def get_info(self, path=True):
-        raise NotImplementedError("{}.get_info".format(self.__class__.__name__))
+        raise NotImplementedError(f"{type(self).__name__}.get_info")
 
     def center(self):
         return np.mean([f.center() for f in self.features()], axis=0)
@@ -4319,19 +4693,21 @@ class TrackableFeatureCombination_Oldstyle(TrackableFeature_Oldstyle):
         if other.__class__.__name__ == "TrackableFeature_Oldstyle":
             return np.sum([f.overlap_n(other) for f in self.features()])
         elif other.__class__.__name__ == "TrackableFeatureCombination_Oldstyle":
-            return np.sum([f.overlap_n(o)
-                    for f in self.features() for o in other.features()])
-        err = "{}.overlap_fraction({})".format(
-                self.__class__.__name__, other.__class__.__name__)
-        raise NotImplementedError(err)
+            return np.sum(
+                [f.overlap_n(o) for f in self.features() for o in other.features()]
+            )
+        raise NotImplementedError(
+            f"{type(self).__name__}.overlap_fraction({type(other).__name__})"
+        )
 
     def is_unassigned(self):
         if all(f.is_unassigned() for f in self.features()):
             return True
         if not any(f.is_unassigned() for f in self.features()):
             return False
-        err = "{}[{}]: some but not all features are unassigned".format(
-                self.__class__.__name__, self.id_str())
-        raise Exception(err)
+        raise Exception(
+            f"{type(self).__name__}[{self.id_str()}]: some but not all features are "
+            f"unassigned"
+        )
 
 TrackableFeature_Oldstyle.cls_combination = TrackableFeatureCombination_Oldstyle

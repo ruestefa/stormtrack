@@ -2,17 +2,19 @@
 
 from __future__ import print_function
 
-cimport cython
-cimport numpy as np
-from cython.parallel cimport prange
+# C: C-libraries
 from libc.math cimport pow
 from libc.math cimport sqrt
 from libc.stdlib cimport exit
 from libc.stdlib cimport free
 from libc.stdlib cimport malloc
 
-# ------------------------------------------------------------------------------
+# C: Third-party
+cimport cython
+cimport numpy as np
+from cython.parallel cimport prange
 
+# Standard library
 import datetime as dt
 import logging as log
 import os
@@ -22,14 +24,9 @@ import unicodedata
 from pprint import pformat
 from pprint import pprint
 
+# Third-party
 import numpy as np
 
-try:
-    from ..utils.various import ipython
-except ImportError:
-    pass
-
-# ==============================================================================
 
 MAX_UI8  = np.iinfo(np.uint8).max
 MAX_UI16 = np.iinfo(np.uint16).max
@@ -51,59 +48,54 @@ NAN_I64  = MAX_I64
 NAN_F32  = MAX_F32
 NAN_F64  = MAX_F64
 
+
 cdef void check_f32(np.float32_t fact, np.float32_t val) except *:
     if fact <= 0 or fact >= 1:
-        raise ValueError("fact not in (0..1): {}".format(fact))
+        raise ValueError(f"fact not in (0..1): {fact}")
     if abs(val) > fact*MAX_F32:
-        err = "number too big: {:,} >= {:,}*{:,}".format(val, fact, MAX_F32)
-        raise Exception(err)
+        raise Exception(f"number too big: {val:,} >= {fact:,}*{MAX_F32:,}")
+
 
 cdef void check_f64(np.float32_t fact, np.float64_t val) except *:
     if fact <= 0 or fact >= 1:
-        raise ValueError("fact not in (0..1): {}".format(fact))
+        raise ValueError(f"fact not in (0..1): {fact}")
     if abs(val) > fact*MAX_F64:
-        err = "number too big: {:,} >= {:,}*{:,}".format(val, fact, MAX_F64)
-        raise Exception(err)
+        raise Exception(f"number too big: {val:,} >= {fact:,} * {MAX_F64:,}")
+
 
 cdef void check_i32(np.float32_t fact, np.int32_t val) except *:
     if fact <= 0 or fact >= 1:
-        raise ValueError("fact not in (0..1): {}".format(fact))
+        raise ValueError(f"fact not in (0..1): {fact}")
     if abs(val) > fact*MAX_I32:
-        err = "number too big: {:,} >= {:,}*{:,}".format(val, fact, MAX_I32)
-        raise Exception(err)
+        raise Exception(f"number too big: {val:,} >= {fact:,} * {MAX_I32:,}")
+
 
 cdef void check_i64(np.float32_t fact, np.int64_t val) except *:
     if fact <= 0 or fact >= 1:
-        raise ValueError("fact not in (0..1): {}".format(fact))
+        raise ValueError(f"fact not in (0..1): {fact}")
     if abs(val) > fact*MAX_I64:
-        err = "number too big: {:,} >= {:,}*{:,}".format(val, fact, MAX_I64)
-        raise Exception(err)
+        raise Exception(f"number too big: {val:,} >= {fact:,} * {MAX_I64:,}")
 
-# ==============================================================================
-# Reduce grid resolution by striding
-# ==============================================================================
 
 def reduce_grid_resolution(fld, stride, mode):
+    """Reduce grid resolution by striding."""
 
     # Check stride
     if (stride - 1)%2 > 0:
-        err = "invalid stride {}; must be uneven".format(stride)
-        raise ValueError(err)
+        raise ValueError("stride must be an uneven number", stride)
 
     # Check and codify the reduction mode
     modes = ["pick", "mean"]
     try:
         imode = modes.index(mode)
     except ValueError:
-        err = "invalid mode '{}'; must be one of {}".format(mode,
-                ", ".join(["'{}'".format(m) for m in modes]))
-        raise ValueError(err)
+        raise ValueError(f"mode must be one of {modes}", mode)
 
     if len(fld.shape) == 1:
 
         # Determine grid sizes (in and out)
         nxi, = fld.shape
-        nxo = int(nxi/stride)
+        nxo = int(nxi / stride)
 
         # Initialize output field
         fld_out = np.empty(nxo, fld.dtype)
@@ -115,8 +107,8 @@ def reduce_grid_resolution(fld, stride, mode):
 
         # Determine grid sizes (in and out)
         nxi, nyi = fld.shape
-        nxo = int(nxi/stride)
-        nyo = int(nyi/stride)
+        nxo = int(nxi / stride)
+        nyo = int(nyi / stride)
 
         # Initialize output field
         fld_out = np.empty([nxo, nyo], fld.dtype)
@@ -125,22 +117,22 @@ def reduce_grid_resolution(fld, stride, mode):
         _reduce_grid_resolution_2d__core(fld, fld_out, stride, imode)
 
     else:
-        err = "invalid shape: {}".format(fld.shape)
-        raise ValueError(err)
+        raise ValueError("invalid shape", fld.shape)
 
     return fld_out
 
+
 def _reduce_grid_resolution_1d__core(
-        np.float32_t [:] fld_in,
-        np.float32_t [:] fld_out,
-        int              stride,
-        int              imode,
-    ):
+    np.float32_t [:] fld_in, np.float32_t [:] fld_out, int stride, int imode,
+):
     cdef int half_stride = int((stride - 1)/2)
     cdef int nxi = fld_in.shape[0]
     cdef int nxo = fld_out.shape[0]
     cdef np.float32_t box_size = stride
-    cdef int io, ii, iis, iie
+    cdef int io
+    cdef int ii
+    cdef int iis
+    cdef int iie
     for io in range(nxo):
         if imode == 0:
             # Pick the value at the center point
@@ -156,16 +148,22 @@ def _reduce_grid_resolution_1d__core(
             fld_out[io] /= box_size
 
 def _reduce_grid_resolution_2d__core(
-        np.float32_t [:, :] fld_in,
-        np.float32_t [:, :] fld_out,
-        int                 stride,
-        int                 imode,
-    ):
+    np.float32_t [:, :] fld_in, np.float32_t [:, :] fld_out, int stride, int imode,
+):
     cdef int half_stride = int((stride - 1)/2)
-    cdef int nxi=fld_in.shape[0], nyi=fld_in.shape[1]
-    cdef int nxo=fld_out.shape[0], nyo=fld_out.shape[1]
+    cdef int nxi = fld_in.shape[0]
+    cdef int nyi = fld_in.shape[1]
+    cdef int nxo = fld_out.shape[0]
+    cdef int nyo = fld_out.shape[1]
     cdef np.float32_t box_size = stride*stride
-    cdef int io, jo, ii, ji, iis, iie, jis, jie
+    cdef int io
+    cdef int jo
+    cdef int ii
+    cdef int ji
+    cdef int iis
+    cdef int iie
+    cdef int jis
+    cdef int jie
     for io in range(nxo):
         for jo in range(nyo):
             if imode == 0:
@@ -185,9 +183,6 @@ def _reduce_grid_resolution_2d__core(
                         fld_out[io, jo] += fld_in[ii, ji]
                 fld_out[io, jo] /= box_size
 
-# ==============================================================================
-# Manipulate masks
-# ==============================================================================
 
 def shrink_mask(mask, n):
     """Shrink a 2D mask by N grid points in all four directions."""
@@ -196,13 +191,12 @@ def shrink_mask(mask, n):
     _shrink_mask__core(shrunk, nx, ny, n)
     return shrunk.astype(np.bool)
 
-cdef void _shrink_mask__core(
-        np.uint8_t[:, :] mask,
-        int nx,
-        int ny,
-        int n_shrink,
-    ):
+
+cdef void _shrink_mask__core(np.uint8_t[:, :] mask, int nx, int ny, int n_shrink):
     cdef int i, j
+    cdef int val
+    cdef int prev
+    cdef int changing = 0
 
     # Initialize array indicating which values have been changed
     cdef bint** changed = <bint**>malloc(nx*sizeof(bint*))
@@ -210,8 +204,6 @@ cdef void _shrink_mask__core(
         changed[i] = <bint*>malloc(ny*sizeof(bint))
         for j in range(ny):
             changed[i][j] = 0
-
-    cdef int changing=0, val, prev
 
     # Vertical direction
     for i in range(nx):
@@ -306,16 +298,13 @@ cdef void _shrink_mask__core(
         free(changed[i])
     free(changed)
 
-# ==============================================================================
-# Compute the minimum along-grid distance to a mask boundary
-# ==============================================================================
 
 def min_griddist_mask_boundary(mask, *, dirs=None, nan=None):
     """Compute the minimum along-grid distance to a mask boundary.
 
     Distances inside a mask are positive, those outside negative.
-    """
 
+    """
     if dirs is None:
         dirs = list("NEWS")
 
@@ -325,9 +314,7 @@ def min_griddist_mask_boundary(mask, *, dirs=None, nan=None):
     # Check directions
     dirs_choices = list("NESW")
     if not all(d in dirs_choices for d in dirs):
-        err = "invalid relaxation directions {}: not all in {}".format(
-                dirs, dirs_choices)
-        raise ValueError(err)
+        raise ValueError("relaxation directions must all be among {dirs_choices}", dirs)
     N, E, S, W = [d in dirs for d in "NESW"]
 
     # Compute distances
@@ -335,25 +322,29 @@ def min_griddist_mask_boundary(mask, *, dirs=None, nan=None):
     if nan is None:
         nan = -(nx + ny)
     dists = np.full([nx, ny], nan, dtype=np.int32)
-    _min_griddist_mask_boundary__core(mask.astype(np.uint8), dists,
-            N, E, S, W, nan, nx, ny)
+    _min_griddist_mask_boundary__core(
+        mask.astype(np.uint8), dists, N, E, S, W, nan, nx, ny,
+    )
 
     return dists
 
 cdef void _min_griddist_mask_boundary__core(
-        np.uint8_t[:, :] mask,
-        np.int32_t[:, :] dists,
-        bint do_N,
-        bint do_E,
-        bint do_S,
-        bint do_W,
-        int nan,
-        int nx,
-        int ny,
-    ):
-    cdef int i, j
-
-    cdef int val, prev, dist, sign
+    np.uint8_t[:, :] mask,
+    np.int32_t[:, :] dists,
+    bint do_N,
+    bint do_E,
+    bint do_S,
+    bint do_W,
+    int nan,
+    int nx,
+    int ny,
+):
+    cdef int i
+    cdef int j
+    cdef int val
+    cdef int prev
+    cdef int dist
+    cdef int sign
 
     # Vertical direction
     for i in range(nx):
@@ -441,9 +432,6 @@ cdef void _min_griddist_mask_boundary__core(
                     dist += sign
                 prev = val
 
-# ==============================================================================
-# Number the zones in a domain with a rectangular mask
-# ==============================================================================
 
 def decompose_rectangular_mask(mask):
     """Determine zones in a field containing a rectangular mask.
@@ -470,17 +458,18 @@ def decompose_rectangular_mask(mask):
     _decompose_rectangular_mask__core(mask.astype(np.uint8), out, nx, ny)
     return out
 
+
 cdef void _decompose_rectangular_mask__core(
-        np.uint8_t[:, :] mask,
-        np.int32_t[:, :] out,
-        int nx,
-        int ny,
-    ):
-    cdef int i, j
+    np.uint8_t[:, :] mask, np.int32_t[:, :] out, int nx, int ny,
+):
+    cdef int i
+    cdef int j
 
     # X -zones
     cdef int* zones_x = <int*>malloc(nx*sizeof(int))
-    cdef int nseg1_y, zone_x_curr, zone_x_prev=0
+    cdef int nseg1_y
+    cdef int zone_x_curr
+    cdef int zone_x_prev = 0
     cdef bint in_seg1_y
     for i in range(nx):
 
@@ -511,7 +500,9 @@ cdef void _decompose_rectangular_mask__core(
 
     # Y -zones
     cdef int* zones_y = <int*>malloc(nx*sizeof(int))
-    cdef int nseg1_x, zone_y_curr, zone_y_prev=0
+    cdef int nseg1_x
+    cdef int zone_y_curr
+    cdef int zone_y_prev = 0
     cdef bint in_seg1_x
     for j in range(ny):
 
@@ -545,13 +536,9 @@ cdef void _decompose_rectangular_mask__core(
         for j in range(ny):
             out[i, j] = 10*zones_x[i] + zones_y[j]
 
-    # Clean up
     free(zones_x)
     free(zones_y)
 
-# ==============================================================================
-# Number the zones in a domain with a rectangular mask with a hole in it
-# ==============================================================================
 
 def decompose_holy_rectangular_mask(mask):
     """Determine zones in a field containing a rectangular mask with a hole.
@@ -588,17 +575,17 @@ def decompose_holy_rectangular_mask(mask):
     _decompose_holy_rectangular_mask__core(mask.astype(np.uint8), out, nx, ny)
     return out
 
+
 cdef void _decompose_holy_rectangular_mask__core(
-        np.uint8_t[:, :] mask,
-        np.int32_t[:, :] out,
-        int nx,
-        int ny,
-    ):
+    np.uint8_t[:, :] mask, np.int32_t[:, :] out, int nx, int ny,
+):
     cdef int i, j
 
     # X -zones
     cdef int* zones_x = <int*>malloc(nx*sizeof(int))
-    cdef int nseg1_y, zone_x_curr, zone_x_prev=0
+    cdef int nseg1_y
+    cdef int zone_x_curr
+    cdef int zone_x_prev=0
     cdef bint in_seg1_y
     for i in range(nx):
 
@@ -634,7 +621,9 @@ cdef void _decompose_holy_rectangular_mask__core(
 
     # Y -zones
     cdef int* zones_y = <int*>malloc(nx*sizeof(int))
-    cdef int nseg1_x, zone_y_curr, zone_y_prev=0
+    cdef int nseg1_x
+    cdef int zone_y_curr
+    cdef int zone_y_prev=0
     cdef bint in_seg1_x
     for j in range(ny):
 
@@ -673,16 +662,15 @@ cdef void _decompose_holy_rectangular_mask__core(
         for j in range(ny):
             out[i, j] = 10*zones_x[i] + zones_y[j]
 
-    # Clean up
     free(zones_x)
     free(zones_y)
 
-# ==============================================================================
 
 def strip_accents(text):
     """Strip accents from input String.
 
     source: https://stackoverflow.com/a/31607735/4419816
+
     """
     try:
         text = unicode(text, 'utf-8')
@@ -696,7 +684,6 @@ def strip_accents(text):
     text = text.decode("utf-8")
     return str(text)
 
-# ==============================================================================
 
 def threshold_at_timestep(thr, ts):
     """Derive timestep-specific threshold from, e.g., monthly thresholds.
@@ -704,8 +691,8 @@ def threshold_at_timestep(thr, ts):
     If thr is a 12-element list, those values refer to the thresholds in the
     middle of each month. If the mid-monthly threshold differs from one month
     to the next, the values in-between are obtained by linear interpolation.
-    """
 
+    """
     if isinstance(thr, (float, int)):
         # Constant threshold (trivial case)
         return thr
@@ -716,9 +703,6 @@ def threshold_at_timestep(thr, ts):
 
     elif isinstance(thr, (list, tuple)) and len(thr) == 12:
         # -- Monthly thresholds
-
-        thrs_ref = thr
-
         if not isinstance(ts, dt.datetime):
             # Convert timestep to dt.datetime
             sts = str(ts)
@@ -729,45 +713,45 @@ def threshold_at_timestep(thr, ts):
             elif len(sts) == 12:
                 ts_fmt = "%Y%m%d%H%M"
             else:
-                err = "cannot deduce timestep format: {}".format(sts)
-                raise Exception(err)
+                raise Exception("cannot deduce timestep format", sts)
             ts = dt.datetime.strptime(str(ts), ts_fmt)
 
+        thrs_ref = thr
         year = ts.year
 
         # Determine reference timesteps
         thrs_ref = [thrs_ref[-1]] + thrs_ref + [thrs_ref[0]]
-        tss_ref = [None]*14
-        tss_ref[0] = dt.datetime(year-1, 12, 1) + 0.5*(
-                dt.datetime(year, 1, 1) - dt.datetime(year-1, 12, 1))
+        tss_ref = [None] * 14
+        tss_ref[0] = dt.datetime(year - 1, 12, 1) + 0.5 * (
+            dt.datetime(year, 1, 1) - dt.datetime(year - 1, 12, 1)
+        )
         for m in range(1, 12):
-            tss_ref[m] = dt.datetime(year, m, 1) + 0.5*(
-                dt.datetime(year, m+1, 1) - dt.datetime(year, m, 1))
-        tss_ref[12] = dt.datetime(year, 12, 1) + 0.5*(
-                dt.datetime(year+1, 1, 1) - dt.datetime(year, 12, 1))
-        tss_ref[13] = dt.datetime(year+1, 1, 1) + 0.5*(
-                dt.datetime(year+1, 2, 1) - dt.datetime(year+1, 1, 1))
+            tss_ref[m] = dt.datetime(year, m, 1) + 0.5 * (
+                dt.datetime(year, m + 1, 1) - dt.datetime(year, m, 1)
+            )
+        tss_ref[12] = dt.datetime(year, 12, 1) + 0.5 * (
+            dt.datetime(year + 1, 1, 1) - dt.datetime(year, 12, 1)
+        )
+        tss_ref[13] = dt.datetime(year + 1, 1, 1) + 0.5 * (
+            dt.datetime(year + 1, 2, 1) - dt.datetime(year + 1, 1, 1)
+        )
 
         # Determine thresholds sourrounding timestep
         for (thr0, thr1, ts0, ts1) in zip(
-                thrs_ref[:-1], thrs_ref[1:], tss_ref[:-1], tss_ref[1:]):
+                thrs_ref[: -1], thrs_ref[1:], tss_ref[: -1], tss_ref[1:]):
             if ts0 <= ts < ts1:
                 break
         else:
-            err = "could not place {} among {}".format(ts, tss_ref)
-            raise Exception(err)
+            raise Exception("could not place ts among {tss_ref}", ts)
 
         # Derive threshold by linear interpolation
         if ts == ts0:
             f = 0.0
         else:
-            f = (ts - ts0)/(ts1 - ts0)
-        thr = f*thr1 + (1 - f)*thr0
+            f = (ts - ts0) / (ts1 - ts0)
+        thr = f * thr1 + (1 - f) * thr0
 
         return thr
 
     else:
-        err = "invalid threshold format: '{}'".format(thr)
-        raise ValueError(err)
-
-# ==============================================================================
+        raise ValueError("invalid threshold format", thr)

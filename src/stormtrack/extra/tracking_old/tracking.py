@@ -4152,7 +4152,7 @@ class FeatureTrackIOReaderJson(IOReaderJsonBase):
                 feature=feature,
                 timestep=timestep,
                 id=event_id,
-                **event_data
+                **event_data,
             )
             events[event_id] = event
         for id, next in next_ids.items():

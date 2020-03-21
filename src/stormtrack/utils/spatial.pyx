@@ -28,12 +28,12 @@ def path_lonlat_to_mask(path, *args, **kwas):
     """Create a 2D mask from a path of (lon, lat) tuples.
 
     See paths_lonlat_to_mask for arguments.
+
     """
     return paths_lonlat_to_mask([path], *args, **kwas)
 
 
-def paths_lonlat_to_mask(paths, lon, lat, *, return_tree=False, silent=False,
-        _tree=[]):
+def paths_lonlat_to_mask(paths, lon, lat, *, return_tree=False, silent=False, _tree=[]):
     """Create a 2D mask from multiple paths of (lon, lat) tuples."""
 
     # Ensure lon, lat are 2D
@@ -42,9 +42,10 @@ def paths_lonlat_to_mask(paths, lon, lat, *, return_tree=False, silent=False,
     elif (len(lon.shape), len(lat.shape)) == (1, 1):
         lat, lon = np.meshgrid(lat, lon)
     else:
-        err = ("lon, lat must both be either 1D or 2D, not {}D {} and {}D {}"
-                ).format(len(lon.shape), lon.shape, len(lat.shape), lat.shape)
-        raise ValueError(err)
+        raise ValueError(
+            f"lon, lat must both be either 1D or 2D, not {len(lon.shape)}D {lon.shape} "
+            f"and {len(lat.shape)}D {lat.shape}"
+        )
 
     # Initialize or fetch lon/lat lookup tree
     if len(_tree) == 0:
@@ -77,33 +78,33 @@ def points_area_lonlat_reg(pxs, pys, lon1d, lat1d):
 
     # Number of points
     if pxs.size != pys.size:
-        err = ("different numbers of points in x and y: {} != {}"
-                ).format(pxs.size, pys.size)
-        raise ValueError(err)
+        raise ValueError(
+            f"different numbers of points in x and y: {pxs.size} != {pys.size}"
+        )
     npt = pxs.shape[0]
 
     # Longitude
     if len(lon1d.shape) != 1:
-        err = "lon1d: not one-dimensional: {}".format(lon1d.shape)
-        raise ValueError(err)
+        raise ValueError("lon1d not one-dimensional", lon1d.shape)
     nlon = lon1d.size
 
     # Latitude
     if len(lat1d.shape) != 1:
-        err = "lat1d: not one-dimensional: {}".format(lat1d.shape)
-        raise ValueError(err)
+        raise ValueError("lat1d not one-dimensional", lat1d.shape)
     nlat = lat1d.size
 
     # Longitude grid spacing
     dlons = lon1d[1:] - lon1d[:-1]
-    if np.unique(dlons).size > 1:
-        err = "longitude grid spacing varies: {}".format(np.unique(dlons))
+    unique_dlons = np.unique(dlons.round(decimals=5))
+    if unique_dlons.size > 1:
+        raise ValueError("longitude grid spacing varies", unique_dlons, dlons)
     dlon = dlons[0]
 
     # Latitude grid spacing
     dlats = lat1d[1:] - lat1d[:-1]
-    if np.unique(dlats).size > 1:
-        err = "latitude grid spacing varies: {}".format(np.unique(dlats))
+    unique_dlats = np.unique(dlons.round(decimals=5))
+    if unique_dlats.size > 1:
+        raise ValueError("latitude grid spacing varies", unique_dlats, dlats)
     dlat = dlats[0]
 
     # Ensure correct types
@@ -118,19 +119,21 @@ def points_area_lonlat_reg(pxs, pys, lon1d, lat1d):
 
     return area_km2
 
-cdef np.float64_t _feature_area_lonlat__core(
-        np.int32_t  [:] pxs,
-        np.int32_t  [:] pys,
-        np.float64_t[:] lon,
-        np.float64_t[:] lat,
-        np.int32_t      npt,
-        np.int32_t      nlon,
-        np.int32_t      nlat,
-        np.float64_t    dlon,
-        np.float64_t    dlat,
-    ) except -1:
 
-    cdef int p, j, k
+cdef np.float64_t _feature_area_lonlat__core(
+    np.int32_t [:] pxs,
+    np.int32_t [:] pys,
+    np.float64_t[:] lon,
+    np.float64_t[:] lat,
+    np.int32_t npt,
+    np.int32_t nlon,
+    np.int32_t nlat,
+    np.float64_t  dlon,
+    np.float64_t  dlat,
+) except -1:
+    cdef int p
+    cdef int j
+    cdef int k
 
     # -- Compute length of a degree longitude (m) at a given latitude
     #   src: https://en.wikipedia.org/wiki/Longitude (2019-04-02)
@@ -156,15 +159,16 @@ cdef np.float64_t _feature_area_lonlat__core(
     # cdef int nk = 10
     # cdef int nk = 100
 
-    cdef int nkh = int((nk - 1)/2)
+    cdef int nkh = int((nk - 1) / 2)
     cdef np.ndarray[np.float64_t, ndim=1] _areas_km2_j = np.empty(nk, np.float64)
-
     cdef np.float64_t[:] areas_km2_j = _areas_km2_j
-    cdef np.float64_t dlon_km_k, area_km2_k
-    cdef np.float64_t lat_k, f, f0, f1
-
+    cdef np.float64_t dlon_km_k
+    cdef np.float64_t area_km2_k
+    cdef np.float64_t lat_k
+    cdef np.float64_t f
+    cdef np.float64_t f0
+    cdef np.float64_t f1
     for j in range(nlat):
-
         areas_km2[j] = 0.0
 
         # Loop over subcells
@@ -172,24 +176,24 @@ cdef np.float64_t _feature_area_lonlat__core(
         for k in range(nk):
 
             # Determine latitude
-            f = float(k - nkh)/nk
-            lat_k = lat[j] + f*dlat
+            f = float(k - nkh) / nk
+            lat_k = lat[j] + f * dlat
             if k < nkh:
                 lat_k = max(lat_k, -90.0)
             elif k > nkh:
                 lat_k = min(lat_k,  90.0)
 
             # Determine longitude distance at latitude
-            dlon_km_k = dlon*pi180*rad*cos(lat_k*pi180)/1000.0
+            dlon_km_k = dlon * pi180 * rad * cos(lat_k * pi180) / 1000.0
 
             # Compute area
-            area_km2_k = dlon_km_k*dlat_km/float(nk)
+            area_km2_k = dlon_km_k * dlat_km / float(nk)
 
             # Increment total area
             areas_km2[j] += area_km2_k
 
     # Compute total area over all points
-    cdef np.float64_t area_km2=0.0
+    cdef np.float64_t area_km2 = 0.0
     for p in range(npt):
         j = pys[p]
         area_km2 += areas_km2[j]
@@ -207,14 +211,19 @@ def path_along_domain_boundary(lon, lat, nbnd=0, bnd_nan=False, fld=None):
     -------
      x coordinates of path: array
      y coordinates of path: array
+
     """
     if not bnd_nan:
-        nx, ny = lon.shape
-        xs, xe, ys, ye = 0, nx, 0, ny
+        (nx, ny) = lon.shape
+        (nx, ny) = lon.shape
+        xs = 0
+        xe = nx
+        ys = 0
+        ye = ny
     else:
         if fld is None:
             raise ValueError("must pass fld for bnd_nan=T")
-        xs, xe, ys, ye = locate_domain_in_nans(fld)
+        (xs, xe, ys, ye) = locate_domain_in_nans(fld)
 
     xs += nbnd
     xe -= nbnd
@@ -222,16 +231,16 @@ def path_along_domain_boundary(lon, lat, nbnd=0, bnd_nan=False, fld=None):
     ye -= nbnd
 
     pxs = (
-        lon[xs:xe, ys].tolist()
-        + lon[xe - 1, ys:ye].tolist()  # west
-        + lon[xe:xs:-1, ye - 1].tolist()  # north
-        + lon[xs, ye:ys:-1].tolist()  # east  # south
+        lon[xs : xe, ys].tolist()  # west
+        + lon[xe - 1, ys : ye].tolist()  # north
+        + lon[xe : xs : -1, ye - 1].tolist()  # east
+        + lon[xs, ye : ys : -1].tolist()  # south
     )
     pys = (
-        lat[xs:xe, ys].tolist()
-        + lat[xe - 1, ys:ye].tolist()  # west
-        + lat[xe:xs:-1, ye - 1].tolist()  # north
-        + lat[xs, ye:ys:-1].tolist()  # east  # south
+        lat[xs : xe, ys].tolist()  # west
+        + lat[xe - 1, ys :  ye].tolist()  # north
+        + lat[xe : xs : -1, ye - 1].tolist()  # east
+        + lat[xs, ye : ys : -1].tolist()  # south
     )
 
     if (pxs[-1], pys[-1]) != (pxs[0], pys[0]):
@@ -245,7 +254,6 @@ def great_circle_distance(lon1, lat1, lon2, lat2):
     """Calculate the great circle distance between two points
 
     based on : https://gist.github.com/gabesmed/1826175
-
 
     Parameters
     ----------
@@ -269,18 +277,21 @@ def great_circle_distance(lon1, lat1, lon2, lat2):
 
     >>> great_circle_distance(0, 55, 8, 45.5)
     1199.3240879770135
+
     """
-
     EARTH_CIRCUMFERENCE = 6378137  # earth circumference in meters
-
     dLat = math.radians(lat2 - lat1)
     dLon = math.radians(lon2 - lon1)
-    a = (math.sin(dLat / 2) * math.sin(dLat / 2) +
-         math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) *
-         math.sin(dLon / 2) * math.sin(dLon / 2))
+    a = (
+        math.sin(dLat / 2)
+        * math.sin(dLat / 2)
+        + math.cos(math.radians(lat1))
+        * math.cos(math.radians(lat2))
+        * math.sin(dLon / 2)
+        * math.sin(dLon / 2)
+    )
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = EARTH_CIRCUMFERENCE * c
-
     return distance / 1000
 
 
@@ -292,23 +303,26 @@ def derive_lonlat_1d(lon2d, lat2d, *, nonreg_ok=False):
     lat1d = lat2d[0, :]
 
     if (lon1d == lon1d[0]).all() and (lat1d == lat1d[0]).all():
-        err = ("uniform 1D lon/lat fields ({}/{}); likely the input 2D fields "
-                "need to be transposed").format(lon1d[0], lat1d[0])
-        raise Exception(err)
+        raise Exception(
+            f"uniform 1D lon/lat fields ({lon1d[0]}/{lat1d[0]}); "
+            f"likely the input 2D fields "
+        )
 
     # -- Check if grid is indeed regular
 
     lat2d_check, lon2d_check = np.meshgrid(lat1d, lon1d)
 
     if lat2d_check.shape != lat2d.shape:
-        err = ("inconsistent shapes: lon2d {} -> lon1d {} -> lon2d_check {}"
-                ).format(lon2d.shape, lon1d.shape, lon2d_check.shape)
-        raise Exception(err)
+        raise Exception(
+            f"inconsistent shapes: lon2d {lon2d.shape} -> lon1d {lon1d.shape} -> "
+            f"lon2d_check {lon2d_check.shape}"
+        )
 
     if lat2d_check.shape != lat2d.shape:
-        err = ("inconsistent shapes: lat2d {} -> lat1d {} -> lat2d_check {}"
-                ).format(lat2d.shape, lat1d.shape, lat2d_check.shape)
-        raise Exception(err)
+        raise Exception(
+            f"inconsistent shapes: lat2d {lat2d.shape} -> lat1d {lat1d.shape} -> "
+            f"lat2d_check {lat2d_check.shape}"
+        )
 
     if (lon2d == lon2d_check).all() and (lat2d == lat2d_check).all():
 
@@ -332,8 +346,8 @@ def locate_domain_in_nans(field):
 
     """
     fld = np.asarray(field)
-    xs, ys = 0, 0
-    xe, ye = fld.shape
+    (xs, ys) = 0, 0
+    (xe, ye) = fld.shape
     while np.isnan(fld[xs, :]).all():
         assert xs < xe
         xs += 1
@@ -346,4 +360,4 @@ def locate_domain_in_nans(field):
     while np.isnan(fld[:, ye - 1]).all():
         assert ye > ys
         ye -= 1
-    return xs, xe, ys, ye
+    return (xs, xe, ys, ye)

@@ -474,7 +474,7 @@ class Temporal_MinOverlap05_MaxSize12(Temporal_Base):
             self.features_in_cat_new_8c,
             self.features_in_cat_now_8c,
             self.features_in_cat_old_8c,
-            **self.kwargs
+            **self.kwargs,
         )
         features_sol = self.features_out_cat_now_all_8c
         for category, sol in sorted(features_sol.items()):
@@ -491,7 +491,7 @@ class Temporal_MinOverlap05_MaxSize12(Temporal_Base):
             self.features_in_cat_new_8c,
             self.features_in_cat_now_8c,
             None,
-            **self.kwargs
+            **self.kwargs,
         )
         features_sol = self.features_out_cat_now_new_8c
         for category, sol in sorted(features_sol.items()):
@@ -508,7 +508,7 @@ class Temporal_MinOverlap05_MaxSize12(Temporal_Base):
             None,
             self.features_in_cat_now_8c,
             self.features_in_cat_old_8c,
-            **self.kwargs
+            **self.kwargs,
         )
         features_sol = self.features_out_cat_now_old_8c
         for category, sol in sorted(features_sol.items()):
@@ -606,7 +606,7 @@ class Temporal_MinOverlap08_MaxSizeM1(Temporal_Base):
             self.features_in_cat_new_8c,
             self.features_in_cat_now_8c,
             self.features_in_cat_old_8c,
-            **self.kwargs
+            **self.kwargs,
         )
         features_sol = self.features_out_cat_now_all_8c
         for category, sol in sorted(features_sol.items()):
@@ -623,7 +623,7 @@ class Temporal_MinOverlap08_MaxSizeM1(Temporal_Base):
             self.features_in_cat_new_8c,
             self.features_in_cat_now_8c,
             None,
-            **self.kwargs
+            **self.kwargs,
         )
         features_sol = self.features_out_cat_now_new_8c
         for category, sol in sorted(features_sol.items()):
@@ -640,7 +640,7 @@ class Temporal_MinOverlap08_MaxSizeM1(Temporal_Base):
             None,
             self.features_in_cat_now_8c,
             self.features_in_cat_old_8c,
-            **self.kwargs
+            **self.kwargs,
         )
         features_sol = self.features_out_cat_now_old_8c
         for category, sol in sorted(features_sol.items()):

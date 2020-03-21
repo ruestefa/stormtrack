@@ -33,7 +33,7 @@ class GenericFeature(TrackableFeatureBase):
         track=None,
         event=None,
         center=None,
-        attr=None
+        attr=None,
     ):
         self._poly = geo.Polygon(path)
         self._center = center

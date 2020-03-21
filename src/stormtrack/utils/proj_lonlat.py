@@ -60,7 +60,7 @@ def circle_lonlat_mask_pyproj(
     lon_range=None,
     lat_range=None,
     trim_pad=None,
-    silent=True
+    silent=True,
 ):
     """Project a circle on the globe onto a lon/lat grid using pyproj."""
 

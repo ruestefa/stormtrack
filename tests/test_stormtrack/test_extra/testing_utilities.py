@@ -174,7 +174,7 @@ def create_nested_circular_contours(
     no_min=False,
     cls_contour=CLS_CONTOUR,
     cls_point=CLS_POINT,
-    contour_resolution=CONTOUR_RESOLUTION
+    contour_resolution=CONTOUR_RESOLUTION,
 ):
     """Create N nested circular contours around a point.
 
