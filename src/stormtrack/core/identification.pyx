@@ -1,15 +1,16 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from __future__ import print_function
 
-cimport cython
-cimport numpy as np
+# C: Standard library
 from cpython.object cimport Py_EQ
 from cpython.object cimport Py_GE
 from cpython.object cimport Py_GT
 from cpython.object cimport Py_LE
 from cpython.object cimport Py_LT
 from cpython.object cimport Py_NE
+
+# C: C libraries
 from libc.math cimport pow
 from libc.math cimport sqrt
 from libc.stdlib cimport RAND_MAX
@@ -19,8 +20,11 @@ from libc.stdlib cimport malloc
 from libc.stdlib cimport rand
 from libc.stdlib cimport srand
 
-#------------------------------------------------------------------------------
+# C: Third-party
+cimport cython
+cimport numpy as np
 
+# Standard library
 import logging as log
 import os
 import sys
@@ -30,15 +34,16 @@ from copy import deepcopy
 from pprint import pprint
 from pprint import pformat
 
+# Third-party
 import PIL
 import cython
 import numpy as np
 import scipy as sp
 from cython.parallel import prange
 
+# Local
 from ..utils.spatial import points_area_lonlat_reg
 from ..utils.spatial import paths_lonlat_to_mask
-
 try:
     from ..utils.various import NoIndent
 except ImportError:
@@ -46,12 +51,6 @@ except ImportError:
     def NoIndent(arg):
         return arg
 
-try:
-    from ..utils.various import ipython
-except ImportError:
-    pass
-
-#==============================================================================
 
 # Default type codes for feature id for common feature types
 DEFAULT_TYPE_CODES = dict(
@@ -84,7 +83,6 @@ DEFAULT_TYPE_CODES = dict(
         anticyclone700  = 630,
     )
 
-#==============================================================================
 
 def identify_features(fld, feature_name, nx, ny, lower, upper, minsize,
         maxsize, base_id, timestep, split_levels, split_seed_minsize,
@@ -106,7 +104,7 @@ def identify_features(fld, feature_name, nx, ny, lower, upper, minsize,
             fld = np.where(topo_mask > 0, 0.0, fld).astype(np.float32)
 
     if grid is None:
-        const = Constants.default(nx=nx, ny=ny)
+        const = default_constants.default(nx=nx, ny=ny)
         grid = Grid(const)
     grid.set_values(fld)
 
@@ -155,7 +153,6 @@ def identify_features(fld, feature_name, nx, ny, lower, upper, minsize,
 
     return features
 
-#==============================================================================
 
 def find_features_2d_threshold_seeded(
         field_raw,
@@ -205,7 +202,7 @@ def find_features_2d_threshold_seeded(
     # Set up constants
     if constants is None:
         nx, ny = field_raw.shape
-        constants = Constants.default(nx=nx, ny=ny) #SR_TMP
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -251,7 +248,6 @@ def find_features_2d_threshold_seeded(
                 cconstants,
             )
 
-#------------------------------------------------------------------------------
 
 cdef list _find_features_threshold_random_seeds(
         np.float32_t [:, :] field_raw,
@@ -283,7 +279,7 @@ cdef list _find_features_threshold_random_seeds(
     # Initialize random seeds (shuffle indices)
     cdef int n_seeds = grid.constants.nx*grid.constants.ny
 
-    #SR_TODO replace by real points
+    # SR_TODO replace by real points
     # Initialize dummy points
     cdef np.ndarray[np.int32_t, ndim=1] dummy_center = np.array(
                 [], dtype=np.int32)
@@ -339,7 +335,7 @@ cdef list _find_features_threshold_random_seeds(
     pixel_region_table_alloc_grid(&grid.pixel_region_table, constants)
 
     # Build the feature objects
-    cdef np.uint64_t base_id = 0 #SR_TODO implement IDs properly
+    cdef np.uint64_t base_id = 0 # SR_TODO implement IDs properly
     cdef bint ignore_missing_neighbors = False
     cdef list features = cregions_create_features(
             &cfeatures,
@@ -359,7 +355,6 @@ cdef list _find_features_threshold_random_seeds(
 
     return features
 
-#------------------------------------------------------------------------------
 
 cdef list c_find_features_2d_threshold_seeds(
         np.float32_t [:, :] field_raw,
@@ -436,11 +431,11 @@ cdef list c_find_features_2d_threshold_seeds(
             cleanup=True,
         )
 
-    #SR_TMP<
+    # SR_TMP <
     # Allocate lookup tables
     pixel_status_table_alloc(&grid.pixel_status_table, constants)
     pixel_region_table_alloc_grid(&grid.pixel_region_table, constants)
-    #SR_TMP>
+    # SR_TMP >
 
     # Build the feature objects
     cdef np.uint64_t base_id = 0
@@ -463,7 +458,6 @@ cdef list c_find_features_2d_threshold_seeds(
 
     return features
 
-#==============================================================================
 
 cdef void c_find_features_2d_threshold_seeds_core(
         np.float32_t[:, :] field_raw,
@@ -505,19 +499,19 @@ cdef void c_find_features_2d_threshold_seeds_core(
     # Assign all pixels to either a region or the background
     cdef int n_iter_max = 10*grid.constants.nx*grid.constants.ny
     for i in range(n_iter_max):
-        if n_unassigned_seeds <= 0: #or n_unassigned_pixels[0] <= 0:
+        if n_unassigned_seeds <= 0: # or n_unassigned_pixels[0] <= 0:
             if debug: log.debug("BREAK n_unassigned_seeds={}, n_unassigned_pixels={}".format(n_unassigned_seeds, n_unassigned_pixels[0]))
             break
 
-        ##DBG_BLOCK<
-        #if debug:
+        # # DBG_BLOCK <
+        # if debug:
         #    log.debug("<<<")
         #    for i in range(n_seeds):
         #        log.debug("@ ({}, {}) {} {}".format(seeds[i][0], seeds[i][1], seeds[i][2], unassigned[seeds[i][0], seeds[0][1]]))
         #    log.debug("---")
         #    log.debug("IS_SEED ({}, {}) {}".format(cpixel.x, cpixel.y, i_seeds))
         #    log.debug("<<<")
-        ##DBG_BLOCK>
+        # # DBG_BLOCK >
 
         # Get a random unassigned seed pixel
         if debug: log.debug("UNASSIGNED: {} seeds, {} pixels".format(n_unassigned_seeds, n_unassigned_pixels[0]))
@@ -536,15 +530,15 @@ cdef void c_find_features_2d_threshold_seeds_core(
         if not selected_seeds:
             n_unassigned_pixels[0] -= 1
 
-        ##DBG_BLOCK<
-        #if debug:
+        # # DBG_BLOCK <
+        # if debug:
         #    log.debug(">>>")
         #    for i in range(n_seeds):
         #        log.debug("@ ({}, {}) {} {}".format(seeds[i][0], seeds[i][1], seeds[i][2], unassigned[seeds[i][0], seeds[0][1]]))
         #    log.debug("---")
         #    log.debug("IS_SEED ({}, {}) {}".format(cpixel.x, cpixel.y, i_seeds))
         #    log.debug(">>>")
-        ##DBG_BLOCK>
+        # # DBG_BLOCK >
 
         # Assign the pixel to a region or the background
         assign_cpixel(
@@ -555,7 +549,7 @@ cdef void c_find_features_2d_threshold_seeds_core(
                 NULL,
                 grid,
             )
-        #SR_TMP>
+        # SR_TMP >
 
         # Grow the region if the pixel already belongs to one
         if cpixel.type == pixeltype_feature:
@@ -577,7 +571,6 @@ cdef void c_find_features_2d_threshold_seeds_core(
 
     if debug: log.debug("> c_find_features_2d_threshold_seeds_core")
 
-#==============================================================================
 
 cdef void grow_cregion_rec(
         cPixel*         cpixel_center,
@@ -596,7 +589,7 @@ cdef void grow_cregion_rec(
     cdef int i, neighbor_pid
     cdef pixeltype ctype
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         log.debug("CREGIONS: {}".format(cregions.n))
         for i in range(cregions.n):
@@ -606,7 +599,7 @@ cdef void grow_cregion_rec(
                         cregions.regions[i].connected_n,
                         cregions.regions[i].connected_max,
                     ))
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     if debug: log.debug("N_NEIGHBORS {}".format(cpixel_center.neighbors_n))
     for i in range(cpixel_center.neighbors_max):
@@ -649,10 +642,10 @@ cdef void grow_cregion_rec(
                 n_unassigned_pixels[0] -= 1
 
             if debug: log.debug("assigned other pixel to {}".format("feature" if ctype==pixeltype_feature else "background"))
-            #SR_TODO think about this recursive calls (it is not necessary
-            #SR_TODO as the result is the same if it is just removed/commented;
-            #SR_TODO and there might be a better, more intuitive approach
-            #SR_TODO (recursion sucks) to the region growing (i.e. a loop)
+            # SR_TODO think about this recursive calls (it is not necessary
+            # SR_TODO as the result is the same if it is just removed/commented;
+            # SR_TODO and there might be a better, more intuitive approach
+            # SR_TODO (recursion sucks) to the region growing (i.e. a loop)
 
             if ctype == pixeltype_feature:
                 if debug: log.debug(" -> other pixel is feature: ({}, {})".format(other_cpixel.x, other_cpixel.y))
@@ -669,7 +662,6 @@ cdef void grow_cregion_rec(
                     )
     if debug: log.debug("> grow_cregion_rec")
 
-#==============================================================================
 
 cdef np.ndarray[np.int32_t, ndim=2] init_random_seeds(cGrid* grid):
     cdef np.ndarray[np.int32_t, ndim=2] inds = np.empty(
@@ -682,7 +674,6 @@ cdef np.ndarray[np.int32_t, ndim=2] init_random_seeds(cGrid* grid):
     inds = np.random.permutation(inds)
     return inds
 
-#------------------------------------------------------------------------------
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -710,14 +701,12 @@ cdef cPixel* pop_random_unassigned_pixel(
     err = "no random unassigned pixel found"
     raise Exception(err)
 
-#------------------------------------------------------------------------------
 
 @cython.cdivision(True)
 cdef inline int random_int(int min, int max):
-    #srand(42) # for testing
+    # srand(42) # for testing
     return int(rand()/(RAND_MAX)*(max - 1))
 
-#==============================================================================
 
 cdef void cregions_merge_connected_inplace(
         cRegions*   cregions,
@@ -903,7 +892,6 @@ cdef void _cregions_merge_connected_core(
         raise Exception(err)
     if debug: log.debug("\n+++ LOOP DONE +++ in {} iterations".format(iter_i))
 
-#------------------------------------------------------------------------------
 
 cdef int collect_pixels(
         cRegion** connected_regions,
@@ -937,9 +925,8 @@ cdef int collect_pixels(
 
     return i_pixels_feature
 
-#------------------------------------------------------------------------------
 
-#SR_TODO eliminate (only used in old cyclone id code)
+# SR_TODO eliminate (only used in old cyclone id code)
 cdef Feature create_feature(
         cPixel**         pixels_feature,
         int              n_pixels_feature,
@@ -948,7 +935,7 @@ cdef Feature create_feature(
         np.uint64_t      feature_id,
     ):
     log.warning("TODO remove function create_feature")
-    #print("< create_feature {}".format(feature_id))
+    # print("< create_feature {}".format(feature_id))
     cdef np.ndarray[np.int32_t, ndim=2] pixels = np.empty(
                 [n_pixels_feature, 2], dtype=np.int32)
     cdef np.ndarray[np.float32_t, ndim=1] values = np.empty(
@@ -971,10 +958,9 @@ cdef Feature create_feature(
             id_     = feature_id,
         )
 
-    #print("> create_feature {}".format(feature_id))
+    # print("> create_feature {}".format(feature_id))
     return feature
 
-#------------------------------------------------------------------------------
 
 cdef int cregion_collect_connected_regions(
         cRegions* cregions,
@@ -982,7 +968,7 @@ cdef int cregion_collect_connected_regions(
         int       connected_regions_max,
         cRegion*  cregion_start,
     ) except -999:
-    #SR_TODO better solution than bare-bones pointer array
+    # SR_TODO better solution than bare-bones pointer array
     if connected_regions_max < cregions.n:
         err = ("array connected_regions potentially too small "
                 "({} < {})").format(connected_regions_max, cregions.n)
@@ -1028,9 +1014,9 @@ cdef void _cregion_collect_connected_regions_rec(
         if connected_region is NULL:
             continue
 
-        #SR_DBG looks like this is necessary for the above NULL check
-        #SR_DBG to work, but I'm not really sure whether this is correct...
-        cregion.connected[i] = NULL #SR_DBG
+        # SR_DBG looks like this is necessary for the above NULL check
+        # SR_DBG to work, but I'm not really sure whether this is correct...
+        cregion.connected[i] = NULL # SR_DBG
 
         # Continue with previously unprocessed region
         _cregion_collect_connected_regions_rec(
@@ -1041,7 +1027,6 @@ cdef void _cregion_collect_connected_regions_rec(
                 connected_region,
             )
 
-#==============================================================================
 
 cdef void assign_cpixel(
         cPixel*      cpixel,
@@ -1052,7 +1037,7 @@ cdef void assign_cpixel(
         cGrid*       grid,
     ) except *:
     cdef bint debug = False
-    #if debug: log.debug("< assign_cpixel ({}, {})".format(cpixel.x, cpixel.y))
+    # if debug: log.debug("< assign_cpixel ({}, {})".format(cpixel.x, cpixel.y))
 
     # If the pixel does not fulfil the feature condition,
     # assign it to the background and we're already done
@@ -1072,9 +1057,6 @@ cdef void assign_cpixel(
     cregion_insert_pixel(cregion, cpixel, link_region, unlink_pixel)
     if debug: log.debug("> assign_cpixel ({}, {}) FEATURE {}".format(cpixel.x, cpixel.y, cregion.id))
 
-#==============================================================================
-#==============================================================================
-#==============================================================================
 
 def find_features_2d_threshold(
         np.float32_t[:, :] field_raw,
@@ -1129,7 +1111,7 @@ def find_features_2d_threshold(
 
     # Set up constants and grid
     if constants is None:
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     if grid is None:
         grid = Grid(constants)
         grid.set_values(np.asarray(field_raw))
@@ -1173,7 +1155,7 @@ def find_features_2d_threshold(
     eliminate_regions_by_size(&cregions, minsize, maxsize)
     if debug: log.debug("eliminated too small regions: {} -> {}".format(nold, cregions.n))
 
-    #SR_TMP< TODO integrate into Grid class
+    # SR_TMP < TODO integrate into Grid class
     # Allocate or reset lookup tables
     if cgrid.neighbor_link_stat_table is NULL:
         neighbor_link_stat_table_alloc(&cgrid.neighbor_link_stat_table, &cgrid.constants)
@@ -1187,7 +1169,7 @@ def find_features_2d_threshold(
         pixel_region_table_alloc_grid(&cgrid.pixel_region_table, &cgrid.constants)
     else:
         pixel_region_table_reset(cgrid.pixel_region_table, cgrid.constants.nx, cgrid.constants.ny)
-    #SR_TMP>
+    # SR_TMP >
 
     # Determine boundaries (both shells and holes)
     if debug: log.debug("determine boundaries")
@@ -1204,10 +1186,10 @@ def find_features_2d_threshold(
             cconstants,
         )
 
-    #SR_TMP<
+    # SR_TMP <
     # Reset up grid
-    #grid.reset()
-    #SR_TMP>
+    # grid.reset()
+    # SR_TMP >
 
     features_reset_cregion(features, warn=False)
 
@@ -1219,7 +1201,7 @@ cdef void eliminate_regions_by_size(
         int       minsize,
         int       maxsize,
     ) except *:
-    #print("< eliminate_regions_by_size (n < {} | n > {})".format(minsize, maxsize))
+    # print("< eliminate_regions_by_size (n < {} | n > {})".format(minsize, maxsize))
     cdef int i, nold=cregions.n, nnew=0
     cdef cRegion** tmp = <cRegion**>malloc(nold*sizeof(cRegion*))
     for i in range(nold):
@@ -1230,7 +1212,7 @@ cdef void eliminate_regions_by_size(
             cregion_cleanup(
                     cregions.regions[i],
                     unlink_pixels=True,
-                    reset_connected=True, #SR_TODO necessary?
+                    reset_connected=True, # SR_TODO necessary?
                 )
         else:
             tmp[nnew] = cregions.regions[i]
@@ -1242,11 +1224,10 @@ cdef void eliminate_regions_by_size(
     for i in range(nnew):
         cregions.regions[i] = tmp[i]
     free(tmp)
-    #print("> eliminate_regions_by_size ({} -> {})".format(nold, nnew))
+    # print("> eliminate_regions_by_size ({} -> {})".format(nold, nnew))
 
-#------------------------------------------------------------------------------
 
-#SR_TODO: Consider 4 vs. 8 connectivity
+# SR_TODO: Consider 4 vs. 8 connectivity
 cdef inline cRegion* find_existing_region(
         cGrid*     grid,
         np.int32_t x,
@@ -1261,9 +1242,9 @@ cdef inline cRegion* find_existing_region(
     neighbor is a candidate as well, depending on the loop order which is an
     input parameter.
     """
-    #SR_TMP<
+    # SR_TMP <
     cdef int loop_order_ij=0, loop_order_ji=1
-    #SR_TMP>
+    # SR_TMP >
     cdef bint debug = False
     if debug: log.debug("< find_existing_region ({}, {}) ({}c)".format(x, y, grid.constants.connectivity))
 
@@ -1295,14 +1276,14 @@ cdef inline cRegion* find_existing_region(
         if loop_order == loop_order_ji and x < grid.constants.nx-1 and y > 0:
             cregion_se = grid.pixels[x+1][y-1].region
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         log.debug("3 cregion_se ({}, {}) {}".format(x+1, y-1, "NULL" if cregion_se is NULL else cregion_se.id))
         log.debug("4 cregion_s  ({}, {}) {}".format(x,   y-1, "NULL" if cregion_s  is NULL else cregion_s.id))
         log.debug("5 cregion_sw ({}, {}) {}".format(x-1, y-1, "NULL" if cregion_sw is NULL else cregion_sw.id))
         log.debug("6 cregion_w  ({}, {}) {}".format(x-1, y,   "NULL" if cregion_w  is NULL else cregion_w.id))
         log.debug("7 cregion_nw ({}, {}) {}".format(x-1, y+1, "NULL" if cregion_nw is NULL else cregion_nw.id))
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     # Find suitable existing region if there is one
     cdef int i
@@ -1328,20 +1309,19 @@ cdef inline cRegion* find_existing_region(
                         cregion_i,
                     )
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         if cregion is NULL:
             log.debug("> find_existing_region {}".format("NULL"))
         else:
             log.debug("> find_existing_region {}".format(cregion.id))
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     return cregion
 
-#==============================================================================
 
-#SR_TODO add option to only merge features of the connecting pixels exceed
-#SR_TODO a certaion threshold (requires passing the field/values, obviously)
+# SR_TODO add option to only merge features of the connecting pixels exceed
+# SR_TODO a certaion threshold (requires passing the field/values, obviously)
 def merge_adjacent_features(
         list features,
         np.uint64_t base_id,
@@ -1352,13 +1332,13 @@ def merge_adjacent_features(
         np.int32_t ny = 0,
         Constants constants = None,
     ):
-    #print("< merge_adjacent_features")
+    # print("< merge_adjacent_features")
     cdef int i, j
 
     if len(features) == 0:
         return []
 
-    #SR_TMP<
+    # SR_TMP <
     cdef Feature feature
     cdef np.uint64_t timestep = features[0].timestep
     for feature in features:
@@ -1366,13 +1346,13 @@ def merge_adjacent_features(
             err = ("merge_adjacent_features: inconsistent timesteps: {}"
                     ).format(", ".join([str(f.timestep) for f in features]))
             raise Exception(err)
-    #SR_TMP>
+    # SR_TMP >
 
     # Set up constants
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -1427,26 +1407,25 @@ def merge_adjacent_features(
             cconstants,
         )
 
-    #SR_TMP<
+    # SR_TMP <
     for feature in merged_features:
         feature.cleanup_cregion()
-    #SR_TMP>
+    # SR_TMP >
 
-    #SR_TMP<
+    # SR_TMP <
     for feature in merged_features:
         feature.timestep = timestep
-    #SR_TMP>
+    # SR_TMP >
 
     # Cleanup
     grid_cleanup(&grid)
     features_reset_cregion(features, warn=False)
     features_reset_cregion(merged_features, warn=False)
 
-    #print("> merge_adjacent_features")
+    # print("> merge_adjacent_features")
 
     return merged_features
 
-#==============================================================================
 
 cpdef list split_regiongrow_points(
         Feature feature,
@@ -1456,7 +1435,7 @@ cpdef list split_regiongrow_points(
         np.uint64_t base_id = 0,
         Constants constants = None,
     ):
-    #print("< csplit_regiongrow {}".format(feature.id))
+    # print("< csplit_regiongrow {}".format(feature.id))
 
     raise NotImplementedError("")
 
@@ -1464,7 +1443,7 @@ cpdef list split_regiongrow_points(
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -1513,7 +1492,7 @@ cpdef list split_regiongrow_points(
     feature.reset_cregion(warn=False)
     features_reset_cregion(subfeatures, warn=False)
 
-    #print("> csplit_regiongrow")
+    # print("> csplit_regiongrow")
     return subfeatures
 
 cdef cRegions _split_regiongrow_points_core(
@@ -1534,7 +1513,7 @@ cdef cRegions _split_regiongrow_points_core(
                 seed_points[i:i+1, :], link_region=False, unlink_pixels=False)
         cregions_link_region(&cregions_seeds, cregion,
                 cleanup=False, unlink_pixels=False)
-    #print("seed regions: {}".format(cregions_seeds.n))
+    # print("seed regions: {}".format(cregions_seeds.n))
 
     # Create cregions for new subregions
     cdef cRegions subfeature_cregions = cregions_create(n_seed_points)
@@ -1574,7 +1553,7 @@ cpdef list feature_split_regiongrow(
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -1696,8 +1675,8 @@ cpdef list feature_split_regiongrow(
     features_reset_cregion(seed_features, warn=False)
     features_reset_cregion(subfeatures, warn=False)
 
-    #SR_TODO Consider adding feature type names as optional function arguments
-    #SR_TODO Actually, I should add the type name as a Feature property!!
+    # SR_TODO Consider adding feature type names as optional function arguments
+    # SR_TODO Actually, I should add the type name as a Feature property!!
 
     if debug: log.debug("  replace feature associations")
     _replace_feature_associations(feature, seed_features, subfeatures)
@@ -1705,7 +1684,6 @@ cpdef list feature_split_regiongrow(
     if debug: log.debug("> csplit_regiongrow")
     return subfeatures
 
-#==============================================================================
 
 cpdef list features_grow(
         int         n,
@@ -1741,7 +1719,7 @@ cpdef list features_grow(
 
     # Initialize grid (if necessary)
     if grid is None:
-        #SR_TODO figure out appropriate n_slots (no. neighbors maybe?)
+        # SR_TODO figure out appropriate n_slots (no. neighbors maybe?)
         grid = Grid(constants, alloc_tables=True, n_slots=1)
     else:
         raise Exception("memory leak with external Grid")
@@ -1773,7 +1751,7 @@ cpdef list features_grow(
             cgrid,
         )
 
-    #SR_TODO also expand values (dummy values for new pixels)
+    # SR_TODO also expand values (dummy values for new pixels)
 
     cdef list features_grown
     cdef np.ndarray[np.float32_t, ndim=1] values_orig, values
@@ -1801,9 +1779,9 @@ cpdef list features_grow(
 
             # Transfer values, pixels, etc. from cregions
             values = np.full(cregion.pixels_n, -1, dtype=np.float32)
-            #+for j in range(cregion.pixels_max):
-            #+    if cregion.pixels[j] is not NULL:
-            #+        values[j] = cregion.pixels[j].v
+            # +for j in range(cregion.pixels_max):
+            # +    if cregion.pixels[j] is not NULL:
+            # +        values[j] = cregion.pixels[j].v
             feature.set_values(values)
             feature.set_pixels(cpixel2arr(cregion.pixels, cregion.pixels_n))
             shells = []
@@ -1852,7 +1830,7 @@ cdef void cfeatures_grow_core(
     cdef cPixel* cpixel
     cdef np.int32_t x, y
 
-    #SR_TMP<
+    # SR_TMP <
     # Initialize dummy feature covering the whole domain to grow into
     if debug: log.debug("  initialize dummy region for domain")
     cdef cRegion cfeature
@@ -1876,10 +1854,10 @@ cdef void cfeatures_grow_core(
             link_region=True,
             unlink_pixels=False,
         )
-    #SR_TMP>
+    # SR_TMP >
 
-    #SR_TODO Move all the initialization into a function (same for cleanup)
-    #SR_TODO Thus it will be visible in profiling and easy to pull up
+    # SR_TODO Move all the initialization into a function (same for cleanup)
+    # SR_TODO Thus it will be visible in profiling and easy to pull up
     if debug: log.debug("  initialize tables etc.")
 
     # 'Activate' new subregions
@@ -1968,7 +1946,7 @@ cdef void cfeatures_grow_core(
     # Identify boundaries and connected regions
     if debug: log.debug("  post-process grown features")
     cregions_determine_boundaries(cregions_grown, grid)
-    cdef bint reset_existing = False #SR_TODO True or False?
+    cdef bint reset_existing = False # SR_TODO True or False?
     cregions_find_connected(cregions_grown, reset_existing, &grid.constants)
 
     if debug: log.debug("  clean up")
@@ -1989,7 +1967,6 @@ cdef void cfeatures_grow_core(
 
     if debug: log.debug("> cfeatures_grow_core")
 
-#==============================================================================
 
 cpdef void _replace_feature_associations(Feature feature,
         list seed_features, list subfeatures) except *:
@@ -2101,7 +2078,6 @@ cpdef void _replace_feature_associations(Feature feature,
                         break
                     break
 
-#==============================================================================
 
 def split_regiongrow_levels(
         features,
@@ -2114,7 +2090,7 @@ def split_regiongrow_levels(
         maxsize = -1,
         seed_minsize = 0,
         seed_min_strength = 0,
-        filter_mask = None, #SR_TODO add min overlap with filter regions
+        filter_mask = None, # SR_TODO add min overlap with filter regions
         filter_min_overlap = -1.0,
         constants = None,
     ):
@@ -2123,7 +2099,7 @@ def split_regiongrow_levels(
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -2248,7 +2224,7 @@ cdef list csplit_regiongrow_levels(
         # Clean up slots in pixel region table for all feature pixels
         pixel_region_table_reset_region(grid.pixel_region_table, cfeature)
 
-        #SR_TODO move into function
+        # SR_TODO move into function
         # Finish regions
         for i in range(subfeatures_tmp.n):
 
@@ -2266,7 +2242,7 @@ cdef list csplit_regiongrow_levels(
 
             # Filter features by overlap with mask
             # Features which overlap with mask are removed
-            #SR_TODO implement threshold for overlap (absolute or relative)
+            # SR_TODO implement threshold for overlap (absolute or relative)
             if apply_mask_filter:
                 cregion = subfeatures_tmp.regions[i]
                 n = cregion_overlap_n_mask(
@@ -2279,7 +2255,7 @@ cdef list csplit_regiongrow_levels(
                         if debug: log.debug("remove [{}] (n={}): overlaps with mask: {} ({})".format(cregion.id, cregion.pixels_n, n, ratio))
                         continue
 
-            #SR_TODO Figure out if this can be removed!
+            # SR_TODO Figure out if this can be removed!
             # Not exactly sure why I'm removing gaps in pixels array here...
             cregion = grid_new_region(&grid)
             cregions_link_region(&subfeatures_final, cregion, cleanup=False, unlink_pixels=False)
@@ -2340,7 +2316,7 @@ cdef void csplit_regiongrow_levels_core(
         int                              seed_minsize,
         np.float32_t                     seed_min_strength,
     ) except *:
-    #print("< csplit_regiongrow_levels_core")
+    # print("< csplit_regiongrow_levels_core")
     cdef int i_level, i_region
     cdef np.float32_t level
     cdef cRegion* cregion
@@ -2358,7 +2334,7 @@ cdef void csplit_regiongrow_levels_core(
     cdef int n_levels = levels.shape[0]
     for i_level in range(n_levels):
         level = levels[i_level]
-        #print("\n[{}] LEVEL {}".format(i_level, level))
+        # print("\n[{}] LEVEL {}".format(i_level, level))
 
         # Loop over all previously split subregions
         cregions_reset(&subfeatures_new)
@@ -2373,7 +2349,7 @@ cdef void csplit_regiongrow_levels_core(
                 )
 
             # Build seed features
-            #print("[{}] FIND SEED FEATURES (LEVEL {})".format(i_region, level))
+            # print("[{}] FIND SEED FEATURES (LEVEL {})".format(i_region, level))
             cregions_reset(&subfeatures_seeds)
             extract_subregions_level(
                     cfeature_sub,
@@ -2383,15 +2359,15 @@ cdef void csplit_regiongrow_levels_core(
                     seed_minsize,
                     seed_min_strength,
                 )
-            #print("subfeatures_seeds.n={}".format(subfeatures_seeds.n))
+            # print("subfeatures_seeds.n={}".format(subfeatures_seeds.n))
 
             # If no seed has been found, this subfeature is finished
             if subfeatures_seeds.n == 0:
-                #print("region finished!")
+                # print("region finished!")
                 cregion = grid_new_region(grid)
                 cregions_link_region(subfeatures_final, cregion, cleanup=False, unlink_pixels=False)
                 n = cfeature_sub.pixels_n
-                #SR_TODO move malloc/free out of loop
+                # SR_TODO move malloc/free out of loop
                 pixels_tmp = <cPixel**>malloc(n*sizeof(cPixel*))
                 j = 0
                 for i in range(cfeature_sub.pixels_max):
@@ -2405,7 +2381,7 @@ cdef void csplit_regiongrow_levels_core(
                             cregion,
                             cpixel,
                             link_region=True,
-                            #SR_TODO check whether unlinking is necessary
+                            # SR_TODO check whether unlinking is necessary
                             unlink_pixel=True,
                         )
                 free(pixels_tmp)
@@ -2427,10 +2403,10 @@ cdef void csplit_regiongrow_levels_core(
                     subfeatures_seeds.n,
                     grid,
                 )
-            #print("subfeatures_new.n={}".format(subfeatures_new.n))
+            # print("subfeatures_new.n={}".format(subfeatures_new.n))
 
         # Collect new subfeatures in 'temporary storage'
-        #print("cregions_reset 1645")
+        # print("cregions_reset 1645")
         cregions_reset(subfeatures_tmp)
         for i in range(subfeatures_new.n):
             cregion = grid_new_region(grid)
@@ -2456,9 +2432,8 @@ cdef void csplit_regiongrow_levels_core(
     # Cleanup
     cregions_cleanup(&subfeatures_seeds, cleanup_regions=True)
     cregions_cleanup(&subfeatures_new, cleanup_regions=True)
-    #print("> csplit_regiongrow_levels_core")
+    # print("> csplit_regiongrow_levels_core")
 
-#------------------------------------------------------------------------------
 
 cdef void extract_subregions_level(
         cRegion*     cregion,
@@ -2535,11 +2510,11 @@ cdef void extract_subregions_level(
         cregion_reset(
                 &cregion_tmp,
                 unlink_pixels=False,
-                reset_connected=False, #SR_TODO check whether necessary
+                reset_connected=False, # SR_TODO check whether necessary
             )
     free(pixels_tmp)
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         log.debug("PIXEL REGIONS:")
         for i in range(cregion.pixels_max):
@@ -2556,18 +2531,18 @@ cdef void extract_subregions_level(
             for j in range(cregions_sub.regions[i].pixels_max):
                 if cregions_sub.regions[i].pixels[j] is not NULL:
                     log.debug("[{}] ({}, {})".format(cregions_sub.regions[i].id, cregions_sub.regions[i].pixels[j].x, cregions_sub.regions[i].pixels[j].y))
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
-    #SR_TODO unlink_pixels or not?
+    # SR_TODO unlink_pixels or not?
     cregion_reset(
             &cregion_tmp,
-            unlink_pixels=False, #SR_TODO check whether necessary
-            reset_connected=True, #SR_TODO check whether necessary
+            unlink_pixels=False, # SR_TODO check whether necessary
+            reset_connected=True, # SR_TODO check whether necessary
         )
 
     cregions_determine_boundaries(cregions_sub, grid)
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         for i in range(cregions_sub.n):
             log.debug("[{}] PIXEL {}".format(cregions_sub.regions[i].id, cregions_sub.regions[i].pixels_n))
@@ -2578,21 +2553,20 @@ cdef void extract_subregions_level(
                 log.debug("[{}] SHELL({}) {}".format(cregions_sub.regions[i].id, j, cregions_sub.regions[i].shells_n))
                 for k in range(cregions_sub.regions[i].shells_n):
                     log.debug("[{}] SHELL({}) ({}, {})".format(cregions_sub.regions[i].id, j, cregions_sub.regions[i].shells[j][k].x, cregions_sub.regions[i].shells[j][k].y))
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     # Reset lookup table for the pixels
     pixel_done_table_reset(grid.pixel_done_table, cregion)
 
     if debug: log.debug("> extract_subregions_level {}".format(cregions_sub.n))
 
-#------------------------------------------------------------------------------
 
 cdef void collect_adjacent_pixels(
         cPixel*  cpixel,
         cRegion* cregion,
         cGrid*   grid,
     ) except *:
-    #print("< collect_adjacent_pixels ({}, {})".format(cpixel.x, cpixel.y))
+    # print("< collect_adjacent_pixels ({}, {})".format(cpixel.x, cpixel.y))
     grid.pixel_done_table[cpixel.x][cpixel.y] = True
     cdef cRegion pixels_todo
     cregion_init(
@@ -2600,7 +2574,7 @@ cdef void collect_adjacent_pixels(
             cregion_conf_default(),
             cregion_get_unique_id(),
         )
-    #print("pixels_todo.id == {}".format(pixels_todo.id))
+    # print("pixels_todo.id == {}".format(pixels_todo.id))
     cdef int i, i_neighbor
     cdef cPixel* neighbor
     cdef cPixel* current_cpixel = cpixel
@@ -2646,11 +2620,10 @@ cdef void collect_adjacent_pixels(
     cregion_cleanup(
             &pixels_todo,
             unlink_pixels=False,
-            reset_connected=True, #SR_TODO necessary?
+            reset_connected=True, # SR_TODO necessary?
         )
-    #print("> collect_adjacent_pixels")
+    # print("> collect_adjacent_pixels")
 
-#==============================================================================
 
 cdef void csplit_regiongrow_core(
         cRegion*  cfeature,
@@ -2666,8 +2639,8 @@ cdef void csplit_regiongrow_core(
     cdef cPixel* cpixel
     cdef np.int32_t x, y
 
-    #SR_TODO Move all the initialization into a function (same for cleanup)
-    #SR_TODO Thus it will be visible in profiling and easy to pull up
+    # SR_TODO Move all the initialization into a function (same for cleanup)
+    # SR_TODO Thus it will be visible in profiling and easy to pull up
 
     # 'Activate' new subregions
     for i in range(n_subregions):
@@ -2756,7 +2729,7 @@ cdef void csplit_regiongrow_core(
 
     # Identify boundaries and connected regions
     cregions_determine_boundaries(subfeature_cregions, grid)
-    cdef bint reset_existing = False #SR_TODO True or False?
+    cdef bint reset_existing = False # SR_TODO True or False?
     cregions_find_connected(subfeature_cregions, reset_existing, &grid.constants)
 
     # Reset pixel status table for feature pixels
@@ -2790,7 +2763,6 @@ cdef void assert_no_unambiguously_assigned_pixels(
             err = "pixel_status_table[{}][{}] == 2".format(x, y)
             raise Exception(err)
 
-#------------------------------------------------------------------------------
 
 cdef void regiongrow_advance_boundary(
         cRegions* subfeatures_iteration_seeds,
@@ -2807,7 +2779,7 @@ cdef void regiongrow_advance_boundary(
     cdef bint newly_assigned
     cdef np.int32_t x, y
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         if superdebug: log.debug("========================================")
         log.debug("seed pixels of {} regions:".format(subfeatures_iteration_seeds.n))
@@ -2821,11 +2793,11 @@ cdef void regiongrow_advance_boundary(
                         continue
                     log.debug(" [{}] ({}, {})".format(i_region, cregion.pixels[i_pixel].x, cregion.pixels[i_pixel].y))
                 log.debug("")
-    #SR_BLOCK>
+    # SR_BLOCK >
 
-    #SR_TODO Yet another case where cRegion is not really appropriate
-    #SR_TODO but still used because it's a flexible cPixel container!
-    #SR_TODO I.e. yet another cry for a more general-purpose cPixels struct!
+    # SR_TODO Yet another case where cRegion is not really appropriate
+    # SR_TODO but still used because it's a flexible cPixel container!
+    # SR_TODO I.e. yet another cry for a more general-purpose cPixels struct!
     # Initialize pixel container for multi-assigned pixels
     cdef cRegion cregion_multi_assigned
     cregion_init(
@@ -2840,12 +2812,12 @@ cdef void regiongrow_advance_boundary(
             cregion_get_unique_id(),
         )
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         if superdebug: log.debug("========================================")
         log.debug("assign boundary pixels to {} regions".format(subfeatures_iteration_seeds.n))
         if superdebug: log.debug("========================================")
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     cdef cRegion* cregion_seeds
     cdef cRegion* cregion_target
@@ -2894,12 +2866,12 @@ cdef void regiongrow_advance_boundary(
                             unlink_pixel=False,
                         )
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         if superdebug: log.debug("========================================")
         log.debug("resolve multi-assigned pixels ({})".format(cregion_multi_assigned.pixels_n))
         if superdebug: log.debug("========================================")
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     # Resolve multi-assignments (pixels that might belong to multiple regions)
     regiongrow_resolve_multi_assignments(
@@ -2911,10 +2883,10 @@ cdef void regiongrow_advance_boundary(
     cregion_cleanup(
             &cregion_multi_assigned,
             unlink_pixels=False,
-            reset_connected=True, #SR_TODO necessary?
+            reset_connected=True, # SR_TODO necessary?
         )
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         if superdebug: log.debug("========================================")
         log.debug("newly assigned pixels ({}):".format(newly_assigned_pixels.pixels_n))
@@ -2931,14 +2903,14 @@ cdef void regiongrow_advance_boundary(
                     if grid.pixel_region_table[x][y].slots[0].region.id == cregion.id:
                         log.debug(" [{}] ({}, {})".format(i_region, cpixel.x, cpixel.y))
                 log.debug("")
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     # Reset seeds
     for i_region in range(subfeatures_iteration_seeds.n):
         cregion_cleanup(
                 subfeatures_iteration_seeds.regions[i_region],
                 unlink_pixels=True,
-                reset_connected=True, #SR_TODO necessary?
+                reset_connected=True, # SR_TODO necessary?
             )
 
     # Store newly assigned pixels
@@ -2969,12 +2941,12 @@ cdef void regiongrow_advance_boundary(
                 break
         else:
             continue
-        #SR_TMP<
+        # SR_TMP <
         for i_region in range(subfeature_cregions.n - n_subregions,
                 subfeature_cregions.n):
             if subfeature_cregions.regions[i_region].id == cregion.id:
                 break
-        #SR_TMP>
+        # SR_TMP >
         cregion = subfeatures_iteration_seeds.regions[i_region]
         cregion_insert_pixel(
                 cregion,
@@ -2985,10 +2957,10 @@ cdef void regiongrow_advance_boundary(
     cregion_cleanup(
             &newly_assigned_pixels,
             unlink_pixels=True,
-            reset_connected=True, #SR_TODO necessary?
+            reset_connected=True, # SR_TODO necessary?
         )
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if superdebug:
         log.debug("========================================")
         log.debug("pixels of updated growing regions:")
@@ -3002,11 +2974,10 @@ cdef void regiongrow_advance_boundary(
                 if cpixel is not NULL:
                     log.debug(" [{}] {} ({}, {})".format(i_region, subfeature_cregions.regions[i_region].id, cpixel.x, cpixel.y))
             log.debug("")
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     if debug: log.debug("> regiongrow_advance_boundary")
 
-#------------------------------------------------------------------------------
 
 cdef void regiongrow_resolve_multi_assignments(
         cRegion* cregion_multi_assigned,
@@ -3021,8 +2992,8 @@ cdef void regiongrow_resolve_multi_assignments(
     cdef np.int32_t x, y
     cdef int n_selected_regions_max = 3
     cdef cRegionRankSlots selected_regions
-    #SR_TODO Use/write generic function to initialize slots
-    #SR_TMP<
+    # SR_TODO Use/write generic function to initialize slots
+    # SR_TMP <
     selected_regions.slots = <cRegionRankSlot*>malloc(
             n_selected_regions_max*sizeof(cRegionRankSlot))
     selected_regions.max = n_selected_regions_max
@@ -3030,7 +3001,7 @@ cdef void regiongrow_resolve_multi_assignments(
     for i in range(selected_regions.max):
         selected_regions.slots[i].region = NULL
         selected_regions.slots[i].rank = -1
-    #SR_TMP>
+    # SR_TMP >
 
     # Loop over the multi-assigned pixels
     for i_pixel in range(cregion_multi_assigned.pixels_istart,
@@ -3063,11 +3034,11 @@ cdef void regiongrow_resolve_multi_assignments(
                 selected_region_ranked.region,
                 selected_region_ranked.rank,
             )
-        #SR_TMP<
+        # SR_TMP <
         if grid.pixel_status_table is not NULL:
             grid.pixel_status_table[x][y] = 1
-        #grid.pixel_status_table[x][y] = 1
-        #SR_TMP>
+        # grid.pixel_status_table[x][y] = 1
+        # SR_TMP >
 
     if debug: log.debug("------------------------------------")
 
@@ -3076,7 +3047,6 @@ cdef void regiongrow_resolve_multi_assignments(
 
     if debug: log.debug("> regiongrow_resolve_multi_assignments")
 
-#------------------------------------------------------------------------------
 
 cdef cRegionRankSlot* resolve_multi_assignment(
         cPixel*           cpixel,
@@ -3087,9 +3057,9 @@ cdef cRegionRankSlot* resolve_multi_assignment(
         bint              debug,
     ) except? NULL:
 
-    #------------------------------------------------------------
+    # ------------------------------------------------------------
     # (1) The region with most connections wins (direct > indirect)
-    #------------------------------------------------------------
+    # ------------------------------------------------------------
     if debug: log.debug("(1) The region with most connections wins (direct > indirect)")
     resolve_multi_assignment_best_connected_region(
             cpixel,
@@ -3101,9 +3071,9 @@ cdef cRegionRankSlot* resolve_multi_assignment(
     if selected_regions.n == 1:
         return &selected_regions.slots[0]
 
-    #------------------------------------------------------------
+    # ------------------------------------------------------------
     # (2) The biggest region wins (no. pixels)
-    #------------------------------------------------------------
+    # ------------------------------------------------------------
     if debug: log.debug("(2) The biggest region wins (no. pixels)")
     resolve_multi_assignment_biggest_region(
             cpixel,
@@ -3113,9 +3083,9 @@ cdef cRegionRankSlot* resolve_multi_assignment(
     if selected_regions.n == 1:
         return &selected_regions.slots[0]
 
-    #------------------------------------------------------------
+    # ------------------------------------------------------------
     # (3) The strongest region wins (sum of pixel values)
-    #------------------------------------------------------------
+    # ------------------------------------------------------------
     if debug: log.debug("(3) The strongest region wins (sum of pixel values)")
     resolve_multi_assignment_strongest_region(
             cpixel,
@@ -3125,9 +3095,9 @@ cdef cRegionRankSlot* resolve_multi_assignment(
     if selected_regions.n == 1:
         return &selected_regions.slots[0]
 
-    #------------------------------------------------------------
+    # ------------------------------------------------------------
     # (4) The 'mean strongest' region wins (mean of pixel values)
-    #------------------------------------------------------------
+    # ------------------------------------------------------------
     if debug: log.debug("(4) The 'mean strongest' region wins (mean of pixel values)")
     resolve_multi_assignment_mean_strongest_region(
             cpixel,
@@ -3142,7 +3112,7 @@ cdef cRegionRankSlot* resolve_multi_assignment(
             "to a region\n\nregions").format(cpixel.x, cpixel.y)
     raise Exception(err)
 
-#DBG_PERMANENT
+# DBG_PERMANENT
 cdef void print_selected_regions_dbg(
         int               i_test,
         cRegionRankSlots* selected_regions,
@@ -3158,7 +3128,7 @@ cdef void print_selected_regions_dbg(
             foo.append(selected_regions.slots[i].region.id)
         log.info("[{}] still multiple regions: {}".format(i_test, ", ".join([str(i) for i in foo])))
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 cdef void resolve_multi_assignment_best_connected_region(
         cPixel*           cpixel,
@@ -3225,13 +3195,12 @@ cdef void resolve_multi_assignment_best_connected_region(
 
     if debug: log.debug("> resolve_multi_assignment_best_connected_region: {} region{}".format(selected_regions.n, "" if selected_regions.n == 1 else "s"))
 
-#------------------------------------------------------------------------------
 
 cdef void resolve_multi_assignment_biggest_region(
         cPixel*           cpixel,
         cRegionRankSlots* selected_regions,
     ) except *:
-    #print("> resolve_multi_assignment_biggest_region")
+    # print("> resolve_multi_assignment_biggest_region")
     cdef int i, i_slot, neighbor_rank, size_max=-1, n_selected_regions=0
     cdef cRegion* cregion
     cdef cRegionRankSlots pre_selected_regions
@@ -3242,7 +3211,7 @@ cdef void resolve_multi_assignment_biggest_region(
         neighbor_rank = pre_selected_regions.slots[i_slot].rank
         if cregion is NULL:
             continue
-        #print(" -> region {}: {}".format(i_region, cregion.pixels_n))
+        # print(" -> region {}: {}".format(i_region, cregion.pixels_n))
         if cregion.pixels_n < size_max:
             continue
         elif cregion.pixels_n == size_max:
@@ -3260,13 +3229,13 @@ cdef void resolve_multi_assignment_biggest_region(
                 )
             size_max = cregion.pixels_n
     free(pre_selected_regions.slots)
-    #print("< resolve_multi_assignment_biggest_region: {} region{}".format(selected_regions.n, "" if selected_regions.n == 1 else "s"))
+    # print("< resolve_multi_assignment_biggest_region: {} region{}".format(selected_regions.n, "" if selected_regions.n == 1 else "s"))
 
 cdef void resolve_multi_assignment_strongest_region(
         cPixel*           cpixel,
         cRegionRankSlots* selected_regions,
     ) except *:
-    #print("> resolve_multi_assignment_strongest_region")
+    # print("> resolve_multi_assignment_strongest_region")
     cdef int i, i_slot, i_pixel, n_selected_regions=0, neighbor_rank
     cdef cRegion* cregion
     cdef np.float32_t vsum, vsum_max = -1
@@ -3283,7 +3252,7 @@ cdef void resolve_multi_assignment_strongest_region(
             if cregion.pixels[i_pixel] is NULL:
                 continue
             vsum += cregion.pixels[i_pixel].v
-        #print(" -> region {}: {}".format(i_region, vsum))
+        # print(" -> region {}: {}".format(i_region, vsum))
         if vsum < vsum_max:
             continue
         elif vsum == vsum_max:
@@ -3302,13 +3271,13 @@ cdef void resolve_multi_assignment_strongest_region(
             vsum_max = vsum
     free(pre_selected_regions.slots)
 
-    #print("< resolve_multi_assignment_strongest_region: {} region{}".format(selected_regions.n, "" if selected_regions.n == 1 else "s"))
+    # print("< resolve_multi_assignment_strongest_region: {} region{}".format(selected_regions.n, "" if selected_regions.n == 1 else "s"))
 
 cdef void resolve_multi_assignment_mean_strongest_region(
         cPixel*           cpixel,
         cRegionRankSlots* selected_regions,
     ) except *:
-    #print("> resolve_multi_assignment_mean_strongest_region")
+    # print("> resolve_multi_assignment_mean_strongest_region")
     cdef int i, i_slot, i_pixel, n_selected_regions=0, neighbor_rank
     cdef cRegion* cregion
     cdef np.float32_t vmean, vmean_max=-1
@@ -3327,7 +3296,7 @@ cdef void resolve_multi_assignment_mean_strongest_region(
             vmean += cregion.pixels[i_pixel].v
         with cython.cdivision(True):
             vmean /= (<np.float32_t>cregion.pixels_n)
-        #print(" -> region {}: {}".format(i_region, vmean))
+        # print(" -> region {}: {}".format(i_region, vmean))
         if vmean < vmean_max:
             continue
         elif vmean == vmean_max:
@@ -3346,9 +3315,8 @@ cdef void resolve_multi_assignment_mean_strongest_region(
                 )
     free(pre_selected_regions.slots)
 
-    #print("< resolve_multi_assignment_mean_strongest_region: {} region{}".format(selected_regions.n, "" if selected_regions.n == 1 else "s"))
+    # print("< resolve_multi_assignment_mean_strongest_region: {} region{}".format(selected_regions.n, "" if selected_regions.n == 1 else "s"))
 
-#------------------------------------------------------------------------------
 
 cdef void cpixel_count_neighbors_in_cregion(
         cPixel*  cpixel,
@@ -3396,7 +3364,6 @@ cdef void cpixel_count_neighbors_in_cregion(
                 n_indirect_neighbors[0] += 1
                 if debug: log.debug(" => indirect neighbor no. {}".format(n_direct_neighbors[0]))
 
-#------------------------------------------------------------------------------
 
 @cython.profile(False)
 cdef bint regiongrow_assign_pixel(
@@ -3412,7 +3379,7 @@ cdef bint regiongrow_assign_pixel(
     cdef bint newly_assigned
     x = cpixel.x
     y = cpixel.y
-    #print("< regiongrow_assign_pixel ({}, {})".format(x, y))
+    # print("< regiongrow_assign_pixel ({}, {})".format(x, y))
 
     # We're done if the pixel is not assignable:
     # - < 0: never been assignable (e.g. background or seed pixel)
@@ -3469,11 +3436,10 @@ cdef bint regiongrow_assign_pixel(
                     unlink_pixel=False,
                 )
 
-    #print("> regiongrow_assign_pixel")
+    # print("> regiongrow_assign_pixel")
 
     return newly_assigned
 
-#==============================================================================
 
 cpdef find_minima_2d(fld, n=4, nmax_extrema=100):
     if n not in [4, 8, 12, 20]:
@@ -3565,7 +3531,6 @@ cdef int _c_find_extrema_2d_core(
             raise Exception("maximum number of extrema reached")
     return n_extrema
 
-#==============================================================================
 
 cdef void features_to_cregions(
         list        features,
@@ -3601,7 +3566,7 @@ cdef void features_to_cregions(
         fid = feature.id
         for j in range(i):
             if fids[j] == fid:
-                err = "#{}: duplicate feature id: {} (#{})".format(i, fid, j)
+                err = "# {}: duplicate feature id: {} (# {})".format(i, fid, j)
                 raise Exception(err)
         fids[i] = fid
 
@@ -3617,7 +3582,7 @@ cdef void features_to_cregions(
                 feature.cleanup_cregion(unlink_pixels=False,
                         reset_connected=False)
         cregion = grid_new_region(grid)
-        #if debug: log.debug("create new cregion at {}".format(<long>cregion))
+        # if debug: log.debug("create new cregion at {}".format(<long>cregion))
         cregions_link_region(cregions, cregion, cleanup=False, unlink_pixels=False)
 
         # Create cregion from feature
@@ -3642,9 +3607,9 @@ cdef void features_to_cregions(
         if debug: log.debug("determine boundaries of all cfeatures")
         cregions_determine_boundaries(cregions, grid)
 
-    dbg_check_features_cregion_pixels(features) #SR_DBG_PERMANENT
+    dbg_check_features_cregion_pixels(features) # SR_DBG_PERMANENT
 
-#SR_DBG<
+# SR_DBG <
 def dbg_features_check_unique_pixels(features):
     # Check uniqueness of pixels
     pixels_all = [(x, y) for f in features for x, y in f.pixels]
@@ -3666,14 +3631,14 @@ def dbg_features_check_unique_pixels(features):
                 for (fid1, fid2), pxs in sorted(shared_fids.items())]))
         err = "{} feature pairs share pixels:\n"+err_core
         print("warning: "+err)
-        #raise ValueError(err)
+        # raise ValueError(err)
         outfile = "cyclone_tracking_debug_shared_pixels.txt"
         print("debug: write feature ids and pixels to {}".format(outfile))
         with open(outfile, "a") as fo:
             fo.write(err_core+"\n")
-#SR_DBG>
+# SR_DBG >
 
-#SR_DBG<
+# SR_DBG <
 cpdef void dbg_check_features_cregion_pixels(list features) except *:
     cdef Feature feature
     for feature in features:
@@ -3683,12 +3648,12 @@ cpdef void dbg_check_features_cregion_pixels(list features) except *:
                         feature.id, feature.cregion.id,
                         feature.n, feature.cregion.pixels_n)
                 print("warning: "+err)
-                #raise Exception(err)
+                # raise Exception(err)
                 outfile = "cyclone_tracking_debug_features_inconsistent_pixels.txt"
                 print("debug: write feature info to {}".format(outfile))
                 with open(outfile, "a") as fo:
                     fo.write(err+"\n")
-#SR_DBG>
+# SR_DBG >
 
 cdef void features_neighbors_to_cregions_connected(
         list      features_list,
@@ -3722,9 +3687,9 @@ cdef void features_neighbors_to_cregions_connected(
                         ).format(feature.id)
                 raise Exception(err)
 
-            #SR_TODO use table to cross-reference features and cregions
-            #SR_TODO (as is already done to transfer connected features
-            #SR_TODO to neighbors, i.e. just the opposite direction)
+            # SR_TODO use table to cross-reference features and cregions
+            # SR_TODO (as is already done to transfer connected features
+            # SR_TODO to neighbors, i.e. just the opposite direction)
 
             # Find array index of neighbor
             for i_region_2 in range(cregions.n):
@@ -3764,23 +3729,23 @@ cdef void feature_to_cregion(
     cdef int i, n_pixels = feature.n
     cdef np.int32_t x, y
     cdef bint has_values = feature.values.size > 0
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         log.debug("  {} pixels:".format(n_pixels))
         for i, (x, y) in enumerate(feature.pixels):
             log.debug("  {}/{}\t({}, {})".format(i+1, n_pixels, x, y))
-    #DBG_BLOCK>
+    # DBG_BLOCK >
     cregion_init(cregion, cregion_conf, feature.id)
     for i in range(n_pixels):
         x = feature.pixels[i, 0]
         y = feature.pixels[i, 1]
 
         if x < 0 or y < 0:
-            err = "{}: invalid pixel #{}: ({}, {})".format(_name_, i, x, y)
+            err = "{}: invalid pixel # {}: ({}, {})".format(_name_, i, x, y)
             raise Exception(err)
 
         if x >= grid.constants.nx or y >= grid.constants.ny:
-            err = "{}: pixel #{} outside {}x{} grid: ({}, {})".format(_name_,
+            err = "{}: pixel # {} outside {}x{} grid: ({}, {})".format(_name_,
                     i, grid.constants.nx, grid.constants.ny, x, y)
             raise Exception(err)
 
@@ -3803,25 +3768,22 @@ cdef void feature_to_cregion(
     # Link cregion to feature
     feature.set_cregion(cregion)
 
-    #SR_TMP<
+    # SR_TMP <
     # Check that the number of pixels match
     if feature.cregion is not NULL:
         if feature.n != feature.cregion.pixels_n:
             err = "feature {}: inconsistent pixels: {}/{}".format(
                     feature.id, feature.n, feature.cregion.pixels_n)
             print("warning: "+err)
-            #raise Exception(err)
+            # raise Exception(err)
             outfile = "cyclone_tracking_debug_cfeature_inconsistent_pixels.txt"
             print("debug: write feature info to {}".format(outfile))
             with open(outfile, "a") as fo:
                 fo.write(err+"\n")
-    #SR_TMP>
+    # SR_TMP >
 
     if debug: log.debug("> feature_to_cregion ({})".format(feature.id))
 
-#==============================================================================
-# FIND FEATURE BOUNDARIES
-#==============================================================================
 
 cpdef tuple pixels_find_boundaries(
         np.ndarray[np.int32_t, ndim=2] pixels,
@@ -3834,7 +3796,7 @@ cpdef tuple pixels_find_boundaries(
     This python-accessible function has been written initially in order to
     unit test the core function.
     """
-    #print("< pixels_find_boundaries")
+    # print("< pixels_find_boundaries")
 
     cdef int i, j
 
@@ -3842,7 +3804,7 @@ cpdef tuple pixels_find_boundaries(
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -3880,15 +3842,15 @@ cpdef tuple pixels_find_boundaries(
     cregion_determine_boundaries(&cregion, &grid)
 
     # Extract shell
-    #SR_ONE_SHELL< TODO remove once multiple shells per feature properly implemented
-    #-cdef cPixel* cpixel
-    #-cdef np.ndarray[np.int32_t, ndim=2] shell = np.empty(
-    #-            [cregion.shell_n, 2], dtype=np.int32)
-    #-for i in range(cregion.shell_n):
-    #-    cpixel = cregion.shell[i]
-    #-    shell[i, 0] = cpixel.x
-    #-    shell[i, 1] = cpixel.y
-    #SR_ONE_SHELL>
+    # SR_ONE_SHELL < TODO remove once multiple shells per feature properly implemented
+    # -cdef cPixel* cpixel
+    # -cdef np.ndarray[np.int32_t, ndim=2] shell = np.empty(
+    # -            [cregion.shell_n, 2], dtype=np.int32)
+    # -for i in range(cregion.shell_n):
+    # -    cpixel = cregion.shell[i]
+    # -    shell[i, 0] = cpixel.x
+    # -    shell[i, 1] = cpixel.y
+    # SR_ONE_SHELL >
     cdef list shells = []
     cdef np.ndarray[np.int32_t, ndim=2] shell
     for i in range(cregion.shells_n):
@@ -3913,9 +3875,6 @@ cpdef tuple pixels_find_boundaries(
 
     return shells, holes
 
-#==============================================================================
-# Python extension classes
-#==============================================================================
 
 cdef class Pixel:
 
@@ -3938,7 +3897,6 @@ cdef class Pixel:
             return []
         return self.fld.get_neighbors(self)
 
-#------------------------------------------------------------------------------
 
 cdef class Field2D:
 
@@ -3973,7 +3931,6 @@ cdef class Field2D:
     cpdef list pixels(Field2D self):
         return list(iter(self))
 
-#------------------------------------------------------------------------------
 
 _TRACK_REGISTER = {}
 
@@ -4100,7 +4057,7 @@ cdef class Feature:
     def __dealloc__(self):
         # Note: log.debug cannot be used inside from __dealloc__
         if self.debug: print("{}.__dealloc__()".format(self))
-        #print("WARNING: Feature.__dealloc__: cregion not cleaned up (see comment)")
+        # print("WARNING: Feature.__dealloc__: cregion not cleaned up (see comment)")
         #
         # Cleanup of cregion here can interfere with cleanup of the same
         # cregion elsewhere (in pure cython code), causing segfault!
@@ -4114,18 +4071,18 @@ cdef class Feature:
         # (Of course even better would be to slowly, but surely merge
         # cRegion and Feature, starting by elimination Pixel etc.)
         #
-        #self.cleanup_cregion()
+        # self.cleanup_cregion()
 
     def __repr__(self):
         s = "Feature["
-        #s += "{}|".format(id(self))
+        # s += "{}|".format(id(self))
         s += "{}](".format(self.id)
         if self.timestep != NAN_UI64:
             s += "@{}, ".format(self.timestep)
         s += "n={}/".format(self.n)
         if self.cregion is not NULL:
             s += str(self.cregion.pixels_n)
-        #s += ", min={:.3f}, mean={:.3f}, max={.3f}".format(self.min, self.mean, self.max)
+        # s += ", min={:.3f}, mean={:.3f}, max={.3f}".format(self.min, self.mean, self.max)
         s += ")"
         return s
 
@@ -4180,7 +4137,7 @@ cdef class Feature:
         feature._shared_boundary_pixels = copy(self._shared_boundary_pixels)
         feature._shared_boundary_pixels_unique = copy(self._shared_boundary_pixels_unique)
 
-        assert feature == self #SR_TMP
+        assert feature == self # SR_TMP
 
         return feature
 
@@ -4443,7 +4400,7 @@ cdef class Feature:
         self._check_pixels_present("derive boundaries")
         if constants is None:
             nx, ny = self.pixels[:, 0].max()+1, self.pixels[:, 1].max()+1
-            constants = Constants.default(nx=nx, ny=ny)
+            constants = default_constants(nx=nx, ny=ny)
         x0, y0, x1, y1 = self.bbox()
         ll = np.array([x0, y0])
         pixels_rel = self.pixels - ll
@@ -4455,7 +4412,7 @@ cdef class Feature:
         self._check_pixels_present("derive shells")
         if constants is None:
             nx, ny = self.pixels[:, 0].max()+1, self.pixels[:, 1].max()+1
-            constants = Constants.default(nx=nx, ny=ny)
+            constants = default_constants(nx=nx, ny=ny)
         x0, y0, x1, y1 = self.bbox()
         ll = np.array([x0, y0])
         pixels_rel = self.pixels - ll
@@ -4466,7 +4423,7 @@ cdef class Feature:
         self._check_pixels_present("derive holes")
         if constants is None:
             nx, ny = self.pixels[:, 0].max()+1, self.pixels[:, 1].max()+1
-            constants = Constants.default(nx=nx, ny=ny)
+            constants = default_constants(nx=nx, ny=ny)
         x0, y0, x1, y1 = self.bbox()
         ll = np.array([x0, y0])
         pixels_rel = self.pixels - ll
@@ -4481,12 +4438,12 @@ cdef class Feature:
 
         for shell in self.shells:
             shell = [(x, y) for x, y in shell]
-            #draw.polygon(shell, fill=1, outline=1)
+            # draw.polygon(shell, fill=1, outline=1)
             PIL.ImageDraw.Draw(raster).polygon(shell, fill=1, outline=1)
 
         for hole in self.holes:
             hole = [(x, y) for x, y in hole]
-            #draw.polygon(hole, fill=0, outline=1)
+            # draw.polygon(hole, fill=0, outline=1)
             PIL.ImageDraw.Draw(raster).polygon(hole, fill=0, outline=1)
 
         mask = np.array(raster, np.int8).T
@@ -4497,7 +4454,7 @@ cdef class Feature:
             err = "feature {}: pixel reconstruction failed: {} != {}".format(
                     self.id, int(pixels.size/2), self.n)
             log.warning(err)
-            #raise Exception(err)
+            # raise Exception(err)
 
         self.pixels = pixels
         self.values = values
@@ -4562,7 +4519,7 @@ cdef class Feature:
         # Subtract holes areas from shell areas
         area_m2 = area_shells_m2 - area_holes_m2
 
-        #SR_TMP<
+        # SR_TMP <
         if len(self.holes) > 0:
             log.warning(("feature {}: area_lonlat: subtracting area of {} "
                     "holes ({} m^2) from {} shells ({} m^2); holes area "
@@ -4570,7 +4527,7 @@ cdef class Feature:
                     "pixels which area actually part of the feature)"
                     ).format(self.id, len(self.holes), area_holes_m2,
                             len(self.shells),area_shells_m2))
-        #SR_TMP>
+        # SR_TMP >
 
         return area_m2*1e-6
 
@@ -4580,12 +4537,12 @@ cdef class Feature:
         source: https://gis.stackexchange.com/a/166421
         """
 
-        #SR_TMP< hide dependencies only used here; TODO clean this up
+        # SR_TMP < hide dependencies only used here; TODO clean this up
         import shapely.geometry as geo
         import shapely.ops
         import pyproj
         import functools
-        #SR_TMP>
+        # SR_TMP >
 
         px, py = path.T
         plon = lon[px, py]
@@ -4754,7 +4711,7 @@ cdef class Feature:
         # Looping over the bigger feature first should be faster
         # because more pixels outside the overlap bbox can be skipped
         # (the inner loop always needs to be completed)
-        #SR_TODO actually measure this for confirmation!
+        # SR_TODO actually measure this for confirmation!
         if self.n >= other.n:
             return self._overlap_n_core(
                     self.pixels,
@@ -4899,10 +4856,10 @@ cdef class Feature:
                     "derive_pixels_from_boundaries")
             raise NotImplementedError(err)
 
-        #SR_TODO<
+        # SR_TODO <
         if fill_holes:
             raise NotImplemented("Feature.to_field: fill_holes=T")
-        #SR_TODO>
+        # SR_TODO >
 
         cdef bint has_values = (self.values.size > 0)
         cdef np.ndarray[np.float32_t, ndim=2] fld = np.full(
@@ -4958,11 +4915,10 @@ cdef class Feature:
                 sum([shell.size for shell in self.shells]) == 0):
             err = "cannot compute convex hull without shells"
             raise Exception(err)
-        raise NotImplementedError("Feature.convex_hull for multiple shells") #SR_ONE_SHELL
+        raise NotImplementedError("Feature.convex_hull for multiple shells") # SR_ONE_SHELL
         hull = sp.spatial.ConvexHull(self.shell)
         return self.shell[hull.vertices]
 
-#------------------------------------------------------------------------------
 
 cpdef tuple _feature__from_jdat__pixels_from_tables(
         dict jdat,
@@ -4990,9 +4946,9 @@ cpdef tuple _feature__from_jdat__pixels_from_tables(
 
     cdef str key_pixels      = pid_str+"_pixels"
     cdef str key_values      = pid_str+"_values"
-    #SR_ONE_SHELL<
+    # SR_ONE_SHELL <
     cdef str key_shell_old   = pid_str+"_shell"
-    #SR_ONE_SHELL>
+    # SR_ONE_SHELL >
     cdef str key_shells_base = pid_str+"_shell_"
     cdef str key_holes_base  = pid_str+"_hole_"
 
@@ -5013,7 +4969,7 @@ cpdef tuple _feature__from_jdat__pixels_from_tables(
             values = pixel_tables[key_values]
 
     # Get shells
-    #SR_ONE_SHELL<
+    # SR_ONE_SHELL <
     cdef str key
     cdef np.ndarray[np.int32_t, ndim=2] table
     try:
@@ -5024,7 +4980,7 @@ cpdef tuple _feature__from_jdat__pixels_from_tables(
             if key.startswith(key_shells_base):
                 table = pixel_tables[key]
                 shells.append(table)
-    #SR_ONE_SHELL>
+    # SR_ONE_SHELL >
 
     # Get holes
     holes = []
@@ -5035,7 +4991,6 @@ cpdef tuple _feature__from_jdat__pixels_from_tables(
 
     return pixels, values, shells, holes
 
-#------------------------------------------------------------------------------
 
 cpdef feature2d_from_jdat(
         dict jdat,
@@ -5089,13 +5044,13 @@ cpdef void features_find_neighbors(
         np.int32_t nx = 0,
         np.int32_t ny = 0,
     ):
-    #print("< features_find_neighbors")
+    # print("< features_find_neighbors")
 
     # Set up constants
     if constants is None:
         if nx == 0 or ny == 0:
             raise Exception("must pass either (nx, ny) or constants")
-        constants = Constants.default(nx=nx, ny=ny)
+        constants = default_constants(nx=nx, ny=ny)
     else:
         nx = constants.nx
         ny = constants.ny
@@ -5123,7 +5078,7 @@ cdef void features_find_neighbors_core(
         cGrid*      grid,
         cConstants* constants,
     ) except *:
-    #print("< features_find_neighbors_core")
+    # print("< features_find_neighbors_core")
     cdef int i, j, k, n_features=len(features)
 
     # Turn features into cregions
@@ -5140,10 +5095,10 @@ cdef void features_find_neighbors_core(
         )
 
     # Find neighbors among cregions
-    cdef bint reset_existing = False #SR_TODO True or False?
+    cdef bint reset_existing = False # SR_TODO True or False?
     cregions_find_connected(&cregions, reset_existing, constants)
 
-    #SR_TMP<
+    # SR_TMP <
     cdef np.uint64_t** id_table = <np.uint64_t**>malloc(
             n_features*sizeof(np.uint64_t*))
     cdef Feature feature
@@ -5152,8 +5107,8 @@ cdef void features_find_neighbors_core(
         id_table[i][0] = cregions.regions[i].id
         feature = features[i]
         id_table[i][1] = feature.id
-        #print("id_table[{}] = [{}, {}]".format(i, cregions.regions[i].id, feature.id))
-    #SR_TMP>
+        # print("id_table[{}] = [{}, {}]".format(i, cregions.regions[i].id, feature.id))
+    # SR_TMP >
 
     # Transfer links back
     cregions2features_connected2neighbors(
@@ -5164,11 +5119,11 @@ cdef void features_find_neighbors_core(
             constants,
         )
 
-    #SR_TMP<
+    # SR_TMP <
     for i in range(n_features):
         free(id_table[i])
     free(id_table)
-    #SR_TMP>
+    # SR_TMP >
 
     # Clean up
     cregions_cleanup(&cregions, cleanup_regions=True)
@@ -5181,7 +5136,7 @@ cdef list cregions_create_features(
         cConstants* constants,
         list        used_ids = None,
     ):
-    #print("< cregions_create_features")
+    # print("< cregions_create_features")
     cdef int i, j
     cdef cRegion* cregion
     cdef Feature feature
@@ -5197,18 +5152,18 @@ cdef list cregions_create_features(
     for i in range(cregions.n):
         cregion = cregions.regions[i]
 
-        #SR_DBG_PERMANENT<
+        # SR_DBG_PERMANENT <
         if cregion.pixels_n == 0 or cregion.pixels_max == 0:
             log.error("warning: empty region ({}/{}) - SKIP".format(cregion.pixels_n, cregion.pixels_max))
             continue
-        #SR_DBG_PERMANENT>
+        # SR_DBG_PERMANENT >
 
-        #SR_DBG_PERMANENT<
+        # SR_DBG_PERMANENT <
         if not 0 <= cregion.pixels_n <= cregion.pixels_max:
             err = ("inconsistent cregion {}: n={}, max={}").format(
                     cregion.id, cregion.pixels_n, cregion.pixels_max)
             raise Exception(err)
-        #SR_DBG_PERMANENT>
+        # SR_DBG_PERMANENT >
 
         values = np.zeros(cregion.pixels_n, dtype=np.float32)
         for j in range(cregion.pixels_max):
@@ -5250,7 +5205,7 @@ cdef list cregions_create_features(
         id_table[i][0] = cregions.regions[i].id
         feature = features[i]
         id_table[i][1] = feature.id
-        #print("id_table[{}] = [{}, {}]".format(i, id_table[i][0], id_table[i][1]))
+        # print("id_table[{}] = [{}, {}]".format(i, id_table[i][0], id_table[i][1]))
 
     # Transfer links back
     cregions2features_connected2neighbors(
@@ -5279,7 +5234,7 @@ cdef void cregions2features_connected2neighbors(
         cConstants*   constants,
     ) except *:
     """Turn connected regions into neighboring features."""
-    #print("< cregions2features_connected2neighbors {} {}".format(cregions.n, len(features)))
+    # print("< cregions2features_connected2neighbors {} {}".format(cregions.n, len(features)))
     cdef int i, j, k, n_features=len(features)
     cdef int i_feature, i_cregion, i_other_feature
     cdef np.uint64_t fid
@@ -5321,7 +5276,7 @@ cdef void cregions2features_connected2neighbors(
 
         # Add neighbors
         feature.neighbors = []
-        #print("cregion[{}].connected_n == {}".format(cregion.id, cregion.connected_n))
+        # print("cregion[{}].connected_n == {}".format(cregion.id, cregion.connected_n))
         for i_cregion in range(cregion.connected_n):
             other_cregion = cregion.connected[i_cregion]
 
@@ -5333,7 +5288,7 @@ cdef void cregions2features_connected2neighbors(
                     id_table
                 )
 
-            #print("neighbors: {} <-> {}".format(feature.id, other_feature.id))
+            # print("neighbors: {} <-> {}".format(feature.id, other_feature.id))
             feature.neighbors.append(other_feature)
 
             # Mode "shared"
@@ -5355,7 +5310,7 @@ cdef void cregions2features_connected2neighbors(
     cregion_cleanup(
             &cregion_bg,
             unlink_pixels=True,
-            reset_connected=True, #SR_TODO necessary?
+            reset_connected=True, # SR_TODO necessary?
         )
 
 cdef void determine_shared_boundary_pixels(
@@ -5377,7 +5332,7 @@ cdef void determine_shared_boundary_pixels(
     cdef cRegion* cregion_assoc
     cdef tuple xy
 
-    cdef dict pixels_assignments = {} #SR_TMP
+    cdef dict pixels_assignments = {} # SR_TMP
 
     # Initialize dicts for shared pixels
     shared_boundary_pixels["bg"] = set()
@@ -5493,7 +5448,7 @@ cdef void determine_shared_boundary_pixels(
                     link_region=False,
                     unlink_pixel=False,
                 )
-            #DBG_BLOCK<
+            # DBG_BLOCK <
             if debug:
                 log.debug(" -> ({}, {}) multi-assigned ({}x):".format(x, y, grid.pixel_region_table[x][y].n))
                 for i in range(grid.pixel_region_table[x][y].n):
@@ -5503,7 +5458,7 @@ cdef void determine_shared_boundary_pixels(
                         log.debug("  - region {} (interior)".format(grid.pixel_region_table[x][y].slots[i].region.id))
                     else:
                         log.debug("  - region {}".format(grid.pixel_region_table[x][y].slots[i].region.id))
-            #DBG_BLOCK>
+            # DBG_BLOCK >
 
     # Insert pixels into "complete" lists
     for i_pixel in range(boundary_pixels.pixels_istart,
@@ -5526,19 +5481,19 @@ cdef void determine_shared_boundary_pixels(
                 if debug: log.debug("SHARED[bg] <- ({}, {})".format(*xy))
                 shared_boundary_pixels["bg"].add((x, y))
             else:
-                #DBG_PERMANENT<
+                # DBG_PERMANENT <
                 if cregion_assoc.id not in shared_boundary_pixels:
                     shared_boundary_pixels[cregion_assoc.id] = set()
-                    #log.warning("warning: key {} not in shared_boundary_pixels".format(cregion_assoc.id))
-                #DBG_PERMANENT>
+                    # log.warning("warning: key {} not in shared_boundary_pixels".format(cregion_assoc.id))
+                # DBG_PERMANENT >
                 if debug: log.debug("SHARED[{}] <- ({}, {})".format(cregion_assoc.id, *xy))
                 shared_boundary_pixels[cregion_assoc.id].add(xy)
 
     # Assigned to multiple targets: resolve assignment!
-    #SR_TMP< SR_TODO fix this properly
+    # SR_TMP < SR_TODO fix this properly
     cdef np.int8_t** pixel_status_table_tmp = grid.pixel_status_table
     grid.pixel_status_table = NULL
-    #SR_TMP>
+    # SR_TMP >
     if cregion_multi.pixels_n > 0:
         regiongrow_resolve_multi_assignments(
                 &cregion_multi,
@@ -5546,9 +5501,9 @@ cdef void determine_shared_boundary_pixels(
                 grid.constants.n_neighbors_max,
                 debug = False,
             )
-    #SR_TMP<
+    # SR_TMP <
     grid.pixel_status_table = pixel_status_table_tmp
-    #SR_TMP>
+    # SR_TMP >
 
     # Insert pixels into "unique" lists
     for i_pixel in range(boundary_pixels.pixels_istart,
@@ -5558,13 +5513,13 @@ cdef void determine_shared_boundary_pixels(
         x = boundary_pixels.pixels[i_pixel].x
         y = boundary_pixels.pixels[i_pixel].y
         xy = (x, y)
-        #SR_DBG_PERMANENT<
+        # SR_DBG_PERMANENT <
         if grid.pixel_region_table[x][y].n != 1:
             err = ("determine_shared_boundary_pixels: pixel ({}, {}) "
                     "not uniquely assigned (n={})").format(
                     x, y, grid.pixel_region_table[x][y].n)
             raise Exception(err)
-        #SR_DBG_PERMANENT>
+        # SR_DBG_PERMANENT >
         if debug: log.debug("({}, {}) [{}] {}".format(x, y, grid.pixel_region_table[x][y].slots[0].region.id, grid.pixel_region_table[x][y].slots[0].rank))
         i_slot = 0
         cregion_assoc = grid.pixel_region_table[x][y].slots[i_slot].region
@@ -5579,11 +5534,11 @@ cdef void determine_shared_boundary_pixels(
             if debug: log.debug("UNIQUE[bg] <- ({}, {})".format(*xy))
             shared_boundary_pixels_unique["bg"].add(xy)
         else:
-            #DBG_PERMANENT<
+            # DBG_PERMANENT <
             if cregion_assoc.id not in shared_boundary_pixels_unique:
                 shared_boundary_pixels_unique[cregion_assoc.id] = set()
-                #log.warning("warning: key {} not in shared_boundary_pixels_unique".format(cregion_assoc.id))
-            #DBG_PERMANENT>
+                # log.warning("warning: key {} not in shared_boundary_pixels_unique".format(cregion_assoc.id))
+            # DBG_PERMANENT >
             if debug: log.debug("UNIQUE[{}] <- ({}, {})".format(cregion_assoc.id, *xy))
             shared_boundary_pixels_unique[cregion_assoc.id].add(xy)
 
@@ -5591,12 +5546,12 @@ cdef void determine_shared_boundary_pixels(
     cregion_cleanup(
             &cregion_in,
             unlink_pixels=False,
-            reset_connected=True, #SR_TODO necessary?
+            reset_connected=True, # SR_TODO necessary?
         )
     cregion_cleanup(
             &boundary_pixels,
             unlink_pixels=False,
-            reset_connected=True, #SR_TODO necessary?
+            reset_connected=True, # SR_TODO necessary?
         )
 
 cdef void initialize_surrounding_background_region(
@@ -5673,7 +5628,7 @@ cdef Feature cregion_find_corresponding_feature(
         int           n_features,
         np.uint64_t** id_table,
     ):
-    #print("< cregion_find_corresponding_feature {}".format(cregion.id))
+    # print("< cregion_find_corresponding_feature {}".format(cregion.id))
     cdef int i
     cdef np.uint64_t fid
     cdef Feature feature
@@ -5691,10 +5646,9 @@ cdef Feature cregion_find_corresponding_feature(
     else:
         err = "error: feature with id {} not found".format(fid)
         raise Exception(err)
-    #print("> cregion_find_corresponding_feature {} {}".format(cregion.id, feature.id))
+    # print("> cregion_find_corresponding_feature {} {}".format(cregion.id, feature.id))
     return feature
 
-#==============================================================================
 
 cdef np.ndarray[np.int32_t, ndim=2] cpixel2arr(
         cPixel** pixels,
@@ -5708,9 +5662,6 @@ cdef np.ndarray[np.int32_t, ndim=2] cpixel2arr(
         arr[i, 1] = pixels[i][0].y
     return arr
 
-#==============================================================================
-#SR_TODO consider moving this into a new module
-#==============================================================================
 
 def features_neighbors_id2obj(features, missing_action="error"):
     _name_ = "features_neighbors_id2obj"
@@ -5750,7 +5701,7 @@ def features_neighbors_obj2id(features, names=None):
             feature.neighbors = [(f.id if isinstance(f, Feature) else f)
                     for f in feature.neighbors]
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 cpdef void associate_features(
         str name1,
@@ -5878,7 +5829,7 @@ cpdef int resolve_indirect_associations(
                         break
                 else:
                     n_assoc += 1
-                    #print("feature1.associates[{}].append({})".format(assoc_name_13, assoc_ids_13))
+                    # print("feature1.associates[{}].append({})".format(assoc_name_13, assoc_ids_13))
                     feature1.associates[assoc_name_13].append(assoc_ids_13)
 
                 # Connect 'target' to 'source' feature
@@ -5892,7 +5843,7 @@ cpdef int resolve_indirect_associations(
                         break
                 else:
                     n_assoc += 1
-                    #print("feature3.associates[{}].append({})".format(assoc_name_31, assoc_ids_31))
+                    # print("feature3.associates[{}].append({})".format(assoc_name_31, assoc_ids_31))
                     feature3.associates[assoc_name_31].append(assoc_ids_31)
 
     return n_assoc
@@ -5977,7 +5928,6 @@ def features_associates_id2obj(features_named, names=None,
                                 in sorted(missing_ids.items(),
                                         key=lambda i: len(i[1]))])))
 
-#==============================================================================
 
 def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
     """Extract pixels, center, and extrema from old-style cyclone feature."""
@@ -6043,9 +5993,3 @@ def cyclones_to_features(ts, cyclones, slp, lon, lat, vb=True, out=None):
             out.append(feature)
 
     return out
-
-#==============================================================================
-
-if __name__ == "__main__":
-    raise Exception("{} cannot be run directly".format(
-            os.path.basename(sys.argv[0])))

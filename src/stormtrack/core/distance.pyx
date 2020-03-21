@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from __future__ import print_function
 
-cimport cython
-cimport numpy as np
+# C: C libraries
 from cython.parallel cimport prange
 from libc.math cimport M_PI
 from libc.math cimport atan2
@@ -11,21 +10,19 @@ from libc.math cimport cos
 from libc.math cimport sin
 from libc.math cimport sqrt
 
-#------------------------------------------------------------------------------
+# C: Third-party
+cimport cython
+cimport numpy as np
 
+# Third-party
 import cython
 import numpy as np
 
-try:
-    from ..utils.various import ipython
-except ImportError:
-    pass
-
-#==============================================================================
 
 def pairwise_distances_great_circle(lon, lat):
     """Compute the pairwise great circle distance (km) between all points."""
     return _pairwise_distances_great_circle__core(lon, lat)
+
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -66,7 +63,6 @@ cdef np.ndarray[np.float32_t, ndim=4] _pairwise_distances_great_circle__core(
 
     return dists
 
-#==============================================================================
 
 def closest_feature(features, lon=None, lat=None, great_circle=True, *,
         nx=None, ny=None, out=None, mask=None, return_ids=False, approx=False):
@@ -82,10 +78,10 @@ def closest_feature(features, lon=None, lat=None, great_circle=True, *,
     domain.
     """
 
-    #SR_TMP<
+    # SR_TMP <
     if return_ids:
         raise NotImplementedError("return feature ids")
-    #SR_TMP>
+    # SR_TMP >
 
     if len(features) == 0:
         dists = np.empty(lon.shape, np.float32)
@@ -139,6 +135,7 @@ def closest_feature(features, lon=None, lat=None, great_circle=True, *,
     if out is None:
         return dists
 
+
 def features_to_mask(features, nx, ny, dtype=np.bool):
     mask_features = None
     for feature in features:
@@ -149,12 +146,14 @@ def features_to_mask(features, nx, ny, dtype=np.bool):
             mask_features |= mask_feature
     return mask_features.astype(dtype)
 
+
 def features_extract_shell_inds(features, lon, lat, dtype=np.int32):
     inds = []
     for feature in features:
         for shell in feature.shells:
             inds.extend(shell.tolist())
     return np.array(inds, dtype)
+
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -198,6 +197,7 @@ def _compute_feature_distances_lonlat_exact(
                     mindist = dist
 
             dists[i0, j0] = mindist
+
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -249,6 +249,7 @@ def _compute_feature_distances_lonlat_approx(
 
             dists[i0, j0] = mindist
 
+
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
@@ -284,7 +285,6 @@ def _compute_feature_distances_xy(
 
             dists[i0, j0] = mindist
 
-#==============================================================================
 
 cdef np.float32_t great_circle_distance(
         np.float32_t lon0,
@@ -305,6 +305,3 @@ cdef np.float32_t great_circle_distance(
     c = 2*atan2(sqrt(a), sqrt(1 - a))
     dist = EARTH_CIRC*c/1000
     return dist
-
-#==============================================================================
-

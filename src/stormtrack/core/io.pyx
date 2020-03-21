@@ -1,13 +1,14 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from __future__ import print_function
 
+# C: Third-party
 cimport cython
 cimport numpy as np
 
-#------------------------------------------------------------------------------
-
+# Standard library
 import errno
+import json
 import logging as log
 import os
 import re
@@ -18,17 +19,17 @@ from copy import deepcopy
 from functools import total_ordering
 from pprint import pprint
 
-import PIL
+# Third-party
 import cython
 import h5py
-import json
 import numpy as np
-
+import PIL
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
 
+# Local
 from ..utils.netcdf import points_lonlat_to_inds
 from ..utils.various import NoIndent
 from ..utils.various import NoIndentEncoder
@@ -37,16 +38,10 @@ from .identification import feature2d_from_jdat
 from .tracking import FeatureTrack
 from .tracking import remerge_partial_tracks
 
-try:
-    from ..utils.various import ipython
-except ImportError:
-    pass
 
-#==============================================================================
-
-#SR_TMP< SR_TODO if retained, move into more appropriate module
-#@cython.boundscheck(False)
-#@cython.wraparound(False)
+# SR_TMP < SR_TODO if retained, move into more appropriate module
+# @cython.boundscheck(False)
+# @cython.wraparound(False)
 cpdef int mask_sum(np.ndarray[np.uint8_t, ndim=2] mask):
     cdef int i, j, nx = mask.shape[0], ny = mask.shape[1]
     cdef int sum=0
@@ -55,9 +50,10 @@ cpdef int mask_sum(np.ndarray[np.uint8_t, ndim=2] mask):
             if mask[i, j]:
                 sum += 1
     return sum
-#SR_TMP>
+# SR_TMP >
 
-#SR_TMP< SR_TODO if retained, move into more appropriate module
+
+# SR_TMP < SR_TODO if retained, move into more appropriate module
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cpdef np.ndarray[np.float32_t, ndim=1] sum_hist_bins(
@@ -77,11 +73,12 @@ cpdef np.ndarray[np.float32_t, ndim=1] sum_hist_bins(
             else:
                 sums[nbins] += v
     return sums
-#SR_TMP>
+# SR_TMP >
 
-#SR_TMP< SR_TODO if retained, move into more appropriate module
-#@cython.boundscheck(False)
-#@cython.wraparound(False)
+
+# SR_TMP < SR_TODO if retained, move into more appropriate module
+# @cython.boundscheck(False)
+# @cython.wraparound(False)
 cpdef np.ndarray[np.int32_t, ndim=1] count_hist_bins(
         np.ndarray[np.float32_t, ndim=2] fld,
         np.ndarray[np.float32_t, ndim=1] bins):
@@ -99,9 +96,8 @@ cpdef np.ndarray[np.int32_t, ndim=1] count_hist_bins(
             else:
                 counts[nbins] += 1
     return counts
-#SR_TMP>
+# SR_TMP >
 
-#==============================================================================
 
 def write_feature_file(
         outfile,
@@ -134,9 +130,7 @@ def write_feature_file(
     TODO
 
     """
-    #--------------------------------------------------------------------------
     # Prepare Arguments - Shared
-    #--------------------------------------------------------------------------
 
     # Features v. tracks
     if features is not None and tracks is not None:
@@ -167,9 +161,7 @@ def write_feature_file(
         if e.errno != errno.EEXIST:
             raise
 
-    #--------------------------------------------------------------------------
     # Prepare Arguments - Tracks Only
-    #--------------------------------------------------------------------------
 
     # Track graphs file
     if tracks is None:
@@ -199,7 +191,6 @@ def write_feature_file(
             feature_files_tss = [[tss, fs] for tss, fs
                             in sorted(feature_files_tss.items())]
 
-    #--------------------------------------------------------------------------
 
     if not silent:
         if tracks is None:
@@ -210,12 +201,9 @@ def write_feature_file(
                     len(tracks), feature_name, outfile)
         log.info(msg)
 
-    #--------------------------------------------------------------------------
     jdat = odict()
 
-    #--------------------------------------------------------------------------
     # Header
-    #--------------------------------------------------------------------------
 
     # Initialize header
     jdat["header"] = odict([("nx", nx), ("ny", ny)])
@@ -251,9 +239,7 @@ def write_feature_file(
         jdat["header"]["link_features"]     = link_features
         jdat["header"]["feature_files_tss"] = feature_files_tss
 
-    #--------------------------------------------------------------------------
     # Feature (and Track) Info
-    #--------------------------------------------------------------------------
 
     # Add pixel store mode to info blocks
     info_features["pixel_store_mode"] = pixel_store_mode
@@ -265,16 +251,15 @@ def write_feature_file(
         # Add tracks info
         jdat["info_tracks"] = info_tracks
 
-    #--------------------------------------------------------------------------
-    #SR_TMP< TODO properly integrate graph-based track storage
+    # SR_TMP < TODO properly integrate graph-based track storage
     if tracks is not None:
         if track_store_mode == "json":
             pass
         elif track_store_mode == "graph":
-            #SR_TMP<
+            # SR_TMP <
             separate_pixels_file = True
             store_feature_values = (pixel_store_mode == "pixels")
-            #SR_TMP>
+            # SR_TMP >
             __tmp__write_tracks_features_as_graphs(
                     outfile, tracks, feature_name,
                     separate_pixels_file    = separate_pixels_file,
@@ -283,16 +268,14 @@ def write_feature_file(
                     info_tracks             = jdat["info_tracks"],
                     info_features           = jdat["info_"+feature_name],
                 )
-            #+++++
+            # +++++
             return
-            #+++++
+            # +++++
         else:
             err = "invalid track store mode '{}'".format(track_store_mode)
             raise ValueError(err)
-    #SR_TMP>
-    #--------------------------------------------------------------------------
+    # SR_TMP >
     # Feature (and Track) Data
-    #--------------------------------------------------------------------------
 
     # Add features data
     if tracks is None:
@@ -315,16 +298,15 @@ def write_feature_file(
             jdat_track = track.json_dict()
             jdat["tracks"].append(jdat_track)
 
-    #--------------------------------------------------------------------------
 
     if jdat_old:
         # Merge in old jdat dict
         # Add what's missing, don't overwrite what's there
         for section, content in jdat_old.items():
-            #SR_TMP<
+            # SR_TMP <
             if section == "features" and not content:
                 continue
-            #SR_TMP>
+            # SR_TMP >
             if section not in jdat:
                 jdat[section] = content
             elif (section in ["header", "info"] or
@@ -356,7 +338,6 @@ def write_feature_file(
                 # Remove feature files from old jdat
                 del jdat_old["header"]["feature_files_tss"]
 
-    #--------------------------------------------------------------------------
 
     # Write json data to disk
     if outfile.endswith(".json"):
@@ -400,7 +381,6 @@ def write_feature_file(
             with open(outfile_graphs, "wb") as fo:
                 pickle.dump(graphs_table, fo)
 
-#------------------------------------------------------------------------------
 
 def write_feature_pixels(outfile, *, feature_name, features, mode,
         silent=False):
@@ -447,7 +427,6 @@ def write_feature_pixels(outfile, *, feature_name, features, mode,
         err = "unknown file format: {}".format(outfile)
         raise Exception(err)
 
-#------------------------------------------------------------------------------
 
 def _collect_jdat_features(features, timesteps, pixel_store_mode):
     """Collect data of features and add it to json data dict."""
@@ -457,10 +436,10 @@ def _collect_jdat_features(features, timesteps, pixel_store_mode):
         jdat_feature = feature.json_dict()
 
         if pixel_store_mode == "boundaries":
-            #SR_DBG<
+            # SR_DBG <
             nold = feature.properties.pop("n", feature.n)
             if nold != feature.n:
-                #SR_TODO Debug this issue!!!!
+                # SR_TODO Debug this issue!!!!
                 # Problem with "boundaries" mode: some features
                 # mysteriously gain pixels (though not all)! First,
                 # when this happened to all pixels, the problem was
@@ -470,7 +449,7 @@ def _collect_jdat_features(features, timesteps, pixel_store_mode):
                         ).format(feature.id, nold, feature.n)
                 raise Exception(err)
                 log.warning(err)
-            #SR_DBG>
+            # SR_DBG >
 
             stats = dict(
                     min    = feature.properties.pop("min",    -1),
@@ -484,7 +463,6 @@ def _collect_jdat_features(features, timesteps, pixel_store_mode):
 
     return jdat_features
 
-#==============================================================================
 
 def __tmp__write_tracks_features_as_graphs(outfile, tracks, feature_name, *,
         header, info_tracks, info_features,
@@ -628,7 +606,6 @@ def track_to_graph(track, *, separate_pixels=False, store_values=False):
             output["values_by_fid"] = values_by_fid
     return output
 
-#==============================================================================
 
 def distribute_tracks_across_outfiles(tracks, timesteps_outfiles, jdats,
         args_methods=None, group_names=None, features_have_pixels=True,
@@ -683,7 +660,7 @@ def distribute_tracks_across_outfiles(tracks, timesteps_outfiles, jdats,
                     tracks.remove(track)
                     partial_track = track
                 else:
-                    #if not silent:
+                    # if not silent:
                     #    log.info("   -> split track {}".format(track.id))
                     partial_track = track.cut_off(until=ts_max,
                             compute_footprint=features_have_pixels)
@@ -691,7 +668,7 @@ def distribute_tracks_across_outfiles(tracks, timesteps_outfiles, jdats,
             outfiles_tracks[outfile] = (jdat, tracks_outfile)
         return outfiles_tracks
 
-    #SR_TODO Merge simple (above) and extended case (below)
+    # SR_TODO Merge simple (above) and extended case (below)
 
     # Extended case where tracks are sorted into two groups by method value
     if group_names is None:
@@ -787,7 +764,7 @@ def distribute_tracks_across_outfiles(tracks, timesteps_outfiles, jdats,
                 tracks.remove(track)
                 partial_track = track
             else:
-                #print("   -> split track {}".format(track.id))
+                # print("   -> split track {}".format(track.id))
                 partial_track = track.cut_off(until=ts_max,
                         compute_footprint=features_have_pixels)
 
@@ -800,7 +777,6 @@ def distribute_tracks_across_outfiles(tracks, timesteps_outfiles, jdats,
 
     return outfiles_tracks
 
-#------------------------------------------------------------------------------
 
 def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
         counter=False, counter_core=False, extra_tracks=None,
@@ -808,14 +784,14 @@ def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
     """Read multiple feature files; remerge partial tracks if necessary.
 
     See 'read_feature_file' for a detailed parameter description.
-    """
 
+    """
     if silent_core is None:
         silent_core = silent
     if counter_core is None:
         counter_core = counter
 
-    #SR_TMP< TODO only define defaults in one single place!
+    # SR_TMP < TODO only define defaults in one single place!
     read_pixels                 = kwas.get("read_pixels", True)
     read_tracks                 = kwas.get("read_tracks", True)
     read_pixelfile              = kwas.get("read_pixelfile", True)
@@ -823,7 +799,7 @@ def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
     rebuild_pixels_if_necessary = kwas.get("rebuild_pixels_if_necessary", False)
     retain_n_biggest_tracks     = kwas.get("retain_n_biggest_tracks", None)
     discard_untracked_features  = kwas.get("discard_untracked_features", False)
-    #SR_TMP>
+    # SR_TMP >
 
     # Initialize lists for features and tracks
     features = []
@@ -834,9 +810,9 @@ def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
 
     if optimize_pixelfile_input:
         kwas["read_pixelfile"] = False
-        #SR_DBG<
-        #+kwas["rebuild_pixels_if_necessary"] = False
-        #SR_DBG>
+        # SR_DBG <
+        # +kwas["rebuild_pixels_if_necessary"] = False
+        # SR_DBG >
 
     jdats = []
     nskip_features = 0
@@ -859,7 +835,7 @@ def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
             else:
                 print(msg[:w], end="\r", flush=True)
 
-        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++
         _r = read_feature_file(
                 infile,
                 feature_name             = feature_name,
@@ -870,7 +846,7 @@ def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
         new_features        = _r["features"]
         new_pixelfiles_fids = _r["pixelfiles_fids"]
         new_timesteps       = _r["timesteps"]
-        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++
 
         if not silent and not counter:
             log.info(" -> {:,} tracks and {:,} features".format(
@@ -926,11 +902,11 @@ def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
 
     if optimize_pixelfile_input and read_pixelfile:
 
-        #SR_TMP<
+        # SR_TMP <
         # Grab the next best jdat (only header used; should be all the same)
         jdat = next(iter(jdats))
         period = "{}..{}".format(min(timesteps), max(timesteps))
-        #SR_TMP>
+        # SR_TMP >
 
         # Read pixelfiles of the remaining features from disk
         _fids = [f.id for f in features]
@@ -959,8 +935,8 @@ def read_feature_files(infiles, *, feature_name, silent=False, silent_core=None,
             timesteps       = timesteps,
         )
 
-#SR_TODO Implement named tracks analogous to named features!
-#SR_TODO (currently features are returned in name dict, tracks in list)
+# SR_TODO Implement named tracks analogous to named features!
+# SR_TODO (currently features are returned in name dict, tracks in list)
 def read_feature_file(
         infile,
         *,
@@ -992,12 +968,12 @@ def read_feature_file(
         silent                         = False,
         counter                        = False,
 
-        #SR_TMP< TODO resolve underlying issues
+        # SR_TMP < TODO resolve underlying issues
         ignore_missing_neighbors              = True,
         ignore_edges_pshare_0                 = True,
         ignore_missing_total_track_stats      = False,
         ignore_missing_missing_features_stats = False,
-        #SR_TMP>
+        # SR_TMP >
     ):
     """Read a '.json' file containing features and/or tracks, and linked files.
 
@@ -1157,7 +1133,7 @@ def read_feature_file(
     debug = False
     if debug: log.debug("< read_feature_file {}".format(infile))
 
-    #SR_TMP< TODO integrate in existing function
+    # SR_TMP < TODO integrate in existing function
     if track_store_mode == "graph":
         _r = __tmp__rebuild_tracks_from_graphs(
                 infile,
@@ -1186,12 +1162,12 @@ def read_feature_file(
                 silent                           = silent,
                 counter                          = counter,
 
-                #SR_TMP<
+                # SR_TMP <
                 ignore_missing_neighbors              = ignore_missing_neighbors,
                 ignore_edges_pshare_0                 = ignore_edges_pshare_0,
                 ignore_missing_total_track_stats      = ignore_missing_total_track_stats,
                 ignore_missing_missing_features_stats = ignore_missing_missing_features_stats,
-                #SR_TMP>
+                # SR_TMP >
             )
         tracks         = _r["tracks"]
         features       = _r["features"]
@@ -1201,14 +1177,14 @@ def read_feature_file(
         info_features  = _r["info_features"]
         header         = _r["header"]
 
-        #SR_TMP<
+        # SR_TMP <
         jdat = {
                 "header"                : header,
                 "info_"+feature_name    : info_features,
                 "info_tracks"           : info_tracks,
             }
         pixelfiles_fids = {}
-        #SR_TMP>
+        # SR_TMP >
 
     elif track_store_mode == "json":
 
@@ -1216,10 +1192,10 @@ def read_feature_file(
             if (ts_start, ts_end) != (None, None):
                 raise ValueError("incompatible: timesteps, ts_start/ts_end")
 
-        #SR_TMP<
+        # SR_TMP <
         if infile_type != "json":
             raise NotImplementedError("infile type '{}'".format(infile_type))
-        #SR_TMP>
+        # SR_TMP >
 
         # Check and prepare tss_excl_mode_* arguments
         if tss_excl_mode_tracks not in ["strict", "liberal"]:
@@ -1256,9 +1232,9 @@ def read_feature_file(
             # Read pickle file
             with open(infile, "rb") as fi:
                 jdat = pickle.load(fi)
-            #SR_TMP<
+            # SR_TMP <
             jdat_remove_noindent(jdat)
-            #SR_TMP>
+            # SR_TMP >
         else:
             raise ValueError("unknown infile format: "+infile)
 
@@ -1266,10 +1242,10 @@ def read_feature_file(
             read_tracks = False
             pre_read_tracks = False
         else:
-            #SR_TMP< TODO figure out if this is still not supported
+            # SR_TMP < TODO figure out if this is still not supported
             if timesteps is not None and read_tracks:
                 raise NotImplementedError("timesteps & read_tracks")
-            #SR_TMP>
+            # SR_TMP >
             pre_read_tracks = (read_tracks or
                     (ts_start, ts_end, timesteps) != (None, None, None))
 
@@ -1307,7 +1283,7 @@ def read_feature_file(
             # Done here to determine which features to skip
 
             # Read graphs
-            #SR_TMP<
+            # SR_TMP <
             graphfile_header = os.path.basename(jdat["header"]["graphfile"])
             graphfile_deriv = "{}.graphs{}".format(
                     os.path.basename(os.path.splitext(infile)[0]),
@@ -1318,7 +1294,7 @@ def read_feature_file(
                         ).format(graphfile_header, graphfile_deriv)
                 print(msg)
             graphfile = "{}/{}".format(indir, graphfile_deriv)
-            #SR_TMP>
+            # SR_TMP >
             if debug: log.debug("read graphs from {}".format(graphfile))
             _r = read_track_graphs(graphfile,
                     ts_start    = ts_start,
@@ -1341,10 +1317,10 @@ def read_feature_file(
             read_pixelfile_now = read_pixelfile
             if optimize_pixelfile_input:
                 read_pixelfile_now = False
-            #SR_TMP<
+            # SR_TMP <
             if len(fids_skip) > 0:
                 raise NotImplementedError("fids_skip for linked features")
-            #SR_TMP>
+            # SR_TMP >
             _r =  read_feature_files(
                     _feature_files,
                     names                       = feature_name,
@@ -1372,7 +1348,7 @@ def read_feature_file(
             timesteps       = _r["timesteps"]
         else:
             # Read features from current files
-            #SR_TMP<
+            # SR_TMP <
             pixelfile_header = os.path.basename(jdat["header"]["pixelfile"])
             pixelfile_deriv = "{}{}".format(
                     os.path.basename(os.path.splitext(infile)[0]),
@@ -1383,7 +1359,7 @@ def read_feature_file(
                         ).format(pixelfile_header, pixelfile_deriv)
                 print(msg)
             pixelfile = "{}/{}".format(indir, pixelfile_deriv)
-            #SR_TMP>
+            # SR_TMP >
             if read_pixelfile:
                 pixelfile_now = pixelfile
             else:
@@ -1460,7 +1436,7 @@ def read_feature_file(
     nskip_tracks    = _r["nskip_tracks"]
     nskip_features  = _r["nskip_features"]
 
-    if track_store_mode != "graph": #SR_TMP TODO implement this as well
+    if track_store_mode != "graph": # SR_TMP TODO implement this as well
         if optimize_pixelfile_input:
             # Read pixelfiles of the remaining features from disk
             period = "{}..{}".format(min(timesteps), max(timesteps))
@@ -1521,7 +1497,7 @@ def read_track_graphs(graphfile, *, format="basic",
     if timesteps is not None and not isinstance(timesteps, set):
         timesteps = set(timesteps)
 
-    #SR_TMP< Fix p_share; TODO fix underlying issue & remove once fixed
+    # SR_TMP < Fix p_share; TODO fix underlying issue & remove once fixed
     nzeroisol = 0
     nzerobranch = 0
     for graph in graphs_by_tid.values():
@@ -1540,7 +1516,7 @@ def read_track_graphs(graphfile, *, format="basic",
         print(("warning: {:,} edges with p_share == 0 "
                 "({:,} isolated, {:,} in branchings)").format(
                 nzeroisol + nzerobranch, nzeroisol, nzerobranch))
-    #SR_TMP>
+    # SR_TMP >
 
     tids_skip = set()
     fids_skip = set()
@@ -1643,7 +1619,7 @@ def read_track_graphs(graphfile, *, format="basic",
             ))
     return output
 
-#SR_TMP<
+# SR_TMP <
 def jdat_remove_noindent(jdat):
     for key, val in jdat.items():
         if isinstance(val, dict):
@@ -1654,7 +1630,7 @@ def jdat_remove_noindent(jdat):
                     jdat_remove_noindent(element)
         elif isinstance(val, NoIndent):
             jdat[key] = val.value
-#SR_TMP>
+# SR_TMP >
 
 def __tmp__rebuild_tracks_from_graphs(
         infile,
@@ -1689,14 +1665,14 @@ def __tmp__rebuild_tracks_from_graphs(
         ignore_missing_missing_features_stats,
     ):
 
-    #SR_TMP<
+    # SR_TMP <
     if read_pixels and not rebuild_pixels_if_necessary:
         raise NotImplementedError("read_pixels")
     if retain_n_biggest_tracks and retain_n_biggest_tracks >= 0:
         raise NotImplementedError("retain_n_biggest_tracks")
     if optimize_pixelfile_input:
         raise NotImplementedError("optimize_pixelfile_input")
-    #SR_TMP>
+    # SR_TMP >
 
     # Read graphs containing track and feature info
     _r = read_track_graphs(infile, format=graph_file_format,
@@ -1713,26 +1689,26 @@ def __tmp__rebuild_tracks_from_graphs(
     separate_pixels_file = header["separate_pixels_file"]
     if separate_pixels_file:
         pixels_file = header["pixels_file"]
-        #SR_TMP<
+        # SR_TMP <
         pixels_file = "{}/{}".format(
                 os.path.dirname(os.path.abspath(infile)),
                 os.path.basename(pixels_file))
-        #SR_TMP>
+        # SR_TMP >
 
-    #SR_TMP<
+    # SR_TMP <
     read_feature_values = False
-    #SR_TMP>
+    # SR_TMP >
 
     if read_feature_values and not store_feature_values:
         print("warning: cannot read feature values from {}".format(infile))
         read_feature_values = False
 
-    #SR_TMP<
+    # SR_TMP <
     jdat_features = {
             "header"                : header,
             "info_"+feature_name    : info_features,
         }
-    #SR_TMP>
+    # SR_TMP >
 
     # Rebuild tracks and features
     if not separate_pixels_file:
@@ -1763,13 +1739,13 @@ def __tmp__rebuild_tracks_from_graphs(
             timesteps_track.add(timestep)
 
             if not separate_pixels_file:
-                #SR_TMP<
+                # SR_TMP <
                 try:
                     shells_by_fid[fid] = vx["feature_shells"]
                 except KeyError:
                     # Old file (before multiple shells per feature)
                     shells_by_fid[fid] = vx["feature_shell"]
-                #SR_TMP>
+                # SR_TMP >
                 holes_by_fid[fid] = vx["feature_holes"]
                 if read_feature_values:
                     values_by_fid[fid] = vx["feature_values"]
@@ -1778,13 +1754,13 @@ def __tmp__rebuild_tracks_from_graphs(
 
         del graph.vs["feature_json_dict"]
         if not separate_pixels_file:
-            #SR_TMP<
+            # SR_TMP <
             try:
                 del graph.vs["feature_shells"]
             except KeyError:
                 # Old file (before multiple shells per feature)
                 del graph.vs["feature_shell"]
-            #SR_TMP<>
+            # SR_TMP <>
             del graph.vs["feature_holes"]
             if store_feature_values:
                 del graph.vs["feature_values"]
@@ -1836,12 +1812,12 @@ def __tmp__rebuild_tracks_from_graphs(
                     holes = []
                     values = None
                     for key in grp.keys():
-                        #SR_TMP< Account for old files (one shell per feature)
+                        # SR_TMP < Account for old files (one shell per feature)
                         if key == "shell":
                             shells = [grp[key][:]]
                         elif key == "shells":
                             shells = grp[key][:]
-                        #SR_TMP>
+                        # SR_TMP >
                         elif key.startswith("hole_"):
                             holes.append(grp[key][:])
                         elif key == "values" and read_feature_values:
@@ -1894,7 +1870,6 @@ def __tmp__rebuild_tracks_from_graphs(
             header         = header,
         )
 
-#==============================================================================
 
 def rebuild_features(*,
         pixelfile,
@@ -1959,9 +1934,9 @@ def rebuild_features(*,
                 err = ("features have different pixel store modes: {} != {}"
                         ).format(mode, pixel_store_mode)
                 raise Exception(err)
-    #SR_TMP<
+    # SR_TMP <
     assert len(names_all) == 1, "more than one feature type"
-    #SR_TMP>
+    # SR_TMP >
     if pixel_store_mode == "boundaries":
         if rebuild_pixels_if_necessary:
             rebuild_pixels = True
@@ -2044,7 +2019,7 @@ def rebuild_features(*,
             period                      = period,
         )
 
-    #SR_TODO move rebuild block somewhere where it's called for optimized pixelfile input
+    # SR_TODO move rebuild block somewhere where it's called for optimized pixelfile input
     if not read_pixels and rebuild_pixels:
         for feature in features:
             try:
@@ -2078,9 +2053,9 @@ def features_read_pixels(feature_name, features, pixelfiles_fids, jdat, *,
     log.info(("restore pixels for {:,} features from {:,} pixelfiles"
             ).format(len(features), len(pixelfiles_fids)))
 
-    #SR_TMP<
+    # SR_TMP <
     pixel_store_mode = jdat["info_"+feature_name]["pixel_store_mode"]
-    #SR_TMP>
+    # SR_TMP >
 
     ntot = len(features)
     itot = 0
@@ -2115,12 +2090,12 @@ def features_read_pixels(feature_name, features, pixelfiles_fids, jdat, *,
                 mode            = pixel_store_mode,
                 read_pixels     = read_pixels,
                 rebuild_pixels  = rebuild_pixels,
-                #minsize         = minsize,
-                #maxsize         = maxsize,
+                # minsize         = minsize,
+                # maxsize         = maxsize,
                 counter         = True,
                 fids_select     = fids_i,
                 fids_skip       = fids_skip,
-                #key_starts_skip = key_starts_skip,
+                # key_starts_skip = key_starts_skip,
                 silent          = True,
                 period          = period,
             )
@@ -2160,13 +2135,13 @@ def features_read_pixels(feature_name, features, pixelfiles_fids, jdat, *,
             pixels = arrs_fid[fid].get("pixels")
             feature.set_pixels(pixels)
 
-            #SR_TMP<
+            # SR_TMP <
             try:
                 shells  = arrs_fid[fid].get("shells")
             except KeyError:
                 # Old file (before multiple shells per feature)
                 shells  = [arrs_fid[fid].get("shell")]
-            #SR_TMP>
+            # SR_TMP >
             feature.set_shells(shells)
 
             values = arrs_fid[fid].get("values")
@@ -2258,7 +2233,7 @@ def rebuild_tracks(*, jdat_tracks, features_by_id, graphs_tid, track_config,
         tracks.append(track)
 
         if not track.is_complete():
-            #-- Handle partial tracks: store missing stats
+            # -- Handle partial tracks: store missing stats
 
             # Total track stats
             stats = jdat_track["total_track_stats"]
@@ -2344,10 +2319,10 @@ def _read_feature_pixels_core(fi, names, *, mode, nx=None, ny=None,
         key_starts_skip=None, silent=False,
     ):
 
-    #SR_TMP<
+    # SR_TMP <
     if counter and period is None:
         raise ValueError("must pass period for counter")
-    #SR_TMP>
+    # SR_TMP >
 
     if maxsize == 0:
         raise ValueError("invalid maxsize 0")
@@ -2362,19 +2337,19 @@ def _read_feature_pixels_core(fi, names, *, mode, nx=None, ny=None,
 
     # Sort keys by variable name
     keys_name = {}
-    for name in names: #SR_TODO eliminate multiple names per file
+    for name in names: # SR_TODO eliminate multiple names per file
         keys_name[name] = [key for key in fi.keys() if key.startswith(name)]
 
     # Process variables one-by-one
     if mode == "pixels":
         ntot = len(fi.keys())
     elif mode == "boundaries":
-        #SR_TMP<
+        # SR_TMP <
         ntot = len([k for k in fi.keys() if k.endswith("_shells_0")])
         if ntot == 0:
             # Most likely old file (only one shell per feature)
             ntot = len([k for k in fi.keys() if k.endswith("_shell")])
-        #SR_TMP>
+        # SR_TMP >
     ni, di = 0, np.ceil(float(ntot)/100)
     pixel_tables = {}
 
@@ -2386,7 +2361,7 @@ def _read_feature_pixels_core(fi, names, *, mode, nx=None, ny=None,
     if key_starts_skip:
         key_starts_n = len(next(iter(key_starts_skip)))
 
-    for name in names: #SR_TODO eliminate multiple names per file
+    for name in names: # SR_TODO eliminate multiple names per file
         for key in fi.keys():
             ni += 1
             if counter and ni%di == 0:
@@ -2411,16 +2386,16 @@ def _read_feature_pixels_core(fi, names, *, mode, nx=None, ny=None,
                 if (    key.endswith("_pixels") or
                         key.endswith("_values") or
                         "_shell_" in key        or
-                        #SR_TMP< Account for old files (one shell per feature)
+                        # SR_TMP < Account for old files (one shell per feature)
                         key.endswith("_shell")  or
-                        #SR_TMP>
+                        # SR_TMP >
                         "_hole_" in key         ):
                     pixel_tables[key] = fi[key][:]
             else:
                 if (    "_shell_" in key        or
-                        #SR_TMP<
+                        # SR_TMP <
                         key.endswith("_shell")  or
-                        #SR_TMP>
+                        # SR_TMP >
                         "_hole_" in key         ):
                     pixel_tables[key] = fi[key][:]
 
@@ -2527,7 +2502,7 @@ def rebuild_features_core(
             else:
                 feature.neighbors.append(neighbor)
 
-    #if counter:
+    # if counter:
     #    print("rebuild features : 100%", flush=True)
 
     if debug: log.debug("> rebuild_features_core")
@@ -2564,10 +2539,10 @@ def select_tracks_features(*,
         sizes_tid = {}
         tracks_tid = {}
         for track in tracks:
-            #SR_TMP<
+            # SR_TMP <
             if track.id in sizes_tid:
                 assert sizes_tid[track.id] == track.size(total=True)
-            #SR_TMP>
+            # SR_TMP >
             sizes_tid[track.id] = track.size(total=True)
             if track.id not in tracks_tid:
                 tracks_tid[track.id] = []
@@ -2581,9 +2556,9 @@ def select_tracks_features(*,
                 track.unlink_features()
         tracks = tracks_sel
 
-    #SR_TMP< TODO figure out if this makes sense...
+    # SR_TMP < TODO figure out if this makes sense...
     if tracks or nskip_tracks == 0:
-    #SR_TMP>
+    # SR_TMP >
         if tss_excl_mode_tracks == "liberal" and (
                 ts_start is not None or ts_end is not None):
             # Remove all features outside the target period
@@ -2599,7 +2574,7 @@ def select_tracks_features(*,
     if discard_untracked_features:
         # Only keep features linked to a track
         for feature in [f for f in features]:
-            if f.track() is None:
+            if feature.track() is None:
                 nskip_features += 1
                 features.remove(feature)
 
@@ -2623,7 +2598,6 @@ def select_tracks_features(*,
             nskip_features = nskip_features,
         )
 
-#==============================================================================
 
 def read_masks(infile, lon, lat, silent=False, dtype=bool):
     """Read mask shells and holes and turn them into mask fields."""
@@ -2669,6 +2643,3 @@ def read_masks(infile, lon, lat, silent=False, dtype=bool):
         masks[name] = mask
 
     return masks
-
-#==============================================================================
-

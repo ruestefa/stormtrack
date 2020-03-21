@@ -13,6 +13,7 @@ from datetime import datetime
 from multiprocessing import Pool
 from timeit import default_timer as timer
 from pprint import pprint, pformat
+from warnings import warn
 
 # Thirt-party
 import h5py
@@ -21,52 +22,31 @@ import numpy as np
 import scipy as sp
 
 # Local
-from .core.identification import DEFAULT_TYPE_CODES
 from .core.identification import cyclones_to_features
+from .core.identification import DEFAULT_TYPE_CODES
 from .core.identification import features_grow
 from .core.identification import identify_features as identify_features_core
 from .core.io import write_feature_file
-from .core.typedefs import Constants
+from .core.typedefs import default_constants
 from .core.typedefs import Grid
 from .core.utilities import reduce_grid_resolution
 from .core.utilities import threshold_at_timestep
+from .extra.cyclone_id.identify import identify_features as identify_cyclones_core
+from .extra.cyclone_id import config as cycl_cfg
+from .extra.fronts.fronts import identify_fronts
+from .extra.io_misc import plot_cyclones_depressions_extrema
+from .extra.utilities_misc import Field2D
+from .identify_fronts import read_fields as fronts_read_raw_fields
 from .utils.netcdf import nc_read_var_list
 from .utils.netcdf import point_list_to_field
-from .utils.various import TimestepGenerator
-from .utils.various import TimestepStringFormatter
 from .utils.various import extract_args
 from .utils.various import ipython
 from .utils.various import print_args
+from .utils.various import TimestepGenerator
+from .utils.various import TimestepStringFormatter
 
-# SR_TMP< TODO solve issue with compiling fronts._libfronts on daint
-# Fronts
-try:
-    from .fronts.fronts import identify_fronts
-    from .identify_fronts import read_fields as fronts_read_raw_fields
-except ImportError as e:
-    print(
-        "warning: fronts-related import failed: {}; cannot identify fronts!".format(e)
-    )
-# SR_TMP>
 
 log.basicConfig(format="%(message)s", level=log.INFO)
-
-# SR_TMP< TODO clean up
-# Cyclones
-try:
-    from cyclone_identification_old.identify import (
-        identify_features as identify_cyclones_core,
-    )
-    import cyclone_identification_old.config as cfg
-    from utilities.io_old import plot_cyclones_depressions_extrema
-    from utilities.utilities_old import Field2D
-except ImportError as e:
-    print(
-        "warning: cyclones-related import failed: {}; cannot identify cyclones!".format(
-            e
-        )
-    )
-# SR_TMP>
 
 
 def main(
@@ -478,7 +458,7 @@ def identify_features(
     grid=None,
     silent=False,
     its=None,
-    nts=None
+    nts=None,
 ):
     timings = {}
 
@@ -583,7 +563,7 @@ def identify_features(
     postproc_features(new_features, flds_named, infile, lon, lat, conf_in)
 
     if conf_idfy["grow_features_n"]:
-        const = Constants.default(nx=conf_in["nx"], ny=conf_in["ny"])
+        const = default_constants(nx=conf_in["nx"], ny=conf_in["ny"])
         features_grow(
             conf_idfy["grow_features_n"],
             new_features,
@@ -925,9 +905,9 @@ def identify_cyclones(infile, name, conf_in, conf_preproc, timestep, anti=False)
     # SR_TMP>
 
     # Set up config: merge inifile config into default config
-    conf_def = cfg.get_config_default()
-    conf_ini = cfg.get_config_inifile(inifile)
-    conf = cfg.merge_configs([conf_def, conf_ini])
+    conf_def = cycl_cfg.get_config_default()
+    conf_ini = cycl_cfg.get_config_inifile(inifile)
+    conf = cycl_cfg.merge_configs([conf_def, conf_ini])
     conf["IDENTIFY"]["timings-identify"] = None
     conf["IDENTIFY"]["datetime"] = timestep
 
@@ -1024,18 +1004,17 @@ def read_input_field_lonlat(
      - conv_fact: Conversion factor applied to the field.
      - crop: cut N pixels off around the domain
     """
-    # Read the raw field from file, alonw with lon/lat fields
-    var_list = [fld_name, lon_name, lat_name]
+    # Read the raw field from file, along with lon/lat fields
     try:
         with nc4.Dataset(input_file, "r") as fi:
-            lon = fi[var_list[lon_name]][:]
-            lat = fi[var_list[lat_name]][:]
-            fld_raw = fi[var_list[fld_name]][0]  # strip leading time dimension
+            lon = fi[lon_name][:]
+            lat = fi[lat_name][:]
+            fld_raw = fi[fld_name][0]  # strip leading time dimension
     except Exception as e:
         err = "Cannot read '{}' from {}\n{}: {}".format(
             fld_name, input_file, e.__class__.__name__, str(e).strip()
         )
-        raise IOError(err) from None
+        raise IOError(err)
 
     # Shrink domain
     if crop is not None and crop > 0:

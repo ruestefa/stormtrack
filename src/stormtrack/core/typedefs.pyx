@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from __future__ import print_function
 
@@ -15,7 +15,7 @@ from libc.stdlib cimport exit
 from libc.stdlib cimport free
 from libc.stdlib cimport malloc
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 import logging as log
 
@@ -26,7 +26,7 @@ try:
 except ImportError:
     pass
 
-#=============================================================================
+# =============================================================================
 
 cdef inline int sign(int num):
     if num >= 0:
@@ -34,20 +34,29 @@ cdef inline int sign(int num):
     else:
         return -1
 
-#=============================================================================
+# =============================================================================
 # Constants
-#=============================================================================
+# =============================================================================
 
-#SR_TODO move nx, ny out of Constants (use from Grid)
+# SR_TODO remove nx, ny (use from Grid)
+cpdef Constants default_constants(
+    int nx, int ny, int connectivity=4, int n_neighbors_max=8,
+):
+    return Constants(
+        nx=nx, ny=ny, connectivity=connectivity, n_neighbors_max=n_neighbors_max,
+    )
+
+# SR_TODO move nx, ny out of Constants (use from Grid)
 cdef class Constants:
 
     def __cinit__(self,
-            #SR_TMP<
-            int nx, int ny,
-            #SR_TMP>
-            int connectivity,
-            int n_neighbors_max,
-        ):
+        # SR_TMP < TODO remove
+        int nx,
+        int ny,
+        # SR_TMP >
+        int connectivity,
+        int n_neighbors_max,
+    ):
         self.nx = nx
         self.ny = ny
         self.connectivity = connectivity
@@ -59,25 +68,10 @@ cdef class Constants:
     cdef cConstants* to_c(self):
         return &(self._cconstants)
 
-    #SR_TODO remove nx, ny
-    @classmethod
-    def default(cls,
-            #SR_TMP< TODO remove (use from Grid)
-            nx, ny,
-            #SR_TMP>
-            *,
-            connectivity=4,
-            n_neighbors_max=8,
-        ):
-        return cls(
-                nx=nx, ny=ny,
-                connectivity    = connectivity,
-                n_neighbors_max = n_neighbors_max,
-            )
 
-#==============================================================================
+# ==============================================================================
 # Grid
-#==============================================================================
+# ==============================================================================
 
 cdef class Grid:
 
@@ -91,7 +85,7 @@ cdef class Grid:
         self._cgrid = grid_create(fld, constants.to_c()[0])
         self.constants = constants
 
-        #SR_TMP< TODO cleaner implementation
+        # SR_TMP < TODO cleaner implementation
         if alloc_tables:
             if n_slots < 0:
                 raise ValueError("must pass n_slots >= 0 to alloc tables")
@@ -104,7 +98,7 @@ cdef class Grid:
             pixel_region_table_alloc(
                     &self._cgrid.pixel_region_table, n_slots,
                     &self._cgrid.constants)
-        #SR_TMP>
+        # SR_TMP >
 
     def __dealloc__(self):
         grid_cleanup(&self._cgrid)
@@ -133,9 +127,9 @@ cdef class Grid:
                     self.constants.nx, self.constants.ny)
 
 cdef cGrid grid_create(np.float32_t[:, :] fld, cConstants constants) except *:
-    #SR_TMP<
-    #print("< GRID CREATE") #SR_DBG
-    #SR_TMP>
+    # SR_TMP <
+    # print("< GRID CREATE") # SR_DBG
+    # SR_TMP >
     cdef cGrid grid = grid_create_empty(constants)
     grid_create_pixels(&grid, fld)
     return grid
@@ -157,14 +151,14 @@ cdef void grid_reset(cGrid* grid) except *:
     if grid.pixel_done_table is not NULL:
         log.error("not implemented: grid_reset/pixel_done_table_reset")
         exit(4)
-        #pixel_done_table_reset(grid.pixel_done_table, cregion)
+        # pixel_done_table_reset(grid.pixel_done_table, cregion)
 
     if grid.neighbor_link_stat_table is not NULL:
         neighbor_link_stat_table_reset(grid.neighbor_link_stat_table,
                 &grid.constants)
 
 cdef void grid_cleanup(cGrid* grid) except *:
-    #print("< GRID CLEANUP") #SR_DBG
+    # print("< GRID CLEANUP") # SR_DBG
 
     grid.timestep = 0
 
@@ -258,9 +252,9 @@ cdef cRegions grid_new_regions(cGrid* grid, int n) except *:
             )
     return cregions
 
-#=============================================================================
+# =============================================================================
 # cRegion
-#=============================================================================
+# =============================================================================
 
 cdef np.uint64_t cregion_get_unique_id():
     global CREGION_NEXT_ID
@@ -274,7 +268,7 @@ cdef void cregion_init(
         np.uint64_t rid,
     ):
     cdef int i, j
-    #print("< cregion_init")
+    # print("< cregion_init")
 
     cregion.id = rid
 
@@ -301,16 +295,16 @@ cdef void cregion_init(
             cregion.pixels[i] = NULL
 
     # Shell pixels
-    #SR_TMP< TODO remove once multiple shells properly implemented
-    #-cregion.shell_max = cregion_conf.shell_max
-    #-cregion.shell_n = 0
-    #-cregion.shell = NULL
-    #-if cregion_conf.shell_max > 0:
-    #-    cregion.shell = <cPixel**>malloc(
-    #-            cregion_conf.shell_max*sizeof(cPixel*))
-    #-    for i in prange(cregion_conf.shell_max, nogil=True):
-    #-        cregion.shell[i] = NULL
-    #SR_TMP>
+    # SR_TMP < TODO remove once multiple shells properly implemented
+    # -cregion.shell_max = cregion_conf.shell_max
+    # -cregion.shell_n = 0
+    # -cregion.shell = NULL
+    # -if cregion_conf.shell_max > 0:
+    # -    cregion.shell = <cPixel**>malloc(
+    # -            cregion_conf.shell_max*sizeof(cPixel*))
+    # -    for i in prange(cregion_conf.shell_max, nogil=True):
+    # -        cregion.shell[i] = NULL
+    # SR_TMP >
     cregion.shells_max = cregion_conf.shells_max
     cregion.shells_n = 0
     cregion.shells = NULL
@@ -364,7 +358,7 @@ cdef void cregion_insert_pixels_coords(
     cdef int i, n_pixels = coords.shape[0]
     cdef np.int32_t x, y
     cdef cPixel* cpixel
-    #for i in prange(n_pixels, nogil=True):
+    # for i in prange(n_pixels, nogil=True):
     for i in range(n_pixels):
         x = coords[i, 0]
         y = coords[i, 1]
@@ -413,7 +407,7 @@ cdef void cregion_insert_pixel(
             cregion_remove_pixel(cpixel.region, cpixel)
         cpixel_set_region(cpixel, cregion)
 
-#SR_TMP_NOGIL
+# SR_TMP_NOGIL
 @profile(False)
 cdef void cregion_insert_pixel_nogil(
         cRegion* cregion,
@@ -450,7 +444,7 @@ cdef void cregion_remove_pixel(
     _cregion_remove_pixel_from_shells(cregion, cpixel)
     _cregion_remove_pixel_from_holes(cregion, cpixel)
 
-#SR_TMP_NOGIL
+# SR_TMP_NOGIL
 @profile(False)
 cdef void cregion_remove_pixel_nogil(
         cRegion* cregion,
@@ -466,20 +460,20 @@ cdef inline void _cregion_remove_pixel_from_pixels(
         cPixel* cpixel,
     ):# nogil:
 
-    #SR_DBG<
+    # SR_DBG <
     if cregion is NULL:
         log.error("_cregion_remove_pixel_from_pixels: cregion is NULL")
         exit(44)
     if cpixel is NULL:
         log.error("_cregion_remove_pixel_from_pixels: cpixel is NULL")
         exit(44)
-    #SR_DBG>
+    # SR_DBG >
 
     cdef int i
     cdef cPixel* cpixel_i
     for i in range(cregion.pixels_istart, cregion.pixels_iend):
         cpixel_i = cregion.pixels[i]
-        #if cpixel_i is not NULL:
+        # if cpixel_i is not NULL:
         if cregion.pixels[i] is not NULL:
             if cpixel_i.x == cpixel.x and cpixel_i.y == cpixel.y:
                 cregion.pixels[i] = NULL
@@ -490,7 +484,7 @@ cdef inline void _cregion_remove_pixel_from_pixels(
             cregion.pixels_istart = i
             break
 
-#SR_TMP_NOGIL
+# SR_TMP_NOGIL
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_pixels_nogil(
         cRegion* cregion,
@@ -524,7 +518,7 @@ cdef inline void _cregion_remove_pixel_from_shells(
                 _cregion_shell_remove_gaps(cregion, j, i)
                 break
 
-#SR_TMP_NOGIL
+# SR_TMP_NOGIL
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_shells_nogil(
         cRegion* cregion,
@@ -553,7 +547,7 @@ cdef inline void _cregion_remove_pixel_from_holes(
             _cregion_hole_remove_gaps(cregion, j, i)
             return
 
-#SR_TMP_NOGIL
+# SR_TMP_NOGIL
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_holes_nogil(
         cRegion* cregion,
@@ -582,7 +576,7 @@ cdef inline void cregion_pixels_remove_gaps(
     cregion.pixels_istart = 0
     cregion.pixels_iend = cregion.pixels_n
 
-#SR_TMP_NOGIL
+# SR_TMP_NOGIL
 cdef inline void cregion_pixels_remove_gaps_nogil(
         cRegion* cregion,
         int i_start,
@@ -614,7 +608,7 @@ cdef inline void _cregion_shell_remove_gaps(
     for i in prange(n_old - d, n_old, nogil=True):
         cregion.shells[i_shell][i] = NULL
 
-#SR_TMP_NOGIL
+# SR_TMP_NOGIL
 cdef inline void _cregion_shell_remove_gaps_nogil(
         cRegion* cregion,
         int i_shell,
@@ -648,7 +642,7 @@ cdef inline void _cregion_hole_remove_gaps(
     for i in prange(n_old - d, n_old, nogil=True):
         cregion.holes[i_hole][i] = NULL
 
-#SR_TMP_NOGIL
+# SR_TMP_NOGIL
 cdef inline void _cregion_hole_remove_gaps_nogil(
         cRegion* cregion,
         int i_hole,
@@ -670,7 +664,7 @@ cdef void _cregion_insert_shell_pixel(
         int i_shell,
         cPixel* cpixel,
     ):
-    #print("< _cregion_insert_shell_pixel: ({}, {}) -> {} ({}/{})".format(cpixel.x, cpixel.y, cregion.id, cregion.shell_n, cregion.shell_max))
+    # print("< _cregion_insert_shell_pixel: ({}, {}) -> {} ({}/{})".format(cpixel.x, cpixel.y, cregion.id, cregion.shell_n, cregion.shell_max))
     if i_shell > cregion.shells_n:
         err = ("error: _cregion_insert_shell_pixel: i_shell={} > "
                 "cregion.shells_n={}").format(i_shell, cregion.shells_n)
@@ -695,7 +689,7 @@ cdef void _cregion_insert_hole_pixel(
         int i_hole,
         cPixel* cpixel,
     ):
-    #print("< _cregion_insert_hole_pixel({}): {}/{}".format(i_hole, cregion.hole_n[i_hole], cregion.hole_max[i_hole]))
+    # print("< _cregion_insert_hole_pixel({}): {}/{}".format(i_hole, cregion.hole_n[i_hole], cregion.hole_max[i_hole]))
     if i_hole > cregion.holes_n:
         err = ("error: _cregion_insert_hole_pixel: i_hole={} > "
                 "cregion.holes_n={}").format(i_hole, cregion.holes_n)
@@ -762,7 +756,7 @@ cdef void _cregion_extend_pixels(
     free(tmp)
     cregion.pixels_max = nmax_new
 
-#SR_TMP_NOGIL
+# SR_TMP_NOGIL
 cdef void _cregion_extend_pixels_nogil(
         cRegion* cregion,
     ) nogil:
@@ -802,7 +796,7 @@ cdef void _cregion_extend_shell(
     cdef int i, nmax_old=cregion.shell_max[i_shell], nmax_new=nmax_old*5
     if nmax_old == 0:
         nmax_new = 5
-    #print("< _cregion_extend_shell({}) [{}]: {} -> {}".format(i_shell, cregion.id, nmax_old, nmax_new))
+    # print("< _cregion_extend_shell({}) [{}]: {} -> {}".format(i_shell, cregion.id, nmax_old, nmax_new))
     cdef cPixel** tmp = <cPixel**>malloc(nmax_old*sizeof(cPixel*))
     for i in range(nmax_old):
         tmp[i] = cregion.shells[i_shell][i]
@@ -814,7 +808,7 @@ cdef void _cregion_extend_shell(
         cregion.shells[i_shell][i] = NULL
     cregion.shell_max[i_shell] = nmax_new
     free(tmp)
-    #print("< _cregion_extend_shell")
+    # print("< _cregion_extend_shell")
 
 cdef void _cregion_extend_hole(
         cRegion* cregion,
@@ -827,7 +821,7 @@ cdef void _cregion_extend_hole(
     cdef int i, nmax_old=cregion.hole_max[i_hole], nmax_new=nmax_old*5
     if nmax_old == 0:
         nmax_new = 5
-    #print("< _cregion_extend_hole({}) [{}]: {} -> {}".format(i_hole, cregion.id, nmax_old, nmax_new))
+    # print("< _cregion_extend_hole({}) [{}]: {} -> {}".format(i_hole, cregion.id, nmax_old, nmax_new))
     cdef cPixel** tmp = <cPixel**>malloc(nmax_old*sizeof(cPixel*))
     for i in range(nmax_old):
         tmp[i] = cregion.holes[i_hole][i]
@@ -837,7 +831,7 @@ cdef void _cregion_extend_hole(
         cregion.holes[i_hole][i] = tmp[i]
     cregion.hole_max[i_hole] = nmax_new
     free(tmp)
-    #print("< _cregion_extend_hole")
+    # print("< _cregion_extend_hole")
 
 cdef void _cregion_extend_shells(
         cRegion* cregion,
@@ -845,7 +839,7 @@ cdef void _cregion_extend_shells(
     cdef int i, nmax_old=cregion.shells_max, nmax_new=nmax_old*5
     if nmax_old == 0:
         nmax_new = 5
-    #print("< _cregion_extend_shells [{}]: {} -> {}".format(cregion.id, nmax_old, nmax_new))
+    # print("< _cregion_extend_shells [{}]: {} -> {}".format(cregion.id, nmax_old, nmax_new))
     cdef cPixel*** tmp_shells = <cPixel***>malloc(nmax_old*sizeof(cPixel**))
     cdef int* tmp_n=<int*>malloc(nmax_old*sizeof(int))
     cdef int* tmp_max=<int*>malloc(nmax_old*sizeof(int))
@@ -871,7 +865,7 @@ cdef void _cregion_extend_shells(
     free(tmp_shells)
     free(tmp_n)
     free(tmp_max)
-    #print("< _cregion_extend_shells")
+    # print("< _cregion_extend_shells")
 
 cdef void _cregion_extend_holes(
         cRegion* cregion,
@@ -879,7 +873,7 @@ cdef void _cregion_extend_holes(
     cdef int i, nmax_old=cregion.holes_max, nmax_new=nmax_old*5
     if nmax_old == 0:
         nmax_new = 5
-    #print("< _cregion_extend_holes [{}]: {} -> {}".format(cregion.id, nmax_old, nmax_new))
+    # print("< _cregion_extend_holes [{}]: {} -> {}".format(cregion.id, nmax_old, nmax_new))
     cdef cPixel*** tmp_holes = <cPixel***>malloc(nmax_old*sizeof(cPixel**))
     cdef int* tmp_n=<int*>malloc(nmax_old*sizeof(int))
     cdef int* tmp_max=<int*>malloc(nmax_old*sizeof(int))
@@ -905,12 +899,12 @@ cdef void _cregion_extend_holes(
     free(tmp_holes)
     free(tmp_n)
     free(tmp_max)
-    #print("< _cregion_extend_holes")
+    # print("< _cregion_extend_holes")
 
 cdef void _cregion_new_shell(
         cRegion* cregion,
     ):
-    #print("< _cregion_new_shell {}/{}".format(cregion.shells_n, cregion.shells_max))
+    # print("< _cregion_new_shell {}/{}".format(cregion.shells_n, cregion.shells_max))
     if cregion.shells_max == 0:
         _cregion_extend_shells(cregion)
     if cregion.shell_max[cregion.shells_n] == 0:
@@ -922,7 +916,7 @@ cdef void _cregion_new_shell(
 cdef void _cregion_new_hole(
         cRegion* cregion,
     ):
-    #print("< _cregion_new_hole {}/{}".format(cregion.holes_n, cregion.holes_max))
+    # print("< _cregion_new_hole {}/{}".format(cregion.holes_n, cregion.holes_max))
     if cregion.holes_max == 0:
         _cregion_extend_holes(cregion)
     if cregion.hole_max[cregion.holes_n] == 0:
@@ -935,13 +929,13 @@ cdef void _cregion_add_connected(
         cRegion* cregion,
         cRegion* cregion_other,
     ):
-    #print("< _cregion_add_connected {} <- {} (no. {})".format(cregion.id, cregion_other.id, cregion.connected_n))
+    # print("< _cregion_add_connected {} <- {} (no. {})".format(cregion.id, cregion_other.id, cregion.connected_n))
     cdef int i
     for i in range(cregion.connected_n):
         if cregion.connected[i].id == cregion_other.id:
-            #print("> _cregion_add_connected (already present)")
+            # print("> _cregion_add_connected (already present)")
             return
-    #print("add connected region: {} <- {} ({})".format(cregion.id, cregion_other.id, cregion.connected_n))
+    # print("add connected region: {} <- {} ({})".format(cregion.id, cregion_other.id, cregion.connected_n))
     if cregion.connected_n == 0:
         _cregion_extend_connected(cregion)
     cregion.connected[cregion.connected_n] = cregion_other
@@ -956,7 +950,7 @@ cdef void _cregion_extend_connected(
     cdef int i, nmax_old=cregion.connected_max, nmax_new=nmax_old*5
     if nmax_old == 0:
         nmax_new = 5
-    #print("< _cregion_extend_connected {}: {} -> {}".format(cregion.id, nmax_old, nmax_new))
+    # print("< _cregion_extend_connected {}: {} -> {}".format(cregion.id, nmax_old, nmax_new))
     cdef cRegion** tmp = <cRegion**>malloc(nmax_old*sizeof(cRegion*))
     for i in range(nmax_old):
         tmp[i] = cregion.connected[i]
@@ -1024,7 +1018,7 @@ cdef inline void _cpixel_unlink_region(
     if (cpixel is not NULL and
             cpixel.region is not NULL and
             cpixel.region.id == cregion.id):
-        #if debug: log.debug("cleanup region {} - disconnect pixel ({}, {})".format(cregion.id, cpixel[i].x, cpixel.y))
+        # if debug: log.debug("cleanup region {} - disconnect pixel ({}, {})".format(cregion.id, cpixel[i].x, cpixel.y))
         cpixel_set_region(cpixel, NULL)
         cpixel.is_feature_boundary = False
 
@@ -1132,11 +1126,11 @@ cdef cRegion* cregion_merge(
     cregion_cleanup(
             cregion2,
             unlink_pixels = False,
-            reset_connected = True, #SR_TODO necessary?
+            reset_connected = True, # SR_TODO necessary?
         )
     return cregion1
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 cdef void cregion_determine_boundaries(
         cRegion* cregion,
@@ -1226,13 +1220,13 @@ cdef void _cregion_determine_boundaries_core(
     cregion_cleanup(
             &boundary_pixels,
             unlink_pixels=False,
-            reset_connected=True, #SR_TODO necessary?
+            reset_connected=True, # SR_TODO necessary?
         )
 
     # Categorize boundaries as shells or holes
     cdef bint* boundary_is_shell = categorize_boundaries(&cboundaries, grid)
 
-    #SR_TMP<
+    # SR_TMP <
     k = 0
     for i in range(cboundaries.n):
         if boundary_is_shell[i]:
@@ -1240,7 +1234,7 @@ cdef void _cregion_determine_boundaries_core(
     if k > 1:
         err = "cregions_find_connected for multiple shells per feature"
         raise NotImplementedError(err)
-    #SR_TMP>
+    # SR_TMP >
 
     # Transfer shells into original cregion
     cdef int i_bnd, n_pixels, i_pixel, j_pixel
@@ -1263,12 +1257,12 @@ cdef void _cregion_determine_boundaries_core(
         j_pixel = 0
         for i_pixel in range(cboundary.pixels_max):
             if cboundary.pixels[i_pixel] is not NULL:
-                #SR_DBG_PERMANENT<
+                # SR_DBG_PERMANENT <
                 if j_pixel >= n_pixels:
                     err = "region {}: j_pixel > n_pixels: {} >= {}".format(
                             cboundary.id, j_pixel, n_pixels)
                     raise Exception(err)
-                #SR_DBG_PERMANENT>
+                # SR_DBG_PERMANENT >
                 cpixels_tmp[j_pixel] = cboundary.pixels[i_pixel]
                 j_pixel += 1
 
@@ -1283,48 +1277,48 @@ cdef void _cregion_determine_boundaries_core(
 
         free(cpixels_tmp)
 
-    #SR_ONE_SHELL< TODO remove once it works
-    #-# Transfer holes into original cregion
-    #-cdef int i_bnd, i_shell, i_hole, i_pixel
-    #-i_hole = 0
-    #-for i_bnd in range(1, cboundaries.n):
-    #-    if is_shell[i_bnd]:
-    #-        continue
+    # SR_ONE_SHELL < TODO remove once it works
+    # -# Transfer holes into original cregion
+    # -cdef int i_bnd, i_shell, i_hole, i_pixel
+    # -i_hole = 0
+    # -for i_bnd in range(1, cboundaries.n):
+    # -    if is_shell[i_bnd]:
+    # -        continue
 
-    #-    cboundary = cboundaries.regions[i_bnd]
-    #-    i_hole += 1
+    # -    cboundary = cboundaries.regions[i_bnd]
+    # -    i_hole += 1
 
-    #-    _cregion_new_hole(cregion)
+    # -    _cregion_new_hole(cregion)
 
-    #-    np = cboundary.pixels_n
-    #-    cpixels_tmp = <cPixel**>malloc(np*sizeof(cPixel))
-    #-    j = 0
-    #-    for i in range(cboundary.pixels_max):
-    #-        if cboundary.pixels[i] is not NULL:
-    #-            #SR_DBG_PERMANENT<
-    #-            if j >= np:
-    #-                err = "region {}: j={} >= np={}".format(cboundary.id, j, np)
-    #-                raise Exception(err)
-    #-            #SR_DBG_PERMANENT>
-    #-            cpixels_tmp[j] = cboundary.pixels[i]
-    #-            j += 1
-    #-    for i_pixel in range(np):
-    #-        cpixel = cpixels_tmp[i_pixel]
-    #-        if cpixel is not NULL:
-    #-            cpixel_set_region(cpixel, cregion)
-    #-            _cregion_insert_hole_pixel(
-    #-                    cregion,
-    #-                    i_hole,
-    #-                    cpixel,
-    #-                )
-    #-    free(cpixels_tmp)
-    #SR_ONE_SHELL>
+    # -    np = cboundary.pixels_n
+    # -    cpixels_tmp = <cPixel**>malloc(np*sizeof(cPixel))
+    # -    j = 0
+    # -    for i in range(cboundary.pixels_max):
+    # -        if cboundary.pixels[i] is not NULL:
+    # -            # SR_DBG_PERMANENT <
+    # -            if j >= np:
+    # -                err = "region {}: j={} >= np={}".format(cboundary.id, j, np)
+    # -                raise Exception(err)
+    # -            # SR_DBG_PERMANENT >
+    # -            cpixels_tmp[j] = cboundary.pixels[i]
+    # -            j += 1
+    # -    for i_pixel in range(np):
+    # -        cpixel = cpixels_tmp[i_pixel]
+    # -        if cpixel is not NULL:
+    # -            cpixel_set_region(cpixel, cregion)
+    # -            _cregion_insert_hole_pixel(
+    # -                    cregion,
+    # -                    i_hole,
+    # -                    cpixel,
+    # -                )
+    # -    free(cpixels_tmp)
+    # SR_ONE_SHELL >
 
-    #Cleanup
+    # Cleanup
     free(boundary_is_shell)
     cregions_cleanup(&cboundaries, cleanup_regions=True)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 cdef cRegions _reconstruct_boundaries(
         cRegion* boundary_pixels,
@@ -1339,8 +1333,8 @@ cdef cRegions _reconstruct_boundaries(
     # Define minimal boundary length
     cdef int min_length_boundary = 3
 
-    #SR_TODO Figure out a way to avoid a whole nx*ny array
-    #SR_TODO Not really efficient because the features are much smaller!
+    # SR_TODO Figure out a way to avoid a whole nx*ny array
+    # SR_TODO Not really efficient because the features are much smaller!
     neighbor_link_stat_table_init(grid.neighbor_link_stat_table,
             boundary_pixels, &grid.constants)
 
@@ -1392,7 +1386,7 @@ cdef cRegions _reconstruct_boundaries(
             if x0 != x1 or y0 != y1:
                 if debug: log.debug("BOUNDARY NOT CLOSED! ({}, {}) != ({}, {})".format(x0, y0, x1, y1))
 
-                #SR_TODO check if really necessary (once other things fixed)
+                # SR_TODO check if really necessary (once other things fixed)
                 # Extract the longest closed segment if there is one
                 valid_boundary = _extract_closed_path(current_boundary)
 
@@ -1450,18 +1444,18 @@ cdef cRegions _reconstruct_boundaries(
                 unlink_pixel=False,
             )
 
-        #SR_TODO Move loop body into function
+        # SR_TODO Move loop body into function
         # Loop until boundary closed
         for iter1 in range(iter1_max):
-            #DBG_BLOCK<
+            # DBG_BLOCK <
             if debug:
                 log.debug("ITER_1({}) ({}, {}) {}".format(iter1, cpixel.x, cpixel.y, i_neighbor))
                 log.debug("boundaries: {}".format(boundaries.n))
                 log.debug("current boundary: {} pixels:".format(current_boundary.pixels_n))
-                #for i in range(current_boundary.pixels_max):
+                # for i in range(current_boundary.pixels_max):
                 #    if current_boundary.pixels[i] is not NULL:
                 #        log.debug("[{}] ({}, {})".format(i, current_boundary.pixels[i].x, current_boundary.pixels[i].y))
-            #DBG_BLOCK>
+            # DBG_BLOCK >
 
             # Check if the current boundary is finished (full-circle)
             if iter1 > 0 and cpixel.id == cpixel_start.id:
@@ -1475,7 +1469,7 @@ cdef cRegions _reconstruct_boundaries(
                         break
                     if grid.neighbor_link_stat_table[cpixel.x][cpixel.y][j] == 0:
                         break
-                #if neighbor_link_stat_table[cpixel.x][cpixel.y][i_neighbor] < 2:
+                # if neighbor_link_stat_table[cpixel.x][cpixel.y][i_neighbor] < 2:
                 if done:
                     if debug: log.debug(" *** BOUNDARY DONE [0] ***")
                     break
@@ -1507,7 +1501,7 @@ cdef cRegions _reconstruct_boundaries(
             # Get next neighbor
             if debug: log.debug("find neighbor of ({}, {})".format(cpixel.x, cpixel.y))
             for i in range(i_neighbor, i_neighbor + cpixel.neighbors_max):
-                #SR_TODO add cython.cdivision directive to modulo
+                # SR_TODO add cython.cdivision directive to modulo
                 with cython.cdivision(True):
                     i_neighbor = i%cpixel.neighbors_max
                 if cpixel.neighbors[i_neighbor] is NULL:
@@ -1525,7 +1519,7 @@ cdef cRegions _reconstruct_boundaries(
             err = "identify_regions: loop(1) timed out (nmax={})".format(iter1_max)
             raise Exception(err)
 
-        #DBG_BLOCK<
+        # DBG_BLOCK <
         if debug:
             log.debug("finished boundary: {} pixels:".format(current_boundary.pixels_n))
             for i in range(current_boundary.pixels_max):
@@ -1533,10 +1527,10 @@ cdef cRegions _reconstruct_boundaries(
                     continue
                 log.debug("[{}] ({}, {})".format(i, current_boundary.pixels[i].x, current_boundary.pixels[i].y))
             log.debug("\n================================\n")
-        #DBG_BLOCK>
+        # DBG_BLOCK >
 
     else:
-        err = "identify_regions: loop #0 timed out (nmax={})".format(iter0_max)
+        err = "identify_regions: loop # 0 timed out (nmax={})".format(iter0_max)
         raise Exception(err)
 
     # Reset neighbor link status table
@@ -1577,12 +1571,12 @@ cdef bint _find_link_to_continue(
         boundary_pixels.pixels[i] = NULL
         boundary_pixels.pixels_n -= 1
 
-        #DBG_PERMANENT<
+        # DBG_PERMANENT <
         if boundary_pixels.pixels_n < 0:
             log.error("{}: boundary_pixels.pixels_n < 0 !!!".format(
                     "_find_link_to_continue"))
             exit(4)
-        #DBG_PERMANENT>
+        # DBG_PERMANENT >
 
         if not done:
             break
@@ -1642,7 +1636,7 @@ cdef bint* categorize_boundaries(
     # - Repeat until all boundaries have been assigned.
     #
 
-    #SR_TMP< TODO only keep what's necessary
+    # SR_TMP < TODO only keep what's necessary
     cdef int* d_angles = NULL
     cdef int* angles = NULL
     cdef int i_a, n_a
@@ -1651,7 +1645,7 @@ cdef bint* categorize_boundaries(
     cdef int* px_inds = NULL
     cdef int angle_pre
     cdef int n_pixels_eff
-    #SR_TMP>
+    # SR_TMP >
 
     cdef int iter_i, iter_max=10000
     for iter_i in range(iter_max):
@@ -1680,18 +1674,18 @@ cdef bint* categorize_boundaries(
         if debug: log.debug("  process boundary {}/{} ({} px)".format(
                 ib, n_bnds, n_pixels))
 
-        #SR_DBG_NOW<
-        #-print("\n boundary #{} ({}):".format(ib, n_pixels))
-        #-for i in range(n_pixels):
-        #-    print(" {:2} ({:2},{:2})".format(i,
-        #-            boundary.pixels[i].x, boundary.pixels[i].y))
-        #SR_DBG_NOW>
+        # SR_DBG_NOW <
+        # -print("\n boundary # {} ({}):".format(ib, n_pixels))
+        # -for i in range(n_pixels):
+        # -    print(" {:2} ({:2},{:2})".format(i,
+        # -            boundary.pixels[i].x, boundary.pixels[i].y))
+        # SR_DBG_NOW >
 
         # Ensure that first and last pixels of boundary match
         cpixel      = boundary.pixels[0]
         cpixel_pre = boundary.pixels[n_pixels - 1]
         if not cpixel.x == cpixel_pre.x and cpixel.y == cpixel_pre.y:
-            err = ("boundary #{}: first and last ({}th) pixel differ: "
+            err = ("boundary # {}: first and last ({}th) pixel differ: "
                     "({}, {}) != ({}, {})").format(ib_sel, cpixel.x, cpixel.y,
                     cpixel_pre.x, cpixel_pre.y)
             raise Exception(err)
@@ -1710,7 +1704,7 @@ cdef bint* categorize_boundaries(
         i_i  = -1
         n_i  =  0
 
-        #-print("<"*5+" ({})".format(n_pixels)) #SR_DBG_NOW
+        # -print("<"*5+" ({})".format(n_pixels)) # SR_DBG_NOW
 
         # Determine boundary's sense of rotation
         cpixel_pre = boundary.pixels[n_pixels - 2]
@@ -1729,7 +1723,7 @@ cdef bint* categorize_boundaries(
                 # boundaries would/could cause problems below.
                 boundary_is_shell[ib_sel] = True
                 categorized[ib_sel] = True
-                if debug: log.debug(("  boundary #{} too short ({} px) "
+                if debug: log.debug(("  boundary # {} too short ({} px) "
                         "to be a hole ({}-connectivity)").format(
                         ib_sel, n_pixels, grid.constants.connectivity))
                 break
@@ -1738,7 +1732,7 @@ cdef bint* categorize_boundaries(
             n_i += 1
             px_inds[i_i] = i_px
             cpixel = boundary.pixels[i_px]
-            #-print('#', i_px, px_inds[i_a], (i_i, n_i), (i_a, n_a), (i_da, n_da), (cpixel.x, cpixel.y)) #SR_DBG_NOW
+            # -print('# ', i_px, px_inds[i_a], (i_i, n_i), (i_a, n_a), (i_da, n_da), (cpixel.x, cpixel.y)) # SR_DBG_NOW
 
             # Determine angle from previous to current pixel
             angle = neighbor_pixel_angle(cpixel, cpixel_pre)
@@ -1746,19 +1740,19 @@ cdef bint* categorize_boundaries(
             n_a += 1
             angles[i_a] = angle
             px_inds[i_a] = i_px
-            #-print((cpixel_pre.x, cpixel_pre.y), (cpixel.x, cpixel.y), angle)
+            # -print((cpixel_pre.x, cpixel_pre.y), (cpixel.x, cpixel.y), angle)
 
-            #SR_DBG<
-            #-lst1 = []
-            #-lst2 = []
-            #-for i in range(n_pixels):
-            #-    if i < n_a:
-            #-        lst1.append(int(px_inds[i]))
-            #-    if i < n_da:
-            #-        lst2.append(int(d_angles[i]))
-            #-print(">", int(i_a), int(n_a), lst1)
-            #-print(">", int(i_da), int(n_da), lst2)
-            #SR_DBG>
+            # SR_DBG <
+            # -lst1 = []
+            # -lst2 = []
+            # -for i in range(n_pixels):
+            # -    if i < n_a:
+            # -        lst1.append(int(px_inds[i]))
+            # -    if i < n_da:
+            # -        lst2.append(int(d_angles[i]))
+            # -print(">", int(i_a), int(n_a), lst1)
+            # -print(">", int(i_da), int(n_da), lst2)
+            # SR_DBG >
 
             if angle_pre != -999:
 
@@ -1774,13 +1768,13 @@ cdef bint* categorize_boundaries(
                     # Change to opposite direction indicates an isolated
                     # boundary pixel, which can simply be ignored
 
-                    #SR_TMP<
+                    # SR_TMP <
                     if i_i < 2:
                         raise NotImplementedError("i_i: {} < 2".format(i_i))
-                    #SR_TMP>
+                    # SR_TMP >
                     cpixel_pre2 = boundary.pixels[px_inds[i_i - 2]]
 
-                    #print(("!"
+                    # print(("!"
                     #        " {:2}/{:2}({:2},{:2})"
                     #        " {:2}/{:2}({:2},{:2})"
                     #        " {:2}/{:2}({:2},{:2})"
@@ -1789,57 +1783,57 @@ cdef bint* categorize_boundaries(
                     #        i_i - 1, px_inds[i_i - 1], cpixel_pre.x,  cpixel_pre.y,
                     #        i_i,     px_inds[i_i],     cpixel.x,      cpixel.y
                     #    ))
-                    #raise Exception("ambiguous angle: 180 or -180?")
+                    # raise Exception("ambiguous angle: 180 or -180?")
 
                     if (cpixel_pre2.x == cpixel.x and
                             cpixel_pre2.y == cpixel.y):
-                        #SR_DBG<
-                        #-print()
-                        #-for i in range(n_a):
-                        #-    print(i, i_a, n_a, angles[i])
-                        #-print()
-                        #-for i in range(n_da):
-                        #-    print(i, i_da, n_da, d_angles[i])
-                        #-print()
-                        #-for i in range(n_i):
-                        #-    print(i, i_i, n_i, px_inds[i])
-                        #-print()
-                        #SR_DBG>
+                        # SR_DBG <
+                        # -print()
+                        # -for i in range(n_a):
+                        # -    print(i, i_a, n_a, angles[i])
+                        # -print()
+                        # -for i in range(n_da):
+                        # -    print(i, i_da, n_da, d_angles[i])
+                        # -print()
+                        # -for i in range(n_i):
+                        # -    print(i, i_i, n_i, px_inds[i])
+                        # -print()
+                        # SR_DBG >
                         i_i  = max(i_i  - 2, -1)
                         n_i  = max(n_i  - 2,  0)
                         i_da = max(i_da - 2, -1)
                         n_da = max(n_da - 2,  0)
                         i_a  = max(i_a  - 2, -1)
                         n_a  = max(n_a  - 2,  0)
-                        #SR_DBG<
-                        #-print()
-                        #-for i in range(n_a):
-                        #-    print(i, i_a, n_a, angles[i])
-                        #-print()
-                        #-for i in range(n_da):
-                        #-    print(i, i_da, n_da, d_angles[i])
-                        #-print()
-                        #-for i in range(n_i):
-                        #-    print(i, i_i, n_i, px_inds[i])
-                        #-print()
-                        #SR_DBG>
+                        # SR_DBG <
+                        # -print()
+                        # -for i in range(n_a):
+                        # -    print(i, i_a, n_a, angles[i])
+                        # -print()
+                        # -for i in range(n_da):
+                        # -    print(i, i_da, n_da, d_angles[i])
+                        # -print()
+                        # -for i in range(n_i):
+                        # -    print(i, i_i, n_i, px_inds[i])
+                        # -print()
+                        # SR_DBG >
                         n_pixels_eff -= 2
                         angle_pre = angles[i_a]
                         cpixel_pre = cpixel
-                        #-print((i_i, n_i), (i_da, n_da), (i_a, n_a), n_pixels_eff, angle_pre)
-                        #print(" OK cpixel_pre2 == cpixel") #SR_DBG_NOW
+                        # -print((i_i, n_i), (i_da, n_da), (i_a, n_a), n_pixels_eff, angle_pre)
+                        # print(" OK cpixel_pre2 == cpixel") # SR_DBG_NOW
                         continue
 
                     exit(4)
-                #SR_TMP>
+                # SR_TMP >
 
-                #DBG_BLOCK<
+                # DBG_BLOCK <
                 if debug:
                     fmt = ("  {:2} ({:2}, {:2}) -> ({:2}, {:2}) "
                             "{:4} -> {:4} : {:4}")
                     log.debug(fmt.format(ic, cpixel_pre.x, cpixel_pre.y,
                             cpixel.x, cpixel.y, angle_pre, angle, da))
-                #DBG_BLOCK>
+                # DBG_BLOCK >
 
             cpixel_pre = cpixel
             angle_pre = angle
@@ -1848,30 +1842,30 @@ cdef bint* categorize_boundaries(
 
             da_sum = 0
             for i_da in range(n_da):
-                #print(" {:2} {:4} {:4}".format(i_da, d_angles[i_da], int(da_sum)))
+                # print(" {:2} {:4} {:4}".format(i_da, d_angles[i_da], int(da_sum)))
                 da_sum += d_angles[i_da]
-            #print(" {:2} {:4} {:4}".format('', '', int(da_sum)))
+            # print(" {:2} {:4} {:4}".format('', '', int(da_sum)))
 
             # Categorize the boundary
             if da_sum == -360:
                 boundary_is_shell[ib_sel] = True
-                #print(">"*5+" SHELL")
+                # print(">"*5+" SHELL")
             elif da_sum == 360:
                 boundary_is_shell[ib_sel] = False
-                #print(">"*5+" SHELL")
+                # print(">"*5+" SHELL")
             else:
-                err = ("categorization of boundary #{} failed: "
+                err = ("categorization of boundary # {} failed: "
                         "total angle {} != +-360").format(ib_sel, da_sum)
-                #print(err) #SR_DBG_NOW
-                #exit(4) #SR_DBG_NOW
+                # print(err) # SR_DBG_NOW
+                # exit(4) # SR_DBG_NOW
                 raise Exception(err)
             categorized[ib_sel] = True
 
-        #SR_TMP<
+        # SR_TMP <
         free(angles)
         free(d_angles)
         free(px_inds)
-        #SR_TMP>
+        # SR_TMP >
 
     else:
         err = ("categorize_boundaries: timed out after {:,} iterations"
@@ -1956,19 +1950,19 @@ cdef bint _extract_closed_path(
     #   are checked against all, but that can be worked out in case it is
     #   necessary to implement. For now, just leave the idea here.
     #
-    #print("< _extract_closed_path")
+    # print("< _extract_closed_path")
     cdef bint debug = False
     cdef int i, j, k, l
     cdef int ind0, ind1, dist, dist_min = -1
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         log.debug("<<<<")
         for i in range(boundary.pixels_max):
             if boundary.pixels[i] is not NULL:
                 log.debug("[{}] {} ({}, {})".format(boundary.id, i, boundary.pixels[i].x, boundary.pixels[i].y))
         log.debug("----")
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     # Determine pair of identical pixels with smallest combined
     # respective distance to the beginning and end of the array
@@ -2027,20 +2021,20 @@ cdef bint _extract_closed_path(
     boundary.pixels_istart = 0
     boundary.pixels_iend = k
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         log.debug("----")
         for i in range(boundary.pixels_max):
             if boundary.pixels[i] is not NULL:
                 log.debug("[{}] {} ({}, {})".format(boundary.id, i, boundary.pixels[i].x, boundary.pixels[i].y))
         log.debug(">>>>")
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     if debug: log.debug("> _extract_closed_path: True")
     if debug: exit(2)
     return True
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 cdef cPixel* cregion_northernmost_pixel(
         cRegion* cregion,
@@ -2062,7 +2056,7 @@ cdef cPixel* cregion_northernmost_pixel(
             selection = cpixel
     return selection
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 cdef void cregion_reset_boundaries(
         cRegion* cregion,
@@ -2085,7 +2079,7 @@ cdef void cregion_reset_boundaries(
         cregion.hole_n[i_hole] = 0
     cregion.holes_n = 0
 
-#==============================================================================
+# ==============================================================================
 
 cdef cRegion _determine_boundary_pixels_raw(
         cRegion* cregion,
@@ -2121,7 +2115,7 @@ cdef cRegion _determine_boundary_pixels_raw(
             cregion_get_unique_id(),
         )
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         log.debug("\n[{}] {} pixels:".format(cregion.id, cregion.pixels_n))
         j = 0
@@ -2130,7 +2124,7 @@ cdef cRegion _determine_boundary_pixels_raw(
                 log.debug("{} ({}, {})".format(j, cregion.pixels[i].x, cregion.pixels[i].y))
                 j += 1
         log.debug("")
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
     # Determine neighbor connectivity (inverse)
     if grid.constants.connectivity == 4:
@@ -2152,11 +2146,11 @@ cdef cRegion _determine_boundary_pixels_raw(
         cpixel = cpixels_tmp[i]
         if cpixel is NULL:
             continue
-        #SR_DBG_PERMANENT<
+        # SR_DBG_PERMANENT <
         if cpixel.region is NULL:
             log.error("error: cpixel({}, {}).region is NULL".format(cpixel.x, cpixel.y))
             exit(23)
-        #SR_DBG_PERMANENT>
+        # SR_DBG_PERMANENT >
 
         # Collect all pixel neighbors with inverse connectivity
         n_neighbors = _collect_neighbors(
@@ -2190,14 +2184,14 @@ cdef cRegion _determine_boundary_pixels_raw(
             else:
                 if debug: log.debug(" -> neighbor {} ({}, {}): other region {}".format(j, neighbors[j].x, neighbors[j].y, neighbors[j].region.id))
                 n_neighbors_other_feature += 1
-        #DBG_BLOCK<
+        # DBG_BLOCK <
         if debug:
             log.debug(" -> {} neighbors:".format(n_neighbors))
             log.debug("    {} same feature {}".format(n_neighbors_same_feature, cpixel.region.id))
             log.debug("    {} other feature(s)".format(n_neighbors_other_feature))
             log.debug("    {} background".format(n_neighbors_background))
             log.debug("    {} domain boundary".format(n_neighbors_domain_boundary))
-        #DBG_BLOCK>
+        # DBG_BLOCK >
 
         # If the pixel is at the domain boundary, it's a feature boundary pixel
         if n_neighbors_same_feature > 0 and n_neighbors_domain_boundary > 0:
@@ -2225,10 +2219,10 @@ cdef cRegion _determine_boundary_pixels_raw(
     # Cleanup
     free(neighbors)
 
-    #print("> _determine_boundary_pixels_raw {} {}".format(cregion.id, boundary_pixels_n[0]))
+    # print("> _determine_boundary_pixels_raw {} {}".format(cregion.id, boundary_pixels_n[0]))
     return boundary_pixels
 
-#==============================================================================
+# ==============================================================================
 
 @profile(False)
 @boundscheck(False)
@@ -2346,7 +2340,7 @@ cdef inline cPixel* _cpixel_get_neighbor(
     if debug: log.debug("({}, {}) neighbors({}) = NULL".format(x, y, index))
     return NULL
 
-#==============================================================================
+# ==============================================================================
 
 cdef bint cregion_overlaps(
         cRegion* cregion,
@@ -2508,10 +2502,10 @@ cdef void cregion_determine_bbox(
     for i_pixel in range(cregion.pixels_istart, cregion.pixels_iend):
         cpixel = cregion.pixels[i_pixel]
         if cpixel is not NULL:
-            #lower_left.x = min(lower_left.x, cpixel.x)
-            #lower_left.y = min(lower_left.y, cpixel.y)
-            #upper_right.x = max(upper_right.x, cpixel.x)
-            #upper_right.y = max(upper_right.y, cpixel.y)
+            # lower_left.x = min(lower_left.x, cpixel.x)
+            # lower_left.y = min(lower_left.y, cpixel.y)
+            # upper_right.x = max(upper_right.x, cpixel.x)
+            # upper_right.y = max(upper_right.y, cpixel.y)
             if cpixel.x < lower_left.x:
                 lower_left.x = cpixel.x
             if cpixel.y < lower_left.y:
@@ -2521,9 +2515,9 @@ cdef void cregion_determine_bbox(
             if cpixel.y > upper_right.y:
                 upper_right.y = cpixel.y
 
-#==============================================================================
+# ==============================================================================
 # cRegions
-#==============================================================================
+# ==============================================================================
 
 cdef np.uint64_t cregions_get_unique_id():
     global CREGIONS_NEXT_ID
@@ -2572,7 +2566,7 @@ cdef void cregions_link_region(
         cregion_cleanup(
                 cregions.regions[n],
                 unlink_pixels,
-                reset_connected=True, #SR_TODO necessary?
+                reset_connected=True, # SR_TODO necessary?
             )
     cregions.regions[n] = cregion
     cregions.n += 1
@@ -2623,7 +2617,7 @@ cdef void cregions_move(
 cdef void cregions_reset(
         cRegions* cregions,
     ):
-    #print("< cregions_reset")
+    # print("< cregions_reset")
     cdef int i_region
     for i_region in range(cregions.n):
         cregion_reset(
@@ -2643,11 +2637,11 @@ cdef void cregions_cleanup(
     if cleanup_regions:
         if debug: log.debug(" -> clean up regions (n={}, max={})".format(cregions.n, cregions.max))
         for i in range(cregions.n):
-            #SR_DBG<
+            # SR_DBG <
             if cregions.regions[i] is NULL:
                 log.error("error: cregions_cleanup: cregions {} is NULL".format(i))
                 exit(4)
-            #SR_DBG>
+            # SR_DBG >
             cregion_cleanup(
                     cregions.regions[i],
                     unlink_pixels=True,
@@ -2658,13 +2652,13 @@ cdef void cregions_cleanup(
         cregions.regions = NULL
         cregions.n = 0
         cregions.max = 0
-    #if debug: log.debug("> cregions_cleanup")
+    # if debug: log.debug("> cregions_cleanup")
 
 cdef void cregions_connect(
         cRegion* cregion1,
         cRegion* cregion2
     ):
-    #print("< cregions_connect {} {}".format(cregion1.id, cregion2.id))
+    # print("< cregions_connect {} {}".format(cregion1.id, cregion2.id))
     _cregion_add_connected(cregion1, cregion2)
     _cregion_add_connected(cregion2, cregion1)
 
@@ -2686,7 +2680,7 @@ cdef void cregions_find_connected(
         for i_region in range(cregions.n):
             _cregion_reset_connected(cregions.regions[i_region], unlink=False)
 
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         log.debug("=== {}".format(cregions.n))
         for i_region in range(cregions.n):
@@ -2697,13 +2691,13 @@ cdef void cregions_find_connected(
                 for i_neighbor in range(cregion.connected_n):
                     log.debug("    -> {}".format(cregion.connected[i_neighbor].id))
         log.debug("===")
-    #DBG_BLOCK>
+    # DBG_BLOCK >
 
-    dbg_check_connected(cregions, _name_+"(0)") #SR_DBG_PERMANENT
+    dbg_check_connected(cregions, _name_+"(0)") # SR_DBG_PERMANENT
 
-    #SR_TMP<
+    # SR_TMP <
     cdef int i_shell = 0
-    #SR_TMP>
+    # SR_TMP >
 
     for i_region in range(cregions.n):
         cregion = cregions.regions[i_region]
@@ -2713,14 +2707,14 @@ cdef void cregions_find_connected(
             cpixel = cregion.shells[i_shell][i_pixel]
             if debug: log.debug(" ({:2},{:2})[{}]".format(cpixel.x, cpixel.y, "-" if cpixel.region is NULL else cpixel.region.id))
 
-            #SR_DBG_PERMANENT<
+            # SR_DBG_PERMANENT <
             if cpixel.region.id != cregion.id:
                 log.error(("[{}] error: shell pixel ({}, {}) of region {} "
                         "connected to wrong region {}").format(_name_,
                         cpixel.x, cpixel.y, cregion.id, cpixel.region.id))
                 with cdivision(True): i_pixel=5/0
                 exit(4)
-            #SR_DBG_PERMANENT>
+            # SR_DBG_PERMANENT >
 
             for i_neighbor in range(constants.n_neighbors_max):
                 neighbor = cpixel.neighbors[i_neighbor]
@@ -2741,19 +2735,19 @@ cdef void cregions_find_connected(
                         if debug: log.debug(" -> already connected {} <-> {}".format(cregion.id, neighbor.region.id))
                         break
                 else:
-                    #print(" -> connect {} <-> {}".format(cregion.id, neighbor.region.id))
+                    # print(" -> connect {} <-> {}".format(cregion.id, neighbor.region.id))
                     cregions_connect(cregion, neighbor.region)
 
-    dbg_check_connected(cregions, _name_+"(1)") #SR_DBG_PERMANENT
+    dbg_check_connected(cregions, _name_+"(1)") # SR_DBG_PERMANENT
 
-#==============================================================================
+# ==============================================================================
 
-#SR_DBG_PERMANENT
+# SR_DBG_PERMANENT
 cdef void dbg_check_connected(
         cRegions* cregions,
         str msg,
     ) except *:
-    #print("dbg_check_connected_old {} {}".format(cregions.n, msg))
+    # print("dbg_check_connected_old {} {}".format(cregions.n, msg))
     cdef int i, j, k
     cdef cRegion* cregion_i
     cdef cRegion* cregion_j
@@ -2777,15 +2771,15 @@ cdef void dbg_check_connected(
                         msg, cregion_i.id, cregion_j.id))
                 exit(8)
 
-#==============================================================================
+# ==============================================================================
 
 cdef void cpixel_set_region(cPixel* cpixel, cRegion* cregion) nogil:
     cdef bint debug = False
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         with gil:
             log.debug("cpixel_set_region: ({}, {})->[{}]".format(cpixel.x, cpixel.y, "NULL" if cregion is NULL else cregion.id))
-    #DBG_BLOCK>
+    # DBG_BLOCK >
     cpixel.region = cregion
 
 cdef void cpixels_reset(
@@ -2804,11 +2798,11 @@ cdef void cpixels_reset(
 
 cdef cPixel* cpixel2d_create(int n) nogil:
     cdef bint debug = False
-    #DBG_BLOCK<
+    # DBG_BLOCK <
     if debug:
         with gil:
             log.debug("cpixel2d_create: {}".format(n))
-    #DBG_BLOCK>
+    # DBG_BLOCK >
     cdef int i, j
     cdef cPixel* cpixels = <cPixel*>malloc(n*sizeof(cPixel))
     cdef cPixel* cpixel
@@ -2828,9 +2822,9 @@ cdef cPixel* cpixel2d_create(int n) nogil:
         cpixel.is_feature_boundary = False
     return cpixels
 
-#==============================================================================
+# ==============================================================================
 # cRegionsStore
-#==============================================================================
+# ==============================================================================
 
 cdef cRegion* cregions_store_get_new_region(cRegionsStore* store):
 
@@ -2860,13 +2854,13 @@ cdef cRegion* cregions_store_get_new_region(cRegionsStore* store):
     else:
         _name_ = "cregions_store_get_new_region"
         log.error("{}: should not happen".format(_name_))
-        #SR_DBG<
+        # SR_DBG <
         log.debug("")
         log.debug("no_blocks {}".format(no_blocks))
         log.debug("in_last_block {}".format(in_last_block))
         log.debug("at_end_of_block {}".format(at_end_of_block))
         log.debug("blocks_full {}".format(blocks_full))
-        #SR_DBG>
+        # SR_DBG >
         exit(4)
     return cregion
 
@@ -2882,7 +2876,7 @@ cdef void cregions_store_reset(cRegionsStore* store):
 cdef void cregions_store_extend(cRegionsStore* store):
     cdef int i, nold=store.n_blocks, nnew=nold+1
     cdef cRegion** blocks_tmp
-    #print("< cregions_store_extend {} -> {}".format(nold, nnew))
+    # print("< cregions_store_extend {} -> {}".format(nold, nnew))
     if nold > 0:
         blocks_tmp = <cRegion**>malloc(nold*sizeof(cRegion*))
         for i in range(nold):
@@ -2921,4 +2915,4 @@ cdef void cregions_store_cleanup(cRegionsStore* store):
     store.n_blocks = 0
     store.i_next_region = 0
 
-#==============================================================================
+# ==============================================================================

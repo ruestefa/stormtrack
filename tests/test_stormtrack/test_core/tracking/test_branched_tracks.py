@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Standard library
+import pytest
 import sys
 import unittest
 from datetime import datetime
@@ -94,7 +95,7 @@ class MergeSplit_Isolated(TestCase):
         s.assertEqual(len(s.tracker.active_tracks), 2)
 
 
-@unittest.skip("not implemented")
+@pytest.mark.skip("not implemented")
 class MergeSplit_MissingFeature(TestTracks_Base):
 
     plot = False
@@ -615,10 +616,8 @@ class MergeSplit_Complex_TempRes(MergeSplit_Complex_Mixed_base):
 
 
 if __name__ == "__main__":
-
     import logging as log
 
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
     log.getLogger().setLevel(log.DEBUG)
-
     unittest.main()

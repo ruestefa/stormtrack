@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from __future__ import print_function
 
@@ -11,7 +11,7 @@ from libc.stdlib cimport exit
 from libc.stdlib cimport free
 from libc.stdlib cimport malloc
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 import datetime as dt
 import logging as log
@@ -29,7 +29,7 @@ try:
 except ImportError:
     pass
 
-#==============================================================================
+# ==============================================================================
 
 MAX_UI8  = np.iinfo(np.uint8).max
 MAX_UI16 = np.iinfo(np.uint16).max
@@ -79,9 +79,9 @@ cdef void check_i64(np.float32_t fact, np.int64_t val) except *:
         err = "number too big: {:,} >= {:,}*{:,}".format(val, fact, MAX_I64)
         raise Exception(err)
 
-#==============================================================================
+# ==============================================================================
 # Reduce grid resolution by striding
-#==============================================================================
+# ==============================================================================
 
 def reduce_grid_resolution(fld, stride, mode):
 
@@ -136,9 +136,9 @@ def _reduce_grid_resolution_1d__core(
         int              stride,
         int              imode,
     ):
-    cdef int half_stride = (stride - 1)/2
-    cdef int nxi=fld_in.shape[0]
-    cdef int nxo=fld_out.shape[0]
+    cdef int half_stride = int((stride - 1)/2)
+    cdef int nxi = fld_in.shape[0]
+    cdef int nxo = fld_out.shape[0]
     cdef np.float32_t box_size = stride
     cdef int io, ii, iis, iie
     for io in range(nxo):
@@ -161,7 +161,7 @@ def _reduce_grid_resolution_2d__core(
         int                 stride,
         int                 imode,
     ):
-    cdef int half_stride = (stride - 1)/2
+    cdef int half_stride = int((stride - 1)/2)
     cdef int nxi=fld_in.shape[0], nyi=fld_in.shape[1]
     cdef int nxo=fld_out.shape[0], nyo=fld_out.shape[1]
     cdef np.float32_t box_size = stride*stride
@@ -185,9 +185,9 @@ def _reduce_grid_resolution_2d__core(
                         fld_out[io, jo] += fld_in[ii, ji]
                 fld_out[io, jo] /= box_size
 
-#==============================================================================
+# ==============================================================================
 # Manipulate masks
-#==============================================================================
+# ==============================================================================
 
 def shrink_mask(mask, n):
     """Shrink a 2D mask by N grid points in all four directions."""
@@ -221,7 +221,7 @@ cdef void _shrink_mask__core(
         for j in range(ny):
             val = mask[i][j]
             if val == 1:
-                #-- In positive area (not masked)
+                # -- In positive area (not masked)
                 if prev == 0:
                     # Just entering positive area!
                     changing = n_shrink
@@ -230,7 +230,7 @@ cdef void _shrink_mask__core(
                     changed[i][j] = 1
                     changing -= 1
             elif val == 0:
-                #-- In negative area (masked)
+                # -- In negative area (masked)
                 if changing > 0:
                     changing = 0 # reset
             prev = val
@@ -240,7 +240,7 @@ cdef void _shrink_mask__core(
         for j in range(ny-1, -1, -1):
             val = mask[i][j]
             if val == 1:
-                #-- In positive area (not masked)
+                # -- In positive area (not masked)
                 if prev == 0:
                     # Just entering positive area!
                     changing = n_shrink
@@ -249,7 +249,7 @@ cdef void _shrink_mask__core(
                     changed[i][j] = 1
                     changing -= 1
             elif val == 0:
-                #-- In negative area (masked)
+                # -- In negative area (masked)
                 if changing > 0:
                     changing = 0 # reset
             prev = val
@@ -262,7 +262,7 @@ cdef void _shrink_mask__core(
         for i in range(nx):
             val = mask[i][j]
             if val == 1:
-                #-- In positive area (not masked)
+                # -- In positive area (not masked)
                 if prev == 0:
                     # Just entering positive area!
                     changing = n_shrink
@@ -271,7 +271,7 @@ cdef void _shrink_mask__core(
                     changed[i][j] = 1
                     changing -= 1
             elif val == 0:
-                #-- In negative area (masked)
+                # -- In negative area (masked)
                 if changing > 0:
                     changing = 0 # reset
             prev = val
@@ -281,7 +281,7 @@ cdef void _shrink_mask__core(
         for i in range(nx-1, -1, -1):
             val = mask[i][j]
             if val == 1:
-                #-- In positive area (not masked)
+                # -- In positive area (not masked)
                 if prev == 0:
                     # Just entering positive area!
                     changing = n_shrink
@@ -290,7 +290,7 @@ cdef void _shrink_mask__core(
                     changed[i][j] = 1
                     changing -= 1
             elif val == 0:
-                #-- In negative area (masked)
+                # -- In negative area (masked)
                 if changing > 0:
                     changing = 0 # reset
             prev = val
@@ -306,9 +306,9 @@ cdef void _shrink_mask__core(
         free(changed[i])
     free(changed)
 
-#==============================================================================
+# ==============================================================================
 # Compute the minimum along-grid distance to a mask boundary
-#==============================================================================
+# ==============================================================================
 
 def min_griddist_mask_boundary(mask, *, dirs=None, nan=None):
     """Compute the minimum along-grid distance to a mask boundary.
@@ -441,9 +441,9 @@ cdef void _min_griddist_mask_boundary__core(
                     dist += sign
                 prev = val
 
-#==============================================================================
+# ==============================================================================
 # Number the zones in a domain with a rectangular mask
-#==============================================================================
+# ==============================================================================
 
 def decompose_rectangular_mask(mask):
     """Determine zones in a field containing a rectangular mask.
@@ -478,7 +478,7 @@ cdef void _decompose_rectangular_mask__core(
     ):
     cdef int i, j
 
-    # X-zones
+    # X -zones
     cdef int* zones_x = <int*>malloc(nx*sizeof(int))
     cdef int nseg1_y, zone_x_curr, zone_x_prev=0
     cdef bint in_seg1_y
@@ -509,7 +509,7 @@ cdef void _decompose_rectangular_mask__core(
 
         zone_x_prev = zone_x_curr
 
-    # Y-zones
+    # Y -zones
     cdef int* zones_y = <int*>malloc(nx*sizeof(int))
     cdef int nseg1_x, zone_y_curr, zone_y_prev=0
     cdef bint in_seg1_x
@@ -540,7 +540,7 @@ cdef void _decompose_rectangular_mask__core(
 
         zone_y_prev = zone_y_curr
 
-    # XY-zones
+    # XY -zones
     for i in range(nx):
         for j in range(ny):
             out[i, j] = 10*zones_x[i] + zones_y[j]
@@ -549,9 +549,9 @@ cdef void _decompose_rectangular_mask__core(
     free(zones_x)
     free(zones_y)
 
-#==============================================================================
+# ==============================================================================
 # Number the zones in a domain with a rectangular mask with a hole in it
-#==============================================================================
+# ==============================================================================
 
 def decompose_holy_rectangular_mask(mask):
     """Determine zones in a field containing a rectangular mask with a hole.
@@ -596,7 +596,7 @@ cdef void _decompose_holy_rectangular_mask__core(
     ):
     cdef int i, j
 
-    # X-zones
+    # X -zones
     cdef int* zones_x = <int*>malloc(nx*sizeof(int))
     cdef int nseg1_y, zone_x_curr, zone_x_prev=0
     cdef bint in_seg1_y
@@ -632,7 +632,7 @@ cdef void _decompose_holy_rectangular_mask__core(
 
         zone_x_prev = zone_x_curr
 
-    # Y-zones
+    # Y -zones
     cdef int* zones_y = <int*>malloc(nx*sizeof(int))
     cdef int nseg1_x, zone_y_curr, zone_y_prev=0
     cdef bint in_seg1_x
@@ -668,7 +668,7 @@ cdef void _decompose_holy_rectangular_mask__core(
 
         zone_y_prev = zone_y_curr
 
-    # XY-zones
+    # XY -zones
     for i in range(nx):
         for j in range(ny):
             out[i, j] = 10*zones_x[i] + zones_y[j]
@@ -677,7 +677,7 @@ cdef void _decompose_holy_rectangular_mask__core(
     free(zones_x)
     free(zones_y)
 
-#==============================================================================
+# ==============================================================================
 
 def strip_accents(text):
     """Strip accents from input String.
@@ -689,14 +689,14 @@ def strip_accents(text):
     except (TypeError, NameError): # unicode is a default on python 3
         pass
     text = unicodedata.normalize('NFD', text)
-    #SR_TMP<
+    # SR_TMP <
     text = text.replace("Ø", "O").replace("ø", "o")
-    #SR_TMP>
+    # SR_TMP >
     text = text.encode('ascii', 'ignore')
     text = text.decode("utf-8")
     return str(text)
 
-#==============================================================================
+# ==============================================================================
 
 def threshold_at_timestep(thr, ts):
     """Derive timestep-specific threshold from, e.g., monthly thresholds.
@@ -715,7 +715,7 @@ def threshold_at_timestep(thr, ts):
         return next(iter(thr))
 
     elif isinstance(thr, (list, tuple)) and len(thr) == 12:
-        #-- Monthly thresholds
+        # -- Monthly thresholds
 
         thrs_ref = thr
 
@@ -770,4 +770,4 @@ def threshold_at_timestep(thr, ts):
         err = "invalid threshold format: '{}'".format(thr)
         raise ValueError(err)
 
-#==============================================================================
+# ==============================================================================

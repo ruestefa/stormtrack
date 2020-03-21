@@ -1,32 +1,29 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 from __future__ import print_function
 
-cimport cython
-cimport numpy as np
-from cython.parallel cimport prange
+# C: C libraries
 from libc.math cimport pow
 from libc.math cimport sqrt
 from libc.stdlib cimport exit
 from libc.stdlib cimport free
 from libc.stdlib cimport malloc
 
-#------------------------------------------------------------------------------
+# C: Third-party
+cimport cython
+cimport numpy as np
+from cython.parallel cimport prange
 
+# Standard library
 import logging as log
 import os
 import sys
 
+# Third-party
+import cython
 import numpy as np
 
-try:
-    from ..utils.various import ipython
-except ImportError:
-    pass
-
-#==============================================================================
 # pixel_done_table
-#==============================================================================
 
 cdef void pixel_done_table_alloc(
         PixelDoneTable* table,
@@ -75,9 +72,7 @@ cdef void pixel_done_table_cleanup(
         free(table[i])
     free(table)
 
-#==============================================================================
 # pixel_region_table
-#==============================================================================
 
 cdef void pixel_region_table_alloc(
         PixelRegionTable* table,
@@ -104,7 +99,7 @@ cdef void pixel_region_table_alloc(
     just to be more robust, but for the sake of consistency the index in the
     seeds cRegion.regions array is chosen.)
     """
-    #print("< pixel_region_table_alloc {}x{}x{}".format(constants.nx, constants.ny, n_slots))
+    # print("< pixel_region_table_alloc {}x{}x{}".format(constants.nx, constants.ny, n_slots))
     cdef int i, j, k
     if table[0] is not NULL:
         log.error("pixel_region_table_alloc: table must be NULL")
@@ -120,13 +115,13 @@ cdef void pixel_region_table_alloc(
             for k in range(n_slots):
                 table[0][i][j].slots[k].region = NULL
                 table[0][i][j].slots[k].rank = -1
-    #print("> pixel_region_table_alloc")
+    # print("> pixel_region_table_alloc")
 
 cdef void pixel_region_table_alloc_grid(
         PixelRegionTable* table,
         cConstants* constants,
     ) except *:
-    #print("< pixel_region_table_alloc_grid {}x{}".format(constants.nx, constants.ny))
+    # print("< pixel_region_table_alloc_grid {}x{}".format(constants.nx, constants.ny))
     cdef int i, j
     if table[0] is not NULL:
         err = "pixel_region_table_alloc_grid: table must be NULL"
@@ -139,14 +134,14 @@ cdef void pixel_region_table_alloc_grid(
             table[0][i][j].slots = NULL
             table[0][i][j].max = 0
             table[0][i][j].n = 0
-    #print("> pixel_region_table_alloc_grid")
+    # print("> pixel_region_table_alloc_grid")
 
 cdef void pixel_region_table_alloc_pixels(
         PixelRegionTable table,
         int n_slots,
         cRegion* cregion,
     ):
-    #print("< pixel_region_table_alloc_pixels {}".format(n_slots))
+    # print("< pixel_region_table_alloc_pixels {}".format(n_slots))
     cdef int i_pixel, i_slot
     cdef np.int32_t x, y
     for i_pixel in prange(cregion.pixels_istart, cregion.pixels_iend,
@@ -237,14 +232,14 @@ cdef void pixel_region_table_init_regions(
         cRegions* cregions_target,
         int n_slots_max,
     ):
-    #print("< pixel_region_table_init_regions {}".format(cregions.n))
+    # print("< pixel_region_table_init_regions {}".format(cregions.n))
     cdef:
         int i_region, i_pixel
         cRegion* cregion_pixels
         cRegion* cregion_target
         cPixel* cpixel
         np.int32_t x, y
-    #for i_region in prange(cregions_pixels.n, nogil=True):
+    # for i_region in prange(cregions_pixels.n, nogil=True):
     for i_region in range(cregions_pixels.n):
         cregion_pixels = cregions_pixels.regions[i_region]
         cregion_target = cregions_target.regions[
@@ -260,7 +255,7 @@ cdef void pixel_region_table_init_regions(
             pixel_region_table_alloc_pixel(table, x, y, n_slots_max)
 
             # Initialize slots
-            #print("table[{}][{}][0] = {}".format(x, y, i_region))
+            # print("table[{}][{}][0] = {}".format(x, y, i_region))
             table[x][y].slots[0].region = cregion_target
             table[x][y].slots[0].rank = -1
             table[x][y].n = 1
@@ -270,15 +265,15 @@ cdef void pixel_region_table_grow(
         cRegion* cregion,
         int n_slots_new,
     ):
-    #print("< pixel_region_table_grow")
+    # print("< pixel_region_table_grow")
     pixel_region_table_alloc_pixels(table, n_slots_new, cregion)
-    #print("> pixel_region_table_grow")
+    # print("> pixel_region_table_grow")
 
 cdef void pixel_region_table_cleanup_pixels(
         PixelRegionTable table,
         cRegion* cregion,
     ):
-    #print("< pixel_region_table_cleanup_pixels")
+    # print("< pixel_region_table_cleanup_pixels")
     cdef:
         int i_pixel
         np.int32_t x, y
@@ -289,7 +284,7 @@ cdef void pixel_region_table_cleanup_pixels(
                     cregion.pixels[i_pixel].x,
                     cregion.pixels[i_pixel].y,
                 )
-    #print("> pixel_region_table_cleanup_pixels")
+    # print("> pixel_region_table_cleanup_pixels")
 
 cdef void pixel_region_table_reset(
         PixelRegionTable table,
@@ -368,7 +363,7 @@ cdef void pixel_region_table_cleanup(
         np.int32_t nx,
         np.int32_t ny,
     ):
-    #print("< pixel_region_table_cleanup")
+    # print("< pixel_region_table_cleanup")
     cdef int i, j
     if table is not NULL:
         for i in prange(nx, nogil=True):
@@ -376,11 +371,9 @@ cdef void pixel_region_table_cleanup(
                 _pixel_region_table_cleanup_entry(table, i, j)
             free(table[i])
         free(table)
-    #print("> pixel_region_table_cleanup")
+    # print("> pixel_region_table_cleanup")
 
-#==============================================================================
 # pixel_status_table
-#==============================================================================
 
 cdef void pixel_status_table_init_feature(
         PixelStatusTable table,
@@ -399,7 +392,7 @@ cdef void pixel_status_table_init_feature(
 
     TODO consider marking boundary pixels separately (of feature/seeds)
     """
-    #print("< pixel_status_table_init_feature")
+    # print("< pixel_status_table_init_feature")
     cdef int i, j
     cdef cPixel* cpixel
     cdef cRegion* cregion
@@ -419,13 +412,13 @@ cdef void pixel_status_table_init_feature(
             if cpixel is not NULL:
                 table[cpixel.x][cpixel.y] = -1
 
-    #print("> pixel_status_table_init_feature")
+    # print("> pixel_status_table_init_feature")
 
 cdef void pixel_status_table_reset_feature(
         PixelStatusTable table,
         cRegion* cfeature,
     ):
-    #print("< pixel_status_table_reset_feature")
+    # print("< pixel_status_table_reset_feature")
     cdef int i_pixel
     cdef np.int32_t x, y
     for i_pixel in prange(cfeature.pixels_max, nogil=True):
@@ -434,7 +427,7 @@ cdef void pixel_status_table_reset_feature(
         x = cfeature.pixels[i_pixel].x
         y = cfeature.pixels[i_pixel].y
         table[x][y] = -2
-    #print("> pixel_status_table_reset_feature")
+    # print("> pixel_status_table_reset_feature")
 
 cdef void pixel_status_table_alloc(
         PixelStatusTable* table,
@@ -455,10 +448,10 @@ cdef void pixel_status_table_reset(
         np.int32_t nx,
         np.int32_t ny,
     ):
-    #SR_OMP<
-    #cdef np.int32_t x, y
+    # SR_OMP <
+    # cdef np.int32_t x, y
     cdef np.int32_t x, y
-    #SR_OMP>
+    # SR_OMP >
     for x in prange(nx, nogil=True):
         for y in range(ny):
             table[x][y] = -2
@@ -472,20 +465,18 @@ cdef void pixel_status_table_cleanup(
         free(table[i])
     free(table)
 
-#==============================================================================
 # neighbor_link_stat_table
-#==============================================================================
 
 cdef void neighbor_link_stat_table_alloc(
         NeighborLinkStatTable* table,
         cConstants* constants,
     ) except *:
-    #print("< neighbor_link_stat_table_alloc")
+    # print("< neighbor_link_stat_table_alloc")
     cdef int i, j, k
     if table[0] is not NULL:
         err = "neighbor_link_stat_table_alloc: table must be NULL"
         raise Exception(err)
-        #with cython.cdivision(True): i=5/0 # for valgrind
+        # with cython.cdivision(True): i=5/0 # for valgrind
     table[0] = <np.int8_t***>malloc(constants.nx*sizeof(np.int8_t**))
     for i in prange(constants.nx, nogil=True):
         table[0][i] = <np.int8_t**>malloc(
@@ -500,7 +491,7 @@ cdef void neighbor_link_stat_table_reset(
         NeighborLinkStatTable table,
         cConstants* constants,
     ) except *:
-    #print("< neighbor_link_stat_table_reset")
+    # print("< neighbor_link_stat_table_reset")
     cdef int i, j, k
     for i in prange(constants.nx, nogil=True):
         for j in range(constants.ny):
@@ -512,7 +503,7 @@ cdef void neighbor_link_stat_table_reset_pixels(
         cRegion* cregion,
         int n_neighbors_max,
     ) except *:
-    #print("< neighbor_link_stat_table_reset_pixels")
+    # print("< neighbor_link_stat_table_reset_pixels")
     cdef:
         int i, j, k
         np.int32_t x, y
@@ -528,7 +519,7 @@ cdef void neighbor_link_stat_table_cleanup(
         np.int32_t nx,
         np.int32_t ny,
     ) except *:
-    #print("< neighbor_link_stat_table_cleanup")
+    # print("< neighbor_link_stat_table_cleanup")
     cdef int i, j
     for i in prange(nx, nogil=True):
         for j in range(ny):
@@ -635,7 +626,7 @@ cdef void neighbor_link_stat_table_init(
                     table[x][y][ind] = 0
                     continue
 
-            #SR_TODO test if this check makes the one above obsolete
+            # SR_TODO test if this check makes the one above obsolete
             # A link is only valid if there is at least one non-feature pixel
             # to the left of it (for clockwise search direction)
             ind_left = get_direct_neighbor_index(-1, ind, constants.connectivity)
@@ -673,7 +664,6 @@ cdef void neighbor_link_stat_table_init(
                     table[x][y][ind] = 0
                     continue
 
-#==============================================================================
 
 cdef inline int get_direct_neighbor_index(
         int direction,
@@ -701,5 +691,3 @@ cdef inline int get_direct_neighbor_index(
     with gil:
         log.error("direct neighbor index not found")
     exit(44)
-
-#==============================================================================

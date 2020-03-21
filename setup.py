@@ -3,18 +3,16 @@
 """
 The setup script.
 """
-# Standard library
-from pathlib import Path
-
 # Third-party
 import numpy
-from setuptools import Extension
+from numpy import f2py
+from setuptools.extension import Extension
 from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 
 # Import Cython AFTER setuptools
-from Cython.Build import cythonize
+from Cython.Build import cythonize  # isort: skip
 from Cython import Compiler  # isort:skip
 
 def read_file(path):
@@ -45,12 +43,15 @@ metadata = {
 python = ">=3.7"
 
 dependencies = [
+    "basemap @ git+https://github.com/matplotlib/basemap.git",
     "cython",
     "click >= 6.0",
+    "descartes",
     "h5py",
     "python-igraph",
     "netcdf4",
     "numpy",
+    "matplotlib",
     "scipy",
     "shapely",
     "pillow",
@@ -63,10 +64,12 @@ scripts = [
     "track-features=stormtrack.track_features:pre_main",
 ]
 
-module_paths = Path("src").rglob(".pyx")
-extensions = [
-    Extension(p.name[: -len(p.suffix)], [p]) for p in module_paths
-]
+# Compile FORTRAN files
+with open("src/stormtrack/extra/fronts/_libfronts.f77", "rb") as f:
+    code = f.read()
+stat = f2py.compile(code, modulename="src/stormtrack.extra.fronts._libfronts")
+if stat != 0:
+    raise Exception("f2py failed", stat)
 
 # https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#compiler-options
 Compiler.Options.annotate = True
@@ -74,9 +77,13 @@ Compiler.Options.annotate = True
 # https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#compiler-directives
 compiler_directives={"embedsignature": True}
 
+extensions = [
+    # Extension("*", ["src/**/*.pyx"], extra_compile_args=["-O0"]),
+    Extension("*", ["src/**/*.pyx"], extra_compile_args=["-O3"]),
+]
+
 cython_setup = {
-    # "ext_modules": cythonize(extensions),
-    "ext_modules": extensions,
+    "ext_modules": cythonize(extensions, compiler_directives={"language_level": 3}),
     "cmdclass": {"build_ext": build_ext},
     "include_dirs": [numpy.get_include()],
     "compiler_directives": compiler_directives,

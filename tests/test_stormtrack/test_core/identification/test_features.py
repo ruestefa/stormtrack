@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
+# Standard library
 import unittest
 import sys
 from unittest import TestCase
 
+# Third-party
 import numpy as np
 
+# First-party
 from stormtrack.core.identification import Feature
 from stormtrack.core.identification import feature_split_regiongrow
 from stormtrack.core.identification import features_find_neighbors
@@ -14,8 +17,9 @@ from stormtrack.core.identification import find_minima_2d
 from stormtrack.core.identification import merge_adjacent_features
 from stormtrack.core.identification import pixels_find_boundaries
 from stormtrack.core.identification import split_regiongrow_levels
-from stormtrack.core.typedefs import Constants
+from stormtrack.core.typedefs import default_constants
 
+# Local
 from ...utils import assertBoundaries
 from ...utils import TestFeatures_Base
 
@@ -64,7 +68,7 @@ class Feature_FindNeighbors(TestCase):
     def test_4c(s):
         for feature in s.features:
             s.assertEqual(len(feature.neighbors), 0)
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=4)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=4)
         features_find_neighbors(s.features, const)
         s.assertNeighbors(s.features[0], [s.features[2]])
         s.assertNeighbors(s.features[1], [])
@@ -74,7 +78,7 @@ class Feature_FindNeighbors(TestCase):
     def test_8c(s):
         for feature in s.features:
             s.assertEqual(len(feature.neighbors), 0)
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=8)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
         features_find_neighbors(s.features, const)
         s.assertNeighbors(s.features[0], [s.features[2], s.features[1]])
         s.assertNeighbors(s.features[1], [s.features[0], s.features[3]])
@@ -294,7 +298,7 @@ class SplitRegiongrow_Basic_GE1FromGE3(TestFeaturesSeeds_Base):
 
     def test_8c(s):
         """Split the ge-1 feature using the ge-3 features as seeds."""
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         subfeatures = feature_split_regiongrow(
             s.features_in_8c[0], s.seeds, constants=const
         )
@@ -354,7 +358,7 @@ class SplitRegiongrow_Basic_GE1FromGE2Raw(TestFeaturesSeeds_Base):
 
     def test_8c(s):
         """Split the ge-1 feature using the ge-2 features as seeds."""
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         subfeatures = feature_split_regiongrow(
             s.features_in_8c[0], s.seeds, constants=const
         )
@@ -414,7 +418,7 @@ class SplitRegiongrow_Basic_GE1FromGE2FromGE3(TestFeaturesSeeds_Base):
 
     def test_8c(s):
         """Split the ge-1 feature using the ge-2 features as seeds."""
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         subfeatures = feature_split_regiongrow(
             s.features_in_8c[0], s.seeds, constants=const
         )
@@ -561,7 +565,7 @@ class SplitRegiongrow_Levels23(TestFeatures_Base):
         s.setUpFeatures("in_4c", "in_8c", "out_4c", "out_8c")
 
     def test_4c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
         subfeatures = split_regiongrow_levels(
             s.features_in_4c, s.levels, constants=const
         )
@@ -570,7 +574,7 @@ class SplitRegiongrow_Levels23(TestFeatures_Base):
         )
 
     def test_8c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         subfeatures = split_regiongrow_levels(
             s.features_in_8c, s.levels, constants=const
         )
@@ -595,7 +599,7 @@ class SplitRegiongrow_Levels23_MinStrength3(TestFeatures_Base):
         s.setUpFeatures("in_8c", "out_8c")
 
     def test_8c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         subfeatures = split_regiongrow_levels(
             s.features_in_8c,
             s.levels,
@@ -626,7 +630,7 @@ class SplitRegiongrow_Levels3_MinSize6(TestFeatures_Base):
         s.setUpFeatures("in_8c", "out_8c")
 
     def test_8c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         subfeatures = split_regiongrow_levels(
             s.features_in_8c, s.levels, seed_minsize=s.min_size, constants=const
         )
@@ -709,13 +713,13 @@ class SplitRegiongrow_SeedRegion_PartialOverlap(TestFeatures_Base):
 
     def test_full_overlap_s8(s):
         seeds = [s.seed_l1, s.seed_r1]
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=8)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
         splits = feature_split_regiongrow(s.feature, seeds, constants=const)
         s.assertSplitsEqual(splits, s.splits)
 
     def test_partial_overlap_s8(s):
         seeds = [s.seed_l2, s.seed_r2]
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=8)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
         splits = feature_split_regiongrow(s.feature, seeds, constants=const)
         s.assertSplitsEqual(splits, s.splits)
 
@@ -1315,14 +1319,14 @@ class SplitRegiongrow_Neighbors(TestFeatures_Base):
         s.min_size = 0
 
     def test_4c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
         subfeatures = split_regiongrow_levels(
             s.features_in_4c, s.levels, seed_minsize=s.min_size, constants=const
         )
         s.assertFeaturesEqual(subfeatures, s.features_out_4c, sort_by_size=True)
 
     def test_8c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         subfeatures = split_regiongrow_levels(
             s.features_in_8c, s.levels, seed_minsize=s.min_size, constants=const
         )
@@ -1467,7 +1471,7 @@ class MergeFeatures(TestFeatures_Base):
         s.setUpFeatures("in_4c", "in_8c", "out_4c", "out_8c")
 
     def test_given_neighbors_4c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
         features = merge_adjacent_features(
             s.features_in_4c,
             base_id=0,
@@ -1478,7 +1482,7 @@ class MergeFeatures(TestFeatures_Base):
         s.assertFeaturesEqual(features, s.features_out_4c, check_shared_pixels=False)
 
     def test_given_neighbors_8c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         features = merge_adjacent_features(
             s.features_in_8c,
             base_id=0,
@@ -1491,7 +1495,7 @@ class MergeFeatures(TestFeatures_Base):
     def test_unknown_neighbors_4c(s):
         for feature in s.features_in_8c:
             feature.neighbors = []
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
         features = merge_adjacent_features(
             s.features_in_4c,
             base_id=0,
@@ -1504,7 +1508,7 @@ class MergeFeatures(TestFeatures_Base):
     def test_unknown_neighbors_8c(s):
         for feature in s.features_in_8c:
             feature.neighbors = []
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         features = merge_adjacent_features(
             s.features_in_8c,
             base_id=0,
@@ -1779,42 +1783,42 @@ class GrowFeatures(TestFeatures_Base):
         )
 
     def test_grow1_4c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
         features_grown = features_grow(1, s.features_in_4c, const)
         s.assertFeaturesEqual(
             features_grown, s.features_out_g1_4c, check_shared_pixels=False
         )
 
     def test_grow1_8c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         features_grown = features_grow(1, s.features_in_8c, const)
         s.assertFeaturesEqual(
             features_grown, s.features_out_g1_8c, check_shared_pixels=False
         )
 
     def test_grow2_4c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
         features_grown = features_grow(2, s.features_in_4c, const)
         s.assertFeaturesEqual(
             features_grown, s.features_out_g2_4c, check_shared_pixels=False
         )
 
     def test_grow2_8c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         features_grown = features_grow(2, s.features_in_8c, const)
         s.assertFeaturesEqual(
             features_grown, s.features_out_g2_8c, check_shared_pixels=False
         )
 
     def test_grow3_4c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=4)
         features_grown = features_grow(3, s.features_in_4c, const)
         s.assertFeaturesEqual(
             features_grown, s.features_out_g3_4c, check_shared_pixels=False
         )
 
     def test_grow3_8c(s):
-        const = Constants.default(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
+        const = default_constants(nx=s.nxy[0], ny=s.nxy[1], connectivity=8)
         features_grown = features_grow(3, s.features_in_8c, const)
         s.assertFeaturesEqual(
             features_grown, s.features_out_g3_8c, check_shared_pixels=False
@@ -1875,12 +1879,12 @@ class FindBoundaries_NoHoles(TestBoundaries_Base):
         s.holes8 = []
 
     def test_4c(s):
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=4)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=4)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
         s.assertBoundaries(shells, s.shells4, holes, s.holes4)
 
     def test_8c(s):
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=8)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
         s.assertBoundaries(shells, s.shells8, holes, s.holes8)
 
@@ -1954,12 +1958,12 @@ class FindBoundaries_OneHole_FarInside(TestBoundaries_Base):
         # fmt: on
 
     def test_4c(s):
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=4)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=4)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
         s.assertBoundaries(shells, s.shells4, holes, s.holes4)
 
     def test_8c(s):
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=8)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
         s.assertBoundaries(shells, s.shells8, holes, s.holes8)
 
@@ -2024,12 +2028,12 @@ class FindBoundaries_OneHole_NearShell(TestBoundaries_Base):
         # fmt: on
 
     def test_4c(s):
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=4)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=4)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
         s.assertBoundaries(shells, s.shells4, holes, s.holes4)
 
     def test_8c(s):
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=8)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
         s.assertBoundaries(shells, s.shells8, holes, s.holes8)
 
@@ -2094,12 +2098,12 @@ class FindBoundaries_OneHole_Width1(TestBoundaries_Base):
         # fmt: on
 
     def test_4c(s):
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=4)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=4)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
         s.assertBoundaries(shells, s.shells4, holes, s.holes4)
 
     def test_8c(s):
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=8)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
         s.assertBoundaries(shells, s.shells8, holes, s.holes8)
 
@@ -2253,12 +2257,12 @@ class FindBoundaries_ManyHoles(TestBoundaries_Base):
         # fmt: on
 
     def test_4c(s):
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=4)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=4)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
         s.assertBoundaries(shells, s.shells4, holes, s.holes4)
 
     def test_8c(s):
-        const = Constants.default(nx=s.nx, ny=s.ny, connectivity=8)
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
         # ? holes = sorted(holes, key=lambda i: len(i), reverse=True)
         s.assertBoundaries(shells, s.shells8, holes, s.holes8)

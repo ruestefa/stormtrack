@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-import sys
+# Standard library
 import logging as log
-from unittest import TestCase
-from pprint import pprint
+import sys
 from pprint import pformat
+from unittest import TestCase
 
+# Third-party
 import numpy as np
 
-# from IPython.terminal.embed import embed; embed()  # SR_DBG
-from stormtrack.core.typedefs import Constants
+# First-party
+from stormtrack.core.typedefs import default_constants
 from stormtrack.core.identification import Feature
 
 
@@ -141,7 +142,7 @@ class TestFeatures_Base(TestCase):
             if connectivity is None:
                 raise ValueError("no connectivity but shells or holes is None")
             nx, ny = self.nxy
-            const = Constants.default(nx=nx, ny=ny, connectivity=connectivity)
+            const = default_constants(nx=nx, ny=ny, connectivity=connectivity)
             if (shells, holes) is (None, None):
                 feature.derive_boundaries_from_pixels(const)
             elif shells is None:
@@ -619,7 +620,6 @@ def feature_rectangle(xymin, xymax, id, ts=0):
 
 
 if __name__ == "__main__":
-
     import logging as log
 
     log.getLogger().addHandler(log.StreamHandler(sys.stdout))
