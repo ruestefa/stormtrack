@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Standard library
+import logging as log
 import os
 import unittest
 import sys
@@ -16,6 +17,10 @@ from stormtrack.extra.front_surgery import front_surgery_temporal
 
 # Local
 from ..utils import TestFeatures_Base
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 class Isolated(TestFeatures_Base):
@@ -654,8 +659,4 @@ class Temporal_MinOverlap08_MaxSizeM1(Temporal_Base):
 
 
 if __name__ == "__main__":
-    import logging as log
-
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
     unittest.main()

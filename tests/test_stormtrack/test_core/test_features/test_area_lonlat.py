@@ -2,6 +2,7 @@
 
 # Standard library
 import itertools
+import logging as log
 import os
 import sys
 import unittest
@@ -13,6 +14,10 @@ import numpy as np
 # First-party
 from stormtrack.core.identification import Feature
 from stormtrack.utils.various import import_module
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 # Define tolerances for area deviations based on setup
@@ -520,8 +525,4 @@ for clat, rad, delta, method in itertools.product(clats, rads, deltas, methods):
 
 
 if __name__ == "__main__":
-    import logging as log
-
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
     unittest.main()

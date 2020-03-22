@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 # Standard library
+import logging as log
 import unittest
+import sys
 from unittest import TestCase
 
 # First-party
@@ -12,6 +14,10 @@ from stormtrack.extra.utilities_misc import Contour
 # Local
 from ...testing_utilities import ContourSimple
 from ...testing_utilities import PointSimple
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 CONTOUR = ContourSimple

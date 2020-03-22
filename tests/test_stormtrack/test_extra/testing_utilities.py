@@ -16,9 +16,6 @@ from shapely.geometry import Point, Polygon
 from stormtrack.extra.utilities_misc import FieldPoint
 
 
-# CLASSES
-
-
 class ContourSimple(Polygon):
     def __init__(self, path, level=None, id=None):
         self._path = path
@@ -123,16 +120,10 @@ class PointSimple(Point):
         return pt.get_info()
 
 
-# SETUP
-
-
 CLS_POINT = PointSimple
 CLS_CONTOUR = ContourSimple
 
 CONTOUR_RESOLUTION = 3
-
-
-# HELPER FUNCTIONS
 
 
 def contours_are_sorted(contours, reverse=False):
@@ -212,9 +203,6 @@ def create_nested_circular_contours(
     return [cont, []] if no_min else [cont, [center]]
 
 
-# ASSERT FUNCTIONS
-
-
 def assert_dict_contained(full, partial):
     """Check that one dict contains another (possibly smaller) dict."""
     err = "Dict not fully contained in other dict"
@@ -244,7 +232,3 @@ def assert_dict_contained(full, partial):
                 _assert_dict_contained_rec(full[key], val, err)
 
     _assert_dict_contained_rec(full, partial, err)
-
-
-if __name__ == "__main__":
-    pass

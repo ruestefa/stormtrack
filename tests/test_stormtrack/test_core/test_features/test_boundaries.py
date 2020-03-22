@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Standard library
+import logging as log
 import unittest
 import sys
 from unittest import TestCase
@@ -14,6 +15,10 @@ from stormtrack.core.typedefs import default_constants
 
 # Local
 from ...utils import assertBoundaries
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 class TestBoundaries_Base(TestCase):
@@ -459,9 +464,118 @@ class FindBoundaries_ManyHoles(TestBoundaries_Base):
         s.assertBoundaries(shells, s.shells8, holes, s.holes8)
 
 
-if __name__ == "__main__":
-    import logging as log
+class FindBoundaries_NestedShells(TestBoundaries_Base):
+    """Find the inner and outer boundaries of a nested feature."""
 
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
+    def setUp(s):
+
+        # Multiple holes
+        _, X = 0, 1
+        # fmt: off
+        s.fld = np.array(
+            [ #  0 1 2 3 4  5 6 7 8 9 10 1 2 3 4 15 6 7
+                [_,_,_,_,_, _,_,_,_,_, X,X,X,X,_, _,_,_], #  9
+                [_,_,_,_,_, _,X,X,X,X, X,X,X,X,X, X,_,_], #  8
+                [_,_,_,_,X, X,X,_,_,_, _,_,_,_,X, X,_,_], #  7
+                [_,_,_,X,X, _,_,_,_,_, _,_,_,_,_, X,_,_], #  6
+                [_,X,X,X,_, _,X,X,X,X, X,X,_,_,X, X,X,_], #  5
+
+                [_,X,X,_,_, X,X,X,X,X, X,_,_,_,X, X,X,_], #  4
+                [_,X,X,_,_, _,_,_,_,_, _,_,_,_,X, X,X,_], #  3
+                [_,X,X,X,_, _,_,_,_,_, _,_,_,X,X, X,X,_], #  2
+                [_,_,X,X,X, X,X,X,X,X, X,X,X,X,X, X,_,_], #  1
+                [_,_,_,X,X, X,X,X,X,X, X,X,X,X,X, _,_,_], #  0
+            ] #  0 1 2 3 4  5 6 7 8 9 10 1 2 3 4 15 6 7
+        ).T[:, ::-1]
+        # fmt: on
+        s.nx, s.ny = s.fld.shape
+        s.pixels = np.dstack(np.where(s.fld > 0))[0].astype(np.int32)
+
+        # 4-connectivity
+        # fmt: off
+        s.shells4 = [
+            np.array(
+                [
+                    (10,  9), (11,  9), (12,  9), (13,  9), (13,  8), (14,  8),
+                    (15,  8), (15,  7), (15,  6), (15,  5), (16,  5), (16,  4),
+                    (16,  3), (16,  2), (15,  2), (15,  1), (14,  1), (14,  0),
+                    (13,  0), (12,  0), (11,  0), (10,  0), ( 9,  0), ( 8,  0),
+                    ( 7,  0), ( 6,  0), ( 5,  0), ( 4,  0), ( 3,  0), ( 3,  1),
+                    ( 2,  1), ( 2,  2), ( 1,  2), ( 1,  3), ( 1,  4), ( 1,  5),
+                    ( 2,  5), ( 3,  5), ( 3,  6), ( 4,  6), ( 4,  7), ( 5,  7),
+                    ( 6,  7), ( 6,  8), ( 7,  8), ( 8,  8), ( 9,  8), (10,  8),
+                    (10,  9),
+                ]
+            ),
+            np.array(
+                [
+                    ( 5,  4), ( 6,  4), ( 6,  5), ( 7,  5), ( 8,  5), ( 9,  5),
+                    (10,  5), (11,  5), (10,  5), (10,  4), ( 9,  4), ( 8,  4),
+                    ( 7,  4), ( 6,  4), ( 5,  4),
+                ]
+            ),
+        ]
+        s.holes4 = [
+            np.array(
+                [
+                    ( 6,  8), ( 6,  7), ( 5,  7), ( 4,  7), ( 4,  6), ( 3,  6),
+                    ( 3,  5), ( 2,  5), ( 2,  4), ( 2,  3), ( 2,  2), ( 3,  2),
+                    ( 3,  1), ( 4,  1), ( 5,  1), ( 6,  1), ( 7,  1), ( 8,  1),
+                    ( 9,  1), (10,  1), (11,  1), (12,  1), (13,  1), (13,  2),
+                    (14,  2), (14,  3), (14,  4), (14,  5), (15,  5), (15,  6),
+                    (15,  7), (14,  7), (14,  8), (13,  8), (12,  8), (11,  8),
+                    (10,  8), ( 9,  8), ( 8,  8), ( 7,  8), ( 6,  8),
+                ]
+            ),
+        ]
+        # fmt: on
+
+        # 8-connectivity
+        # fmt: off
+        s.shells8 = [
+            np.array(
+                [
+                    (10,  9), (11,  9), (12,  9), (13,  9), (14,  8), (15,  8),
+                    (15,  7), (15,  6), (16,  5), (16,  4), (16,  3), (16,  2),
+                    (15,  1), (14,  0), (13,  0), (12,  0), (11,  0), (10,  0),
+                    ( 9,  0), ( 8,  0), ( 7,  0), ( 6,  0), ( 5,  0), ( 4,  0),
+                    ( 3,  0), ( 2,  1), ( 1,  2), ( 1,  3), ( 1,  4), ( 1,  5),
+                    ( 2,  5), ( 3,  6), ( 4,  7), ( 5,  7), ( 6,  8), ( 7,  8),
+                    ( 8,  8), ( 9,  8), (10,  9),
+                ]
+            ),
+            np.array(
+                [
+                    ( 5,  4), ( 6,  5), ( 7,  5), ( 8,  5), ( 9,  5), (10,  5),
+                    (11,  5), (10,  4), ( 9,  4), ( 8,  4), ( 7,  4), ( 6,  4),
+                    ( 5,  4),
+                ]
+            ),
+        ]
+        s.holes8 = [
+            np.array(
+                [
+                    ( 7,  8), ( 6,  7), ( 5,  7), ( 4,  6), ( 3,  5), ( 2,  4),
+                    ( 2,  3), ( 3,  2), ( 4,  1), ( 5,  1), ( 6,  1), ( 7,  1),
+                    ( 8,  1), ( 9,  1), (10,  1), (11,  1), (12,  1), (13,  2),
+                    (14,  3), (14,  4), (14,  5), (15,  6), (14,  7), (13,  8),
+                    (12,  8), (11,  8), (10,  8), ( 9,  8), ( 8,  8), ( 7,  8),
+                ]
+            ),
+        ]
+        # fmt: on
+
+    def test_4c(s):
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=4)
+        shells, holes = pixels_find_boundaries(s.pixels, constants=const)
+        s.assertBoundaries(shells, s.shells4, holes, s.holes4)
+
+    def test_8c(s):
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
+        shells, holes = pixels_find_boundaries(s.pixels, constants=const)
+        # ? holes = sorted(holes, key=lambda i: len(i), reverse=True)
+        s.assertBoundaries(shells, s.shells8, holes, s.holes8)
+
+
+if __name__ == "__main__":
     unittest.main()

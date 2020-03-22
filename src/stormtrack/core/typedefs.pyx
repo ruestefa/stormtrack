@@ -1224,15 +1224,16 @@ cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) exce
     # Categorize boundaries as shells or holes
     cdef bint* boundary_is_shell = categorize_boundaries(&cboundaries, grid)
 
-    # SR_TMP <
-    k = 0
-    for i in range(cboundaries.n):
-        if boundary_is_shell[i]:
-            k += 1
-    if k > 1:
-        err = "cregions_find_connected for multiple shells per feature"
-        raise NotImplementedError(err)
-    # SR_TMP >
+    # - # SR_TMP <
+    # - k = 0
+    # - for i in range(cboundaries.n):
+    # -     if boundary_is_shell[i]:
+    # -         k += 1
+    # - if k > 1:
+    # -     raise NotImplementedError(
+    # -         "cregions_find_connected for multiple shells per feature"
+    # -     )
+    # - # SR_TMP >
 
     # Transfer shells into original cregion
     cdef int i_bnd
@@ -1619,7 +1620,7 @@ cdef bint _find_link_to_continue(
 
 
 cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
-    cdef bint debug = True  # SR_DBG
+    cdef bint debug = False
     if debug:
         log.debug(f"< categorize_boundaries: {boundaries.n}")
     cdef int ib

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Standard library
+import logging as log
 import unittest
 import sys
 from unittest import TestCase
@@ -8,10 +9,12 @@ from unittest import TestCase
 # Third-party
 import numpy as np
 
-sys.path.append(".tox/unittest/lib/python3.7/site-packages")
-
 # Local
 from .utils import circle
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 class TestCircle(TestCase):
@@ -61,10 +64,4 @@ class TestCircle(TestCase):
 
 
 if __name__ == "__main__":
-
-    import logging as log
-
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
-
     unittest.main()

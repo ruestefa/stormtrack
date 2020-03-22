@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Standard library
+import logging as log
 import unittest
 import sys
 from unittest import TestCase
@@ -18,6 +19,10 @@ from stormtrack.core.typedefs import default_constants
 
 # Local
 from ...utils import TestFeatures_Base
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 # TODO properly implement and test center and extrema
@@ -633,8 +638,4 @@ class TestFindMinimaNeighborhoodSize(TestCase):
 
 
 if __name__ == "__main__":
-    import logging as log
-
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
     unittest.main()

@@ -4,6 +4,7 @@
 import json
 import logging as log
 import unittest
+import sys
 from pprint import pprint as pp
 from unittest import TestCase
 
@@ -23,7 +24,9 @@ from ...testing_utilities import create_nested_circular_contours as cncc
 from ...testing_utilities import shuffle_contours_assert
 
 
-# CONTOURS (ID,LEVEL,PATH) AND MINIMA
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
+
 
 # DCC: (3c/1c)3c
 CONT_PATH_LIST_DCC = [

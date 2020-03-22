@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Standard library
+import logging as log
 import pytest
 import sys
 import unittest
@@ -19,6 +20,10 @@ from stormtrack.core.tracking import remerge_partial_tracks
 from ...utils import circle
 from ...utils import feature_circle
 from ...utils import TestTracks_Base
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 class SimpleTrack__Base(TestTracks_Base):
@@ -622,8 +627,4 @@ class SimpleTrack_MissingFeature(TestTracks_Base):
 
 
 if __name__ == "__main__":
-    import logging as log
-
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
     unittest.main()

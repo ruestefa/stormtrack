@@ -3,6 +3,7 @@
 # Standard library
 import logging as log
 import random
+import sys
 import unittest
 from pprint import pprint as pp
 from unittest import TestCase
@@ -27,13 +28,22 @@ from ...testing_utilities import PointSimple
 from ...testing_utilities import create_nested_circular_contours as cncc
 
 
-# CONTOUR CLUSTER DEFINITIONS
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 def plot_cont(fct):
     cont, min = fct()
     outfile = "cycl_{n}.png".format(n=fct.__name__)
     io.plot_contours(outfile, cont, min, labels=lambda x: x.lvl)
+
+
+# plot_cont(cont1)
+# plot_cont(cont2)
+# plot_cont(cont3)
+# plot_cont(cont4)
+# plot_cont(cont5)
+# plot_cont(cont6)
 
 
 def cont1(dx=0.0, dy=0.0, dlvl=0.0):
@@ -143,9 +153,6 @@ def cont6(dx=0.0, dy=0.0, dlvl=0.0):
     cont = [e for lst in cont_min for e in lst[0]]
     min = [e for lst in cont_min for e in lst[1]]
     return cont, min
-
-
-# TEST CASES
 
 
 # CYCLONE CREATION
@@ -284,10 +291,4 @@ class TestThreeSubclustersFourMinima(TestCase):
 
 
 if __name__ == "__main__":
-    # plot_cont(cont1)
-    # plot_cont(cont2)
-    # plot_cont(cont3)
-    # plot_cont(cont4)
-    # plot_cont(cont5)
-    # plot_cont(cont6)
     unittest.main()

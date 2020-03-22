@@ -44,7 +44,8 @@ from stormtrack.extra.utilities_misc import RectangularDomain
 from .testing_utilities import assert_dict_contained
 
 
-log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 def assert_complex_structure_equal(obj1, obj2):

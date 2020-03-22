@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Standard library
+import logging as log
 import pytest
 import sys
 import unittest
@@ -18,6 +19,10 @@ from stormtrack.core.tracking import FeatureTracker
 from ...utils import feature_circle
 from ...utils import TestTrackFeatures_Base
 from ...utils import TestTracks_Base
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 class MergeSplit_Isolated(TestCase):
@@ -616,8 +621,4 @@ class MergeSplit_Complex_TempRes(MergeSplit_Complex_Mixed_base):
 
 
 if __name__ == "__main__":
-    import logging as log
-
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
     unittest.main()

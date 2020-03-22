@@ -2,6 +2,7 @@
 
 # Standard library
 import pytest
+import logging as log
 import sys
 import unittest
 from unittest import TestCase
@@ -13,6 +14,10 @@ import numpy as np
 from stormtrack.core.identification import find_features_2d_threshold
 from stormtrack.core.identification import find_features_2d_threshold_seeded
 from stormtrack.core.typedefs import default_constants
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 class IdentifyRegions_Base(TestCase):
@@ -243,8 +248,4 @@ class IdentifyRegions2DSeeds(IdentifyRegions2D_Base):
 
 
 if __name__ == "__main__":
-    import logging as log
-
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
     unittest.main()

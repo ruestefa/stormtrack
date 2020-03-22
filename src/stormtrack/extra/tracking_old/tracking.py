@@ -3442,7 +3442,7 @@ class FeatureTrackExtender:
             log.debug("")
 
     def find_successors(self, features_now, features_new):
-        debug = True
+        debug = False
 
         if debug:
             log.debug(

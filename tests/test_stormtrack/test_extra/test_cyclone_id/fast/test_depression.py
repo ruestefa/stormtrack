@@ -3,6 +3,7 @@
 # Standard library
 import json
 import logging as log
+import sys
 import unittest
 from pprint import pprint as pp
 from unittest import TestCase
@@ -25,16 +26,14 @@ from ...testing_utilities import create_nested_circular_contours as cncc
 from ...testing_utilities import shuffle_contours_assert
 
 
-# CONTOUR CLUSTER DEFINITIONS
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 def plot_cont(fct):
     cont, min = fct()
     outfile = "depr_{n}.png".format(n=fct.__name__)
     io.plot_contours(outfile, cont, min, labels=lambda x: x.lvl)
-
-
-# IDENTIFICATION
 
 
 def cont1():
@@ -120,9 +119,6 @@ def cont6():
     cont = [e for lst in cont_min for e in lst[0]]
     min = [e for lst in cont_min for e in lst[1]]
     return cont, min
-
-
-# TEST CASES
 
 
 class TestVarious(TestCase):
@@ -276,9 +272,6 @@ class TestInitializationComplex(TestCase):
         """
         clust = Depression.create(s.cont, s.pt_all)[0]
         s.assertSetEqual(set(clust.minima()), set(s.min_complete))
-
-
-# CONTOUR- AND DEPTH-RELATED TESTS
 
 
 class TestDepthNoSubcluster(TestCase):
@@ -466,9 +459,6 @@ class TestCenter(TestCase):
         res = clust.center()
         sol = (5.32, 3.26)
         assert_almost_equal(sol, res, 2)
-
-
-# DEPRESSION FACTORY
 
 
 class TestCreationComplex(TestCase):

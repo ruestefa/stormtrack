@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Standard library
+import logging as log
 import sys
 import unittest
 from collections import OrderedDict as odict
@@ -15,6 +16,10 @@ from stormtrack.core.identification import Feature
 from stormtrack.core.tracking import FeatureTrack
 from stormtrack.core.tracking import FeatureTracker
 from stormtrack.core.tracking import FeatureTrackSplitter
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 class DummyFeature:
@@ -1054,8 +1059,4 @@ class SplitTrack_Probabilities_Simple(TestCase):
 
 
 if __name__ == "__main__":
-    import logging as log
-
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
     unittest.main()

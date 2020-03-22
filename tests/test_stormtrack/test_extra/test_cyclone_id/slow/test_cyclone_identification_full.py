@@ -6,6 +6,7 @@ import logging as log
 import os
 import pytest
 import unittest
+import sys
 from unittest import TestCase
 
 # Third-party
@@ -18,7 +19,8 @@ from stormtrack.extra.cyclone_id.identify import identify_features
 from stormtrack.extra.utilities_misc import Field2D
 
 
-log.basicConfig(format="%(levelname)s:%(message)s", level=log.WARNING)
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 @pytest.mark.skip("missing input data")

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Standard library
+import logging as log
 import sys
 import unittest
 from unittest import TestCase
@@ -14,6 +15,10 @@ from stormtrack.core.tracking import TrackFeatureMerger
 
 # Local
 from ...utils import feature_rectangle
+
+
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 class MergeFeatures_Base(TestCase):
@@ -622,8 +627,4 @@ class MergeFeatures(MergeFeatures_Base):
 
 
 if __name__ == "__main__":
-    import logging as log
-
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
     unittest.main()

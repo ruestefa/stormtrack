@@ -6,6 +6,7 @@ import logging as log
 import os
 import pytest
 import unittest
+import sys
 from pprint import pprint as pp
 from unittest import TestCase
 
@@ -17,7 +18,8 @@ from stormtrack.extra.tracking_old.tracking import FeatureTrackIOReaderJson
 from stormtrack.extra.tracking_old.tracking import FeatureTrackIOWriterJson
 
 
-log.basicConfig(level=log.DEBUG)
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 
 
 class TestCycloneIO(TestCase):
