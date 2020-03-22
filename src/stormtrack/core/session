@@ -3,8 +3,7 @@ distance.pxd
 distance.pyx
 identification.pxd
 identification.pyx
-io.pxd
-io.pyx
+io.py
 structs.pxd
 tables.pxd
 tables.pyx

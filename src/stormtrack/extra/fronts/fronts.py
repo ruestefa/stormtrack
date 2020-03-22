@@ -32,7 +32,7 @@ def identify_fronts(
     nan=-999,
     print_prefix="",
     var_sfx="",
-    verbose=False
+    verbose=False,
 ):
 
     # Check consts arrays

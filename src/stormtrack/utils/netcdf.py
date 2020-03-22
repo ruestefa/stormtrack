@@ -104,7 +104,7 @@ def nc_prepare_file(
     timesteps=None,
     timestep_bnd0=None,
     rotpollat=43.0,
-    rotpollon=-170.0
+    rotpollon=-170.0,
 ):
     """Prepare an empty opened netCDF file by adding grid variables etc."""
 

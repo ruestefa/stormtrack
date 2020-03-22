@@ -520,7 +520,7 @@ class DepressionFactory:
         contours_nested=False,
         contours_valid=True,
         contours_sorted=False,
-        id0=None
+        id0=None,
     ):
 
         self.contours = contours
@@ -587,7 +587,7 @@ class DepressionFactory:
         ncont_min=0,
         bcc_frac=0.5,
         len_min=None,
-        len_max=None
+        len_max=None,
     ):
         """Method called by Depression.create()."""
         factory = cls(
