@@ -449,15 +449,15 @@ class Test_pyproj_d1p00_lat80_r800(Test_Base):
 # Automatic tests based on text files
 
 
-default_path = os.path.dirname(os.path.abspath(__file__))
-infile_fmt = "{path}/circle_on_globe_clat-{clat:02}_rad-{rad}_delta-{delta}_{method}.py"
+data_path = f"{os.path.dirname(os.path.abspath(__file__))}/data"
+data_file_fmt = (
+    data_path + "/circle_on_globe_clat-{clat:02}_rad-{rad}_delta-{delta}_{method}.py"
+)
 
 
 def create_test_class(name, setup):
     def method_setUp(s):
-        if "path" not in s.setup:
-            s.setup["path"] = s.default_path
-        infile = s.infile_fmt.format(**s.setup)
+        infile = s.data_file_fmt.format(**s.setup)
         mod = import_module(infile)
         for var in [
             "clon",
@@ -481,8 +481,7 @@ def create_test_class(name, setup):
         s.eval_test(res, sol)
 
     attributes = {
-        "default_path": default_path,
-        "infile_fmt": infile_fmt,
+        "data_file_fmt": data_file_fmt,
         "setup": setup,
     }
     methods = {"setUp": method_setUp, "test_area": method_test_area}
@@ -506,7 +505,7 @@ for clat, rad, delta, method in itertools.product(clats, rads, deltas, methods):
     setup = dict(clat=clat, rad=rad, delta=delta, method=method)
 
     # Skip setup if no infile exists
-    infile = infile_fmt.format(path=default_path, **setup)
+    infile = data_file_fmt.format(path=data_path, **setup)
     if not os.path.isfile(infile):
         continue
 

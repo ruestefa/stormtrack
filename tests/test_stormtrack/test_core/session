@@ -1,10 +1,12 @@
 # __init__.py
-# identification/__init__.py
-identification/test_area_lonlat.py
-identification/test_features.py
-identification/test_regions.py
-# tracking/__init__.py
-tracking/test_branched_tracks.py
-tracking/test_merge_features.py
-tracking/test_simple_tracks.py
-tracking/test_split_tracks.py
+# test_features/__init__.py
+test_features/test_area_lonlat.py
+test_features/test_boundaries.py
+test_features/test_features.py
+test_features/test_regions.py
+test_features/test_split_regiongrow.py
+# test_tracking/__init__.py
+test_tracking/test_branched_tracks.py
+test_tracking/test_merge_features.py
+test_tracking/test_simple_tracks.py
+test_tracking/test_split_tracks.py

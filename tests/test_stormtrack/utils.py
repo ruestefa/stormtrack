@@ -7,14 +7,12 @@ from pprint import pformat
 from unittest import TestCase
 
 # Third-party
+import matplotlib.pyplot as plt
 import numpy as np
 
 # First-party
 from stormtrack.core.typedefs import default_constants
 from stormtrack.core.identification import Feature
-
-
-# Test Features
 
 
 class TestFeatures_Base(TestCase):
@@ -390,9 +388,6 @@ def assertBoundaries(self, inds_lst1, inds_lst2, name="inds"):
             raise AssertionError(err)
 
 
-# Test Tracks
-
-
 class TestTracks_Base(TestCase):
     """Base class for tracks tests."""
 
@@ -541,9 +536,6 @@ class TestTrackFeatures_Base(TestCase):
         return (fw2bw.get(fw, fw) for fw in type_fw)
 
 
-# Some utility functions/classes
-
-
 def circle(px, py, rad, shell=None, connectivity=8):
     """Compute the coordinates of a circle with radius rad around (px, py).
 
@@ -619,8 +611,10 @@ def feature_rectangle(xymin, xymax, id, ts=0):
     return feature
 
 
-if __name__ == "__main__":
-    import logging as log
-
-    log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-    log.getLogger().setLevel(log.DEBUG)
+def plot_field(outfile, fld, lvl=None, cmap=None):
+    fig, ax = plt.subplots()
+    # p = ax.contourf(fld, levels=lvl, cmap=cmap)
+    p = ax.imshow(fld)
+    fig.colorbar(p)
+    fig.savefig(outfile)
+    plt.close()
