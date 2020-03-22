@@ -280,32 +280,44 @@ endif
 .PHONY: bump-patch
 bump-patch: ${_INSTALL_DEV} #CMD Bump patch component of version number (x.y.Z), incl. git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment patch component"
+	cat VERSION.txt
 	${PREFIX}bumpversion patch
+	cat VERSION.txt
 
 .PHONY: bump-minor
 bump-minor: ${_INSTALL_DEV} #CMD Bump minor component of version number (x.Y.z), incl. git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment minor component"
+	cat VERSION.txt
 	${PREFIX}bumpversion minor
+	cat VERSION.txt
 
 .PHONY: bump-major
 bump-major: ${_INSTALL_DEV} #CMD Bump minor component of version number (X.y.z), incl. git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment major component"
+	cat VERSION.txt
 	${PREFIX}bumpversion major
+	cat VERSION.txt
 
 .PHONY: bump-patch-dry
 bump-patch-dry: ${_INSTALL_DEV} #CMD Bump patch component of version number (x.y.Z), without git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment patch component (dry run)"
+	cat VERSION.txt
 	${PREFIX}bumpversion patch --no-commit --no-tag
+	cat VERSION.txt
 
 .PHONY: bump-minor-dry
 bump-minor-dry: ${_INSTALL_DEV} #CMD Bump minor component of version number (x.Y.z), without git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment minor component (dry run)"
+	cat VERSION.txt
 	${PREFIX}bumpversion minor --no-commit --no-tag
+	cat VERSION.txt
 
 .PHONY: bump-major-dry
 bump-major-dry: ${_INSTALL_DEV} #CMD Bump minor component of version number (X.y.z), without git commit and tag
 	@echo -e "${ECHO_PREFIX}bumping version number: increment major component (dry run)"
+	cat VERSION.txt
 	${PREFIX}bumpversion major --no-commit --no-tag
+	cat VERSION.txt
 
 #==============================================================================
 # Formatting and linting
