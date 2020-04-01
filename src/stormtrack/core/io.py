@@ -1864,8 +1864,7 @@ def rebuild_features(
             break
     else:
         raise Exception(
-            f"missing '{feature_name}' feature data ({target_key}) among "
-            f"{sorted(jdat.keys()}"
+            f"missing '{feature_name}' feature data ({target_key}) among {sorted(jdat)}"
         )
     timesteps = sorted(timesteps)
     period = f"{min(timesteps)}..{max(timesteps)}"
