@@ -1,6 +1,8 @@
 __init__.py
 distance.pxd
 distance.pyx
+grid.pxd
+grid.pyx
 identification.pxd
 identification.pyx
 io.py

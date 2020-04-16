@@ -24,7 +24,108 @@ import logging as log
 # Third-party
 import numpy as np
 
+# sign
+# default_constants
+# cregion_get_unique_id
+# Constants
+# cregion_init
+# cregion_insert_pixels_coords
+# _cregion_create_pixels
+# cregion_insert_pixel
+# cregion_insert_pixel_nogil
+# cregion_remove_pixel
+# cregion_remove_pixel_nogil
+# _cregion_remove_pixel_from_pixels
+# _cregion_remove_pixel_from_pixels_nogil
+# _cregion_remove_pixel_from_shells
+# _cregion_remove_pixel_from_shells_nogil
+# _cregion_remove_pixel_from_holes
+# _cregion_remove_pixel_from_holes_nogil
+# cregion_pixels_remove_gaps
+# cregion_pixels_remove_gaps_nogil
+# _cregion_shell_remove_gaps
+# _cregion_shell_remove_gaps_nogil
+# _cregion_hole_remove_gaps
+# _cregion_hole_remove_gaps_nogil
+# _cregion_insert_shell_pixel
+# _cregion_insert_hole_pixel
+# _cregion_reconnect_pixel
+# _cregion_extend_pixels
+# _cregion_extend_pixels_nogil
+# _cregion_extend_shell
+# _cregion_extend_hole
+# _cregion_extend_shells
+# _cregion_extend_holes
+# _cregion_new_shell
+# _cregion_new_hole
+# _cregion_add_connected
+# _cregion_extend_connected
+# cregion_reset
+# _cpixel_unlink_region
+# _cregion_reset_connected
+# cregion_remove_connected
+# cregion_cleanup
+# cregion_merge
+# cregion_determine_boundaries
+# cregions_determine_boundaries
+# _cregion_determine_boundaries_core
+# _reconstruct_boundaries
+# _find_link_to_continue
+# categorize_boundaries
+# neighbor_pixel_angle
+# _extract_closed_path
+# categorize_boundary_is_shell
+# boundary_must_be_a_shell
+# cregion_check_validity
+# cregion_northernmost_pixel
+# cregions_find_northernmost_uncategorized_region
+# cregion_reset_boundaries
+# _determine_boundary_pixels_raw
+# _collect_neighbors
+# cpixel_get_neighbor
+# _cpixel_get_neighbor
+# cregion_overlaps
+# cregion_overlaps_tables
+# cregion_overlap_n
+# cregion_overlap_n_tables
+# _cregion_overlap_core
+# cregion_overlap_n_mask
+# cregion_determine_bbox
+# cregions_get_unique_id
+# cregions_init
+# cregions_create
+# cregions_link_region
+# cregions_extend
+# cregions_move
+# cregions_reset
+# cregions_cleanup
+# cregions_connect
+# cregions_find_connected
+# dbg_check_connected
+# cpixel_set_region
+# cpixels_reset
+# cpixel2d_create
+# cregions_store_get_new_region
+# cregions_store_reset
+# cregions_store_extend
+# cregions_store_cleanup
+# Grid
+# grid_create
+# grid_reset
+# grid_cleanup
+# grid_create_pixels
+# grid_set_values
+# grid_new_region
+# grid_new_regions
+# \<\(sign\|default_constants\|cregion_get_unique_id\|Constants\|cregion_init\|cregion_insert_pixels_coords\|_cregion_create_pixels\|cregion_insert_pixel\|cregion_insert_pixel_nogil\|cregion_remove_pixel\|cregion_remove_pixel_nogil\|_cregion_remove_pixel_from_pixels\|_cregion_remove_pixel_from_pixels_nogil\|_cregion_remove_pixel_from_shells\|_cregion_remove_pixel_from_shells_nogil\|_cregion_remove_pixel_from_holes\|_cregion_remove_pixel_from_holes_nogil\|cregion_pixels_remove_gaps\|cregion_pixels_remove_gaps_nogil\|_cregion_shell_remove_gaps\|_cregion_shell_remove_gaps_nogil\|_cregion_hole_remove_gaps\|_cregion_hole_remove_gaps_nogil\|_cregion_insert_shell_pixel\|_cregion_insert_hole_pixel\|_cregion_reconnect_pixel\|_cregion_extend_pixels\|_cregion_extend_pixels_nogil\|_cregion_extend_shell\|_cregion_extend_hole\|_cregion_extend_shells\|_cregion_extend_holes\|_cregion_new_shell\|_cregion_new_hole\|_cregion_add_connected\|_cregion_extend_connected\|cregion_reset\|_cpixel_unlink_region\|_cregion_reset_connected\|cregion_remove_connected\|cregion_cleanup\|cregion_merge\|cregion_determine_boundaries\|cregions_determine_boundaries\|_cregion_determine_boundaries_core\|_reconstruct_boundaries\|_find_link_to_continue\|categorize_boundaries\|neighbor_pixel_angle\|_extract_closed_path\|categorize_boundary_is_shell\|boundary_must_be_a_shell\|cregion_check_validity\|cregion_northernmost_pixel\|cregions_find_northernmost_uncategorized_region\|cregion_reset_boundaries\|_determine_boundary_pixels_raw\|_collect_neighbors\|cpixel_get_neighbor\|_cpixel_get_neighbor\|cregion_overlaps\|cregion_overlaps_tables\|cregion_overlap_n\|cregion_overlap_n_tables\|_cregion_overlap_core\|cregion_overlap_n_mask\|cregion_determine_bbox\|cregions_get_unique_id\|cregions_init\|cregions_create\|cregions_link_region\|cregions_extend\|cregions_move\|cregions_reset\|cregions_cleanup\|cregions_connect\|cregions_find_connected\|dbg_check_connected\|cpixel_set_region\|cpixels_reset\|cpixel2d_create\|cregions_store_get_new_region\|cregions_store_reset\|cregions_store_extend\|cregions_store_cleanup\|Grid\|grid_create\|grid_reset\|grid_cleanup\|grid_create_pixels\|grid_set_values\|grid_new_region\|grid_new_regions\)\>
 
+
+# CALL <
+# CALLERS:
+# typedefs::categorize_boundaries
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef inline int sign(int num):
     if num >= 0:
         return 1
@@ -32,8 +133,14 @@ cdef inline int sign(int num):
         return -1
 
 
-# SR_TODO remove nx, ny (use from Grid)
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::Constants
+# CALL >
 cpdef Constants default_constants(
+    # SR_TODO remove nx, ny (use from Grid)
     int nx, int ny, int connectivity=4, int n_neighbors_max=8,
 ):
     return Constants(
@@ -41,11 +148,31 @@ cpdef Constants default_constants(
     )
 
 
-# SR_TODO move nx, ny out of Constants (use from Grid)
+# CALL <
+# CALLERS:
+# typedefs::_determine_boundary_pixels_raw
+# typedefs::cregions_store_extend
+# CALLING:
+# typedefs::NONE
+# CALL >
+cdef np.uint64_t cregion_get_unique_id():
+    global CREGION_NEXT_ID
+    cdef np.uint64_t rid = CREGION_NEXT_ID
+    CREGION_NEXT_ID += 1
+    return rid
+
+
+# CALL <
+# CALLERS:
+# typedefs::default_constants
+# typedefs::Grid::__cinit__
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef class Constants:
 
     def __cinit__(self,
-        # SR_TMP < TODO remove
+        # SR_TMP < TODO remove (use from Grid)
         int nx,
         int ny,
         # SR_TMP >
@@ -64,202 +191,13 @@ cdef class Constants:
         return &(self._cconstants)
 
 
-cdef class Grid:
-    def __cinit__(self,
-        Constants constants,
-        np.float32_t val = 0,
-        bint alloc_tables = False,
-        int n_slots = -1,
-    ):
-        fld = np.full([constants.nx, constants.ny], val, np.float32)
-        self._cgrid = grid_create(fld, constants.to_c()[0])
-        self.constants = constants
-
-        # SR_TMP < TODO cleaner implementation
-        if alloc_tables:
-            if n_slots < 0:
-                raise ValueError("must pass n_slots >= 0 to alloc tables")
-            neighbor_link_stat_table_alloc(
-                &self._cgrid.neighbor_link_stat_table, &self._cgrid.constants,
-            )
-            pixel_status_table_alloc(
-                &self._cgrid.pixel_status_table, &self._cgrid.constants,
-            )
-            pixel_region_table_alloc(
-                &self._cgrid.pixel_region_table, n_slots, &self._cgrid.constants,
-            )
-        # SR_TMP >
-
-    def __dealloc__(self):
-        grid_cleanup(&self._cgrid)
-
-    cpdef void set_values(self, np.ndarray[np.float32_t, ndim=2] fld):
-        grid_set_values(&self._cgrid, fld)
-
-    cpdef void reset(self):
-        grid_reset(&self._cgrid)
-
-    cdef cGrid* to_c(self):
-        return &(self._cgrid)
-
-    cdef void reset_tables(self):
-        if self._cgrid.neighbor_link_stat_table is not NULL:
-            neighbor_link_stat_table_reset(
-                self._cgrid.neighbor_link_stat_table, &self._cgrid.constants,
-            )
-        if self._cgrid.pixel_status_table is not NULL:
-            pixel_status_table_reset(
-                self._cgrid.pixel_status_table, self.constants.nx, self.constants.ny,
-            )
-        if self._cgrid.pixel_region_table is not NULL:
-            pixel_region_table_reset(
-                self._cgrid.pixel_region_table, self.constants.nx, self.constants.ny,
-            )
-
-
-cdef cGrid grid_create(np.float32_t[:, :] fld, cConstants constants) except *:
-    # SR_TMP <
-    # print("< GRID CREATE") # SR_DBG
-    # SR_TMP >
-    cdef cGrid grid = grid_create_empty(constants)
-    grid_create_pixels(&grid, fld)
-    return grid
-
-
-cdef void grid_reset(cGrid* grid) except *:
-    cpixels_reset(grid.pixels, grid.constants.nx, grid.constants.ny)
-    cregions_store_reset(&grid._regions)
-    if grid.pixel_region_table is not NULL:
-        pixel_region_table_reset(
-            grid.pixel_region_table, grid.constants.nx, grid.constants.ny,
-        )
-    if grid.pixel_status_table is not NULL:
-        pixel_status_table_reset(
-            grid.pixel_status_table, grid.constants.nx, grid.constants.ny,
-        )
-    if grid.pixel_done_table is not NULL:
-        log.error("not implemented: grid_reset/pixel_done_table_reset")
-        exit(4)
-        # pixel_done_table_reset(grid.pixel_done_table, cregion)
-    if grid.neighbor_link_stat_table is not NULL:
-        neighbor_link_stat_table_reset(
-            grid.neighbor_link_stat_table, &grid.constants,
-        )
-
-
-cdef void grid_cleanup(cGrid* grid) except *:
-    # print("< GRID CLEANUP") # SR_DBG
-    grid.timestep = 0
-
-    cdef int i
-    if grid.pixels is not NULL:
-        for i in range(grid.constants.nx):
-            free(grid.pixels[i])
-        free(grid.pixels)
-        grid.pixels = NULL
-
-    if grid.pixel_region_table is not NULL:
-        pixel_region_table_cleanup(
-            grid.pixel_region_table, grid.constants.nx, grid.constants.ny,
-        )
-        grid.pixel_region_table = NULL
-
-    if grid.pixel_status_table is not NULL:
-        pixel_status_table_cleanup(grid.pixel_status_table, grid.constants.nx)
-        grid.pixel_status_table = NULL
-
-    if grid.pixel_done_table is not NULL:
-        pixel_done_table_cleanup(grid.pixel_done_table, &grid.constants)
-        grid.pixel_done_table = NULL
-
-    if grid.neighbor_link_stat_table is not NULL:
-        neighbor_link_stat_table_cleanup(
-            grid.neighbor_link_stat_table, grid.constants.nx, grid.constants.ny,
-        )
-        grid.neighbor_link_stat_table = NULL
-
-    cregions_store_cleanup(&grid._regions)
-
-
-@boundscheck(False)
-@wraparound(False)
-cdef void grid_create_pixels(cGrid* grid, np.float32_t[:, :] fld) except *:
-    cdef bint debug=False
-    if debug:
-        log.debug(f"< grid_create_pixels {grid.constants.nx}x{grid.constants.ny}")
-    cdef int i
-    cdef int j
-    cdef int k
-    cdef int n_neigh
-    cdef cPixel* cpixel
-
-    # Create pixels
-    grid.pixels = <cPixel**>malloc(grid.constants.nx*sizeof(cPixel*))
-    for i in prange(grid.constants.nx, nogil=True):
-        grid.pixels[i] = cpixel2d_create(grid.constants.ny)
-        for j in range(grid.constants.ny):
-            cpixel = &grid.pixels[i][j]
-            cpixel.id = i*grid.constants.ny + j
-            cpixel.x = i
-            cpixel.y = j
-            cpixel.v = fld[i, j]
-            cpixel.connectivity = grid.constants.connectivity
-
-    # Determine numbers of neighbors
-    for i in range(grid.constants.nx):
-        for j in range(grid.constants.ny):
-            cpixel = &grid.pixels[i][j]
-            n_neigh = _collect_neighbors(
-                i,
-                j,
-                cpixel.neighbors,
-                grid.pixels,
-                &grid.constants,
-                grid.constants.connectivity,
-            )
-            cpixel.neighbors_n = n_neigh
-
-
-@boundscheck(False)
-@wraparound(False)
-cdef void grid_set_values(cGrid* grid, np.float32_t[:, :] fld) except *:
-    cdef bint debug=False
-    if debug:
-        log.debug(f"< grid_set_values {grid.constants.nx}x{grid.constants.ny}")
-    cdef int i
-    cdef int j
-    cdef int k
-    cdef int n_neigh
-    cdef cPixel* cpixel
-    for i in prange(grid.constants.nx, nogil=True):
-        for j in range(grid.constants.ny):
-            cpixel = &grid.pixels[i][j]
-            cpixel.v = fld[i, j]
-
-
-cdef cRegion* grid_new_region(cGrid* grid) except *:
-    return cregions_store_get_new_region(&grid._regions)
-
-
-cdef cRegions grid_new_regions(cGrid* grid, int n) except *:
-    cdef int i
-    cdef cRegions cregions = cregions_create(n)
-    cdef cRegion* cregion
-    for i in range(n):
-        cregion = grid_new_region(grid)
-        cregions_link_region(
-            &cregions, cregion, cleanup=False, unlink_pixels=False,
-        )
-    return cregions
-
-
-cdef np.uint64_t cregion_get_unique_id():
-    global CREGION_NEXT_ID
-    cdef np.uint64_t rid = CREGION_NEXT_ID
-    CREGION_NEXT_ID += 1
-    return rid
-
-
+# CALL <
+# CALLERS:
+# typedefs::_determine_boundary_pixels_raw
+# typedefs::cregions_store_extend
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void cregion_init(cRegion* cregion, cRegionConf cregion_conf, np.uint64_t rid):
     cdef int i
     cdef int j
@@ -343,6 +281,12 @@ cdef void cregion_init(cRegion* cregion, cRegionConf cregion_conf, np.uint64_t r
                     cregion.holes[i][j] = NULL
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::cregion_insert_pixel
+# CALL >
 @boundscheck(False)
 @wraparound(False)
 cdef void cregion_insert_pixels_coords(
@@ -365,6 +309,12 @@ cdef void cregion_insert_pixels_coords(
         cregion_insert_pixel(cregion, cpixel, link_region, unlink_pixels)
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::cpixel2d_create
+# CALL >
 cdef void _cregion_create_pixels(
     cRegion* cregion,
     int istart,
@@ -382,6 +332,16 @@ cdef void _cregion_create_pixels(
     cpixels = NULL
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_insert_pixels_coords
+# typedefs::cregion_merge
+# typedefs::_reconstruct_boundaries
+# CALLING:
+# typedefs::_cregion_extend_pixels
+# typedefs::cregion_remove_pixel
+# typedefs::cpixel_set_region
+# CALL >
 @profile(False)
 cdef void cregion_insert_pixel(
     cRegion* cregion,
@@ -411,7 +371,14 @@ cdef void cregion_insert_pixel(
         cpixel_set_region(cpixel, cregion)
 
 
-# SR_TMP_NOGIL
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::_cregion_extend_pixels_nogil
+# typedefs::cregion_remove_pixel_nogil
+# typedefs::cpixel_set_region
+# CALL >
 @profile(False)
 cdef void cregion_insert_pixel_nogil(
     cRegion* cregion, cPixel* cpixel, bint link_region, bint unlink_pixel,
@@ -435,6 +402,14 @@ cdef void cregion_insert_pixel_nogil(
         cpixel_set_region(cpixel, cregion)
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_insert_pixel
+# CALLING:
+# typedefs::_cregion_remove_pixel_from_pixels
+# typedefs::_cregion_remove_pixel_from_shells
+# typedefs::_cregion_remove_pixel_from_holes
+# CALL >
 @profile(False)
 cdef void cregion_remove_pixel(cRegion* cregion, cPixel* cpixel):
     cdef bint debug = False
@@ -445,7 +420,14 @@ cdef void cregion_remove_pixel(cRegion* cregion, cPixel* cpixel):
     _cregion_remove_pixel_from_holes(cregion, cpixel)
 
 
-# SR_TMP_NOGIL
+# CALL <
+# CALLERS:
+# typedefs::cregion_insert_pixel_nogil
+# CALLING:
+# typedefs::_cregion_remove_pixel_from_pixels_nogil
+# typedefs::_cregion_remove_pixel_from_shells_nogil
+# typedefs::_cregion_remove_pixel_from_holes_nogil
+# CALL >
 @profile(False)
 cdef void cregion_remove_pixel_nogil(cRegion* cregion, cPixel* cpixel) nogil:
     _cregion_remove_pixel_from_pixels_nogil(cregion, cpixel)
@@ -453,6 +435,12 @@ cdef void cregion_remove_pixel_nogil(cRegion* cregion, cPixel* cpixel) nogil:
     _cregion_remove_pixel_from_holes_nogil(cregion, cpixel)
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_remove_pixel
+# CALLING:
+# typedefs::NONE
+# CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_pixels(cRegion* cregion, cPixel* cpixel):
     # SR_DBG <
@@ -479,7 +467,12 @@ cdef inline void _cregion_remove_pixel_from_pixels(cRegion* cregion, cPixel* cpi
             break
 
 
-# SR_TMP_NOGIL
+# CALL <
+# CALLERS:
+# typedefs::cregion_remove_pixel_nogil
+# CALLING:
+# typedefs::NONE
+# CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_pixels_nogil(
     cRegion* cregion, cPixel* cpixel,
@@ -499,6 +492,12 @@ cdef inline void _cregion_remove_pixel_from_pixels_nogil(
             break
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_remove_pixel
+# CALLING:
+# typedefs::_cregion_shell_remove_gaps
+# CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_shells(cRegion* cregion, cPixel* cpixel):
     cdef int i
@@ -514,7 +513,12 @@ cdef inline void _cregion_remove_pixel_from_shells(cRegion* cregion, cPixel* cpi
                 break
 
 
-# SR_TMP_NOGIL
+# CALL <
+# CALLERS:
+# typedefs::cregion_remove_pixel_nogil
+# CALLING:
+# typedefs::_cregion_shell_remove_gaps_nogil
+# CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_shells_nogil(
     cRegion* cregion, cPixel* cpixel,
@@ -532,6 +536,12 @@ cdef inline void _cregion_remove_pixel_from_shells_nogil(
                 break
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_remove_pixel
+# CALLING:
+# typedefs::_cregion_hole_remove_gaps
+# CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_holes(cRegion* cregion, cPixel* cpixel):
     cdef int i
@@ -547,7 +557,12 @@ cdef inline void _cregion_remove_pixel_from_holes(cRegion* cregion, cPixel* cpix
             return
 
 
-# SR_TMP_NOGIL
+# CALL <
+# CALLERS:
+# typedefs::cregion_remove_pixel_nogil
+# CALLING:
+# typedefs::_cregion_hole_remove_gaps_nogil
+# CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_holes_nogil(
     cRegion* cregion, cPixel* cpixel,
@@ -565,6 +580,12 @@ cdef inline void _cregion_remove_pixel_from_holes_nogil(
             return
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_extend_pixels
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef inline void cregion_pixels_remove_gaps(cRegion* cregion, int i_start):
     cdef int i
     cdef int j = i_start
@@ -578,7 +599,12 @@ cdef inline void cregion_pixels_remove_gaps(cRegion* cregion, int i_start):
     cregion.pixels_iend = cregion.pixels_n
 
 
-# SR_TMP_NOGIL
+# CALL <
+# CALLERS:
+# typedefs::_cregion_extend_pixels_nogil
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef inline void cregion_pixels_remove_gaps_nogil(cRegion* cregion, int i_start) nogil:
     cdef int i
     cdef int j = i_start
@@ -592,6 +618,12 @@ cdef inline void cregion_pixels_remove_gaps_nogil(cRegion* cregion, int i_start)
     cregion.pixels_iend = cregion.pixels_n
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_remove_pixel_from_shells
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef inline void _cregion_shell_remove_gaps(cRegion* cregion, int i_shell, int i_start):
     cdef int i
     cdef int d = 0
@@ -607,7 +639,12 @@ cdef inline void _cregion_shell_remove_gaps(cRegion* cregion, int i_shell, int i
         cregion.shells[i_shell][i] = NULL
 
 
-# SR_TMP_NOGIL
+# CALL <
+# CALLERS:
+# typedefs::_cregion_remove_pixel_from_shells_nogil
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef inline void _cregion_shell_remove_gaps_nogil(
     cRegion* cregion, int i_shell, int i_start,
 ) nogil:
@@ -625,6 +662,12 @@ cdef inline void _cregion_shell_remove_gaps_nogil(
         cregion.shells[i_shell][i] = NULL
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_remove_pixel_from_holes
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef inline void _cregion_hole_remove_gaps(cRegion* cregion, int i_hole, int i_start):
     cdef int i
     cdef int d=0
@@ -640,7 +683,12 @@ cdef inline void _cregion_hole_remove_gaps(cRegion* cregion, int i_hole, int i_s
         cregion.holes[i_hole][i] = NULL
 
 
-# SR_TMP_NOGIL
+# CALL <
+# CALLERS:
+# typedefs::_cregion_remove_pixel_from_holes_nogil
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef inline void _cregion_hole_remove_gaps_nogil(
     cRegion* cregion, int i_hole, int i_start,
 ) nogil:
@@ -658,6 +706,14 @@ cdef inline void _cregion_hole_remove_gaps_nogil(
         cregion.holes[i_hole][i] = NULL
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_extend_shell
+# typedefs::_cregion_determine_boundaries_core
+# CALLING:
+# typedefs::_cregion_extend_shell
+# typedefs::_cregion_reconnect_pixel
+# CALL >
 cdef void _cregion_insert_shell_pixel(cRegion* cregion, int i_shell, cPixel* cpixel):
     # print(
     #     f"< _cregion_insert_shell_pixel: ({cpixel.x}, {cpixel.y}) -> {cregion.id} "
@@ -683,6 +739,14 @@ cdef void _cregion_insert_shell_pixel(cRegion* cregion, int i_shell, cPixel* cpi
         _cregion_reconnect_pixel(cregion, cpixel, warn=True)
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_extend_hole
+# typedefs::_cregion_determine_boundaries_core
+# CALLING:
+# typedefs::_cregion_extend_hole
+# typedefs::_cregion_reconnect_pixel
+# CALL >
 cdef void _cregion_insert_hole_pixel(cRegion* cregion, int i_hole, cPixel* cpixel):
     # print(
     #     f"< _cregion_insert_hole_pixel({i_hole}):
@@ -706,6 +770,13 @@ cdef void _cregion_insert_hole_pixel(cRegion* cregion, int i_hole, cPixel* cpixe
         _cregion_reconnect_pixel(cregion, cpixel, warn=True)
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_insert_shell_pixel
+# typedefs::_cregion_insert_hole_pixel
+# CALLING:
+# typedefs::cpixel_set_region
+# CALL >
 cdef void _cregion_reconnect_pixel(
     cRegion* cregion, cPixel* cpixel, bint warn,
 ):
@@ -729,6 +800,12 @@ cdef void _cregion_reconnect_pixel(
     cpixel_set_region(cpixel, cregion)
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_insert_pixel
+# CALLING:
+# typedefs::cregion_pixels_remove_gaps
+# CALL >
 cdef void _cregion_extend_pixels(cRegion* cregion):
     cdef int i
     cdef int factor = 2
@@ -758,7 +835,12 @@ cdef void _cregion_extend_pixels(cRegion* cregion):
     cregion.pixels_max = nmax_new
 
 
-# SR_TMP_NOGIL
+# CALL <
+# CALLERS:
+# typedefs::cregion_insert_pixel_nogil
+# CALLING:
+# typedefs::cregion_pixels_remove_gaps_nogil
+# CALL >
 cdef void _cregion_extend_pixels_nogil(cRegion* cregion) nogil:
     cdef int i
     cdef int factor = 2
@@ -788,6 +870,12 @@ cdef void _cregion_extend_pixels_nogil(cRegion* cregion) nogil:
     cregion.pixels_max = nmax_new
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_insert_pixel_nogil
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void _cregion_extend_shell(cRegion* cregion, int i_shell):
     if i_shell > cregion.shells_n:
         raise Exception(
@@ -814,6 +902,13 @@ cdef void _cregion_extend_shell(cRegion* cregion, int i_shell):
     # print("< _cregion_extend_shell")
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_insert_hole_pixel
+# typedefs::_cregion_new_hole
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void _cregion_extend_hole(cRegion* cregion, int i_hole):
     if i_hole > cregion.holes_n:
         raise Exception(
@@ -838,6 +933,12 @@ cdef void _cregion_extend_hole(cRegion* cregion, int i_hole):
     # print("< _cregion_extend_hole")
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_new_shell
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void _cregion_extend_shells(cRegion* cregion):
     cdef int i
     cdef int nmax_old = cregion.shells_max
@@ -873,6 +974,12 @@ cdef void _cregion_extend_shells(cRegion* cregion):
     # print("< _cregion_extend_shells")
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_new_hole
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void _cregion_extend_holes(cRegion* cregion):
     cdef int i
     cdef int nmax_old = cregion.holes_max
@@ -908,6 +1015,13 @@ cdef void _cregion_extend_holes(cRegion* cregion):
     # print("< _cregion_extend_holes")
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_determine_boundaries_core
+# CALLING:
+# typedefs::_cregion_extend_shells
+# typedefs::_cregion_extend_shell
+# CALL >
 cdef void _cregion_new_shell(cRegion* cregion):
     # print(f"< _cregion_new_shell {cregion.shells_n}/{cregion.shells_max}")
     if cregion.shells_max == 0:
@@ -919,6 +1033,13 @@ cdef void _cregion_new_shell(cRegion* cregion):
         _cregion_extend_shells(cregion)
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_determine_boundaries_core
+# CALLING:
+# typedefs::_cregion_extend_holes
+# typedefs::_cregion_extend_hole
+# CALL >
 cdef void _cregion_new_hole(cRegion* cregion):
     # print(f"< _cregion_new_hole {cregion.holes_n}/{cregion.holes_max}")
     if cregion.holes_max == 0:
@@ -930,6 +1051,12 @@ cdef void _cregion_new_hole(cRegion* cregion):
         _cregion_extend_holes(cregion)
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregions_connect
+# CALLING:
+# typedefs::_cregion_extend_connected
+# CALL >
 cdef void _cregion_add_connected(cRegion* cregion, cRegion* cregion_other):
     # print(f"< _cregion_add_connected {cregion.id} <- {cregion_other.id} (no. {cregion.connected_n})")
     cdef int i
@@ -946,6 +1073,12 @@ cdef void _cregion_add_connected(cRegion* cregion, cRegion* cregion_other):
         _cregion_extend_connected(cregion)
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_add_connected
+# CALLING:
+# typedefs::TODO
+# CALL >
 cdef void _cregion_extend_connected(cRegion* cregion):
     cdef bint debug = False
     cdef int i
@@ -967,6 +1100,15 @@ cdef void _cregion_extend_connected(cRegion* cregion):
     free(tmp)
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_cleanup
+# typedefs::cregions_reset
+# typedefs::cregions_store_reset
+# CALLING:
+# typedefs::_cregion_reset_connected
+# typedefs::_cpixel_unlink_region
+# CALL >
 cdef void cregion_reset(cRegion* cregion, bint unlink_pixels, bint reset_connected):
     cdef bint debug = False
     if debug:
@@ -1017,6 +1159,12 @@ cdef void cregion_reset(cRegion* cregion, bint unlink_pixels, bint reset_connect
     cregion.holes_n = 0
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_reset
+# CALLING:
+# typedefs::cpixel_set_region
+# CALL >
 cdef inline void _cpixel_unlink_region(cPixel* cpixel, cRegion* cregion) nogil:
     if (
         cpixel is not NULL
@@ -1032,6 +1180,12 @@ cdef inline void _cpixel_unlink_region(cPixel* cpixel, cRegion* cregion) nogil:
         cpixel.is_feature_boundary = False
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_reset
+# CALLING:
+# typedefs::cregion_remove_connected
+# CALL >
 cdef inline void _cregion_reset_connected(cRegion* cregion, bint unlink):
     cdef int i
     for i in range(cregion.connected_n):
@@ -1042,6 +1196,12 @@ cdef inline void _cregion_reset_connected(cRegion* cregion, bint unlink):
     cregion.connected_n = 0
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_reset_connected
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void cregion_remove_connected(cRegion* cregion, cRegion* cregion_other):
     cdef int i
     cdef int j
@@ -1056,6 +1216,17 @@ cdef void cregion_remove_connected(cRegion* cregion, cRegion* cregion_other):
     cregion.connected[cregion.connected_n] = NULL
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_determine_boundaries_core
+# typedefs::cregion_merge
+# typedefs::cregions_cleanup
+# typedefs::cregions_link_region
+# typedefs::cregions_store_cleanup
+# typedefs::_reconstruct_boundaries
+# CALLING:
+# typedefs::cregion_reset
+# CALL >
 cdef void cregion_cleanup(cRegion* cregion, bint unlink_pixels, bint reset_connected):
     cdef bint debug = False
     if debug:
@@ -1114,6 +1285,13 @@ cdef void cregion_cleanup(cRegion* cregion, bint unlink_pixels, bint reset_conne
         log.debug("> cregion_cleanup")
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::cregion_insert_pixel
+# typedefs::cregion_cleanup
+# CALL >
 cdef cRegion* cregion_merge(cRegion* cregion1, cRegion* cregion2):
     cdef bint debug = False
     cdef int i
@@ -1129,6 +1307,13 @@ cdef cRegion* cregion_merge(cRegion* cregion1, cRegion* cregion2):
     return cregion1
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::cregions_create
+# typedefs::cregions_determine_boundaries
+# CALL >
 cdef void cregion_determine_boundaries(cRegion* cregion, cGrid* grid) except *:
     cdef cRegions cregions = cregions_create(1)
     cregions.n = 1
@@ -1137,6 +1322,13 @@ cdef void cregion_determine_boundaries(cRegion* cregion, cGrid* grid) except *:
     free(cregions.regions)
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_determine_boundaries
+# CALLING:
+# typedefs::cregion_reset_boundaries
+# typedefs::_cregion_determine_boundaries_core
+# CALL >
 cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except *:
     cdef bint debug = False
     if debug:
@@ -1168,6 +1360,21 @@ cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except 
         log.warning(f"{n_empty}/{cregions.n} regions empty")
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregions_determine_boundaries
+# CALLING:
+# typedefs::categorize_boundaries
+# typedefs::cpixel_set_region
+# typedefs::cregion_cleanup
+# typedefs::_cregion_insert_hole_pixel
+# typedefs::_cregion_insert_shell_pixel
+# typedefs::_cregion_new_hole
+# typedefs::_cregion_new_shell
+# typedefs::cregions_cleanup
+# typedefs::_determine_boundary_pixels_raw
+# typedefs::_reconstruct_boundaries
+# CALL >
 cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) except *:
     cdef bint debug = False
     if debug:
@@ -1315,6 +1522,19 @@ cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) exce
     cregions_cleanup(&cboundaries, cleanup_regions=True)
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_determine_boundaries_core
+# CALLING:
+# typedefs::cregion_cleanup
+# typedefs::cregion_insert_pixel
+# typedefs::cregion_northernmost_pixel
+# typedefs::cregions_create
+# typedefs::cregions_link_region
+# typedefs::_extract_closed_path
+# typedefs::_find_link_to_continue
+# typedefs::grid_new_region
+# CALL >
 cdef cRegions _reconstruct_boundaries(
         cRegion* boundary_pixels,
         cGrid* grid,
@@ -1569,6 +1789,12 @@ cdef cRegions _reconstruct_boundaries(
     return boundaries
 
 
+# CALL <
+# CALLERS:
+# typedefs::_reconstruct_boundaries
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef bint _find_link_to_continue(
     cPixel** cpixel,
     np.uint8_t *i_neighbor,
@@ -1619,6 +1845,17 @@ cdef bint _find_link_to_continue(
     return done
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_determine_boundaries_core
+# CALLING:
+# typedefs::boundary_must_be_a_shell
+# typedefs::categorize_boundary_is_shell
+# typedefs::cregion_check_validity
+# typedefs::cregions_find_northernmost_uncategorized_region
+# typedefs::neighbor_pixel_angle
+# typedefs::sign
+# CALL >
 cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
     cdef bint debug = False
     if debug:
@@ -1849,6 +2086,12 @@ cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
     return boundary_is_shell
 
 
+# CALL <
+# CALLERS:
+# typedefs::categorize_boundaries
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef int neighbor_pixel_angle(
     cPixel* cpixel1, cPixel* cpixel2, bint minus=True,
 ) except -1:
@@ -1885,6 +2128,12 @@ cdef int neighbor_pixel_angle(
     return angle
 
 
+# CALL <
+# CALLERS:
+# typedefs::_reconstruct_boundaries
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef bint _extract_closed_path(cRegion* boundary):
     """Extract the longest closed segment (return value indicates success).
 
@@ -2027,6 +2276,12 @@ cdef bint _extract_closed_path(cRegion* boundary):
     return True
 
 
+# CALL <
+# CALLERS:
+# typedefs::categorize_boundaries
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void categorize_boundary_is_shell(
     int ib_sel, int* d_angles, int n_da, bint* boundary_is_shell,
 ):
@@ -2052,6 +2307,12 @@ cdef void categorize_boundary_is_shell(
         )
 
 
+# CALL <
+# CALLERS:
+# typedefs::categorize_boundaries
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef bint boundary_must_be_a_shell(int n_pixels_eff, cGrid* grid):
     """Check whether a boundary is too short to be a hole.
 
@@ -2073,6 +2334,12 @@ cdef bint boundary_must_be_a_shell(int n_pixels_eff, cGrid* grid):
         exit(1)
 
 
+# CALL <
+# CALLERS:
+# typedefs::categorize_boundaries
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void cregion_check_validity(cRegion* cregion, int idx) except *:
     """Check the validity of a cregion."""
     cdef cPixel* cpixel = cregion.pixels[0]
@@ -2084,6 +2351,13 @@ cdef void cregion_check_validity(cRegion* cregion, int idx) except *:
         )
 
 
+# CALL <
+# CALLERS:
+# typedefs::_reconstruct_boundaries
+# typedefs::cregions_find_northernmost_uncategorized_region
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef cPixel* cregion_northernmost_pixel(cRegion* cregion):
     """Find northwesternmost pixel (northmost has priority)."""
     cdef cPixel* selection = NULL
@@ -2103,6 +2377,12 @@ cdef cPixel* cregion_northernmost_pixel(cRegion* cregion):
     return selection
 
 
+# CALL <
+# CALLERS:
+# typedefs::categorize_boundaries
+# CALLING:
+# typedefs::cregion_northernmost_pixel
+# CALL >
 cdef int cregions_find_northernmost_uncategorized_region(
     cRegions* boundaries, bint* categorized,
 ):
@@ -2123,6 +2403,12 @@ cdef int cregions_find_northernmost_uncategorized_region(
     return ib_sel
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregions_determine_boundaries
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void cregion_reset_boundaries(cRegion* cregion):
     cdef int i_pixel
     cdef int i_shell
@@ -2145,6 +2431,15 @@ cdef void cregion_reset_boundaries(cRegion* cregion):
     cregion.holes_n = 0
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_determine_boundaries_core
+# CALLING:
+# typedefs::cregion_init
+# typedefs::cregion_get_unique_id
+# typedefs::_collect_neighbors
+# typedefs::cregion_insert_pixel
+# CALL >
 cdef cRegion _determine_boundary_pixels_raw(cRegion* cregion, cGrid* grid):
     """Determine all boundary pixels of a feature, regardless which boundary.
 
@@ -2302,6 +2597,13 @@ cdef cRegion _determine_boundary_pixels_raw(cRegion* cregion, cGrid* grid):
     return boundary_pixels
 
 
+# CALL <
+# CALLERS:
+# typedefs::_determine_boundary_pixels_raw
+# typedefs::grid_create_pixels
+# CALLING:
+# typedefs::_cpixel_get_neighbor
+# CALL >
 @profile(False)
 @boundscheck(False)
 @wraparound(False)
@@ -2335,6 +2637,12 @@ cdef inline int _collect_neighbors(
     return n_neighbors
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::_cpixel_get_neighbor
+# CALL >
 cdef cPixel* cpixel_get_neighbor(
     cPixel* cpixel,
     int index,
@@ -2346,6 +2654,13 @@ cdef cPixel* cpixel_get_neighbor(
     return _cpixel_get_neighbor(cpixel, index, cpixels, nx, ny, connectivity)
 
 
+# CALL <
+# CALLERS:
+#   typedefs:_collect_neighbors
+#   typedefs:cpixel_get_neighbor
+# CALLING:
+# typedefs::NONE
+# CALL >
 @profile(False)
 @boundscheck(False)
 @wraparound(False)
@@ -2423,6 +2738,12 @@ cdef inline cPixel* _cpixel_get_neighbor(
     return NULL
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::_cregion_overlap_core
+# CALL >
 cdef bint cregion_overlaps(cRegion* cregion, cRegion* cregion_other):
     """Check whether two cregions overlap cregions."""
     cdef int n = _cregion_overlap_core(
@@ -2433,6 +2754,12 @@ cdef bint cregion_overlaps(cRegion* cregion, cRegion* cregion_other):
     return False
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::_cregion_overlap_core
+# CALL >
 cdef bint cregion_overlaps_tables(
     cRegion* cregion,
     cRegion* cregion_other,
@@ -2444,6 +2771,12 @@ cdef bint cregion_overlaps_tables(
     )
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::_cregion_overlap_core
+# CALL >
 cdef int cregion_overlap_n(cRegion* cregion, cRegion* cregion_other):
     """Count overlapping pixels between two cregions."""
     return _cregion_overlap_core(
@@ -2451,6 +2784,12 @@ cdef int cregion_overlap_n(cRegion* cregion, cRegion* cregion_other):
     )
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::_cregion_overlap_core
+# CALL >
 cdef int cregion_overlap_n_tables(
     cRegion* cregion,
     cRegion* cregion_other,
@@ -2460,6 +2799,15 @@ cdef int cregion_overlap_n_tables(
     return _cregion_overlap_core(cregion, cregion_other, table, table_other, count=True)
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_overlap_n
+# typedefs::cregion_overlap_n_tables
+# typedefs::cregion_overlaps
+# typedefs::cregion_overlaps_tables
+# CALLING:
+# typedefs::cregion_determine_bbox
+# CALL >
 cdef int _cregion_overlap_core(
     cRegion* cregion,
     cRegion* cregion_other,
@@ -2555,6 +2903,12 @@ cdef int _cregion_overlap_core(
     return n_overlap
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::NONE
+# CALL >
 @boundscheck(False)
 @wraparound(False)
 cdef int cregion_overlap_n_mask(cRegion* cregion, np.ndarray[np.uint8_t, ndim=2] mask):
@@ -2569,6 +2923,12 @@ cdef int cregion_overlap_n_mask(cRegion* cregion, np.ndarray[np.uint8_t, ndim=2]
     return n
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_overlap_core
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void cregion_determine_bbox(
     cRegion* cregion, cPixel* lower_left, cPixel* upper_right,
 ):
@@ -2601,6 +2961,12 @@ cdef void cregion_determine_bbox(
                 upper_right.y = cpixel.y
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregions_create
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef np.uint64_t cregions_get_unique_id():
     global CREGIONS_NEXT_ID
     cdef np.uint64_t rid = CREGIONS_NEXT_ID
@@ -2608,6 +2974,12 @@ cdef np.uint64_t cregions_get_unique_id():
     return rid
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregions_create
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void cregions_init(cRegions* cregions):
     cregions.id = 99999999
     cregions.n = 0
@@ -2615,6 +2987,14 @@ cdef void cregions_init(cRegions* cregions):
     cregions.regions = NULL
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregion_determine_boundaries
+# typedefs::_reconstruct_boundaries
+# CALLING:
+# typedefs::cregions_get_unique_id
+# typedefs::cregions_init
+# CALL >
 cdef cRegions cregions_create(int nmax):
     cdef bint debug = False
     cdef np.uint64_t rid = cregions_get_unique_id()
@@ -2632,6 +3012,14 @@ cdef cRegions cregions_create(int nmax):
     return cregions
 
 
+# CALL <
+# CALLERS:
+# typedefs::_reconstruct_boundaries
+# typedefs::grid_new_regions
+# CALLING:
+# typedefs::cregions_extend
+# typedefs::cregion_cleanup
+# CALL >
 cdef void cregions_link_region(
     cRegions* cregions, cRegion* cregion, bint cleanup, bint unlink_pixels,
 ):
@@ -2653,6 +3041,12 @@ cdef void cregions_link_region(
     cregions.n += 1
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregions_link_region
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void cregions_extend(cRegions* cregions):
     cdef int i
     cdef int nmax_old
@@ -2681,6 +3075,12 @@ cdef void cregions_extend(cRegions* cregions):
     cregions.max = nmax_new
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void cregions_move(cRegions* source, cRegions* target):
     cdef bint debug = False
     if debug:
@@ -2695,6 +3095,12 @@ cdef void cregions_move(cRegions* source, cRegions* target):
     source.max = 0
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::cregion_reset
+# CALL >
 cdef void cregions_reset(cRegions* cregions):
     # print("< cregions_reset")
     cdef int i_region
@@ -2705,6 +3111,12 @@ cdef void cregions_reset(cRegions* cregions):
     cregions.n = 0
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_determine_boundaries_core
+# CALLING:
+# typedefs::cregion_cleanup
+# CALL >
 cdef void cregions_cleanup(cRegions* cregions, bint cleanup_regions):
     cdef bint debug = False
     if debug:
@@ -2731,12 +3143,26 @@ cdef void cregions_cleanup(cRegions* cregions, bint cleanup_regions):
     #     log.debug("> cregions_cleanup")
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregions_find_connected
+# CALLING:
+# typedefs::_cregion_add_connected
+# CALL >
 cdef void cregions_connect(cRegion* cregion1, cRegion* cregion2):
     # print(f"< cregions_connect {cregion1.id} {cregion2.id}")
     _cregion_add_connected(cregion1, cregion2)
     _cregion_add_connected(cregion2, cregion1)
 
 
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::_cregion_reset_connected
+# typedefs::cregions_connect
+# typedefs::dbg_check_connected
+# CALL >
 cdef void cregions_find_connected(
     cRegions* cregions, bint reset_existing, cConstants* constants,
 ) except *:
@@ -2831,6 +3257,12 @@ cdef void cregions_find_connected(
     dbg_check_connected(cregions, _name_+"(1)")  # SR_DBG_PERMANENT
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregions_find_connected
+# CALLING:
+# typedefs::NONE
+# CALL >
 # SR_DBG_PERMANENT
 cdef void dbg_check_connected(cRegions* cregions, str msg) except *:
     # print(f"dbg_check_connected_old {cregions.n} {msg}")
@@ -2862,6 +3294,16 @@ cdef void dbg_check_connected(cRegions* cregions, str msg) except *:
                 exit(8)
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cpixel_unlink_region
+# typedefs::_cregion_determine_boundaries_core
+# typedefs::cregion_insert_pixel
+# typedefs::cregion_insert_pixel_nogil
+# typedefs::_cregion_reconnect_pixel
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void cpixel_set_region(cPixel* cpixel, cRegion* cregion) nogil:
     cdef bint debug = False
     # DBG_BLOCK <
@@ -2875,6 +3317,12 @@ cdef void cpixel_set_region(cPixel* cpixel, cRegion* cregion) nogil:
     cpixel.region = cregion
 
 
+# CALL <
+# CALLERS:
+# typedefs::grid_reset
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef void cpixels_reset(cPixel** cpixels, np.int32_t nx, np.int32_t ny):
     cdef bint debug = False
     if debug:
@@ -2888,6 +3336,13 @@ cdef void cpixels_reset(cPixel** cpixels, np.int32_t nx, np.int32_t ny):
             cpixels[x][y].type = pixeltype_none
 
 
+# CALL <
+# CALLERS:
+# typedefs::_cregion_create_pixels
+# typedefs::grid_create_pixels
+# CALLING:
+# typedefs::NONE
+# CALL >
 cdef cPixel* cpixel2d_create(int n) nogil:
     cdef bint debug = False
     # DBG_BLOCK <
@@ -2916,6 +3371,12 @@ cdef cPixel* cpixel2d_create(int n) nogil:
     return cpixels
 
 
+# CALL <
+# CALLERS:
+# typedefs::grid_new_region
+# CALLING:
+# typedefs::cregions_store_extend
+# CALL >
 cdef cRegion* cregions_store_get_new_region(cRegionsStore* store):
 
     # Assess current situation
@@ -2955,6 +3416,12 @@ cdef cRegion* cregions_store_get_new_region(cRegionsStore* store):
     return cregion
 
 
+# CALL <
+# CALLERS:
+# typedefs::grid_reset
+# CALLING:
+# typedefs::cregion_reset
+# CALL >
 cdef void cregions_store_reset(cRegionsStore* store):
     cdef int i
     cdef int j
@@ -2967,6 +3434,13 @@ cdef void cregions_store_reset(cRegionsStore* store):
     store.i_next_region = 0
 
 
+# CALL <
+# CALLERS:
+# typedefs::cregions_store_get_new_region
+# CALLING:
+# typedefs::cregion_init
+# typedefs::cregion_get_unique_id
+# CALL >
 cdef void cregions_store_extend(cRegionsStore* store):
     cdef int i
     cdef int nold = store.n_blocks
@@ -2997,6 +3471,12 @@ cdef void cregions_store_extend(cRegionsStore* store):
     store.i_next_region = 0
 
 
+# CALL <
+# CALLERS:
+# typedefs::grid_cleanup
+# CALLING:
+# typedefs::cregion_cleanup
+# CALL >
 cdef void cregions_store_cleanup(cRegionsStore* store):
     cdef int i
     if store.blocks is not NULL:
@@ -3012,3 +3492,249 @@ cdef void cregions_store_cleanup(cRegionsStore* store):
     store.i_block = 0
     store.n_blocks = 0
     store.i_next_region = 0
+
+
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::Constants
+# typedefs::grid_create
+# typedefs::grid_cleanup
+# typedefs::grid_set_values
+# typedefs::grid_reset
+# CALL >
+cdef class Grid:
+    def __cinit__(self,
+        Constants constants,
+        np.float32_t val = 0,
+        bint alloc_tables = False,
+        int n_slots = -1,
+    ):
+        fld = np.full([constants.nx, constants.ny], val, np.float32)
+        self._cgrid = grid_create(fld, constants.to_c()[0])
+        self.constants = constants
+
+        # SR_TMP < TODO cleaner implementation
+        if alloc_tables:
+            if n_slots < 0:
+                raise ValueError("must pass n_slots >= 0 to alloc tables")
+            neighbor_link_stat_table_alloc(
+                &self._cgrid.neighbor_link_stat_table, &self._cgrid.constants,
+            )
+            pixel_status_table_alloc(
+                &self._cgrid.pixel_status_table, &self._cgrid.constants,
+            )
+            pixel_region_table_alloc(
+                &self._cgrid.pixel_region_table, n_slots, &self._cgrid.constants,
+            )
+        # SR_TMP >
+
+    def __dealloc__(self):
+        grid_cleanup(&self._cgrid)
+
+    cpdef void set_values(self, np.ndarray[np.float32_t, ndim=2] fld):
+        grid_set_values(&self._cgrid, fld)
+
+    cpdef void reset(self):
+        grid_reset(&self._cgrid)
+
+    cdef cGrid* to_c(self):
+        return &(self._cgrid)
+
+    cdef void reset_tables(self):
+        if self._cgrid.neighbor_link_stat_table is not NULL:
+            neighbor_link_stat_table_reset(
+                self._cgrid.neighbor_link_stat_table, &self._cgrid.constants,
+            )
+        if self._cgrid.pixel_status_table is not NULL:
+            pixel_status_table_reset(
+                self._cgrid.pixel_status_table, self.constants.nx, self.constants.ny,
+            )
+        if self._cgrid.pixel_region_table is not NULL:
+            pixel_region_table_reset(
+                self._cgrid.pixel_region_table, self.constants.nx, self.constants.ny,
+            )
+
+
+# CALL <
+# CALLERS:
+# typedefs::Grid::__cinit__
+# CALLING:
+# typedefs::grid_create_pixels
+# CALL >
+cdef cGrid grid_create(np.float32_t[:, :] fld, cConstants constants) except *:
+    # SR_TMP <
+    # print("< GRID CREATE") # SR_DBG
+    # SR_TMP >
+    cdef cGrid grid = grid_create_empty(constants)
+    grid_create_pixels(&grid, fld)
+    return grid
+
+
+# CALL <
+# CALLERS:
+# typedefs::Grid::reset
+# CALLING:
+# typedefs::cpixels_reset
+# typedefs::cregions_store_reset
+# CALL >
+cdef void grid_reset(cGrid* grid) except *:
+    cpixels_reset(grid.pixels, grid.constants.nx, grid.constants.ny)
+    cregions_store_reset(&grid._regions)
+    if grid.pixel_region_table is not NULL:
+        pixel_region_table_reset(
+            grid.pixel_region_table, grid.constants.nx, grid.constants.ny,
+        )
+    if grid.pixel_status_table is not NULL:
+        pixel_status_table_reset(
+            grid.pixel_status_table, grid.constants.nx, grid.constants.ny,
+        )
+    if grid.pixel_done_table is not NULL:
+        log.error("not implemented: grid_reset/pixel_done_table_reset")
+        exit(4)
+        # pixel_done_table_reset(grid.pixel_done_table, cregion)
+    if grid.neighbor_link_stat_table is not NULL:
+        neighbor_link_stat_table_reset(
+            grid.neighbor_link_stat_table, &grid.constants,
+        )
+
+
+# CALL <
+# CALLERS:
+# typedefs::Grid::__dealloc__
+# CALLING:
+# typedefs::cregions_store_cleanup
+# CALL >
+cdef void grid_cleanup(cGrid* grid) except *:
+    # print("< GRID CLEANUP") # SR_DBG
+    grid.timestep = 0
+
+    cdef int i
+    if grid.pixels is not NULL:
+        for i in range(grid.constants.nx):
+            free(grid.pixels[i])
+        free(grid.pixels)
+        grid.pixels = NULL
+
+    if grid.pixel_region_table is not NULL:
+        pixel_region_table_cleanup(
+            grid.pixel_region_table, grid.constants.nx, grid.constants.ny,
+        )
+        grid.pixel_region_table = NULL
+
+    if grid.pixel_status_table is not NULL:
+        pixel_status_table_cleanup(grid.pixel_status_table, grid.constants.nx)
+        grid.pixel_status_table = NULL
+
+    if grid.pixel_done_table is not NULL:
+        pixel_done_table_cleanup(grid.pixel_done_table, &grid.constants)
+        grid.pixel_done_table = NULL
+
+    if grid.neighbor_link_stat_table is not NULL:
+        neighbor_link_stat_table_cleanup(
+            grid.neighbor_link_stat_table, grid.constants.nx, grid.constants.ny,
+        )
+        grid.neighbor_link_stat_table = NULL
+
+    cregions_store_cleanup(&grid._regions)
+
+
+# CALL <
+# CALLERS:
+# typedefs::grid_create
+# CALLING:
+# typedefs::cpixel2d_create
+# typedefs::_collect_neighbors
+# CALL >
+@boundscheck(False)
+@wraparound(False)
+cdef void grid_create_pixels(cGrid* grid, np.float32_t[:, :] fld) except *:
+    cdef bint debug=False
+    if debug:
+        log.debug(f"< grid_create_pixels {grid.constants.nx}x{grid.constants.ny}")
+    cdef int i
+    cdef int j
+    cdef int k
+    cdef int n_neigh
+    cdef cPixel* cpixel
+
+    # Create pixels
+    grid.pixels = <cPixel**>malloc(grid.constants.nx*sizeof(cPixel*))
+    for i in prange(grid.constants.nx, nogil=True):
+        grid.pixels[i] = cpixel2d_create(grid.constants.ny)
+        for j in range(grid.constants.ny):
+            cpixel = &grid.pixels[i][j]
+            cpixel.id = i*grid.constants.ny + j
+            cpixel.x = i
+            cpixel.y = j
+            cpixel.v = fld[i, j]
+            cpixel.connectivity = grid.constants.connectivity
+
+    # Determine numbers of neighbors
+    for i in range(grid.constants.nx):
+        for j in range(grid.constants.ny):
+            cpixel = &grid.pixels[i][j]
+            n_neigh = _collect_neighbors(
+                i,
+                j,
+                cpixel.neighbors,
+                grid.pixels,
+                &grid.constants,
+                grid.constants.connectivity,
+            )
+            cpixel.neighbors_n = n_neigh
+
+
+# CALL <
+# CALLERS:
+# typedefs::Grid::set_values
+# CALLING:
+# typedefs::NONE
+# CALL >
+@boundscheck(False)
+@wraparound(False)
+cdef void grid_set_values(cGrid* grid, np.float32_t[:, :] fld) except *:
+    cdef bint debug=False
+    if debug:
+        log.debug(f"< grid_set_values {grid.constants.nx}x{grid.constants.ny}")
+    cdef int i
+    cdef int j
+    cdef int k
+    cdef int n_neigh
+    cdef cPixel* cpixel
+    for i in prange(grid.constants.nx, nogil=True):
+        for j in range(grid.constants.ny):
+            cpixel = &grid.pixels[i][j]
+            cpixel.v = fld[i, j]
+
+
+# CALL <
+# CALLERS:
+# typedefs::_reconstruct_boundaries
+# typedefs::grid_new_regions
+# CALLING:
+# typedefs::cregions_store_get_new_region
+# CALL >
+cdef cRegion* grid_new_region(cGrid* grid) except *:
+    return cregions_store_get_new_region(&grid._regions)
+
+
+# CALL <
+# CALLERS:
+# typedefs::NONE
+# CALLING:
+# typedefs::cregions_create
+# typedefs::cregions_link_region
+# typedefs::grid_new_region
+# CALL >
+cdef cRegions grid_new_regions(cGrid* grid, int n) except *:
+    cdef int i
+    cdef cRegions cregions = cregions_create(n)
+    cdef cRegion* cregion
+    for i in range(n):
+        cregion = grid_new_region(grid)
+        cregions_link_region(
+            &cregions, cregion, cleanup=False, unlink_pixels=False,
+        )
+    return cregions
