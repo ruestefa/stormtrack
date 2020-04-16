@@ -90,6 +90,28 @@ DEFAULT_TYPE_CODES = dict(
 # fmt: on
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def identify_features(
     fld,
     feature_name,
@@ -180,6 +202,28 @@ def identify_features(
     return features
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def find_features_2d_threshold_seeded(
     field_raw,
     *,
@@ -276,6 +320,28 @@ def find_features_2d_threshold_seeded(
         )
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef list _find_features_threshold_random_seeds(
     np.float32_t [:, :] field_raw,
     np.float32_t lower_threshold,
@@ -380,6 +446,28 @@ cdef list _find_features_threshold_random_seeds(
     return features
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef list c_find_features_2d_threshold_seeds(
     np.float32_t [:, :] field_raw,
     np.float32_t lower_threshold,
@@ -476,6 +564,28 @@ cdef list c_find_features_2d_threshold_seeds(
     return features
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void c_find_features_2d_threshold_seeds_core(
     np.float32_t[:, :] field_raw,
     cGrid* grid,
@@ -598,6 +708,28 @@ cdef void c_find_features_2d_threshold_seeds_core(
     if debug: log.debug("> c_find_features_2d_threshold_seeds_core")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void grow_cregion_rec(
     cPixel* cpixel_center,
     np.float32_t lower_threshold,
@@ -715,6 +847,28 @@ cdef void grow_cregion_rec(
         log.debug("> grow_cregion_rec")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef np.ndarray[np.int32_t, ndim=2] init_random_seeds(cGrid* grid):
     cdef np.ndarray[np.int32_t, ndim=2] inds = np.empty(
             [grid.constants.nx*grid.constants.ny, 2], dtype=np.int32,
@@ -729,6 +883,28 @@ cdef np.ndarray[np.int32_t, ndim=2] init_random_seeds(cGrid* grid):
     return inds
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef cPixel* pop_random_unassigned_pixel(
@@ -759,12 +935,56 @@ cdef cPixel* pop_random_unassigned_pixel(
     raise Exception(err)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 @cython.cdivision(True)
 cdef inline int random_int(int min, int max):
     # srand(42) # for testing
     return int(rand() / RAND_MAX * (max - 1))
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void cregions_merge_connected_inplace(
     cRegions* cregions,
     cGrid* grid,
@@ -860,6 +1080,29 @@ cdef cRegions cregions_merge_connected(
         log.debug("> cregions_merge_connected")
     return cregions_out
 
+
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void _cregions_merge_connected_core(
     cRegions* cregions_out,
     cRegions* cregions,
@@ -955,6 +1198,28 @@ cdef void _cregions_merge_connected_core(
         log.debug(f"\n+++ LOOP DONE +++ in {iter_i} iterations")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef int collect_pixels(
     cRegion** connected_regions,
     int connected_regions_n,
@@ -988,6 +1253,28 @@ cdef int collect_pixels(
     return i_pixels_feature
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 # SR_TODO eliminate (only used in old cyclone id code)
 cdef Feature create_feature(
     cPixel** pixels_feature,
@@ -1024,6 +1311,28 @@ cdef Feature create_feature(
     return feature
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef int cregion_collect_connected_regions(
     cRegions* cregions,
     cRegion** connected_regions,
@@ -1047,6 +1356,28 @@ cdef int cregion_collect_connected_regions(
     return connected_regions_n
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void _cregion_collect_connected_regions_rec(
     cRegions* cregions,
     cRegion** connected_regions,
@@ -1093,6 +1424,28 @@ cdef void _cregion_collect_connected_regions_rec(
         )
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void assign_cpixel(
     cPixel* cpixel,
     np.float32_t lower_threshold,
@@ -1126,6 +1479,28 @@ cdef void assign_cpixel(
         log.debug(f"> assign_cpixel ({cpixel.x}, {cpixel.y}) FEATURE {cregion.id}")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def find_features_2d_threshold(
     np.float32_t[:, :] field_raw,
     *,
@@ -1273,6 +1648,28 @@ def find_features_2d_threshold(
     return features
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void eliminate_regions_by_size(
     cRegions* cregions, int minsize, int maxsize,
 ) except *:
@@ -1303,6 +1700,28 @@ cdef void eliminate_regions_by_size(
     # print(f"> eliminate_regions_by_size ({nold} -> {nnew})")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 # SR_TODO: Consider 4 vs. 8 connectivity
 cdef inline cRegion* find_existing_region(
     cGrid* grid, np.int32_t x, np.int32_t y, int loop_order,
@@ -1410,6 +1829,28 @@ cdef inline cRegion* find_existing_region(
     return cregion
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 # SR_TODO add option to only merge features of the connecting pixels exceed
 # SR_TODO a certaion threshold (requires passing the field/values, obviously)
 def merge_adjacent_features(
@@ -1515,6 +1956,28 @@ def merge_adjacent_features(
     return merged_features
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef list feature_split_regiongrow(
     Feature feature,
     list seed_features,
@@ -1674,6 +2137,28 @@ cpdef list feature_split_regiongrow(
     return subfeatures
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef list features_grow(
     int n,
     list features,
@@ -1801,6 +2286,29 @@ cpdef list features_grow(
     if not inplace:
         return features_grown
 
+
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void cfeatures_grow_core(
     int ngrow, cRegions* cregions_orig, cRegions* cregions_grown, cGrid* grid,
 ) except *:
@@ -1953,6 +2461,28 @@ cdef void cfeatures_grow_core(
     if debug: log.debug("> cfeatures_grow_core")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef void _replace_feature_associations(
     Feature feature, list seed_features, list subfeatures,
 ) except *:
@@ -2104,6 +2634,28 @@ cpdef void _replace_feature_associations(
                     break
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def split_regiongrow_levels(
     features,
     levels,
@@ -2158,6 +2710,29 @@ def split_regiongrow_levels(
     )
     return subfeatures
 
+
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef list csplit_regiongrow_levels(
     list features,
     np.ndarray[np.float32_t, ndim=1] levels,
@@ -2338,6 +2913,29 @@ cdef list csplit_regiongrow_levels(
 
     return subfeatures
 
+
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void csplit_regiongrow_levels_core(
     cRegion* cfeature,
     cRegions* subfeatures_tmp,
@@ -2464,6 +3062,28 @@ cdef void csplit_regiongrow_levels_core(
     # print("> csplit_regiongrow_levels_core")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void extract_subregions_level(
     cRegion* cregion,
     cRegions* cregions_sub,
@@ -2609,6 +3229,28 @@ cdef void extract_subregions_level(
         log.debug(f"> extract_subregions_level {cregions_sub.n}")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void collect_adjacent_pixels(
     cPixel* cpixel,
     cRegion* cregion,
@@ -2661,6 +3303,28 @@ cdef void collect_adjacent_pixels(
     # print("> collect_adjacent_pixels")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void csplit_regiongrow_core(
     cRegion* cfeature,
     cRegions* cregions_seeds,
@@ -2794,6 +3458,28 @@ cdef void csplit_regiongrow_core(
         log.debug("> csplit_regiongrow_core")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void assert_no_unambiguously_assigned_pixels(
     cRegion* cfeature, np.int8_t** pixel_status_table,
 ) except *:
@@ -3033,6 +3719,28 @@ cdef void regiongrow_advance_boundary(
         log.debug("> regiongrow_advance_boundary")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void regiongrow_resolve_multi_assignments(
     cRegion* cregion_multi_assigned, cGrid* grid, int n_neighbors_max, bint debug,
 ) except *:
@@ -3111,6 +3819,28 @@ cdef void regiongrow_resolve_multi_assignments(
         log.debug("> regiongrow_resolve_multi_assignments")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef cRegionRankSlot* resolve_multi_assignment(
     cPixel* cpixel,
     cRegionRankSlots* selected_regions,
@@ -3173,6 +3903,28 @@ cdef cRegionRankSlot* resolve_multi_assignment(
     )
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 # DBG_PERMANENT
 cdef void print_selected_regions_dbg(
     int i_test, cRegionRankSlots* selected_regions,
@@ -3192,6 +3944,28 @@ cdef void print_selected_regions_dbg(
         )
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void resolve_multi_assignment_best_connected_region(
     cPixel* cpixel,
     cRegionRankSlots* selected_regions,
@@ -3268,6 +4042,28 @@ cdef void resolve_multi_assignment_best_connected_region(
         )
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void resolve_multi_assignment_biggest_region(
     cPixel* cpixel, cRegionRankSlots* selected_regions,
 ) except *:
@@ -3302,6 +4098,28 @@ cdef void resolve_multi_assignment_biggest_region(
     # )
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void resolve_multi_assignment_strongest_region(
     cPixel* cpixel, cRegionRankSlots* selected_regions,
 ) except *:
@@ -3343,6 +4161,29 @@ cdef void resolve_multi_assignment_strongest_region(
     #     f"region{'' if selected_regions.n == 1 else 's'}"
     # )
 
+
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void resolve_multi_assignment_mean_strongest_region(
     cPixel* cpixel, cRegionRankSlots* selected_regions,
 ) except *:
@@ -3387,6 +4228,28 @@ cdef void resolve_multi_assignment_mean_strongest_region(
     # )
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void cpixel_count_neighbors_in_cregion(
     cPixel* cpixel,
     cRegion* cregion,
@@ -3450,6 +4313,28 @@ cdef void cpixel_count_neighbors_in_cregion(
                     log.debug(" => indirect neighbor no. {n_direct_neighbors[0]}")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 @cython.profile(False)
 cdef bint regiongrow_assign_pixel(
     cPixel* cpixel,
@@ -3523,18 +4408,84 @@ cdef bint regiongrow_assign_pixel(
     return newly_assigned
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef find_minima_2d(fld, n=4, nmax_extrema=100):
     if n not in [4, 8, 12, 20]:
         raise ValueError(f"Invalid parameter n={n}")
     return c_find_extrema_2d(fld, n, -1, nmax_extrema)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef find_maxima_2d(fld, n=4, nmax_extrema=100):
     if n not in [4, 8, 12, 20]:
         raise ValueError(f"Invalid parameter n={n}")
     return c_find_extrema_2d(fld, n, 1, nmax_extrema)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef np.ndarray[np.int32_t, ndim=2] c_find_extrema_2d(
     np.float32_t[:, :] fld, int n, np.float32_t sign, int nmax_extrema,
 ):
@@ -3547,6 +4498,28 @@ cdef np.ndarray[np.int32_t, ndim=2] c_find_extrema_2d(
     return extrema[:n_extrema, :]
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef int _c_find_extrema_2d_core(
@@ -3623,6 +4596,28 @@ cdef int _c_find_extrema_2d_core(
     return n_extrema
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void features_to_cregions(
     list features,
     int n_regions,
@@ -3709,6 +4704,28 @@ cdef void features_to_cregions(
     dbg_check_features_cregion_pixels(features) # SR_DBG_PERMANENT
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 # SR_DBG <
 def dbg_features_check_unique_pixels(features):
     # Check uniqueness of pixels
@@ -3737,6 +4754,28 @@ def dbg_features_check_unique_pixels(features):
 # SR_DBG >
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 # SR_DBG <
 cpdef void dbg_check_features_cregion_pixels(list features) except *:
     cdef Feature feature
@@ -3756,6 +4795,28 @@ cpdef void dbg_check_features_cregion_pixels(list features) except *:
 # SR_DBG >
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void features_neighbors_to_cregions_connected(
     list features_list, cRegions* cregions, bint ignore_missing_neighbors,
 ) except *:
@@ -3812,6 +4873,28 @@ cdef void features_neighbors_to_cregions_connected(
             cregions_connect(cregion, cregion_neighbor)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void feature_to_cregion(
     Feature feature,
     cRegion* cregion,
@@ -3893,6 +4976,28 @@ cdef void feature_to_cregion(
         log.debug(f"> feature_to_cregion ({feature.id})")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef tuple pixels_find_boundaries(
     np.ndarray[np.int32_t, ndim=2] pixels,
     Constants constants = None,
@@ -3983,6 +5088,28 @@ cpdef tuple pixels_find_boundaries(
     return shells, holes
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef class Pixel:
 
     def __init__(Pixel self, int x, int y, float v, Field2D fld, np.uint64_t id):
@@ -4003,6 +5130,28 @@ cdef class Pixel:
         return self.fld.get_neighbors(self)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef class Field2D:
 
     def __init__(Field2D self, fld_raw):
@@ -4040,6 +5189,29 @@ cdef class Field2D:
 
 _TRACK_REGISTER = {}
 
+
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef Feature Feature_rebuild(
     np.ndarray values,  # 0
     np.ndarray pixels,  # 1
@@ -4089,6 +5261,28 @@ cpdef Feature Feature_rebuild(
     return feature
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef class Feature:
 
     def __cinit__(self,
@@ -5108,6 +6302,28 @@ cpdef tuple _feature__from_jdat__pixels_from_tables(
     return pixels, values, shells, holes
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef feature2d_from_jdat(
     dict jdat,
     np.ndarray[np.float32_t, ndim=1] values,
@@ -5147,6 +6363,28 @@ cpdef feature2d_from_jdat(
     return feature
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef void features_reset_cregion(list features, bint warn=True) except *:
     if features is None:
         return
@@ -5155,6 +6393,28 @@ cpdef void features_reset_cregion(list features, bint warn=True) except *:
         feature.reset_cregion(warn)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef void features_find_neighbors(
     list features, Constants constants = None, np.int32_t nx = 0, np.int32_t ny = 0,
 ):
@@ -5185,6 +6445,28 @@ cpdef void features_find_neighbors(
     features_reset_cregion(features, warn=False)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void features_find_neighbors_core(
     list features, cGrid* grid, cConstants* constants,
 ) except *:
@@ -5237,6 +6519,28 @@ cdef void features_find_neighbors_core(
     cregions_cleanup(&cregions, cleanup_regions=True)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef list cregions_create_features(
     cRegions* cregions,
     np.uint64_t base_id,
@@ -5334,6 +6638,28 @@ cdef list cregions_create_features(
     return features
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 # need to keep track of which cregion corresponds to which feature, I guess
 cdef void cregions2features_connected2neighbors(
     cRegions* cregions,
@@ -5426,6 +6752,28 @@ cdef void cregions2features_connected2neighbors(
     cregion_cleanup(&cregion_bg, unlink_pixels=True, reset_connected=True)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void determine_shared_boundary_pixels(
     dict shared_boundary_pixels,
     dict shared_boundary_pixels_unique,
@@ -5658,6 +7006,28 @@ cdef void determine_shared_boundary_pixels(
     cregion_cleanup(&boundary_pixels, unlink_pixels=False, reset_connected=True)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void initialize_surrounding_background_region(
     cRegions* cregions, cRegion* cregion_bg, cGrid* grid, bint link_region,
 ) except *:
@@ -5704,6 +7074,28 @@ cdef void initialize_surrounding_background_region(
         )
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef inline void _find_background_neighbor_pixels(
     cRegion* cregion_bg, cPixel* cpixel, bint link_region, int n_neighbors_max,
 ) nogil:
@@ -5724,6 +7116,28 @@ cdef inline void _find_background_neighbor_pixels(
                     )
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef Feature cregion_find_corresponding_feature(
     cRegion* cregion, list features, int n_features, np.uint64_t** id_table,
 ):
@@ -5747,6 +7161,28 @@ cdef Feature cregion_find_corresponding_feature(
     return feature
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef np.ndarray[np.int32_t, ndim=2] cpixel2arr(cPixel** pixels, int n):
     """Convert an cPixel C-array into a numpy array."""
     cdef int i
@@ -5757,6 +7193,28 @@ cdef np.ndarray[np.int32_t, ndim=2] cpixel2arr(cPixel** pixels, int n):
     return arr
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def features_neighbors_id2obj(features, missing_action="error"):
     _name_ = "features_neighbors_id2obj"
     features_fid = {f.id: f for f in features}
@@ -5778,6 +7236,28 @@ def features_neighbors_id2obj(features, missing_action="error"):
         feature.neighbors = neighbors
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def features_neighbors_obj2id(features, names=None):
     if isinstance(features, dict):
         for feature_name, features in features.items():
@@ -5796,6 +7276,28 @@ def features_neighbors_obj2id(features, names=None):
             ]
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef void associate_features(
     str name1,
     list features1,
@@ -5868,6 +7370,28 @@ cpdef void associate_features(
                     feature2.associates[name1].append(feature1.id)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cpdef int resolve_indirect_associations(
     str name1, list features1, str name2, list features2, str name3, list features3,
 ) except -1:
@@ -5959,6 +7483,28 @@ cpdef int resolve_indirect_associations(
     return n_assoc
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def features_associates_obj2id(features, names=None):
     """Replace feature objects in associated features by feature ids."""
     if isinstance(features, dict):
@@ -5982,6 +7528,28 @@ def features_associates_obj2id(features, names=None):
                 ]
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def features_associates_id2obj(
     features_named,
     names=None,
@@ -6047,6 +7615,28 @@ def features_associates_id2obj(
                 log.warning("{n} associated features not found: {s_missing_ids}")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
     """Extract pixels, center, and extrema from old-style cyclone feature."""
 
@@ -6083,6 +7673,28 @@ def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
     )
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def cyclones_to_features(ts, cyclones, slp, lon, lat, vb=True, out=None):
     """Convert old-style cyclone features into new-style Feature objects."""
 

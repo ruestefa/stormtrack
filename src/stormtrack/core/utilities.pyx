@@ -49,6 +49,28 @@ NAN_F32  = MAX_F32
 NAN_F64  = MAX_F64
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void check_f32(np.float32_t fact, np.float32_t val) except *:
     if fact <= 0 or fact >= 1:
         raise ValueError(f"fact not in (0..1): {fact}")
@@ -56,6 +78,28 @@ cdef void check_f32(np.float32_t fact, np.float32_t val) except *:
         raise Exception(f"number too big: {val:,} >= {fact:,}*{MAX_F32:,}")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void check_f64(np.float32_t fact, np.float64_t val) except *:
     if fact <= 0 or fact >= 1:
         raise ValueError(f"fact not in (0..1): {fact}")
@@ -63,6 +107,28 @@ cdef void check_f64(np.float32_t fact, np.float64_t val) except *:
         raise Exception(f"number too big: {val:,} >= {fact:,} * {MAX_F64:,}")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void check_i32(np.float32_t fact, np.int32_t val) except *:
     if fact <= 0 or fact >= 1:
         raise ValueError(f"fact not in (0..1): {fact}")
@@ -70,6 +136,28 @@ cdef void check_i32(np.float32_t fact, np.int32_t val) except *:
         raise Exception(f"number too big: {val:,} >= {fact:,} * {MAX_I32:,}")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void check_i64(np.float32_t fact, np.int64_t val) except *:
     if fact <= 0 or fact >= 1:
         raise ValueError(f"fact not in (0..1): {fact}")
@@ -77,6 +165,28 @@ cdef void check_i64(np.float32_t fact, np.int64_t val) except *:
         raise Exception(f"number too big: {val:,} >= {fact:,} * {MAX_I64:,}")
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def reduce_grid_resolution(fld, stride, mode):
     """Reduce grid resolution by striding."""
 
@@ -122,6 +232,28 @@ def reduce_grid_resolution(fld, stride, mode):
     return fld_out
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def _reduce_grid_resolution_1d__core(
     np.float32_t [:] fld_in, np.float32_t [:] fld_out, int stride, int imode,
 ):
@@ -147,6 +279,29 @@ def _reduce_grid_resolution_1d__core(
                 fld_out[io] += fld_in[ii]
             fld_out[io] /= box_size
 
+
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def _reduce_grid_resolution_2d__core(
     np.float32_t [:, :] fld_in, np.float32_t [:, :] fld_out, int stride, int imode,
 ):
@@ -184,6 +339,28 @@ def _reduce_grid_resolution_2d__core(
                 fld_out[io, jo] /= box_size
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def shrink_mask(mask, n):
     """Shrink a 2D mask by N grid points in all four directions."""
     nx, ny = mask.shape
@@ -192,6 +369,28 @@ def shrink_mask(mask, n):
     return shrunk.astype(np.bool)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void _shrink_mask__core(np.uint8_t[:, :] mask, int nx, int ny, int n_shrink):
     cdef int i, j
     cdef int val
@@ -299,6 +498,28 @@ cdef void _shrink_mask__core(np.uint8_t[:, :] mask, int nx, int ny, int n_shrink
     free(changed)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def min_griddist_mask_boundary(mask, *, dirs=None, nan=None):
     """Compute the minimum along-grid distance to a mask boundary.
 
@@ -328,6 +549,29 @@ def min_griddist_mask_boundary(mask, *, dirs=None, nan=None):
 
     return dists
 
+
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void _min_griddist_mask_boundary__core(
     np.uint8_t[:, :] mask,
     np.int32_t[:, :] dists,
@@ -433,6 +677,28 @@ cdef void _min_griddist_mask_boundary__core(
                 prev = val
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def decompose_rectangular_mask(mask):
     """Determine zones in a field containing a rectangular mask.
 
@@ -459,6 +725,28 @@ def decompose_rectangular_mask(mask):
     return out
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void _decompose_rectangular_mask__core(
     np.uint8_t[:, :] mask, np.int32_t[:, :] out, int nx, int ny,
 ):
@@ -540,6 +828,28 @@ cdef void _decompose_rectangular_mask__core(
     free(zones_y)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def decompose_holy_rectangular_mask(mask):
     """Determine zones in a field containing a rectangular mask with a hole.
 
@@ -576,6 +886,28 @@ def decompose_holy_rectangular_mask(mask):
     return out
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef void _decompose_holy_rectangular_mask__core(
     np.uint8_t[:, :] mask, np.int32_t[:, :] out, int nx, int ny,
 ):
@@ -666,6 +998,28 @@ cdef void _decompose_holy_rectangular_mask__core(
     free(zones_y)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def strip_accents(text):
     """Strip accents from input String.
 
@@ -685,6 +1039,28 @@ def strip_accents(text):
     return str(text)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def threshold_at_timestep(thr, ts):
     """Derive timestep-specific threshold from, e.g., monthly thresholds.
 

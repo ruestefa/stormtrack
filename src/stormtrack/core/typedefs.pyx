@@ -123,8 +123,24 @@ import numpy as np
 # CALL <
 # CALLERS:
 # typedefs::categorize_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef inline int sign(int num):
     if num >= 0:
@@ -136,8 +152,24 @@ cdef inline int sign(int num):
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::Constants
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cpdef Constants default_constants(
     # SR_TODO remove nx, ny (use from Grid)
@@ -152,8 +184,24 @@ cpdef Constants default_constants(
 # CALLERS:
 # typedefs::_determine_boundary_pixels_raw
 # typedefs::cregions_store_extend
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef np.uint64_t cregion_get_unique_id():
     global CREGION_NEXT_ID
@@ -166,8 +214,24 @@ cdef np.uint64_t cregion_get_unique_id():
 # CALLERS:
 # typedefs::default_constants
 # typedefs::Grid::__cinit__
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef class Constants:
 
@@ -195,8 +259,24 @@ cdef class Constants:
 # CALLERS:
 # typedefs::_determine_boundary_pixels_raw
 # typedefs::cregions_store_extend
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregion_init(cRegion* cregion, cRegionConf cregion_conf, np.uint64_t rid):
     cdef int i
@@ -284,8 +364,24 @@ cdef void cregion_init(cRegion* cregion, cRegionConf cregion_conf, np.uint64_t r
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_insert_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @boundscheck(False)
 @wraparound(False)
@@ -312,8 +408,24 @@ cdef void cregion_insert_pixels_coords(
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cpixel2d_create
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_create_pixels(
     cRegion* cregion,
@@ -337,10 +449,26 @@ cdef void _cregion_create_pixels(
 # typedefs::cregion_insert_pixels_coords
 # typedefs::cregion_merge
 # typedefs::_reconstruct_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_extend_pixels
 # typedefs::cregion_remove_pixel
 # typedefs::cpixel_set_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 cdef void cregion_insert_pixel(
@@ -374,10 +502,26 @@ cdef void cregion_insert_pixel(
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_extend_pixels_nogil
 # typedefs::cregion_remove_pixel_nogil
 # typedefs::cpixel_set_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 cdef void cregion_insert_pixel_nogil(
@@ -405,10 +549,26 @@ cdef void cregion_insert_pixel_nogil(
 # CALL <
 # CALLERS:
 # typedefs::cregion_insert_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_remove_pixel_from_pixels
 # typedefs::_cregion_remove_pixel_from_shells
 # typedefs::_cregion_remove_pixel_from_holes
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 cdef void cregion_remove_pixel(cRegion* cregion, cPixel* cpixel):
@@ -423,10 +583,26 @@ cdef void cregion_remove_pixel(cRegion* cregion, cPixel* cpixel):
 # CALL <
 # CALLERS:
 # typedefs::cregion_insert_pixel_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_remove_pixel_from_pixels_nogil
 # typedefs::_cregion_remove_pixel_from_shells_nogil
 # typedefs::_cregion_remove_pixel_from_holes_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 cdef void cregion_remove_pixel_nogil(cRegion* cregion, cPixel* cpixel) nogil:
@@ -438,8 +614,24 @@ cdef void cregion_remove_pixel_nogil(cRegion* cregion, cPixel* cpixel) nogil:
 # CALL <
 # CALLERS:
 # typedefs::cregion_remove_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_pixels(cRegion* cregion, cPixel* cpixel):
@@ -470,8 +662,24 @@ cdef inline void _cregion_remove_pixel_from_pixels(cRegion* cregion, cPixel* cpi
 # CALL <
 # CALLERS:
 # typedefs::cregion_remove_pixel_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_pixels_nogil(
@@ -495,8 +703,24 @@ cdef inline void _cregion_remove_pixel_from_pixels_nogil(
 # CALL <
 # CALLERS:
 # typedefs::cregion_remove_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_shell_remove_gaps
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_shells(cRegion* cregion, cPixel* cpixel):
@@ -516,8 +740,24 @@ cdef inline void _cregion_remove_pixel_from_shells(cRegion* cregion, cPixel* cpi
 # CALL <
 # CALLERS:
 # typedefs::cregion_remove_pixel_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_shell_remove_gaps_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_shells_nogil(
@@ -539,8 +779,24 @@ cdef inline void _cregion_remove_pixel_from_shells_nogil(
 # CALL <
 # CALLERS:
 # typedefs::cregion_remove_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_hole_remove_gaps
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_holes(cRegion* cregion, cPixel* cpixel):
@@ -560,8 +816,24 @@ cdef inline void _cregion_remove_pixel_from_holes(cRegion* cregion, cPixel* cpix
 # CALL <
 # CALLERS:
 # typedefs::cregion_remove_pixel_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_hole_remove_gaps_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 cdef inline void _cregion_remove_pixel_from_holes_nogil(
@@ -583,8 +855,24 @@ cdef inline void _cregion_remove_pixel_from_holes_nogil(
 # CALL <
 # CALLERS:
 # typedefs::_cregion_extend_pixels
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef inline void cregion_pixels_remove_gaps(cRegion* cregion, int i_start):
     cdef int i
@@ -602,8 +890,24 @@ cdef inline void cregion_pixels_remove_gaps(cRegion* cregion, int i_start):
 # CALL <
 # CALLERS:
 # typedefs::_cregion_extend_pixels_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef inline void cregion_pixels_remove_gaps_nogil(cRegion* cregion, int i_start) nogil:
     cdef int i
@@ -621,8 +925,24 @@ cdef inline void cregion_pixels_remove_gaps_nogil(cRegion* cregion, int i_start)
 # CALL <
 # CALLERS:
 # typedefs::_cregion_remove_pixel_from_shells
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef inline void _cregion_shell_remove_gaps(cRegion* cregion, int i_shell, int i_start):
     cdef int i
@@ -642,8 +962,24 @@ cdef inline void _cregion_shell_remove_gaps(cRegion* cregion, int i_shell, int i
 # CALL <
 # CALLERS:
 # typedefs::_cregion_remove_pixel_from_shells_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef inline void _cregion_shell_remove_gaps_nogil(
     cRegion* cregion, int i_shell, int i_start,
@@ -665,8 +1001,24 @@ cdef inline void _cregion_shell_remove_gaps_nogil(
 # CALL <
 # CALLERS:
 # typedefs::_cregion_remove_pixel_from_holes
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef inline void _cregion_hole_remove_gaps(cRegion* cregion, int i_hole, int i_start):
     cdef int i
@@ -686,8 +1038,24 @@ cdef inline void _cregion_hole_remove_gaps(cRegion* cregion, int i_hole, int i_s
 # CALL <
 # CALLERS:
 # typedefs::_cregion_remove_pixel_from_holes_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef inline void _cregion_hole_remove_gaps_nogil(
     cRegion* cregion, int i_hole, int i_start,
@@ -710,9 +1078,25 @@ cdef inline void _cregion_hole_remove_gaps_nogil(
 # CALLERS:
 # typedefs::_cregion_extend_shell
 # typedefs::_cregion_determine_boundaries_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_extend_shell
 # typedefs::_cregion_reconnect_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_insert_shell_pixel(cRegion* cregion, int i_shell, cPixel* cpixel):
     # print(
@@ -743,9 +1127,25 @@ cdef void _cregion_insert_shell_pixel(cRegion* cregion, int i_shell, cPixel* cpi
 # CALLERS:
 # typedefs::_cregion_extend_hole
 # typedefs::_cregion_determine_boundaries_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_extend_hole
 # typedefs::_cregion_reconnect_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_insert_hole_pixel(cRegion* cregion, int i_hole, cPixel* cpixel):
     # print(
@@ -774,8 +1174,24 @@ cdef void _cregion_insert_hole_pixel(cRegion* cregion, int i_hole, cPixel* cpixe
 # CALLERS:
 # typedefs::_cregion_insert_shell_pixel
 # typedefs::_cregion_insert_hole_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cpixel_set_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_reconnect_pixel(
     cRegion* cregion, cPixel* cpixel, bint warn,
@@ -803,8 +1219,24 @@ cdef void _cregion_reconnect_pixel(
 # CALL <
 # CALLERS:
 # typedefs::cregion_insert_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_pixels_remove_gaps
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_extend_pixels(cRegion* cregion):
     cdef int i
@@ -838,8 +1270,24 @@ cdef void _cregion_extend_pixels(cRegion* cregion):
 # CALL <
 # CALLERS:
 # typedefs::cregion_insert_pixel_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_pixels_remove_gaps_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_extend_pixels_nogil(cRegion* cregion) nogil:
     cdef int i
@@ -873,8 +1321,24 @@ cdef void _cregion_extend_pixels_nogil(cRegion* cregion) nogil:
 # CALL <
 # CALLERS:
 # typedefs::cregion_insert_pixel_nogil
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_extend_shell(cRegion* cregion, int i_shell):
     if i_shell > cregion.shells_n:
@@ -906,8 +1370,24 @@ cdef void _cregion_extend_shell(cRegion* cregion, int i_shell):
 # CALLERS:
 # typedefs::_cregion_insert_hole_pixel
 # typedefs::_cregion_new_hole
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_extend_hole(cRegion* cregion, int i_hole):
     if i_hole > cregion.holes_n:
@@ -936,8 +1416,24 @@ cdef void _cregion_extend_hole(cRegion* cregion, int i_hole):
 # CALL <
 # CALLERS:
 # typedefs::_cregion_new_shell
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_extend_shells(cRegion* cregion):
     cdef int i
@@ -977,8 +1473,24 @@ cdef void _cregion_extend_shells(cRegion* cregion):
 # CALL <
 # CALLERS:
 # typedefs::_cregion_new_hole
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_extend_holes(cRegion* cregion):
     cdef int i
@@ -1018,9 +1530,25 @@ cdef void _cregion_extend_holes(cRegion* cregion):
 # CALL <
 # CALLERS:
 # typedefs::_cregion_determine_boundaries_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_extend_shells
 # typedefs::_cregion_extend_shell
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_new_shell(cRegion* cregion):
     # print(f"< _cregion_new_shell {cregion.shells_n}/{cregion.shells_max}")
@@ -1036,9 +1564,25 @@ cdef void _cregion_new_shell(cRegion* cregion):
 # CALL <
 # CALLERS:
 # typedefs::_cregion_determine_boundaries_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_extend_holes
 # typedefs::_cregion_extend_hole
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_new_hole(cRegion* cregion):
     # print(f"< _cregion_new_hole {cregion.holes_n}/{cregion.holes_max}")
@@ -1054,8 +1598,24 @@ cdef void _cregion_new_hole(cRegion* cregion):
 # CALL <
 # CALLERS:
 # typedefs::cregions_connect
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_extend_connected
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_add_connected(cRegion* cregion, cRegion* cregion_other):
     # print(f"< _cregion_add_connected {cregion.id} <- {cregion_other.id} (no. {cregion.connected_n})")
@@ -1076,8 +1636,24 @@ cdef void _cregion_add_connected(cRegion* cregion, cRegion* cregion_other):
 # CALL <
 # CALLERS:
 # typedefs::_cregion_add_connected
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::TODO
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_extend_connected(cRegion* cregion):
     cdef bint debug = False
@@ -1105,9 +1681,25 @@ cdef void _cregion_extend_connected(cRegion* cregion):
 # typedefs::cregion_cleanup
 # typedefs::cregions_reset
 # typedefs::cregions_store_reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_reset_connected
 # typedefs::_cpixel_unlink_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregion_reset(cRegion* cregion, bint unlink_pixels, bint reset_connected):
     cdef bint debug = False
@@ -1162,8 +1754,24 @@ cdef void cregion_reset(cRegion* cregion, bint unlink_pixels, bint reset_connect
 # CALL <
 # CALLERS:
 # typedefs::cregion_reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cpixel_set_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef inline void _cpixel_unlink_region(cPixel* cpixel, cRegion* cregion) nogil:
     if (
@@ -1183,8 +1791,24 @@ cdef inline void _cpixel_unlink_region(cPixel* cpixel, cRegion* cregion) nogil:
 # CALL <
 # CALLERS:
 # typedefs::cregion_reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_remove_connected
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef inline void _cregion_reset_connected(cRegion* cregion, bint unlink):
     cdef int i
@@ -1199,8 +1823,24 @@ cdef inline void _cregion_reset_connected(cRegion* cregion, bint unlink):
 # CALL <
 # CALLERS:
 # typedefs::_cregion_reset_connected
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregion_remove_connected(cRegion* cregion, cRegion* cregion_other):
     cdef int i
@@ -1224,8 +1864,24 @@ cdef void cregion_remove_connected(cRegion* cregion, cRegion* cregion_other):
 # typedefs::cregions_link_region
 # typedefs::cregions_store_cleanup
 # typedefs::_reconstruct_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregion_cleanup(cRegion* cregion, bint unlink_pixels, bint reset_connected):
     cdef bint debug = False
@@ -1288,9 +1944,25 @@ cdef void cregion_cleanup(cRegion* cregion, bint unlink_pixels, bint reset_conne
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_insert_pixel
 # typedefs::cregion_cleanup
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cRegion* cregion_merge(cRegion* cregion1, cRegion* cregion2):
     cdef bint debug = False
@@ -1310,9 +1982,25 @@ cdef cRegion* cregion_merge(cRegion* cregion1, cRegion* cregion2):
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregions_create
 # typedefs::cregions_determine_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregion_determine_boundaries(cRegion* cregion, cGrid* grid) except *:
     cdef cRegions cregions = cregions_create(1)
@@ -1325,9 +2013,25 @@ cdef void cregion_determine_boundaries(cRegion* cregion, cGrid* grid) except *:
 # CALL <
 # CALLERS:
 # typedefs::cregion_determine_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_reset_boundaries
 # typedefs::_cregion_determine_boundaries_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except *:
     cdef bint debug = False
@@ -1363,6 +2067,14 @@ cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except 
 # CALL <
 # CALLERS:
 # typedefs::cregions_determine_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::categorize_boundaries
 # typedefs::cpixel_set_region
@@ -1374,6 +2086,14 @@ cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except 
 # typedefs::cregions_cleanup
 # typedefs::_determine_boundary_pixels_raw
 # typedefs::_reconstruct_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) except *:
     cdef bint debug = False
@@ -1525,6 +2245,14 @@ cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) exce
 # CALL <
 # CALLERS:
 # typedefs::_cregion_determine_boundaries_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_cleanup
 # typedefs::cregion_insert_pixel
@@ -1534,6 +2262,14 @@ cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) exce
 # typedefs::_extract_closed_path
 # typedefs::_find_link_to_continue
 # typedefs::grid_new_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cRegions _reconstruct_boundaries(
         cRegion* boundary_pixels,
@@ -1792,8 +2528,24 @@ cdef cRegions _reconstruct_boundaries(
 # CALL <
 # CALLERS:
 # typedefs::_reconstruct_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef bint _find_link_to_continue(
     cPixel** cpixel,
@@ -1848,6 +2600,14 @@ cdef bint _find_link_to_continue(
 # CALL <
 # CALLERS:
 # typedefs::_cregion_determine_boundaries_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::boundary_must_be_a_shell
 # typedefs::categorize_boundary_is_shell
@@ -1855,6 +2615,14 @@ cdef bint _find_link_to_continue(
 # typedefs::cregions_find_northernmost_uncategorized_region
 # typedefs::neighbor_pixel_angle
 # typedefs::sign
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
     cdef bint debug = False
@@ -2089,8 +2857,24 @@ cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
 # CALL <
 # CALLERS:
 # typedefs::categorize_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef int neighbor_pixel_angle(
     cPixel* cpixel1, cPixel* cpixel2, bint minus=True,
@@ -2131,8 +2915,24 @@ cdef int neighbor_pixel_angle(
 # CALL <
 # CALLERS:
 # typedefs::_reconstruct_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef bint _extract_closed_path(cRegion* boundary):
     """Extract the longest closed segment (return value indicates success).
@@ -2279,8 +3079,24 @@ cdef bint _extract_closed_path(cRegion* boundary):
 # CALL <
 # CALLERS:
 # typedefs::categorize_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void categorize_boundary_is_shell(
     int ib_sel, int* d_angles, int n_da, bint* boundary_is_shell,
@@ -2310,8 +3126,24 @@ cdef void categorize_boundary_is_shell(
 # CALL <
 # CALLERS:
 # typedefs::categorize_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef bint boundary_must_be_a_shell(int n_pixels_eff, cGrid* grid):
     """Check whether a boundary is too short to be a hole.
@@ -2337,8 +3169,24 @@ cdef bint boundary_must_be_a_shell(int n_pixels_eff, cGrid* grid):
 # CALL <
 # CALLERS:
 # typedefs::categorize_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregion_check_validity(cRegion* cregion, int idx) except *:
     """Check the validity of a cregion."""
@@ -2355,8 +3203,24 @@ cdef void cregion_check_validity(cRegion* cregion, int idx) except *:
 # CALLERS:
 # typedefs::_reconstruct_boundaries
 # typedefs::cregions_find_northernmost_uncategorized_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cPixel* cregion_northernmost_pixel(cRegion* cregion):
     """Find northwesternmost pixel (northmost has priority)."""
@@ -2380,8 +3244,24 @@ cdef cPixel* cregion_northernmost_pixel(cRegion* cregion):
 # CALL <
 # CALLERS:
 # typedefs::categorize_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_northernmost_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef int cregions_find_northernmost_uncategorized_region(
     cRegions* boundaries, bint* categorized,
@@ -2406,8 +3286,24 @@ cdef int cregions_find_northernmost_uncategorized_region(
 # CALL <
 # CALLERS:
 # typedefs::cregions_determine_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregion_reset_boundaries(cRegion* cregion):
     cdef int i_pixel
@@ -2434,11 +3330,27 @@ cdef void cregion_reset_boundaries(cRegion* cregion):
 # CALL <
 # CALLERS:
 # typedefs::_cregion_determine_boundaries_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_init
 # typedefs::cregion_get_unique_id
 # typedefs::_collect_neighbors
 # typedefs::cregion_insert_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cRegion _determine_boundary_pixels_raw(cRegion* cregion, cGrid* grid):
     """Determine all boundary pixels of a feature, regardless which boundary.
@@ -2601,8 +3513,24 @@ cdef cRegion _determine_boundary_pixels_raw(cRegion* cregion, cGrid* grid):
 # CALLERS:
 # typedefs::_determine_boundary_pixels_raw
 # typedefs::grid_create_pixels
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cpixel_get_neighbor
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 @boundscheck(False)
@@ -2640,8 +3568,24 @@ cdef inline int _collect_neighbors(
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cpixel_get_neighbor
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cPixel* cpixel_get_neighbor(
     cPixel* cpixel,
@@ -2658,8 +3602,24 @@ cdef cPixel* cpixel_get_neighbor(
 # CALLERS:
 #   typedefs:_collect_neighbors
 #   typedefs:cpixel_get_neighbor
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @profile(False)
 @boundscheck(False)
@@ -2741,8 +3701,24 @@ cdef inline cPixel* _cpixel_get_neighbor(
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_overlap_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef bint cregion_overlaps(cRegion* cregion, cRegion* cregion_other):
     """Check whether two cregions overlap cregions."""
@@ -2757,8 +3733,24 @@ cdef bint cregion_overlaps(cRegion* cregion, cRegion* cregion_other):
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_overlap_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef bint cregion_overlaps_tables(
     cRegion* cregion,
@@ -2774,8 +3766,24 @@ cdef bint cregion_overlaps_tables(
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_overlap_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef int cregion_overlap_n(cRegion* cregion, cRegion* cregion_other):
     """Count overlapping pixels between two cregions."""
@@ -2787,8 +3795,24 @@ cdef int cregion_overlap_n(cRegion* cregion, cRegion* cregion_other):
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_overlap_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef int cregion_overlap_n_tables(
     cRegion* cregion,
@@ -2805,8 +3829,24 @@ cdef int cregion_overlap_n_tables(
 # typedefs::cregion_overlap_n_tables
 # typedefs::cregion_overlaps
 # typedefs::cregion_overlaps_tables
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_determine_bbox
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef int _cregion_overlap_core(
     cRegion* cregion,
@@ -2906,8 +3946,24 @@ cdef int _cregion_overlap_core(
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @boundscheck(False)
 @wraparound(False)
@@ -2926,8 +3982,24 @@ cdef int cregion_overlap_n_mask(cRegion* cregion, np.ndarray[np.uint8_t, ndim=2]
 # CALL <
 # CALLERS:
 # typedefs::_cregion_overlap_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregion_determine_bbox(
     cRegion* cregion, cPixel* lower_left, cPixel* upper_right,
@@ -2964,8 +4036,24 @@ cdef void cregion_determine_bbox(
 # CALL <
 # CALLERS:
 # typedefs::cregions_create
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef np.uint64_t cregions_get_unique_id():
     global CREGIONS_NEXT_ID
@@ -2977,8 +4065,24 @@ cdef np.uint64_t cregions_get_unique_id():
 # CALL <
 # CALLERS:
 # typedefs::cregions_create
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_init(cRegions* cregions):
     cregions.id = 99999999
@@ -2991,9 +4095,25 @@ cdef void cregions_init(cRegions* cregions):
 # CALLERS:
 # typedefs::cregion_determine_boundaries
 # typedefs::_reconstruct_boundaries
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregions_get_unique_id
 # typedefs::cregions_init
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cRegions cregions_create(int nmax):
     cdef bint debug = False
@@ -3016,9 +4136,25 @@ cdef cRegions cregions_create(int nmax):
 # CALLERS:
 # typedefs::_reconstruct_boundaries
 # typedefs::grid_new_regions
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregions_extend
 # typedefs::cregion_cleanup
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_link_region(
     cRegions* cregions, cRegion* cregion, bint cleanup, bint unlink_pixels,
@@ -3044,8 +4180,24 @@ cdef void cregions_link_region(
 # CALL <
 # CALLERS:
 # typedefs::cregions_link_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_extend(cRegions* cregions):
     cdef int i
@@ -3078,8 +4230,24 @@ cdef void cregions_extend(cRegions* cregions):
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_move(cRegions* source, cRegions* target):
     cdef bint debug = False
@@ -3098,8 +4266,24 @@ cdef void cregions_move(cRegions* source, cRegions* target):
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_reset(cRegions* cregions):
     # print("< cregions_reset")
@@ -3114,8 +4298,24 @@ cdef void cregions_reset(cRegions* cregions):
 # CALL <
 # CALLERS:
 # typedefs::_cregion_determine_boundaries_core
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_cleanup
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_cleanup(cRegions* cregions, bint cleanup_regions):
     cdef bint debug = False
@@ -3146,8 +4346,24 @@ cdef void cregions_cleanup(cRegions* cregions, bint cleanup_regions):
 # CALL <
 # CALLERS:
 # typedefs::cregions_find_connected
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_add_connected
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_connect(cRegion* cregion1, cRegion* cregion2):
     # print(f"< cregions_connect {cregion1.id} {cregion2.id}")
@@ -3158,10 +4374,26 @@ cdef void cregions_connect(cRegion* cregion1, cRegion* cregion2):
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::_cregion_reset_connected
 # typedefs::cregions_connect
 # typedefs::dbg_check_connected
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_find_connected(
     cRegions* cregions, bint reset_existing, cConstants* constants,
@@ -3260,8 +4492,24 @@ cdef void cregions_find_connected(
 # CALL <
 # CALLERS:
 # typedefs::cregions_find_connected
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 # SR_DBG_PERMANENT
 cdef void dbg_check_connected(cRegions* cregions, str msg) except *:
@@ -3301,8 +4549,24 @@ cdef void dbg_check_connected(cRegions* cregions, str msg) except *:
 # typedefs::cregion_insert_pixel
 # typedefs::cregion_insert_pixel_nogil
 # typedefs::_cregion_reconnect_pixel
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cpixel_set_region(cPixel* cpixel, cRegion* cregion) nogil:
     cdef bint debug = False
@@ -3320,8 +4584,24 @@ cdef void cpixel_set_region(cPixel* cpixel, cRegion* cregion) nogil:
 # CALL <
 # CALLERS:
 # typedefs::grid_reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cpixels_reset(cPixel** cpixels, np.int32_t nx, np.int32_t ny):
     cdef bint debug = False
@@ -3340,8 +4620,24 @@ cdef void cpixels_reset(cPixel** cpixels, np.int32_t nx, np.int32_t ny):
 # CALLERS:
 # typedefs::_cregion_create_pixels
 # typedefs::grid_create_pixels
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cPixel* cpixel2d_create(int n) nogil:
     cdef bint debug = False
@@ -3374,8 +4670,24 @@ cdef cPixel* cpixel2d_create(int n) nogil:
 # CALL <
 # CALLERS:
 # typedefs::grid_new_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregions_store_extend
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cRegion* cregions_store_get_new_region(cRegionsStore* store):
 
@@ -3419,8 +4731,24 @@ cdef cRegion* cregions_store_get_new_region(cRegionsStore* store):
 # CALL <
 # CALLERS:
 # typedefs::grid_reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_store_reset(cRegionsStore* store):
     cdef int i
@@ -3437,9 +4765,25 @@ cdef void cregions_store_reset(cRegionsStore* store):
 # CALL <
 # CALLERS:
 # typedefs::cregions_store_get_new_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_init
 # typedefs::cregion_get_unique_id
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_store_extend(cRegionsStore* store):
     cdef int i
@@ -3474,8 +4818,24 @@ cdef void cregions_store_extend(cRegionsStore* store):
 # CALL <
 # CALLERS:
 # typedefs::grid_cleanup
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregion_cleanup
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void cregions_store_cleanup(cRegionsStore* store):
     cdef int i
@@ -3497,12 +4857,28 @@ cdef void cregions_store_cleanup(cRegionsStore* store):
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::Constants
 # typedefs::grid_create
 # typedefs::grid_cleanup
 # typedefs::grid_set_values
 # typedefs::grid_reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef class Grid:
     def __cinit__(self,
@@ -3560,8 +4936,24 @@ cdef class Grid:
 # CALL <
 # CALLERS:
 # typedefs::Grid::__cinit__
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::grid_create_pixels
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cGrid grid_create(np.float32_t[:, :] fld, cConstants constants) except *:
     # SR_TMP <
@@ -3575,9 +4967,25 @@ cdef cGrid grid_create(np.float32_t[:, :] fld, cConstants constants) except *:
 # CALL <
 # CALLERS:
 # typedefs::Grid::reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cpixels_reset
 # typedefs::cregions_store_reset
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void grid_reset(cGrid* grid) except *:
     cpixels_reset(grid.pixels, grid.constants.nx, grid.constants.ny)
@@ -3603,8 +5011,24 @@ cdef void grid_reset(cGrid* grid) except *:
 # CALL <
 # CALLERS:
 # typedefs::Grid::__dealloc__
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregions_store_cleanup
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef void grid_cleanup(cGrid* grid) except *:
     # print("< GRID CLEANUP") # SR_DBG
@@ -3643,9 +5067,25 @@ cdef void grid_cleanup(cGrid* grid) except *:
 # CALL <
 # CALLERS:
 # typedefs::grid_create
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cpixel2d_create
 # typedefs::_collect_neighbors
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @boundscheck(False)
 @wraparound(False)
@@ -3689,8 +5129,24 @@ cdef void grid_create_pixels(cGrid* grid, np.float32_t[:, :] fld) except *:
 # CALL <
 # CALLERS:
 # typedefs::Grid::set_values
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 @boundscheck(False)
 @wraparound(False)
@@ -3713,8 +5169,24 @@ cdef void grid_set_values(cGrid* grid, np.float32_t[:, :] fld) except *:
 # CALLERS:
 # typedefs::_reconstruct_boundaries
 # typedefs::grid_new_regions
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregions_store_get_new_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cRegion* grid_new_region(cGrid* grid) except *:
     return cregions_store_get_new_region(&grid._regions)
@@ -3723,10 +5195,26 @@ cdef cRegion* grid_new_region(cGrid* grid) except *:
 # CALL <
 # CALLERS:
 # typedefs::NONE
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALLING:
 # typedefs::cregions_create
 # typedefs::cregions_link_region
 # typedefs::grid_new_region
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# utilities::TODO
 # CALL >
 cdef cRegions grid_new_regions(cGrid* grid, int n) except *:
     cdef int i

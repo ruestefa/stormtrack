@@ -19,11 +19,55 @@ import cython
 import numpy as np
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def pairwise_distances_great_circle(lon, lat):
     """Compute the pairwise great circle distance (km) between all points."""
     return _pairwise_distances_great_circle__core(lon, lat)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
@@ -65,6 +109,28 @@ cdef np.ndarray[np.float32_t, ndim=4] _pairwise_distances_great_circle__core(
     return dists
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def closest_feature(features, lon=None, lat=None, great_circle=True, *,
         nx=None, ny=None, out=None, mask=None, return_ids=False, approx=False):
     """Compute the distance to the closest feature at every point.
@@ -135,6 +201,28 @@ def closest_feature(features, lon=None, lat=None, great_circle=True, *,
         return dists
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def features_to_mask(features, nx, ny, dtype=np.bool):
     mask_features = None
     for feature in features:
@@ -146,6 +234,28 @@ def features_to_mask(features, nx, ny, dtype=np.bool):
     return mask_features.astype(dtype)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 def features_extract_shell_inds(features, lon, lat, dtype=np.int32):
     inds = []
     for feature in features:
@@ -154,6 +264,28 @@ def features_extract_shell_inds(features, lon, lat, dtype=np.int32):
     return np.array(inds, dtype)
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
@@ -200,6 +332,28 @@ def _compute_feature_distances_lonlat_exact(
             dists[i0, j0] = mindist
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
@@ -255,6 +409,28 @@ def _compute_feature_distances_lonlat_approx(
             dists[i0, j0] = mindist
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
@@ -291,6 +467,28 @@ def _compute_feature_distances_xy(
             dists[i0, j0] = mindist
 
 
+# CALL <
+# CALLERS:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALLING:
+# distance::TODO
+# grid::TODO
+# identification::TODO
+# io::TODO
+# structs::TODO
+# tables::TODO
+# tracking::TODO
+# typedefs::TODO
+# utilities::TODO
+# CALL >
 cdef np.float32_t great_circle_distance(
     np.float32_t lon0,
     np.float32_t lat0,
