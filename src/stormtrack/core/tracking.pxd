@@ -25,6 +25,7 @@ from .typedefs cimport cregions_link_region
 from .typedefs cimport grid_create_empty
 
 
+# :call: > --- CALLERS ---
 cdef class FeatureTracker:
     cdef public:
         float f_overlap
@@ -129,6 +130,9 @@ cdef class FeatureTracker:
     cdef  object _merge_tracks(self, list tracks)
 
 
+# :call: > --- CALLERS ---
+# :call: > tracking::FeatureTrack::_compute_successor_probabilities
+# :call: > tracking::FeatureTrackSplitter::recompute_tracking_probabilities
 cdef void compute_tracking_probabilities(
     float* p_tot,
     float* p_size,
@@ -143,6 +147,9 @@ cdef void compute_tracking_probabilities(
 ) except *
 
 
+# :call: > --- CALLERS ---
+# :call: > tracking::FeatureTrack::split
+# :call: > tracking::FeatureTrack_rebuild
 cdef class FeatureTrackSplitter:
     cdef public:
         set used_ids
@@ -154,14 +161,19 @@ cdef class FeatureTrackSplitter:
         bint debug
 
 
+# :call: > --- CALLERS ---
+# :call: > tracking::FeatureTrack::__reduce__
 cpdef FeatureTrack FeatureTrack_rebuild(
     np.uint64_t id_, object graph, dict config,
 )
 
 
-# Info: This class has initially been written in pure Python to convert
-# old-style tracks into new tracks using igraph, i.e. the class has not
-# initially been designed as an extension type.
+# :call: > --- CALLERS ---
+# :call: > io::rebuild_tracks
+# :call: > tracking::FeatureTrackSplitter::_split_graph
+# :call: > tracking::FeatureTrackSplitter::split
+# :call: > tracking::TrackFeatureMerger::__cinit__
+# :call: > tracking::remerge_partial_tracks
 cdef class FeatureTrack:
     cdef public:
         object graph
@@ -184,6 +196,8 @@ cdef class FeatureTrack:
     cpdef void merge_features(self, Constants constants) except *
 
 
+# :call: > --- CALLERS ---
+# :call: > tracking::FeatureTrack::merge_features
 cdef class TrackFeatureMerger:
     cdef readonly:
         FeatureTrack track
