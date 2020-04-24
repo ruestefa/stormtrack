@@ -59,13 +59,11 @@ from ..utils.various import NoIndentEncoder
 # read_masks
 
 
-# CALL <
-# > --- CALLERS ---
-# v --- CALLING ---
-# v io::__tmp__write_tracks_features_as_graphs
-# v io::_collect_jdat_features
-# v io::write_feature_pixels
-# CALL >
+# :call: > --- CALLERS ---
+# :call: v --- CALLING ---
+# :call: v io::__tmp__write_tracks_features_as_graphs
+# :call: v io::_collect_jdat_features
+# :call: v io::write_feature_pixels
 def write_feature_file(
     outfile,
     *,
@@ -336,11 +334,9 @@ def write_feature_file(
                 pickle.dump(graphs_table, fo)
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::write_feature_file
-# v --- CALLING ---
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::write_feature_file
+# :call: v --- CALLING ---
 def write_feature_pixels(outfile, *, feature_name, features, mode, silent=False):
     """Write all feature pixels to an npz archive (shells/holes separately).
 
@@ -381,11 +377,9 @@ def write_feature_pixels(outfile, *, feature_name, features, mode, silent=False)
         raise Exception(f"unknown file format: {outfile}")
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::write_feature_file
-# v --- CALLING ---
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::write_feature_file
+# :call: v --- CALLING ---
 def _collect_jdat_features(features, timesteps, pixel_store_mode):
     """Collect data of features and add it to json data dict."""
     jdat_features = []
@@ -416,12 +410,10 @@ def _collect_jdat_features(features, timesteps, pixel_store_mode):
     return jdat_features
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::write_feature_file
-# v --- CALLING ---
-# v io::tracks_to_graphs
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::write_feature_file
+# :call: v --- CALLING ---
+# :call: v io::tracks_to_graphs
 def __tmp__write_tracks_features_as_graphs(
     outfile,
     tracks,
@@ -487,11 +479,9 @@ def __tmp__write_tracks_features_as_graphs(
                         grp_fid.create_dataset("values", data=values)
 
 
-# CALL <
-# > --- CALLERS ---
-# v --- CALLING ---
-# v io::track_to_graph
-# CALL >
+# :call: > --- CALLERS ---
+# :call: v --- CALLING ---
+# :call: v io::track_to_graph
 def tracks_to_graphs(tracks, *, separate_pixels=False, store_values=False):
     """Reduce tracks to graphs with data to rebuild tracks and features."""
     graphs_by_tid = odict()
@@ -514,11 +504,9 @@ def tracks_to_graphs(tracks, *, separate_pixels=False, store_values=False):
     return output
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::tracks_to_graphs
-# v --- CALLING ---
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::tracks_to_graphs
+# :call: v --- CALLING ---
 def track_to_graph(track, *, separate_pixels=False, store_values=False):
     """Reduce track to graph with data to rebuild track and features.
 
@@ -578,10 +566,8 @@ def track_to_graph(track, *, separate_pixels=False, store_values=False):
     return output
 
 
-# CALL <
-# > --- CALLERS ---
-# v --- CALLING ---
-# CALL >
+# :call: > --- CALLERS ---
+# :call: v --- CALLING ---
 def distribute_tracks_across_outfiles(
     tracks,
     timesteps_outfiles,
@@ -751,15 +737,13 @@ def distribute_tracks_across_outfiles(
     return outfiles_tracks
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::read_feature_file
-# v --- CALLING ---
-# v io::features_read_pixels
-# v io::read_feature_file
-# v io::select_tracks_features
-# v tracking::remerge_partial_tracks
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::read_feature_file
+# :call: v --- CALLING ---
+# :call: v io::features_read_pixels
+# :call: v io::read_feature_file
+# :call: v io::select_tracks_features
+# :call: v tracking::remerge_partial_tracks
 def read_feature_files(
     infiles,
     *,
@@ -936,19 +920,17 @@ def read_feature_files(
     )
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::read_feature_files
-# v --- CALLING ---
-# v io::_rebuild_tracks_from_graphs
-# v io::features_read_pixels
-# v io::jdat_remove_noindent
-# v io::read_feature_files
-# v io::read_track_graphs
-# v io::rebuild_features
-# v io::rebuild_tracks
-# v io::select_tracks_features
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::read_feature_files
+# :call: v --- CALLING ---
+# :call: v io::_rebuild_tracks_from_graphs
+# :call: v io::features_read_pixels
+# :call: v io::jdat_remove_noindent
+# :call: v io::read_feature_files
+# :call: v io::read_track_graphs
+# :call: v io::rebuild_features
+# :call: v io::rebuild_tracks
+# :call: v io::select_tracks_features
 # SR_TODO Implement named tracks analogous to named features!
 # SR_TODO (currently features are returned in name dict, tracks in list)
 def read_feature_file(
@@ -1496,13 +1478,11 @@ def read_feature_file(
     )
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::_rebuild_tracks_from_graphs
-# > io::read_feature_file
-# v --- CALLING ---
-# v io::track_is_outside_timestep_range
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::_rebuild_tracks_from_graphs
+# :call: > io::read_feature_file
+# :call: v --- CALLING ---
+# :call: v io::track_is_outside_timestep_range
 def read_track_graphs(
     graphfile,
     *,
@@ -1658,11 +1638,9 @@ def read_track_graphs(
     return output
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::read_feature_file
-# v --- CALLING ---
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::read_feature_file
+# :call: v --- CALLING ---
 # SR_TMP <<<
 def jdat_remove_noindent(jdat):
     for key, val in jdat.items():
@@ -1676,14 +1654,12 @@ def jdat_remove_noindent(jdat):
             jdat[key] = val.value
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::read_feature_file
-# v --- CALLING ---
-# v io::read_track_graphs
-# v io::rebuild_features
-# v io::rebuild_tracks
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::read_feature_file
+# :call: v --- CALLING ---
+# :call: v io::read_track_graphs
+# :call: v io::rebuild_features
+# :call: v io::rebuild_tracks
 def _rebuild_tracks_from_graphs(
     infile,
     *,
@@ -1921,14 +1897,12 @@ def _rebuild_tracks_from_graphs(
     )
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::_rebuild_tracks_from_graphs
-# > io::read_feature_file
-# v --- CALLING ---
-# v io::_rebuild_features_core
-# v io::read_feature_pixels
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::_rebuild_tracks_from_graphs
+# :call: > io::read_feature_file
+# :call: v --- CALLING ---
+# :call: v io::_rebuild_features_core
+# :call: v io::read_feature_pixels
 def rebuild_features(
     *,
     pixelfile,
@@ -2105,13 +2079,11 @@ def rebuild_features(
     )
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::read_feature_file
-# > io::read_feature_files
-# v --- CALLING ---
-# v io::read_feature_pixels
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::read_feature_file
+# :call: > io::read_feature_files
+# :call: v --- CALLING ---
+# :call: v io::read_feature_pixels
 def features_read_pixels(
     feature_name,
     features,
@@ -2248,14 +2220,12 @@ def features_read_pixels(
             print(" " * w, end="\r", flush=True)
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::_rebuild_tracks_from_graphs
-# > io::read_feature_file
-# v --- CALLING ---
-# v io::track_is_outside_timestep_range
-# v tracking::FeatureTrack
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::_rebuild_tracks_from_graphs
+# :call: > io::read_feature_file
+# :call: v --- CALLING ---
+# :call: v io::track_is_outside_timestep_range
+# :call: v tracking::FeatureTrack
 def rebuild_tracks(
     *,
     jdat_tracks,
@@ -2373,12 +2343,10 @@ def rebuild_tracks(
     return dict(tracks=tracks, nskip_tracks=nskip_tracks,)
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::read_track_graphs
-# > io::rebuild_tracks
-# v --- CALLING ---
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::read_track_graphs
+# :call: > io::rebuild_tracks
+# :call: v --- CALLING ---
 def track_is_outside_timestep_range(
     ts_start,
     ts_end,
@@ -2424,13 +2392,11 @@ def track_is_outside_timestep_range(
     return skip_track
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::features_read_pixels
-# > io::rebuild_features
-# v --- CALLING ---
-# v io::_read_feature_pixels_core
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::features_read_pixels
+# :call: > io::rebuild_features
+# :call: v --- CALLING ---
+# :call: v io::_read_feature_pixels_core
 def read_feature_pixels(pixelfile, *args, **kwas):
     """Read feature pixels from npz archive (including shells and holes).
 
@@ -2451,11 +2417,9 @@ def read_feature_pixels(pixelfile, *args, **kwas):
             return _read_feature_pixels_core(fi, *args, **kwas)
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::read_feature_pixels
-# v --- CALLING ---
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::read_feature_pixels
+# :call: v --- CALLING ---
 def _read_feature_pixels_core(
     fi,
     names,
@@ -2574,12 +2538,10 @@ def _read_feature_pixels_core(
     return pixel_tables
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::rebuild_features
-# v --- CALLING ---
-# v identification::Feature
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::rebuild_features
+# :call: v --- CALLING ---
+# :call: v identification::Feature
 def _rebuild_features_core(
     jdat,
     feature_name,
@@ -2688,12 +2650,10 @@ def _rebuild_features_core(
     return features
 
 
-# CALL <
-# > --- CALLERS ---
-# > io::read_feature_file
-# > io::read_feature_files
-# v --- CALLING ---
-# CALL >
+# :call: > --- CALLERS ---
+# :call: > io::read_feature_file
+# :call: > io::read_feature_files
+# :call: v --- CALLING ---
 def select_tracks_features(
     *,
     tracks=None,
@@ -2793,10 +2753,8 @@ def select_tracks_features(
     }
 
 
-# CALL <
-# > --- CALLERS ---
-# v --- CALLING ---
-# CALL >
+# :call: > --- CALLERS ---
+# :call: v --- CALLING ---
 def read_masks(infile, lon, lat, silent=False, dtype=bool):
     """Read mask shells and holes and turn them into mask fields."""
 
