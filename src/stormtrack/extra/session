@@ -1,4 +1,6 @@
 __init__.py
+distance.pxd
+distance.pyx
 front_surgery.pxd
 front_surgery.pyx
 io_misc.py

@@ -29,14 +29,14 @@ from .core.identification import identify_features as identify_features_core
 from .core.io import write_feature_file
 from .core.typedefs import default_constants
 from .core.typedefs import Grid
-from .core.utilities import reduce_grid_resolution
-from .core.utilities import threshold_at_timestep
 from .extra.cyclone_id.identify import identify_features as identify_cyclones_core
 from .extra.cyclone_id import config as cycl_cfg
 from .extra.fronts.fronts import identify_fronts
 from .extra.io_misc import plot_cyclones_depressions_extrema
 from .extra.utilities_misc import Field2D
+from .extra.utilities_misc import threshold_at_timestep
 from .identify_fronts import read_fields as fronts_read_raw_fields
+from .utils.array import reduce_grid_resolution
 from .utils.netcdf import nc_read_var_list
 from .utils.netcdf import point_list_to_field
 from .utils.various import extract_args

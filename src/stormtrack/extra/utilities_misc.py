@@ -842,5 +842,73 @@ def order_dict(random_dict):
     return ordered_dict
 
 
-if __name__ == "__main__":
-    pass
+def threshold_at_timestep(thr, ts):
+    """Derive timestep-specific threshold from, e.g., monthly thresholds.
+
+    If thr is a 12-element list, those values refer to the thresholds in the
+    middle of each month. If the mid-monthly threshold differs from one month
+    to the next, the values in-between are obtained by linear interpolation.
+
+    """
+    if isinstance(thr, (float, int)):
+        # Constant threshold (trivial case)
+        return thr
+
+    elif isinstance(thr, (list, tuple)) and len(thr) == 1:
+        # Constant threshold (slightly less trivial case)
+        return next(iter(thr))
+
+    elif isinstance(thr, (list, tuple)) and len(thr) == 12:
+        # -- Monthly thresholds
+        if not isinstance(ts, dt.datetime):
+            # Convert timestep to dt.datetime
+            sts = str(ts)
+            if len(sts) == 8:
+                ts_fmt = "%Y%m%d"
+            elif len(sts) == 10:
+                ts_fmt = "%Y%m%d%H"
+            elif len(sts) == 12:
+                ts_fmt = "%Y%m%d%H%M"
+            else:
+                raise Exception("cannot deduce timestep format", sts)
+            ts = dt.datetime.strptime(str(ts), ts_fmt)
+
+        thrs_ref = thr
+        year = ts.year
+
+        # Determine reference timesteps
+        thrs_ref = [thrs_ref[-1]] + thrs_ref + [thrs_ref[0]]
+        tss_ref = [None] * 14
+        tss_ref[0] = dt.datetime(year - 1, 12, 1) + 0.5 * (
+            dt.datetime(year, 1, 1) - dt.datetime(year - 1, 12, 1)
+        )
+        for m in range(1, 12):
+            tss_ref[m] = dt.datetime(year, m, 1) + 0.5 * (
+                dt.datetime(year, m + 1, 1) - dt.datetime(year, m, 1)
+            )
+        tss_ref[12] = dt.datetime(year, 12, 1) + 0.5 * (
+            dt.datetime(year + 1, 1, 1) - dt.datetime(year, 12, 1)
+        )
+        tss_ref[13] = dt.datetime(year + 1, 1, 1) + 0.5 * (
+            dt.datetime(year + 1, 2, 1) - dt.datetime(year + 1, 1, 1)
+        )
+
+        # Determine thresholds sourrounding timestep
+        for (thr0, thr1, ts0, ts1) in zip(
+                thrs_ref[: -1], thrs_ref[1:], tss_ref[: -1], tss_ref[1:]):
+            if ts0 <= ts < ts1:
+                break
+        else:
+            raise Exception("could not place ts among {tss_ref}", ts)
+
+        # Derive threshold by linear interpolation
+        if ts == ts0:
+            f = 0.0
+        else:
+            f = (ts - ts0) / (ts1 - ts0)
+        thr = f * thr1 + (1 - f) * thr0
+
+        return thr
+
+    else:
+        raise ValueError("invalid threshold format", thr)
