@@ -66,34 +66,33 @@ TS_FMT_DEFAULT = None
 # track_graph_add_edge
 # remerge_partial_tracks
 # TrackFeatureMerger
-# \<\(FeatureTracker\|compute_tracking_probabilities\|merge_tracks\|dbg_check_features_cregion_pixels\|new_track_id\|FeatureTrackSplitter\|vertex2str\|edge2str\|all_combinations\|successor_combinations_extend\|FeatureTrack_rebuild\|FeatureTrack\|track_graph_add_feature\|track_graph_add_edge\|remerge_partial_tracks\|TrackFeatureMerger\)\>
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::features_grow
-# < identification::Feature
-# < identification::features_to_cregions
-# < structs::SuccessorCandidates
-# < structs::SuccessorCandidate
-# < structs::cGrid
-# < tables::pixel_region_table_init_regions
-# < typedefs::Constants
-# < typedefs::Grid
-# < typedefs::cregions_create
-# < typedefs::cregions_link_region
-# < typedefs::cregion_overlaps_tables
-# < typedefs::cregion_overlap_n_tables
-# < tracking::dbg_check_features_cregion_pixels
-# < tracking::FeatureTrack
-# < tracking::all_combinations
-# < tracking::successor_combinations_extend
-# < tracking::compute_tracking_probabilities
-# < tracking::track_graph_add_feature
-# < tracking::track_graph_add_edge
-# < tracking::merge_tracks
-# < tracking::new_track_id
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::identification::features_grow
+# v core::identification::features_to_cregions
+# v core::structs::SuccessorCandidate
+# v core::structs::SuccessorCandidates
+# v core::structs::cGrid
+# v core::tables::pixel_region_table_init_regions
+# v core::tracking::FeatureTrack
+# v core::tracking::all_combinations
+# v core::tracking::compute_tracking_probabilities
+# v core::tracking::dbg_check_features_cregion_pixels
+# v core::tracking::merge_tracks
+# v core::tracking::new_track_id
+# v core::tracking::successor_combinations_extend
+# v core::tracking::track_graph_add_edge
+# v core::tracking::track_graph_add_feature
+# v core::typedefs::Constants
+# v core::typedefs::Grid
+# v core::typedefs::cregion_overlap_n_tables
+# v core::typedefs::cregion_overlaps_tables
+# v core::typedefs::cregions_create
+# v core::typedefs::cregions_link_region
 # CALL >
 cdef class FeatureTracker:
 
@@ -1337,10 +1336,10 @@ cdef class FeatureTracker:
 
 
 # CALL <
-# > CALLERS:
-# > tracking::FeatureTrackSplitter::recompute_tracking_probabilities
+# > --- CALLERS ---
 # > tracking::FeatureTrack::_compute_successor_probabilities
-# < CALLING:
+# > tracking::FeatureTrackSplitter::recompute_tracking_probabilities
+# v --- CALLING ---
 # CALL >
 cdef void compute_tracking_probabilities(
     float* p_tot,
@@ -1370,10 +1369,10 @@ cdef void compute_tracking_probabilities(
 
 
 # CALL <
-# > CALLERS:
-# > tracking::FeatureTrack::merge_partial_tracks
+# > --- CALLERS ---
 # > tracking::FeatureTrack::_merge_tracks
-# < CALLING:
+# > tracking::FeatureTrack::merge_partial_tracks
+# v --- CALLING ---
 # CALL >
 def merge_tracks(tracks, active_tracks=None):
     cdef bint debug = False
@@ -1443,12 +1442,12 @@ def merge_tracks(tracks, active_tracks=None):
 
 
 # CALL <
-# > CALLERS:
-# > tracking::FeatureTracker::extend_tracks
+# > --- CALLERS ---
 # > tracking::FeatureTracker::_extend_tracks_core
 # > tracking::FeatureTracker::_finish_track
-# < CALLING:
-# < identification::Feature
+# > tracking::FeatureTracker::extend_tracks
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 cpdef void dbg_check_features_cregion_pixels(list features) except *:
     cdef Feature feature
@@ -1468,10 +1467,10 @@ cpdef void dbg_check_features_cregion_pixels(list features) except *:
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tracking::FeatureTrack::new_track_id
 # > tracking::FeatureTrackSplitter::split
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 def new_track_id(np.uint64_t ts, set used_ids):
     cdef np.uint64_t new_id
@@ -1484,15 +1483,15 @@ def new_track_id(np.uint64_t ts, set used_ids):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tracking::FeatureTrack::split
 # > tracking::FeatureTrack_rebuild
-# < CALLING:
-# < tracking::vertex2str
-# < tracking::edge2str
-# < tracking::new_track_id
-# < tracking::FeatureTrack
-# < tracking::compute_tracking_probabilities
+# v --- CALLING ---
+# v core::tracking::FeatureTrack
+# v core::tracking::compute_tracking_probabilities
+# v core::tracking::edge2str
+# v core::tracking::new_track_id
+# v core::tracking::vertex2str
 # CALL >
 cdef class FeatureTrackSplitter:
 
@@ -2131,11 +2130,11 @@ cdef class FeatureTrackSplitter:
 
 
 # CALL <
-# > CALLERS:
-# > tracking::FeatureTrackSplitter::split
-# > tracking::FeatureTrackSplitter::_adapt_vertex_type_parent
+# > --- CALLERS ---
 # > tracking::FeatureTrackSplitter::_adapt_vertex_type_child
-# < CALLING:
+# > tracking::FeatureTrackSplitter::_adapt_vertex_type_parent
+# > tracking::FeatureTrackSplitter::split
+# v --- CALLING ---
 # CALL >
 # DBG_PERMANENT <<<
 def vertex2str(vertex):
@@ -2143,10 +2142,10 @@ def vertex2str(vertex):
 
 
 # CALL <
-# > CALLERS:
-# > tracking::FeatureTrackSplitter::split
+# > --- CALLERS ---
 # > tracking::FeatureTrackSplitter::_process_branching_vertex
-# < CALLING:
+# > tracking::FeatureTrackSplitter::split
+# v --- CALLING ---
 # CALL >
 # DBG_PERMANENT <<<
 def edge2str(edge):
@@ -2162,9 +2161,9 @@ def edge2str(edge):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tracking::FeatureTrack::_combine_candidates
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 cdef list all_combinations(list elements, int nmin, int nmax):
     return list(
@@ -2176,11 +2175,11 @@ cdef list all_combinations(list elements, int nmin, int nmax):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tracking::FeatureTrack::_combine_candidates
-# < CALLING:
-# < structs::SuccessorCandidates
-# < structs::SuccessorCandidate
+# v --- CALLING ---
+# v core::structs::SuccessorCandidate
+# v core::structs::SuccessorCandidates
 # CALL >
 cdef void successor_combinations_extend(
     SuccessorCandidates* combinations, int max_children,
@@ -2243,31 +2242,31 @@ cdef void successor_combinations_extend(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tracking::FeatureTrack::__reduce__
-# < CALLING:
-# < tracking::FeatureTrack
+# v --- CALLING ---
+# v core::tracking::FeatureTrack
 # CALL >
 cpdef FeatureTrack FeatureTrack_rebuild(np.uint64_t id_, object graph, dict config):
     return FeatureTrack(id_=id_, graph=graph, config=config)
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > io::rebuild_tracks
+# > tracking::FeatureTrackSplitter::_split_graph
+# > tracking::FeatureTrackSplitter::split
 # > tracking::TrackFeatureMerger::__cinit__
 # > tracking::remerge_partial_tracks
-# > tracking::FeatureTrackSplitter::split
-# > tracking::FeatureTrackSplitter::_split_graph
-# < CALLING:
-# < identification::Feature
-# < typedefs::Constants
-# < tracking::track_graph_add_feature
-# < tracking::FeatureTrack_rebuild
-# < tracking::track_graph_add_edge
-# < tracking::FeatureTrackSplitter
-# < tracking::TrackFeatureMerger
-# < tracking::merge_tracks
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::tracking::FeatureTrackSplitter
+# v core::tracking::FeatureTrack_rebuild
+# v core::tracking::TrackFeatureMerger
+# v core::tracking::merge_tracks
+# v core::tracking::track_graph_add_edge
+# v core::tracking::track_graph_add_feature
+# v core::typedefs::Constants
 # CALL >
 # SR_TODO turn into proper extension class (i.e. cythonize methods etc.)
 cdef class FeatureTrack:
@@ -3928,12 +3927,12 @@ cdef class FeatureTrack:
 
 
 # CALL <
-# > CALLERS:
-# > tracking::FeatureTrack::_assign_successors
+# > --- CALLERS ---
 # > tracking::FeatureTrack::__cinit__
+# > tracking::FeatureTrack::_assign_successors
 # > tracking::FeatureTrack::from_features_linear
 # > tracking::FeatureTrack::from_old_track
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 def track_graph_add_feature(graph, feature, attrs=None):
     if attrs is None:
@@ -3951,11 +3950,11 @@ def track_graph_add_feature(graph, feature, attrs=None):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
+# > tracking::FeatureTrack::_assign_successors
 # > tracking::FeatureTrack::from_features_linear
 # > tracking::FeatureTrack::from_old_track
-# > tracking::FeatureTrack::_assign_successors
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 def track_graph_add_edge(graph, vertex1, vertex2, attrs=None):
     # print(f"add edge: {fid1} -> {fid2}")
@@ -3975,10 +3974,10 @@ def track_graph_add_edge(graph, vertex1, vertex2, attrs=None):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > io::read_feature_files
-# < CALLING:
-# < tracking::FeatureTrack
+# v --- CALLING ---
+# v core::tracking::FeatureTrack
 # CALL >
 def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
     """Reconstruct partial tracks.
@@ -4040,12 +4039,12 @@ def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tracking::FeatureTrack::merge_features
-# < CALLING:
-# < identification::Feature
-# < identification::merge_adjacent_features
-# < tracking::FeatureTrack
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::identification::merge_adjacent_features
+# v core::tracking::FeatureTrack
 # CALL >
 cdef class TrackFeatureMerger:
 
@@ -4686,9 +4685,9 @@ cdef class TrackFeatureMerger:
 # Feature wrapper class for compatibility with old-style tracking
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Feature
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 class TrackableFeature_Oldstyle(Feature):
     """Wrapper class for Feature which is compatible with the old-style tracking."""
@@ -4817,9 +4816,9 @@ class TrackableFeature_Oldstyle(Feature):
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Feature
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 class TrackableFeatureCombination_Oldstyle(TrackableFeature_Oldstyle):
 

@@ -29,33 +29,31 @@ import numpy as np
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::Feature::__cinit__
 # > identification::Feature::__repr__
 # > identification::Feature::unset_track
 # CALL >
-# MAX_UI8  = np.iinfo(np.uint8).max
-# MAX_UI16 = np.iinfo(np.uint16).max
-# MAX_UI32 = np.iinfo(np.uint32).max
-MAX_UI64 = np.iinfo(np.uint64).max
+# MAX_F32 = np.finfo(np.float32).max
+# MAX_F64 = np.finfo(np.float64).max
 # MAX_I16 = np.iinfo(np.int16).max
 # MAX_I32 = np.iinfo(np.int32).max
 # MAX_I64 = np.iinfo(np.int64).max
-# MAX_F32 = np.finfo(np.float32).max
-# MAX_F64 = np.finfo(np.float64).max
-# NAN_UI8  = MAX_UI8
+# MAX_UI8 = np.iinfo(np.uint8).max
+# MAX_UI16 = np.iinfo(np.uint16).max
+# MAX_UI32 = np.iinfo(np.uint32).max
+MAX_UI64 = np.iinfo(np.uint64).max
+# NAN_F32 = MAX_F32
+# NAN_F64 = MAX_F64
+# NAN_I16 = MAX_I16
+# NAN_I32 = MAX_I32
+# NAN_I64 = MAX_I64
+# NAN_UI8 = MAX_UI8
 # NAN_UI16 = MAX_UI16
 # NAN_UI32 = MAX_UI32
 NAN_UI64 = MAX_UI64
-# NAN_I16  = MAX_I16
-# NAN_I32  = MAX_I32
-# NAN_I64  = MAX_I64
-# NAN_F32  = MAX_F32
-# NAN_F64  = MAX_F64
 
 
-# # CALL <
-# # CALL >
 # cdef void check_f32(np.float32_t fact, np.float32_t val) except *:
 #     if fact <= 0 or fact >= 1:
 #         raise ValueError(f"fact not in (0..1): {fact}")
@@ -63,8 +61,6 @@ NAN_UI64 = MAX_UI64
 #         raise Exception(f"number too big: {val:,} >= {fact:,}*{MAX_F32:,}")
 
 
-# # CALL <
-# # CALL >
 # cdef void check_f64(np.float32_t fact, np.float64_t val) except *:
 #     if fact <= 0 or fact >= 1:
 #         raise ValueError(f"fact not in (0..1): {fact}")
@@ -72,8 +68,6 @@ NAN_UI64 = MAX_UI64
 #         raise Exception(f"number too big: {val:,} >= {fact:,} * {MAX_F64:,}")
 
 
-# # CALL <
-# # CALL >
 # cdef void check_i32(np.float32_t fact, np.int32_t val) except *:
 #     if fact <= 0 or fact >= 1:
 #         raise ValueError(f"fact not in (0..1): {fact}")
@@ -81,8 +75,6 @@ NAN_UI64 = MAX_UI64
 #         raise Exception(f"number too big: {val:,} >= {fact:,} * {MAX_I32:,}")
 
 
-# # CALL <
-# # CALL >
 # cdef void check_i64(np.float32_t fact, np.int64_t val) except *:
 #     if fact <= 0 or fact >= 1:
 #         raise ValueError(f"fact not in (0..1): {fact}")

@@ -5,6 +5,7 @@ cimport numpy as np
 
 # Local
 from .identification cimport Feature
+from .identification cimport features_grow
 from .identification cimport features_to_cregions
 from .structs cimport cGrid
 from .structs cimport SuccessorCandidate

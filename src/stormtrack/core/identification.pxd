@@ -86,6 +86,18 @@ cdef Feature create_feature(
 )
 
 
+cpdef list features_grow(
+    int n,
+    list features,
+    Constants constants,
+    bint inplace=?,
+    bint retain_orig=?,
+    np.uint64_t base_id=?,
+    list used_ids=?,
+    Grid grid=?,
+)
+
+
 cdef void features_to_cregions(
     list regions_list,
     int n_regions,

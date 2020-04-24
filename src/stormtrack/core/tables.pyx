@@ -57,15 +57,14 @@ import numpy as np
 # neighbor_link_stat_table_cleanup
 # neighbor_link_stat_table_init
 # get_direct_neighbor_index
-# \<\(pixel_done_table_alloc\|pixel_done_table_init\|pixel_done_table_reset\|pixel_done_table_cleanup\|pixel_region_table_alloc\|pixel_region_table_alloc_grid\|pixel_region_table_alloc_pixels\|pixel_region_table_insert_region\|cregion_rank_slots_insert_region\|cregion_rank_slots_extend\|pixel_region_table_alloc_pixel\|pixel_region_table_init_regions\|pixel_region_table_grow\|pixel_region_table_cleanup_pixels\|pixel_region_table_reset\|pixel_region_table_reset_region\|pixel_region_table_reset_regions\|pixel_region_table_reset_slots\|cregion_rank_slots_reset\|cregion_rank_slots_copy\|_pixel_region_table_cleanup_entry\|pixel_region_table_cleanup\|pixel_status_table_init_feature\|pixel_status_table_reset_feature\|pixel_status_table_alloc\|pixel_status_table_reset\|pixel_status_table_cleanup\|neighbor_link_stat_table_alloc\|neighbor_link_stat_table_reset\|neighbor_link_stat_table_reset_pixels\|neighbor_link_stat_table_cleanup\|neighbor_link_stat_table_init\|get_direct_neighbor_index\)\>
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::csplit_regiongrow_levels
-# < CALLING:
-# < structs::PixelDoneTable
-# < structs::cConstants
+# v --- CALLING ---
+# v core::structs::PixelDoneTable
+# v core::structs::cConstants
 # CALL >
 cdef void pixel_done_table_alloc(PixelDoneTable* table, cConstants* constants):
     cdef int i
@@ -81,12 +80,12 @@ cdef void pixel_done_table_alloc(PixelDoneTable* table, cConstants* constants):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::extract_subregions_level
-# < CALLING:
-# < structs::cRegion
-# < structs::PixelDoneTable
-# < structs::cPixel
+# v --- CALLING ---
+# v core::structs::PixelDoneTable
+# v core::structs::cPixel
+# v core::structs::cRegion
 # CALL >
 cdef void pixel_done_table_init(
     PixelDoneTable table, cRegion* cregion, np.float32_t level,
@@ -101,12 +100,12 @@ cdef void pixel_done_table_init(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::extract_subregions_level
-# < CALLING:
-# < structs::PixelDoneTable
-# < structs::cRegion
-# < structs::cPixel
+# v --- CALLING ---
+# v core::structs::PixelDoneTable
+# v core::structs::cPixel
+# v core::structs::cRegion
 # CALL >
 cdef void pixel_done_table_reset(PixelDoneTable table, cRegion* cregion):
     cdef int i_pixel
@@ -118,11 +117,11 @@ cdef void pixel_done_table_reset(PixelDoneTable table, cRegion* cregion):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > typedefs::grid_cleanup
-# < CALLING:
-# < structs::PixelDoneTable
-# < structs::cConstants
+# v --- CALLING ---
+# v core::structs::PixelDoneTable
+# v core::structs::cConstants
 # CALL >
 cdef void pixel_done_table_cleanup(PixelDoneTable table, cConstants* constants):
     cdef int i
@@ -132,13 +131,13 @@ cdef void pixel_done_table_cleanup(PixelDoneTable table, cConstants* constants):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > typedefs::Grid::__cinit__
-# < CALLING:
-# < structs::cConstants
-# < structs::PixelRegionTable
-# < structs::cRegionRankSlots
-# < structs::cRegionRankSlot
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::structs::cConstants
+# v core::structs::cRegionRankSlot
+# v core::structs::cRegionRankSlots
 # CALL >
 cdef void pixel_region_table_alloc(
     PixelRegionTable* table, int n_slots, cConstants* constants,
@@ -185,18 +184,18 @@ cdef void pixel_region_table_alloc(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::_find_features_threshold_random_seeds
 # > identification::c_find_features_2d_threshold_seeds
+# > identification::csplit_regiongrow_levels
+# > identification::feature_split_regiongrow
+# > identification::features_find_neighbors
 # > identification::find_features_2d_threshold
 # > identification::merge_adjacent_features
-# > identification::feature_split_regiongrow
-# > identification::csplit_regiongrow_levels
-# > identification::features_find_neighbors
-# < CALLING:
-# < structs::cConstants
-# < structs::PixelRegionTable
-# < structs::cRegionRankSlots
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::structs::cConstants
+# v core::structs::cRegionRankSlots
 # CALL >
 cdef void pixel_region_table_alloc_grid(
     PixelRegionTable* table, cConstants* constants,
@@ -218,15 +217,15 @@ cdef void pixel_region_table_alloc_grid(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cfeatures_grow_core
-# > identification::csplit_regiongrow_levels
 # > identification::csplit_regiongrow_core
+# > identification::csplit_regiongrow_levels
 # > tables::pixel_region_table_grow
-# < CALLING:
-# < structs::cRegion
-# < structs::PixelRegionTable
-# < tables::pixel_region_table_alloc_pixel
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::structs::cRegion
+# v core::tables::pixel_region_table_alloc_pixel
 # CALL >
 cdef void pixel_region_table_alloc_pixels(
     PixelRegionTable table, int n_slots, cRegion* cregion,
@@ -244,13 +243,13 @@ cdef void pixel_region_table_alloc_pixels(
 
 
 # CALL <
-# > CALLERS:
-# > identification::regiongrow_resolve_multi_assignments
+# > --- CALLERS ---
 # > identification::determine_shared_boundary_pixels
-# < CALLING:
-# < structs::cRegion
-# < structs::PixelRegionTable
-# < tables::cregion_rank_slots_insert_region
+# > identification::regiongrow_resolve_multi_assignments
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::structs::cRegion
+# v core::tables::cregion_rank_slots_insert_region
 # CALL >
 cdef void pixel_region_table_insert_region(
     PixelRegionTable table,
@@ -267,16 +266,16 @@ cdef void pixel_region_table_insert_region(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::resolve_multi_assignment_best_connected_region
 # > identification::resolve_multi_assignment_biggest_region
-# > identification::resolve_multi_assignment_strongest_region
 # > identification::resolve_multi_assignment_mean_strongest_region
+# > identification::resolve_multi_assignment_strongest_region
 # > tables::pixel_region_table_insert_region
-# < CALLING:
-# < structs::cRegion
-# < structs::cRegionRankSlots
-# < tables::cregion_rank_slots_extend
+# v --- CALLING ---
+# v core::structs::cRegion
+# v core::structs::cRegionRankSlots
+# v core::tables::cregion_rank_slots_extend
 # CALL >
 cdef void cregion_rank_slots_insert_region(
     cRegionRankSlots* slots, cRegion* cregion, np.int8_t rank,
@@ -294,11 +293,11 @@ cdef void cregion_rank_slots_insert_region(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tables::cregion_rank_slots_insert_region
-# < CALLING:
-# < structs::cRegionRankSlots
-# < structs::cRegionRankSlot
+# v --- CALLING ---
+# v core::structs::cRegionRankSlot
+# v core::structs::cRegionRankSlots
 # CALL >
 cdef void cregion_rank_slots_extend(cRegionRankSlots* slots):
     cdef int nmax_old = slots.max
@@ -325,12 +324,12 @@ cdef void cregion_rank_slots_extend(cRegionRankSlots* slots):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tables::pixel_region_table_alloc_pixels
 # > tables::pixel_region_table_init_regions
-# < CALLING:
-# < structs::PixelRegionTable
-# < structs::cRegionRankSlot
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::structs::cRegionRankSlot
 # CALL >
 cdef inline void pixel_region_table_alloc_pixel(
     PixelRegionTable table,
@@ -351,16 +350,16 @@ cdef inline void pixel_region_table_alloc_pixel(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cfeatures_grow_core
 # > identification::csplit_regiongrow_core
 # > tracking::FeatureTracker::extend_tracks
-# < CALLING:
-# < structs::cRegion
-# < structs::cPixel
-# < structs::PixelRegionTable
-# < structs::cRegions
-# < tables::pixel_region_table_alloc_pixel
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::tables::pixel_region_table_alloc_pixel
 # CALL >
 cdef void pixel_region_table_init_regions(
     PixelRegionTable table,
@@ -399,12 +398,12 @@ cdef void pixel_region_table_init_regions(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::csplit_regiongrow_levels_core
-# < CALLING:
-# < structs::cRegion
-# < structs::PixelRegionTable
-# < tables::pixel_region_table_alloc_pixels
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::structs::cRegion
+# v core::tables::pixel_region_table_alloc_pixels
 # CALL >
 cdef void pixel_region_table_grow(
     PixelRegionTable table, cRegion* cregion, int n_slots_new):
@@ -414,11 +413,11 @@ cdef void pixel_region_table_grow(
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < structs::cRegion
-# < structs::PixelRegionTable
-# < tables::_pixel_region_table_cleanup_entry
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::structs::cRegion
+# v core::tables::_pixel_region_table_cleanup_entry
 # CALL >
 cdef void pixel_region_table_cleanup_pixels(PixelRegionTable table, cRegion* cregion):
     # print("< pixel_region_table_cleanup_pixels")
@@ -434,14 +433,14 @@ cdef void pixel_region_table_cleanup_pixels(PixelRegionTable table, cRegion* cre
 
 
 # CALL <
-# > CALLERS:
-# > identification::find_features_2d_threshold
+# > --- CALLERS ---
 # > identification::cregions2features_connected2neighbors
+# > identification::find_features_2d_threshold
 # > typedefs::Grid::reset_tables
 # > typedefs::grid_reset
-# < CALLING:
-# < structs::PixelRegionTable
-# < tables::pixel_region_table_reset_slots
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::tables::pixel_region_table_reset_slots
 # CALL >
 cdef void pixel_region_table_reset(
     PixelRegionTable table, np.int32_t nx, np.int32_t ny,
@@ -454,15 +453,15 @@ cdef void pixel_region_table_reset(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cfeatures_grow_core
-# > identification::csplit_regiongrow_levels
 # > identification::csplit_regiongrow_core
+# > identification::csplit_regiongrow_levels
 # > tables::pixel_region_table_reset_regions
-# < CALLING:
-# < structs::cRegion
-# < structs::PixelRegionTable
-# < tables::pixel_region_table_reset_slots
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::structs::cRegion
+# v core::tables::pixel_region_table_reset_slots
 # CALL >
 cdef void pixel_region_table_reset_region(PixelRegionTable table, cRegion* cregion):
     cdef int i
@@ -474,11 +473,11 @@ cdef void pixel_region_table_reset_region(PixelRegionTable table, cRegion* cregi
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < structs::PixelRegionTable
-# < structs::cRegions
-# < tables::pixel_region_table_reset_region
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::structs::cRegions
+# v core::tables::pixel_region_table_reset_region
 # CALL >
 cdef void pixel_region_table_reset_regions(PixelRegionTable table, cRegions* cregions):
     cdef int i
@@ -487,13 +486,13 @@ cdef void pixel_region_table_reset_regions(PixelRegionTable table, cRegions* cre
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::regiongrow_resolve_multi_assignments
 # > tables::pixel_region_table_reset
 # > tables::pixel_region_table_reset_region
-# < CALLING:
-# < structs::PixelRegionTable
-# < tables::cregion_rank_slots_reset
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::tables::cregion_rank_slots_reset
 # CALL >
 @cython.profile(False)
 cdef inline void pixel_region_table_reset_slots(
@@ -503,13 +502,13 @@ cdef inline void pixel_region_table_reset_slots(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::resolve_multi_assignment_best_connected_region
 # > identification::resolve_multi_assignment_biggest_region
-# > identification::resolve_multi_assignment_strongest_region
 # > identification::resolve_multi_assignment_mean_strongest_region
+# > identification::resolve_multi_assignment_strongest_region
 # > tables::pixel_region_table_reset_slots
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 @cython.profile(False)
 cdef void cregion_rank_slots_reset(cRegionRankSlots* slots) nogil:
@@ -521,13 +520,13 @@ cdef void cregion_rank_slots_reset(cRegionRankSlots* slots) nogil:
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::resolve_multi_assignment_biggest_region
-# > identification::resolve_multi_assignment_strongest_region
 # > identification::resolve_multi_assignment_mean_strongest_region
-# < CALLING:
-# < structs::cRegionRankSlots
-# < structs::cRegionRankSlot
+# > identification::resolve_multi_assignment_strongest_region
+# v --- CALLING ---
+# v core::structs::cRegionRankSlot
+# v core::structs::cRegionRankSlots
 # CALL >
 cdef cRegionRankSlots cregion_rank_slots_copy(cRegionRankSlots* slots):
     cdef cRegionRankSlots slots2
@@ -541,11 +540,11 @@ cdef cRegionRankSlots cregion_rank_slots_copy(cRegionRankSlots* slots):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tables::pixel_region_table_cleanup
 # > tables::pixel_region_table_cleanup_pixels
-# < CALLING:
-# < structs::PixelRegionTable
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
 # CALL >
 cdef void _pixel_region_table_cleanup_entry(PixelRegionTable table, int x, int y) nogil:
     if table[x][y].max > 0:
@@ -556,11 +555,11 @@ cdef void _pixel_region_table_cleanup_entry(PixelRegionTable table, int x, int y
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > typedefs::grid_cleanup
-# < CALLING:
-# < structs::PixelRegionTable
-# < tables::_pixel_region_table_cleanup_entry
+# v --- CALLING ---
+# v core::structs::PixelRegionTable
+# v core::tables::_pixel_region_table_cleanup_entry
 # CALL >
 cdef void pixel_region_table_cleanup(
     PixelRegionTable table, np.int32_t nx, np.int32_t ny,
@@ -578,14 +577,14 @@ cdef void pixel_region_table_cleanup(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cfeatures_grow_core
 # > identification::csplit_regiongrow_core
-# < CALLING:
-# < structs::cRegion
-# < structs::cPixel
-# < structs::cRegions
-# < structs::PixelStatusTable
+# v --- CALLING ---
+# v core::structs::PixelStatusTable
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
 # CALL >
 cdef void pixel_status_table_init_feature(
     PixelStatusTable table, cRegion* cfeature, cRegions* cregions_seeds,
@@ -628,12 +627,12 @@ cdef void pixel_status_table_init_feature(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cfeatures_grow_core
 # > identification::csplit_regiongrow_core
-# < CALLING:
-# < structs::cRegion
-# < structs::PixelStatusTable
+# v --- CALLING ---
+# v core::structs::PixelStatusTable
+# v core::structs::cRegion
 # CALL >
 cdef void pixel_status_table_reset_feature(PixelStatusTable table, cRegion* cfeature):
     # print("< pixel_status_table_reset_feature")
@@ -650,16 +649,16 @@ cdef void pixel_status_table_reset_feature(PixelStatusTable table, cRegion* cfea
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::_find_features_threshold_random_seeds
 # > identification::c_find_features_2d_threshold_seeds
-# > identification::find_features_2d_threshold
-# > identification::feature_split_regiongrow
 # > identification::csplit_regiongrow_levels
+# > identification::feature_split_regiongrow
+# > identification::find_features_2d_threshold
 # > typedefs::Grid::__cinit__
-# < CALLING:
-# < structs::cConstants
-# < structs::PixelStatusTable
+# v --- CALLING ---
+# v core::structs::PixelStatusTable
+# v core::structs::cConstants
 # CALL >
 cdef void pixel_status_table_alloc(PixelStatusTable* table, cConstants* constants):
     cdef int i
@@ -675,11 +674,11 @@ cdef void pixel_status_table_alloc(PixelStatusTable* table, cConstants* constant
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > typedefs::Grid::reset_tables
 # > typedefs::grid_reset
-# < CALLING:
-# < structs::PixelStatusTable
+# v --- CALLING ---
+# v core::structs::PixelStatusTable
 # CALL >
 cdef void pixel_status_table_reset(
     PixelStatusTable table, np.int32_t nx, np.int32_t ny,
@@ -692,10 +691,10 @@ cdef void pixel_status_table_reset(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > typedefs::grid_cleanup
-# < CALLING:
-# < structs::PixelStatusTable
+# v --- CALLING ---
+# v core::structs::PixelStatusTable
 # CALL >
 cdef void pixel_status_table_cleanup(PixelStatusTable table, np.int32_t nx):
     cdef int i
@@ -705,19 +704,19 @@ cdef void pixel_status_table_cleanup(PixelStatusTable table, np.int32_t nx):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::_find_features_threshold_random_seeds
 # > identification::c_find_features_2d_threshold_seeds
+# > identification::csplit_regiongrow_levels
+# > identification::feature_split_regiongrow
+# > identification::features_find_neighbors
 # > identification::find_features_2d_threshold
 # > identification::merge_adjacent_features
-# > identification::feature_split_regiongrow
-# > identification::csplit_regiongrow_levels
 # > identification::pixels_find_boundaries
-# > identification::features_find_neighbors
 # > typedefs::Grid::__cinit__
-# < CALLING:
-# < structs::cConstants
-# < structs::NeighborLinkStatTable
+# v --- CALLING ---
+# v core::structs::NeighborLinkStatTable
+# v core::structs::cConstants
 # CALL >
 cdef void neighbor_link_stat_table_alloc(
     NeighborLinkStatTable* table, cConstants* constants,
@@ -742,14 +741,14 @@ cdef void neighbor_link_stat_table_alloc(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::find_features_2d_threshold
-# > typedefs::_reconstruct_boundaries
 # > typedefs::Grid::reset_tables
+# > typedefs::_reconstruct_boundaries
 # > typedefs::grid_reset
-# < CALLING:
-# < structs::cConstants
-# < structs::NeighborLinkStatTable
+# v --- CALLING ---
+# v core::structs::NeighborLinkStatTable
+# v core::structs::cConstants
 # CALL >
 cdef void neighbor_link_stat_table_reset(
     NeighborLinkStatTable table, cConstants* constants,
@@ -765,11 +764,11 @@ cdef void neighbor_link_stat_table_reset(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::csplit_regiongrow_levels_core
-# < CALLING:
-# < structs::cRegion
-# < structs::NeighborLinkStatTable
+# v --- CALLING ---
+# v core::structs::NeighborLinkStatTable
+# v core::structs::cRegion
 # CALL >
 cdef void neighbor_link_stat_table_reset_pixels(
     NeighborLinkStatTable table, cRegion* cregion, int n_neighbors_max,
@@ -787,10 +786,10 @@ cdef void neighbor_link_stat_table_reset_pixels(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > typedefs::grid_cleanup
-# < CALLING:
-# < structs::NeighborLinkStatTable
+# v --- CALLING ---
+# v core::structs::NeighborLinkStatTable
 # CALL >
 cdef void neighbor_link_stat_table_cleanup(
     NeighborLinkStatTable table, np.int32_t nx, np.int32_t ny,
@@ -806,15 +805,15 @@ cdef void neighbor_link_stat_table_cleanup(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > typedefs::_reconstruct_boundaries
-# < CALLING:
-# < structs::cConstants
-# < structs::cRegion
-# < structs::cPixel
-# < structs::NeighborLinkStatTable
-# < structs::get_matching_neighbor_id
-# < tables::get_direct_neighbor_index
+# v --- CALLING ---
+# v core::structs::NeighborLinkStatTable
+# v core::structs::cConstants
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::get_matching_neighbor_id
+# v core::tables::get_direct_neighbor_index
 # CALL >
 cdef void neighbor_link_stat_table_init(
     NeighborLinkStatTable table, cRegion* boundary_pixels, cConstants* constants,
@@ -988,9 +987,9 @@ cdef void neighbor_link_stat_table_init(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tables::neighbor_link_stat_table_init
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 cdef inline int get_direct_neighbor_index(
     int direction, int ind, int connectivity

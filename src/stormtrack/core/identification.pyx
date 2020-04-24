@@ -132,7 +132,6 @@ except ImportError:
 # features_associates_id2obj
 # oldfeature_to_pixels
 # cyclones_to_features
-# \<\(identify_features\|find_features_2d_threshold_seeded\|_find_features_threshold_random_seeds\|c_find_features_2d_threshold_seeds\|c_find_features_2d_threshold_seeds_core\|grow_cregion_rec\|init_random_seeds\|pop_random_unassigned_pixel\|random_int\|cregions_merge_connected_inplace\|cregions_merge_connected\|_cregions_merge_connected_core\|collect_pixels\|create_feature\|cregion_collect_connected_regions\|_cregion_collect_connected_regions_rec\|assign_cpixel\|find_features_2d_threshold\|eliminate_regions_by_size\|find_existing_region\|merge_adjacent_features\|feature_split_regiongrow\|features_grow\|cfeatures_grow_core\|_replace_feature_associations\|split_regiongrow_levels\|csplit_regiongrow_levels\|csplit_regiongrow_levels_core\|extract_subregions_level\|collect_adjacent_pixels\|csplit_regiongrow_core\|assert_no_unambiguously_assigned_pixels\|regiongrow_advance_boundary\|regiongrow_resolve_multi_assignments\|resolve_multi_assignment\|dbg_print_selected_regions\|resolve_multi_assignment_best_connected_region\|resolve_multi_assignment_biggest_region\|resolve_multi_assignment_strongest_region\|resolve_multi_assignment_mean_strongest_region\|cpixel_count_neighbors_in_cregion\|regiongrow_assign_pixel\|find_minima_2d\|find_maxima_2d\|c_find_extrema_2d\|_c_find_extrema_2d_core\|features_to_cregions\|dbg_features_check_unique_pixels\|dbg_check_features_cregion_pixels\|features_neighbors_to_cregions_connected\|feature_to_cregion\|pixels_find_boundaries\|Pixel\|Field2D\|Feature_rebuild\|Feature\|_feature__from_jdat__pixels_from_tables\|feature2d_from_jdat\|features_reset_cregion\|features_find_neighbors\|features_find_neighbors_core\|cregions_create_features\|cregions2features_connected2neighbors\|determine_shared_boundary_pixels\|initialize_surrounding_background_region\|_find_background_neighbor_pixels\|cregion_find_corresponding_feature\|cpixel2arr\|features_neighbors_id2obj\|features_neighbors_obj2id\|associate_features\|resolve_indirect_associations\|features_associates_obj2id\|features_associates_id2obj\|oldfeature_to_pixels\|cyclones_to_features\)\>
 
 
 # Default type codes for feature id for common feature types
@@ -170,12 +169,12 @@ DEFAULT_TYPE_CODES = dict(
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::find_features_2d_threshold
-# < identification::split_regiongrow_levels
-# < typedefs::default_constants
-# < typedefs::Grid
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::find_features_2d_threshold
+# v core::identification::split_regiongrow_levels
+# v core::typedefs::Grid
+# v core::typedefs::default_constants
 # CALL >
 def identify_features(
     fld,
@@ -268,13 +267,13 @@ def identify_features(
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::c_find_features_2d_threshold_seeds
-# < identification::_find_features_threshold_random_seeds
-# < typedefs::Constants
-# < typedefs::default_constants
-# < structs::cConstants
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::_find_features_threshold_random_seeds
+# v core::identification::c_find_features_2d_threshold_seeds
+# v core::structs::cConstants
+# v core::typedefs::Constants
+# v core::typedefs::default_constants
 # CALL >
 def find_features_2d_threshold_seeded(
     field_raw,
@@ -373,26 +372,26 @@ def find_features_2d_threshold_seeded(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::find_features_2d_threshold_seeded
-# < CALLING:
-# < identification::init_random_seeds
-# < identification::c_find_features_2d_threshold_seeds_core
-# < identification::cregions_merge_connected
-# < identification::cregions_create_features(
-# < identification::features_reset_cregion(
-# < tables::neighbor_link_stat_table_alloc
-# < tables::pixel_status_table_alloc
-# < tables::pixel_region_table_alloc_grid
-# < typedefs::Grid
-# < typedefs::grid_create
-# < typedefs::cregions_create
-# < typedefs::cregions_cleanup
-# < typedefs::grid_cleanup
-# < structs::cConstants
-# < structs::cRegionConf
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::c_find_features_2d_threshold_seeds_core
+# v core::identification::cregions_create_features(
+# v core::identification::cregions_merge_connected
+# v core::identification::features_reset_cregion(
+# v core::identification::init_random_seeds
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegionConf
+# v core::structs::cRegions
+# v core::tables::neighbor_link_stat_table_alloc
+# v core::tables::pixel_region_table_alloc_grid
+# v core::tables::pixel_status_table_alloc
+# v core::typedefs::Grid
+# v core::typedefs::cregions_cleanup
+# v core::typedefs::cregions_create
+# v core::typedefs::grid_cleanup
+# v core::typedefs::grid_create
 # CALL >
 cdef list _find_features_threshold_random_seeds(
     np.float32_t [:, :] field_raw,
@@ -499,24 +498,24 @@ cdef list _find_features_threshold_random_seeds(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::find_features_2d_threshold_seeded
-# < CALLING:
-# < identification::c_find_features_2d_threshold_seeds_core
-# < identification::cregions_merge_connected
-# < identification::cregions_create_features
-# < identification::features_reset_cregion
-# < tables::neighbor_link_stat_table_alloc
-# < tables::pixel_status_table_alloc
-# < tables::pixel_region_table_alloc_grid
-# < typedefs::grid_create
-# < typedefs::cregions_create
-# < typedefs::cregions_cleanup
-# < typedefs::grid_cleanup
-# < structs::cConstants
-# < structs::cRegionConf
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::c_find_features_2d_threshold_seeds_core
+# v core::identification::cregions_create_features
+# v core::identification::cregions_merge_connected
+# v core::identification::features_reset_cregion
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegionConf
+# v core::structs::cRegions
+# v core::tables::neighbor_link_stat_table_alloc
+# v core::tables::pixel_region_table_alloc_grid
+# v core::tables::pixel_status_table_alloc
+# v core::typedefs::cregions_cleanup
+# v core::typedefs::cregions_create
+# v core::typedefs::grid_cleanup
+# v core::typedefs::grid_create
 # CALL >
 cdef list c_find_features_2d_threshold_seeds(
     np.float32_t [:, :] field_raw,
@@ -615,16 +614,16 @@ cdef list c_find_features_2d_threshold_seeds(
 
 
 # CALL <
-# > CALLERS:
-# > identification::c_find_features_2d_threshold_seeds
+# > --- CALLERS ---
 # > identification::_find_features_threshold_random_seeds
-# < CALLING:
-# < identification::pop_random_unassigned_pixel
-# < identification::assign_cpixel
-# < identification::grow_cregion_rec
-# < structs::cPixel
-# < structs::cRegions
-# < structs::cGrid
+# > identification::c_find_features_2d_threshold_seeds
+# v --- CALLING ---
+# v core::identification::assign_cpixel
+# v core::identification::grow_cregion_rec
+# v core::identification::pop_random_unassigned_pixel
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegions
 # CALL >
 cdef void c_find_features_2d_threshold_seeds_core(
     np.float32_t[:, :] field_raw,
@@ -749,15 +748,15 @@ cdef void c_find_features_2d_threshold_seeds_core(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::c_find_features_2d_threshold_seeds_core
-# < CALLING:
-# < identification::assign_cpixel
-# < typedefs::cregions_connect
-# < structs::pixeltype
-# < structs::cPixel
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::assign_cpixel
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegions
+# v core::structs::pixeltype
+# v core::typedefs::cregions_connect
 # CALL >
 cdef void grow_cregion_rec(
     cPixel* cpixel_center,
@@ -877,10 +876,10 @@ cdef void grow_cregion_rec(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::_find_features_threshold_random_seeds
-# < CALLING:
-# < structs::cGrid
+# v --- CALLING ---
+# v core::structs::cGrid
 # CALL >
 cdef np.ndarray[np.int32_t, ndim=2] init_random_seeds(cGrid* grid):
     cdef np.ndarray[np.int32_t, ndim=2] inds = np.empty(
@@ -897,11 +896,11 @@ cdef np.ndarray[np.int32_t, ndim=2] init_random_seeds(cGrid* grid):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::c_find_features_2d_threshold_seeds_core
-# < CALLING:
-# < structs::cPixel
-# < structs::cGrid
+# v --- CALLING ---
+# v core::structs::cGrid
+# v core::structs::cPixel
 # CALL >
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -934,8 +933,8 @@ cdef cPixel* pop_random_unassigned_pixel(
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
+# > --- CALLERS ---
+# v --- CALLING ---
 # CALL >
 @cython.cdivision(True)
 cdef inline int random_int(int min, int max):
@@ -944,14 +943,14 @@ cdef inline int random_int(int min, int max):
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::cregions_merge_connected
-# < typedefs::cregions_move
-# < structs::cConstants
-# < structs::cRegionConf
-# < structs::cRegions
-# < structs::cGrid
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::cregions_merge_connected
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegionConf
+# v core::structs::cRegions
+# v core::typedefs::cregions_move
 # CALL >
 cdef void cregions_merge_connected_inplace(
     cRegions* cregions,
@@ -976,21 +975,21 @@ cdef void cregions_merge_connected_inplace(
 
 
 # CALL <
-# > CALLERS:
-# > identification::merge_adjacent_features
-# > identification::cregions_merge_connected_inplace
-# > identification::c_find_features_2d_threshold_seeds
+# > --- CALLERS ---
 # > identification::_find_features_threshold_random_seeds
-# < CALLING:
-# < identification::_cregions_merge_connected_core
-# < typedefs::cregions_create
-# < typedefs::cregions_cleanup
-# < structs::cConstants
-# < structs::cPixel
-# < structs::cRegionConf
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# > identification::c_find_features_2d_threshold_seeds
+# > identification::cregions_merge_connected_inplace
+# > identification::merge_adjacent_features
+# v --- CALLING ---
+# v core::identification::_cregions_merge_connected_core
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegionConf
+# v core::structs::cRegions
+# v core::typedefs::cregions_cleanup
+# v core::typedefs::cregions_create
 # CALL >
 cdef cRegions cregions_merge_connected(
     cRegions* cregions,
@@ -1067,20 +1066,20 @@ cdef cRegions cregions_merge_connected(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cregions_merge_connected
-# < CALLING:
-# < identification::cregion_collect_connected_regions
-# < identification::collect_pixels
-# < typedefs::grid_new_region
-# < typedefs::cregions_link_region
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregion_determine_boundaries
-# < structs::cConstants
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::collect_pixels
+# v core::identification::cregion_collect_connected_regions
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::typedefs::cregion_determine_boundaries
+# v core::typedefs::cregion_insert_pixel
+# v core::typedefs::cregions_link_region
+# v core::typedefs::grid_new_region
 # CALL >
 cdef void _cregions_merge_connected_core(
     cRegions* cregions_out,
@@ -1178,13 +1177,13 @@ cdef void _cregions_merge_connected_core(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::_cregions_merge_connected_core
-# < CALLING:
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
 # CALL >
 cdef int collect_pixels(
     cRegion** connected_regions,
@@ -1220,10 +1219,10 @@ cdef int collect_pixels(
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Feature
-# < structs::cPixel
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::structs::cPixel
 # CALL >
 # SR_TODO eliminate (only used in old cyclone id code)
 cdef Feature create_feature(
@@ -1262,12 +1261,12 @@ cdef Feature create_feature(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::_cregions_merge_connected_core
-# < CALLING:
-# < identification::_cregion_collect_connected_regions_rec
-# < structs::cRegion
-# < structs::cRegions
+# v --- CALLING ---
+# v core::identification::_cregion_collect_connected_regions_rec
+# v core::structs::cRegion
+# v core::structs::cRegions
 # CALL >
 cdef int cregion_collect_connected_regions(
     cRegions* cregions,
@@ -1293,11 +1292,11 @@ cdef int cregion_collect_connected_regions(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cregion_collect_connected_regions
-# < CALLING:
-# < structs::cRegion
-# < structs::cRegions
+# v --- CALLING ---
+# v core::structs::cRegion
+# v core::structs::cRegions
 # CALL >
 cdef void _cregion_collect_connected_regions_rec(
     cRegions* cregions,
@@ -1346,18 +1345,18 @@ cdef void _cregion_collect_connected_regions_rec(
 
 
 # CALL <
-# > CALLERS:
-# > identification::grow_cregion_rec
+# > --- CALLERS ---
 # > identification::c_find_features_2d_threshold_seeds_core
-# < CALLING:
-# < typedefs::grid_new_region
-# < typedefs::cregions_link_region
-# < typedefs::cregion_insert_pixel
-# < typedefs::cpixel_set_region
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# > identification::grow_cregion_rec
+# v --- CALLING ---
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::typedefs::cpixel_set_region
+# v core::typedefs::cregion_insert_pixel
+# v core::typedefs::cregions_link_region
+# v core::typedefs::grid_new_region
 # CALL >
 cdef void assign_cpixel(
     cPixel* cpixel,
@@ -1393,33 +1392,33 @@ cdef void assign_cpixel(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::identify_features
-# < CALLING:
-# < identification::find_existing_region
-# < identification::eliminate_regions_by_size
-# < identification::cregions_create_features
-# < identification::features_reset_cregion
-# < tables::neighbor_link_stat_table_alloc
-# < tables::pixel_status_table_alloc
-# < tables::pixel_region_table_alloc_grid
-# < tables::neighbor_link_stat_table_reset
-# < tables::pixel_status_table_reset
-# < tables::pixel_region_table_reset
-# < typedefs::Constants
-# < typedefs::default_constants
-# < typedefs::Grid
-# < typedefs::cregions_create
-# < typedefs::grid_new_region
-# < typedefs::cregions_link_region
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregions_determine_boundaries
-# < structs::cConstants
-# < structs::cPixel
-# < structs::cRegionConf
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::cregions_create_features
+# v core::identification::eliminate_regions_by_size
+# v core::identification::features_reset_cregion
+# v core::identification::find_existing_region
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegionConf
+# v core::structs::cRegions
+# v core::tables::neighbor_link_stat_table_alloc
+# v core::tables::neighbor_link_stat_table_reset
+# v core::tables::pixel_region_table_alloc_grid
+# v core::tables::pixel_region_table_reset
+# v core::tables::pixel_status_table_alloc
+# v core::tables::pixel_status_table_reset
+# v core::typedefs::Constants
+# v core::typedefs::Grid
+# v core::typedefs::cregion_insert_pixel
+# v core::typedefs::cregions_create
+# v core::typedefs::cregions_determine_boundaries
+# v core::typedefs::cregions_link_region
+# v core::typedefs::default_constants
+# v core::typedefs::grid_new_region
 # CALL >
 def find_features_2d_threshold(
     np.float32_t[:, :] field_raw,
@@ -1569,12 +1568,12 @@ def find_features_2d_threshold(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::find_features_2d_threshold
-# < CALLING:
-# < typedefs::cregion_cleanup
-# < structs::cRegion
-# < structs::cRegions
+# v --- CALLING ---
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::typedefs::cregion_cleanup
 # CALL >
 cdef void eliminate_regions_by_size(
     cRegions* cregions, int minsize, int maxsize,
@@ -1607,12 +1606,12 @@ cdef void eliminate_regions_by_size(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::find_features_2d_threshold
-# < CALLING:
-# < typedefs::cregion_merge
-# < structs::cRegion
-# < structs::cGrid
+# v --- CALLING ---
+# v core::structs::cGrid
+# v core::structs::cRegion
+# v core::typedefs::cregion_merge
 # CALL >
 # SR_TODO: Consider 4 vs. 8 connectivity
 cdef inline cRegion* find_existing_region(
@@ -1722,26 +1721,26 @@ cdef inline cRegion* find_existing_region(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tracking::TrackFeatureMerger::run
-# < CALLING:
-# < identification::Feature
-# < identification::features_to_cregions
-# < identification::cregions_merge_connected
-# < identification::cregions_create_features
-# < identification::features_reset_cregion
-# < tables::neighbor_link_stat_table_alloc
-# < tables::pixel_region_table_alloc_grid
-# < typedefs::Constants
-# < typedefs::default_constants
-# < typedefs::grid_create
-# < typedefs::cregions_create
-# < typedefs::grid_cleanup
-# < typedefs::cregions_find_connected
-# < structs::cConstants
-# < structs::cregion_conf_default
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::identification::cregions_create_features
+# v core::identification::cregions_merge_connected
+# v core::identification::features_reset_cregion
+# v core::identification::features_to_cregions
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegions
+# v core::structs::cregion_conf_default
+# v core::tables::neighbor_link_stat_table_alloc
+# v core::tables::pixel_region_table_alloc_grid
+# v core::typedefs::Constants
+# v core::typedefs::cregions_create
+# v core::typedefs::cregions_find_connected
+# v core::typedefs::default_constants
+# v core::typedefs::grid_cleanup
+# v core::typedefs::grid_create
 # CALL >
 # SR_TODO add option to only merge features of the connecting pixels exceed
 # SR_TODO a certaion threshold (requires passing the field/values, obviously)
@@ -1849,31 +1848,31 @@ def merge_adjacent_features(
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Feature
-# < identification::feature_to_cregion
-# < identification::features_to_cregions
-# < identification::csplit_regiongrow_core
-# < identification::cregions_create_features
-# < identification::features_reset_cregion
-# < identification::_replace_feature_associations
-# < tables::neighbor_link_stat_table_alloc
-# < tables::pixel_status_table_alloc
-# < tables::pixel_region_table_alloc_grid
-# < typedefs::Constants
-# < typedefs::default_constants
-# < typedefs::grid_create
-# < typedefs::cregions_create
-# < typedefs::cregions_cleanup
-# < typedefs::grid_cleanup
-# < typedefs::cregion_remove_pixel
-# < structs::cConstants
-# < structs::cPixel
-# < structs::cregion_conf_default
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::identification::_replace_feature_associations
+# v core::identification::cregions_create_features
+# v core::identification::csplit_regiongrow_core
+# v core::identification::feature_to_cregion
+# v core::identification::features_reset_cregion
+# v core::identification::features_to_cregions
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::structs::cregion_conf_default
+# v core::tables::neighbor_link_stat_table_alloc
+# v core::tables::pixel_region_table_alloc_grid
+# v core::tables::pixel_status_table_alloc
+# v core::typedefs::Constants
+# v core::typedefs::cregion_remove_pixel
+# v core::typedefs::cregions_cleanup
+# v core::typedefs::cregions_create
+# v core::typedefs::default_constants
+# v core::typedefs::grid_cleanup
+# v core::typedefs::grid_create
 # CALL >
 cpdef list feature_split_regiongrow(
     Feature feature,
@@ -2035,24 +2034,24 @@ cpdef list feature_split_regiongrow(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > tracking::FeatureTracker::extend_tracks
-# < CALLING:
-# < identification::Feature
-# < identification::features_to_cregions
-# < identification::cfeatures_grow_core
-# < identification::cpixel2arr
-# < identification::cregions_create_features
-# < identification::features_reset_cregion
-# < typedefs::Constants
-# < typedefs::Grid
-# < typedefs::cregions_create
-# < typedefs::cregions_cleanup
-# < structs::cConstants
-# < structs::cregion_conf_default
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::identification::cfeatures_grow_core
+# v core::identification::cpixel2arr
+# v core::identification::cregions_create_features
+# v core::identification::features_reset_cregion
+# v core::identification::features_to_cregions
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::structs::cregion_conf_default
+# v core::typedefs::Constants
+# v core::typedefs::Grid
+# v core::typedefs::cregions_cleanup
+# v core::typedefs::cregions_create
 # CALL >
 cpdef list features_grow(
     int n,
@@ -2183,32 +2182,32 @@ cpdef list features_grow(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::features_grow
-# < CALLING:
-# < identification::regiongrow_advance_boundary
-# < identification::assert_no_unambiguously_assigned_pixels
-# < tables::pixel_status_table_init_feature
-# < tables::pixel_region_table_alloc_pixels
-# < tables::pixel_region_table_init_regions
-# < tables::pixel_status_table_reset_feature
-# < tables::pixel_region_table_reset_region
-# < typedefs::cregions_create
-# < typedefs::cregions_cleanup
-# < typedefs::grid_new_region
-# < typedefs::cregions_link_region
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregions_determine_boundaries
-# < typedefs::cregion_cleanup
-# < typedefs::cregions_find_connected
-# < typedefs::cregion_init
-# < typedefs::cregion_get_unique_id
-# < typedefs::cregion_insert_pixels_coords
-# < structs::cPixel
-# < structs::cRegionConf
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::assert_no_unambiguously_assigned_pixels
+# v core::identification::regiongrow_advance_boundary
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegionConf
+# v core::structs::cRegions
+# v core::tables::pixel_region_table_alloc_pixels
+# v core::tables::pixel_region_table_init_regions
+# v core::tables::pixel_region_table_reset_region
+# v core::tables::pixel_status_table_init_feature
+# v core::tables::pixel_status_table_reset_feature
+# v core::typedefs::cregion_cleanup
+# v core::typedefs::cregion_get_unique_id
+# v core::typedefs::cregion_init
+# v core::typedefs::cregion_insert_pixel
+# v core::typedefs::cregion_insert_pixels_coords
+# v core::typedefs::cregions_cleanup
+# v core::typedefs::cregions_create
+# v core::typedefs::cregions_determine_boundaries
+# v core::typedefs::cregions_find_connected
+# v core::typedefs::cregions_link_region
+# v core::typedefs::grid_new_region
 # CALL >
 cdef void cfeatures_grow_core(
     int ngrow, cRegions* cregions_orig, cRegions* cregions_grown, cGrid* grid,
@@ -2363,10 +2362,10 @@ cdef void cfeatures_grow_core(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::feature_split_regiongrow
-# < CALLING:
-# < identification::Feature
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 cpdef void _replace_feature_associations(
     Feature feature, list seed_features, list subfeatures,
@@ -2520,11 +2519,11 @@ cpdef void _replace_feature_associations(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::identify_features
-# < CALLING:
-# < identification::csplit_regiongrow_levels
-# < typedefs::default_constants
+# v --- CALLING ---
+# v core::identification::csplit_regiongrow_levels
+# v core::typedefs::default_constants
 # CALL >
 def split_regiongrow_levels(
     features,
@@ -2582,36 +2581,36 @@ def split_regiongrow_levels(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::split_regiongrow_levels
-# < CALLING:
-# < identification::features_to_cregions
-# < identification::csplit_regiongrow_levels_core
-# < identification::cregions_create_features
-# < identification::features_reset_cregion
-# < tables::neighbor_link_stat_table_alloc
-# < tables::pixel_status_table_alloc
-# < tables::pixel_region_table_alloc_grid
-# < tables::pixel_region_table_alloc_pixels
-# < tables::pixel_region_table_reset_region
-# < tables::pixel_done_table_alloc
-# < typedefs::Constants
-# < typedefs::grid_create
-# < typedefs::cregions_create
-# < typedefs::cregions_cleanup
-# < typedefs::grid_cleanup
-# < typedefs::grid_new_region
-# < typedefs::cregions_link_region
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregions_determine_boundaries
-# < typedefs::cregions_find_connected
-# < typedefs::cregion_overlap_n_mask
-# < structs::cConstants
-# < structs::cPixel
-# < structs::cregion_conf_default
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::cregions_create_features
+# v core::identification::csplit_regiongrow_levels_core
+# v core::identification::features_reset_cregion
+# v core::identification::features_to_cregions
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::structs::cregion_conf_default
+# v core::tables::neighbor_link_stat_table_alloc
+# v core::tables::pixel_done_table_alloc
+# v core::tables::pixel_region_table_alloc_grid
+# v core::tables::pixel_region_table_alloc_pixels
+# v core::tables::pixel_region_table_reset_region
+# v core::tables::pixel_status_table_alloc
+# v core::typedefs::Constants
+# v core::typedefs::cregion_insert_pixel
+# v core::typedefs::cregion_overlap_n_mask
+# v core::typedefs::cregions_cleanup
+# v core::typedefs::cregions_create
+# v core::typedefs::cregions_determine_boundaries
+# v core::typedefs::cregions_find_connected
+# v core::typedefs::cregions_link_region
+# v core::typedefs::grid_cleanup
+# v core::typedefs::grid_create
+# v core::typedefs::grid_new_region
 # CALL >
 cdef list csplit_regiongrow_levels(
     list features,
@@ -2795,23 +2794,23 @@ cdef list csplit_regiongrow_levels(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::csplit_regiongrow_levels
-# < CALLING:
-# < identification::extract_subregions_level
-# < identification::csplit_regiongrow_core
-# < tables::neighbor_link_stat_table_reset_pixels
-# < tables::pixel_region_table_grow
-# < typedefs::cregions_create
-# < typedefs::cregions_cleanup
-# < typedefs::grid_new_region
-# < typedefs::cregions_link_region
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregions_reset
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::csplit_regiongrow_core
+# v core::identification::extract_subregions_level
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::tables::neighbor_link_stat_table_reset_pixels
+# v core::tables::pixel_region_table_grow
+# v core::typedefs::cregion_insert_pixel
+# v core::typedefs::cregions_cleanup
+# v core::typedefs::cregions_create
+# v core::typedefs::cregions_link_region
+# v core::typedefs::cregions_reset
+# v core::typedefs::grid_new_region
 # CALL >
 cdef void csplit_regiongrow_levels_core(
     cRegion* cfeature,
@@ -2940,24 +2939,24 @@ cdef void csplit_regiongrow_levels_core(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::csplit_regiongrow_levels_core
-# < CALLING:
-# < identification::collect_adjacent_pixels
-# < tables::pixel_done_table_init
-# < tables::pixel_done_table_reset
-# < typedefs::grid_new_region
-# < typedefs::cregions_link_region
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregions_determine_boundaries
-# < typedefs::cregion_init
-# < typedefs::cregion_get_unique_id
-# < typedefs::cregion_reset
-# < structs::cPixel
-# < structs::cregion_conf_default
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::collect_adjacent_pixels
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::structs::cregion_conf_default
+# v core::tables::pixel_done_table_init
+# v core::tables::pixel_done_table_reset
+# v core::typedefs::cregion_get_unique_id
+# v core::typedefs::cregion_init
+# v core::typedefs::cregion_insert_pixel
+# v core::typedefs::cregion_reset
+# v core::typedefs::cregions_determine_boundaries
+# v core::typedefs::cregions_link_region
+# v core::typedefs::grid_new_region
 # CALL >
 cdef void extract_subregions_level(
     cRegion* cregion,
@@ -3105,18 +3104,18 @@ cdef void extract_subregions_level(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::extract_subregions_level
-# < CALLING:
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregion_cleanup
-# < typedefs::cregion_remove_pixel
-# < typedefs::cregion_init
-# < typedefs::cregion_get_unique_id
-# < structs::cPixel
-# < structs::cregion_conf_default
-# < structs::cRegion
-# < structs::cGrid
+# v --- CALLING ---
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cregion_conf_default
+# v core::typedefs::cregion_cleanup
+# v core::typedefs::cregion_get_unique_id
+# v core::typedefs::cregion_init
+# v core::typedefs::cregion_insert_pixel
+# v core::typedefs::cregion_remove_pixel
 # CALL >
 cdef void collect_adjacent_pixels(
     cPixel* cpixel,
@@ -3171,28 +3170,28 @@ cdef void collect_adjacent_pixels(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::csplit_regiongrow_levels_core
 # > identification::feature_split_regiongrow
-# < CALLING:
-# < identification::regiongrow_advance_boundary
-# < identification::assert_no_unambiguously_assigned_pixels
-# < tables::pixel_status_table_init_feature
-# < tables::pixel_region_table_alloc_pixels
-# < tables::pixel_region_table_init_regions
-# < tables::pixel_status_table_reset_feature
-# < tables::pixel_region_table_reset_region
-# < typedefs::cregions_create
-# < typedefs::cregions_cleanup
-# < typedefs::grid_new_region
-# < typedefs::cregions_link_region
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregions_determine_boundaries
-# < typedefs::cregions_find_connected
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::assert_no_unambiguously_assigned_pixels
+# v core::identification::regiongrow_advance_boundary
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::tables::pixel_region_table_alloc_pixels
+# v core::tables::pixel_region_table_init_regions
+# v core::tables::pixel_region_table_reset_region
+# v core::tables::pixel_status_table_init_feature
+# v core::tables::pixel_status_table_reset_feature
+# v core::typedefs::cregion_insert_pixel
+# v core::typedefs::cregions_cleanup
+# v core::typedefs::cregions_create
+# v core::typedefs::cregions_determine_boundaries
+# v core::typedefs::cregions_find_connected
+# v core::typedefs::cregions_link_region
+# v core::typedefs::grid_new_region
 # CALL >
 cdef void csplit_regiongrow_core(
     cRegion* cfeature,
@@ -3328,11 +3327,11 @@ cdef void csplit_regiongrow_core(
 
 
 # CALL <
-# > CALLERS:
-# > identification::csplit_regiongrow_core
+# > --- CALLERS ---
 # > identification::cfeatures_grow_core
-# < CALLING:
-# < structs::cRegion
+# > identification::csplit_regiongrow_core
+# v --- CALLING ---
+# v core::structs::cRegion
 # CALL >
 cdef void assert_no_unambiguously_assigned_pixels(
     cRegion* cfeature, np.int8_t** pixel_status_table,
@@ -3351,21 +3350,21 @@ cdef void assert_no_unambiguously_assigned_pixels(
 
 
 # CALL <
-# > CALLERS:
-# > identification::csplit_regiongrow_core
+# > --- CALLERS ---
 # > identification::cfeatures_grow_core
-# < CALLING:
-# < identification::regiongrow_assign_pixel
-# < identification::regiongrow_resolve_multi_assignments
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregion_cleanup
-# < typedefs::cregion_init
-# < typedefs::cregion_get_unique_id
-# < structs::cPixel
-# < structs::cregion_conf_default
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# > identification::csplit_regiongrow_core
+# v --- CALLING ---
+# v core::identification::regiongrow_assign_pixel
+# v core::identification::regiongrow_resolve_multi_assignments
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::structs::cregion_conf_default
+# v core::typedefs::cregion_cleanup
+# v core::typedefs::cregion_get_unique_id
+# v core::typedefs::cregion_init
+# v core::typedefs::cregion_insert_pixel
 # CALL >
 cdef void regiongrow_advance_boundary(
     cRegions* subfeatures_iteration_seeds,
@@ -3591,18 +3590,18 @@ cdef void regiongrow_advance_boundary(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::determine_shared_boundary_pixels
 # > identification::regiongrow_advance_boundary
-# < CALLING:
-# < identification::resolve_multi_assignment
-# < tables::pixel_region_table_reset_slots
-# < tables::pixel_region_table_insert_region
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cRegionRankSlot
-# < structs::cRegionRankSlots
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::resolve_multi_assignment
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegionRankSlot
+# v core::structs::cRegionRankSlots
+# v core::tables::pixel_region_table_insert_region
+# v core::tables::pixel_region_table_reset_slots
 # CALL >
 cdef void regiongrow_resolve_multi_assignments(
     cRegion* cregion_multi_assigned, cGrid* grid, int n_neighbors_max, bint debug,
@@ -3683,18 +3682,18 @@ cdef void regiongrow_resolve_multi_assignments(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::regiongrow_resolve_multi_assignments
-# < CALLING:
-# < identification::dbg_print_selected_regions
-# < identification::resolve_multi_assignment_best_connected_region
-# < identification::resolve_multi_assignment_biggest_region
-# < identification::resolve_multi_assignment_mean_strongest_region
-# < identification::resolve_multi_assignment_strongest_region
-# < structs::cPixel
-# < structs::cRegionRankSlot
-# < structs::cRegionRankSlots
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::dbg_print_selected_regions
+# v core::identification::resolve_multi_assignment_best_connected_region
+# v core::identification::resolve_multi_assignment_biggest_region
+# v core::identification::resolve_multi_assignment_mean_strongest_region
+# v core::identification::resolve_multi_assignment_strongest_region
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegionRankSlot
+# v core::structs::cRegionRankSlots
 # CALL >
 cdef cRegionRankSlot* resolve_multi_assignment(
     cPixel* cpixel,
@@ -3759,11 +3758,11 @@ cdef cRegionRankSlot* resolve_multi_assignment(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::resolve_multi_assignment
-# < CALLING:
-# < structs::cRegion
-# < structs::cRegionRankSlots
+# v --- CALLING ---
+# v core::structs::cRegion
+# v core::structs::cRegionRankSlots
 # CALL >
 # DBG_PERMANENT<<<
 cdef void dbg_print_selected_regions(
@@ -3785,15 +3784,15 @@ cdef void dbg_print_selected_regions(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::resolve_multi_assignment
-# < CALLING:
-# < identification::cpixel_count_neighbors_in_cregion
-# < tables::cregion_rank_slots_reset
-# < tables::cregion_rank_slots_insert_region
-# < structs::cPixel
-# < structs::cRegionRankSlots
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::cpixel_count_neighbors_in_cregion
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegionRankSlots
+# v core::tables::cregion_rank_slots_insert_region
+# v core::tables::cregion_rank_slots_reset
 # CALL >
 cdef void resolve_multi_assignment_best_connected_region(
     cPixel* cpixel,
@@ -3872,15 +3871,15 @@ cdef void resolve_multi_assignment_best_connected_region(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::resolve_multi_assignment
-# < CALLING:
-# < tables::cregion_rank_slots_reset
-# < tables::cregion_rank_slots_insert_region
-# < tables::cregion_rank_slots_copy
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cRegionRankSlots
+# v --- CALLING ---
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegionRankSlots
+# v core::tables::cregion_rank_slots_copy
+# v core::tables::cregion_rank_slots_insert_region
+# v core::tables::cregion_rank_slots_reset
 # CALL >
 cdef void resolve_multi_assignment_biggest_region(
     cPixel* cpixel, cRegionRankSlots* selected_regions,
@@ -3917,15 +3916,15 @@ cdef void resolve_multi_assignment_biggest_region(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::resolve_multi_assignment
-# < CALLING:
-# < tables::cregion_rank_slots_reset
-# < tables::cregion_rank_slots_insert_region
-# < tables::cregion_rank_slots_copy
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cRegionRankSlots
+# v --- CALLING ---
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegionRankSlots
+# v core::tables::cregion_rank_slots_copy
+# v core::tables::cregion_rank_slots_insert_region
+# v core::tables::cregion_rank_slots_reset
 # CALL >
 cdef void resolve_multi_assignment_strongest_region(
     cPixel* cpixel, cRegionRankSlots* selected_regions,
@@ -3970,15 +3969,15 @@ cdef void resolve_multi_assignment_strongest_region(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::resolve_multi_assignment
-# < CALLING:
-# < tables::cregion_rank_slots_reset
-# < tables::cregion_rank_slots_insert_region
-# < tables::cregion_rank_slots_copy
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cRegionRankSlots
+# v --- CALLING ---
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cRegionRankSlots
+# v core::tables::cregion_rank_slots_copy
+# v core::tables::cregion_rank_slots_insert_region
+# v core::tables::cregion_rank_slots_reset
 # CALL >
 cdef void resolve_multi_assignment_mean_strongest_region(
     cPixel* cpixel, cRegionRankSlots* selected_regions,
@@ -4025,13 +4024,13 @@ cdef void resolve_multi_assignment_mean_strongest_region(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::resolve_multi_assignment_best_connected_region
-# < CALLING:
-# < typedefs::cpixel_get_neighbor
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cGrid
+# v --- CALLING ---
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::typedefs::cpixel_get_neighbor
 # CALL >
 cdef void cpixel_count_neighbors_in_cregion(
     cPixel* cpixel,
@@ -4097,13 +4096,13 @@ cdef void cpixel_count_neighbors_in_cregion(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::regiongrow_advance_boundary
-# < CALLING:
-# < typedefs::cregion_insert_pixel
-# < structs::cPixel
-# < structs::cRegion
-# < structs::cGrid
+# v --- CALLING ---
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::typedefs::cregion_insert_pixel
 # CALL >
 @cython.profile(False)
 cdef bint regiongrow_assign_pixel(
@@ -4179,9 +4178,9 @@ cdef bint regiongrow_assign_pixel(
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::c_find_extrema_2d
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::c_find_extrema_2d
 # CALL >
 cpdef find_minima_2d(fld, n=4, nmax_extrema=100):
     if n not in [4, 8, 12, 20]:
@@ -4190,9 +4189,9 @@ cpdef find_minima_2d(fld, n=4, nmax_extrema=100):
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::c_find_extrema_2d
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::c_find_extrema_2d
 # CALL >
 cpdef find_maxima_2d(fld, n=4, nmax_extrema=100):
     if n not in [4, 8, 12, 20]:
@@ -4201,11 +4200,11 @@ cpdef find_maxima_2d(fld, n=4, nmax_extrema=100):
 
 
 # CALL <
-# > CALLERS:
-# > identification::find_minima_2d
+# > --- CALLERS ---
 # > identification::find_maxima_2d
-# < CALLING:
-# < identification::_c_find_extrema_2d_core
+# > identification::find_minima_2d
+# v --- CALLING ---
+# v core::identification::_c_find_extrema_2d_core
 # CALL >
 cdef np.ndarray[np.int32_t, ndim=2] c_find_extrema_2d(
     np.float32_t[:, :] fld, int n, np.float32_t sign, int nmax_extrema,
@@ -4220,9 +4219,9 @@ cdef np.ndarray[np.int32_t, ndim=2] c_find_extrema_2d(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::c_find_extrema_2d
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -4301,27 +4300,27 @@ cdef int _c_find_extrema_2d_core(
 
 
 # CALL <
-# > CALLERS:
-# > identification::features_find_neighbors_core
+# > --- CALLERS ---
 # > identification::csplit_regiongrow_levels
-# > identification::features_grow
 # > identification::feature_split_regiongrow
+# > identification::features_find_neighbors_core
+# > identification::features_grow
 # > identification::merge_adjacent_features
 # > tracking::FeatureTracker::extend_tracks
-# < CALLING:
-# < identification::dbg_features_check_unique_pixels
-# < identification::Feature
-# < identification::feature_to_cregion
-# < identification::features_neighbors_to_cregions_connected
-# < identification::dbg_check_features_cregion_pixels
-# < typedefs::grid_new_region
-# < typedefs::cregions_link_region
-# < typedefs::cregions_determine_boundaries
-# < structs::cConstants
-# < structs::cRegionConf
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::identification::dbg_check_features_cregion_pixels
+# v core::identification::dbg_features_check_unique_pixels
+# v core::identification::feature_to_cregion
+# v core::identification::features_neighbors_to_cregions_connected
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegion
+# v core::structs::cRegionConf
+# v core::structs::cRegions
+# v core::typedefs::cregions_determine_boundaries
+# v core::typedefs::cregions_link_region
+# v core::typedefs::grid_new_region
 # CALL >
 cdef void features_to_cregions(
     list features,
@@ -4410,9 +4409,9 @@ cdef void features_to_cregions(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::features_to_cregions
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 # SR_DBG <<<
 def dbg_features_check_unique_pixels(features):
@@ -4442,9 +4441,9 @@ def dbg_features_check_unique_pixels(features):
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::features_to_cregions
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 # SR_DBG <<<
 cpdef void dbg_check_features_cregion_pixels(list features) except *:
@@ -4465,13 +4464,13 @@ cpdef void dbg_check_features_cregion_pixels(list features) except *:
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::features_to_cregions
-# < CALLING:
-# < identification::Feature
-# < typedefs::cregions_connect
-# < structs::cRegion
-# < structs::cRegions
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::typedefs::cregions_connect
 # CALL >
 cdef void features_neighbors_to_cregions_connected(
     list features_list, cRegions* cregions, bint ignore_missing_neighbors,
@@ -4530,19 +4529,19 @@ cdef void features_neighbors_to_cregions_connected(
 
 
 # CALL <
-# > CALLERS:
-# > identification::features_to_cregions
+# > --- CALLERS ---
 # > identification::feature_split_regiongrow
-# < CALLING:
-# < identification::Feature
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregion_determine_boundaries
-# < typedefs::cregion_init
-# < structs::cConstants
-# < structs::cRegionConf
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# > identification::features_to_cregions
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegion
+# v core::structs::cRegionConf
+# v core::structs::cRegions
+# v core::typedefs::cregion_determine_boundaries
+# v core::typedefs::cregion_init
+# v core::typedefs::cregion_insert_pixel
 # CALL >
 cdef void feature_to_cregion(
     Feature feature,
@@ -4626,24 +4625,24 @@ cdef void feature_to_cregion(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::Feature::derive_boundaries_from_pixels
-# > identification::Feature::derive_shells_from_pixels
 # > identification::Feature::derive_holes_from_pixels
-# < CALLING:
-# < tables::neighbor_link_stat_table_alloc
-# < typedefs::Constants
-# < typedefs::default_constants
-# < typedefs::grid_create
-# < typedefs::grid_cleanup
-# < typedefs::cregion_determine_boundaries
-# < typedefs::cregion_init
-# < typedefs::cregion_get_unique_id
-# < typedefs::cregion_insert_pixels_coords
-# < structs::cConstants
-# < structs::cRegionConf
-# < structs::cRegion
-# < structs::cGrid
+# > identification::Feature::derive_shells_from_pixels
+# v --- CALLING ---
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegion
+# v core::structs::cRegionConf
+# v core::tables::neighbor_link_stat_table_alloc
+# v core::typedefs::Constants
+# v core::typedefs::cregion_determine_boundaries
+# v core::typedefs::cregion_get_unique_id
+# v core::typedefs::cregion_init
+# v core::typedefs::cregion_insert_pixels_coords
+# v core::typedefs::default_constants
+# v core::typedefs::grid_cleanup
+# v core::typedefs::grid_create
 # CALL >
 cpdef tuple pixels_find_boundaries(
     np.ndarray[np.int32_t, ndim=2] pixels,
@@ -4736,11 +4735,11 @@ cpdef tuple pixels_find_boundaries(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::Field2D::__init__
 # > identification::Field2D::get
 # > identification::Field2D::list
-# < CALLING:Field2D
+# v --- CALLING ---Field2D
 # CALL >
 cdef class Pixel:
 
@@ -4763,9 +4762,9 @@ cdef class Pixel:
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Pixel
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Pixel
 # CALL >
 cdef class Field2D:
 
@@ -4806,10 +4805,10 @@ _TRACK_REGISTER = {}
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::Feature::__reduce__
-# < CALLING:
-# < identification::Feature
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 cpdef Feature Feature_rebuild(
     np.ndarray values,  # 0
@@ -4861,55 +4860,55 @@ cpdef Feature Feature_rebuild(
 
 
 # CALL <
-# > CALLERS:
-# > identification::merge_adjacent_features
-# > identification::create_feature
-# > identification::feature_split_regiongrow
-# > identification::features_grow
-# > identification::_replace_feature_associations
-# > identification::features_to_cregions
-# > identification::features_neighbors_to_cregions_connected
-# > identification::feature_to_cregion
+# > --- CALLERS ---
 # > identification::Feature_rebuild
-# > identification::feature2d_from_jdat
-# > identification::features_reset_cregion
-# > identification::features_find_neighbors_core
-# > identification::cregions_create_features
-# > identification::cregions2features_connected2neighbors
+# > identification::_replace_feature_associations
+# > identification::associate_features
+# > identification::create_feature
 # > identification::cregion_find_corresponding_feature
+# > identification::cregions2features_connected2neighbors
+# > identification::cregions_create_features
+# > identification::cyclones_to_features
+# > identification::feature2d_from_jdat
+# > identification::feature_split_regiongrow
+# > identification::feature_to_cregion
+# > identification::features_associates_obj2id
+# > identification::features_find_neighbors_core
+# > identification::features_grow
 # > identification::features_neighbors_id2obj
 # > identification::features_neighbors_obj2id
-# > identification::associate_features
+# > identification::features_neighbors_to_cregions_connected
+# > identification::features_reset_cregion
+# > identification::features_to_cregions
+# > identification::merge_adjacent_features
 # > identification::resolve_indirect_associations
-# > identification::features_associates_obj2id
-# > identification::cyclones_to_features
 # > io::rebuild_features_core
-# > tracking::FeatureTracker::extend_tracks
-# > tracking::FeatureTracker::_swap_grids
-# > tracking::FeatureTracker::_extend_tracks_core
-# > tracking::FeatureTracker::_assign_successors
-# > tracking::FeatureTracker::_start_track
-# > tracking::FeatureTracker::_finish_track
-# > tracking::dbg_check_features_cregion_pixels
 # > tracking::FeatureTrack::features_ts_ns
-# > tracking::TrackFeatureMerger::run
-# > tracking::TrackFeatureMerger::merge_feature
+# > tracking::FeatureTracker::_assign_successors
+# > tracking::FeatureTracker::_extend_tracks_core
+# > tracking::FeatureTracker::_finish_track
+# > tracking::FeatureTracker::_start_track
+# > tracking::FeatureTracker::_swap_grids
+# > tracking::FeatureTracker::extend_tracks
+# > tracking::TrackFeatureMerger::_collect_merge_es_attrs_core
+# > tracking::TrackFeatureMerger::collect_merge_es_attrs
+# > tracking::TrackFeatureMerger::collect_merge_vs_attrs
 # > tracking::TrackFeatureMerger::collect_neighbors
 # > tracking::TrackFeatureMerger::collect_vertices_edges
-# > tracking::TrackFeatureMerger::collect_merge_vs_attrs
-# > tracking::TrackFeatureMerger::collect_merge_es_attrs
-# > tracking::TrackFeatureMerger::_collect_merge_es_attrs_core
+# > tracking::TrackFeatureMerger::merge_feature
 # > tracking::TrackFeatureMerger::replace_vertices_edges
-# > tracking::TrackableFeature_Oldstyle
+# > tracking::TrackFeatureMerger::run
 # > tracking::TrackableFeatureCombination_Oldstyle::overlaps
-# < CALLING:
-# < identification::Feature_rebuild
-# < identification::pixels_find_boundaries
-# < identification::_feature__from_jdat__pixels_from_tables
-# < typedefs::default_constants
-# < typedefs::cregion_cleanup
-# < utilities::NAN_UI64
-# < structs::cRegion
+# > tracking::TrackableFeature_Oldstyle
+# > tracking::dbg_check_features_cregion_pixels
+# v --- CALLING ---
+# v core::identification::Feature_rebuild
+# v core::identification::_feature__from_jdat__pixels_from_tables
+# v core::identification::pixels_find_boundaries
+# v core::structs::cRegion
+# v core::typedefs::cregion_cleanup
+# v core::typedefs::default_constants
+# v core::utilities::NAN_UI64
 # CALL >
 cdef class Feature:
 
@@ -5862,9 +5861,9 @@ cdef class Feature:
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::Feature::from_jdat
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 cpdef tuple _feature__from_jdat__pixels_from_tables(
     dict jdat, dict pixel_tables, str name, bint pixels_missing,
@@ -5936,9 +5935,9 @@ cpdef tuple _feature__from_jdat__pixels_from_tables(
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Feature
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 cpdef feature2d_from_jdat(
     dict jdat,
@@ -5980,17 +5979,17 @@ cpdef feature2d_from_jdat(
 
 
 # CALL <
-# > CALLERS:
-# > identification::features_find_neighbors
-# > identification::csplit_regiongrow_levels
-# > identification::features_grow
-# > identification::feature_split_regiongrow
-# > identification::merge_adjacent_features
-# > identification::find_features_2d_threshold
-# > identification::c_find_features_2d_threshold_seeds
+# > --- CALLERS ---
 # > identification::_find_features_threshold_random_seeds
-# < CALLING:
-# < identification::Feature
+# > identification::c_find_features_2d_threshold_seeds
+# > identification::csplit_regiongrow_levels
+# > identification::feature_split_regiongrow
+# > identification::features_find_neighbors
+# > identification::features_grow
+# > identification::find_features_2d_threshold
+# > identification::merge_adjacent_features
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 cpdef void features_reset_cregion(list features, bint warn=True) except *:
     if features is None:
@@ -6001,18 +6000,18 @@ cpdef void features_reset_cregion(list features, bint warn=True) except *:
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::features_find_neighbors_core
-# < identification::features_reset_cregion
-# < tables::neighbor_link_stat_table_alloc
-# < tables::pixel_region_table_alloc_grid
-# < typedefs::Constants
-# < typedefs::default_constants
-# < typedefs::grid_create
-# < typedefs::grid_cleanup
-# < structs::cConstants
-# < structs::cGrid
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::features_find_neighbors_core
+# v core::identification::features_reset_cregion
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::tables::neighbor_link_stat_table_alloc
+# v core::tables::pixel_region_table_alloc_grid
+# v core::typedefs::Constants
+# v core::typedefs::default_constants
+# v core::typedefs::grid_cleanup
+# v core::typedefs::grid_create
 # CALL >
 cpdef void features_find_neighbors(
     list features, Constants constants = None, np.int32_t nx = 0, np.int32_t ny = 0,
@@ -6045,19 +6044,19 @@ cpdef void features_find_neighbors(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::features_find_neighbors
-# < CALLING:
-# < identification::features_to_cregions
-# < identification::Feature
-# < identification::cregions2features_connected2neighbors
-# < typedefs::cregions_create
-# < typedefs::cregions_cleanup
-# < typedefs::cregions_find_connected
-# < structs::cConstants
-# < structs::cregion_conf_default
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::identification::cregions2features_connected2neighbors
+# v core::identification::features_to_cregions
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegions
+# v core::structs::cregion_conf_default
+# v core::typedefs::cregions_cleanup
+# v core::typedefs::cregions_create
+# v core::typedefs::cregions_find_connected
 # CALL >
 cdef void features_find_neighbors_core(
     list features, cGrid* grid, cConstants* constants,
@@ -6112,23 +6111,23 @@ cdef void features_find_neighbors_core(
 
 
 # CALL <
-# > CALLERS:
-# > identification::csplit_regiongrow_levels
-# > identification::features_grow
-# > identification::feature_split_regiongrow
-# > identification::merge_adjacent_features
-# > identification::find_features_2d_threshold
-# > identification::c_find_features_2d_threshold_seeds
+# > --- CALLERS ---
 # > identification::_find_features_threshold_random_seeds
-# < CALLING:
-# < identification::Feature
-# < identification::cpixel2arr
-# < identification::cregions2features_connected2neighbors
-# < typedefs::cregions_cleanup
-# < structs::cConstants
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# > identification::c_find_features_2d_threshold_seeds
+# > identification::csplit_regiongrow_levels
+# > identification::feature_split_regiongrow
+# > identification::features_grow
+# > identification::find_features_2d_threshold
+# > identification::merge_adjacent_features
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::identification::cpixel2arr
+# v core::identification::cregions2features_connected2neighbors
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::typedefs::cregions_cleanup
 # CALL >
 cdef list cregions_create_features(
     cRegions* cregions,
@@ -6228,23 +6227,23 @@ cdef list cregions_create_features(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cregions_create_features
 # > identification::features_find_neighbors_core
-# < CALLING:
-# < identification::Feature
-# < identification::initialize_surrounding_background_region
-# < identification::determine_shared_boundary_pixels
-# < identification::cregion_find_corresponding_feature
-# < tables::pixel_region_table_reset
-# < typedefs::cregion_cleanup
-# < typedefs::cregion_init
-# < typedefs::cregion_get_unique_id
-# < structs::cConstants
-# < structs::cregion_conf_default
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::identification::cregion_find_corresponding_feature
+# v core::identification::determine_shared_boundary_pixels
+# v core::identification::initialize_surrounding_background_region
+# v core::structs::cConstants
+# v core::structs::cGrid
+# v core::structs::cRegion
+# v core::structs::cRegions
+# v core::structs::cregion_conf_default
+# v core::tables::pixel_region_table_reset
+# v core::typedefs::cregion_cleanup
+# v core::typedefs::cregion_get_unique_id
+# v core::typedefs::cregion_init
 # CALL >
 # need to keep track of which cregion corresponds to which feature, I guess
 cdef void cregions2features_connected2neighbors(
@@ -6339,19 +6338,19 @@ cdef void cregions2features_connected2neighbors(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cregions2features_connected2neighbors
-# < CALLING:
-# < identification::regiongrow_resolve_multi_assignments
-# < tables::pixel_region_table_insert_region
-# < typedefs::cregion_insert_pixel
-# < typedefs::cregion_cleanup
-# < typedefs::cregion_init
-# < typedefs::cregion_get_unique_id
-# < structs::cPixel
-# < structs::cregion_conf_default
-# < structs::cRegion
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::regiongrow_resolve_multi_assignments
+# v core::structs::cGrid
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::structs::cregion_conf_default
+# v core::tables::pixel_region_table_insert_region
+# v core::typedefs::cregion_cleanup
+# v core::typedefs::cregion_get_unique_id
+# v core::typedefs::cregion_init
+# v core::typedefs::cregion_insert_pixel
 # CALL >
 cdef void determine_shared_boundary_pixels(
     dict shared_boundary_pixels,
@@ -6586,13 +6585,13 @@ cdef void determine_shared_boundary_pixels(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cregions2features_connected2neighbors
-# < CALLING:
-# < identification::_find_background_neighbor_pixels
-# < structs::cRegion
-# < structs::cRegions
-# < structs::cGrid
+# v --- CALLING ---
+# v core::identification::_find_background_neighbor_pixels
+# v core::structs::cGrid
+# v core::structs::cRegion
+# v core::structs::cRegions
 # CALL >
 cdef void initialize_surrounding_background_region(
     cRegions* cregions, cRegion* cregion_bg, cGrid* grid, bint link_region,
@@ -6641,12 +6640,12 @@ cdef void initialize_surrounding_background_region(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::initialize_surrounding_background_region
-# < CALLING:
-# < typedefs::cregion_insert_pixel_nogil
-# < structs::cPixel
-# < structs::cRegion
+# v --- CALLING ---
+# v core::structs::cPixel
+# v core::structs::cRegion
+# v core::typedefs::cregion_insert_pixel_nogil
 # CALL >
 cdef inline void _find_background_neighbor_pixels(
     cRegion* cregion_bg, cPixel* cpixel, bint link_region, int n_neighbors_max,
@@ -6669,11 +6668,11 @@ cdef inline void _find_background_neighbor_pixels(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cregions2features_connected2neighbors
-# < CALLING:
-# < identification::Feature
-# < structs::cRegion
+# v --- CALLING ---
+# v core::identification::Feature
+# v core::structs::cRegion
 # CALL >
 cdef Feature cregion_find_corresponding_feature(
     cRegion* cregion, list features, int n_features, np.uint64_t** id_table,
@@ -6699,11 +6698,11 @@ cdef Feature cregion_find_corresponding_feature(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cregions_create_features
 # > identification::features_grow
-# < CALLING:
-# < structs::cPixel
+# v --- CALLING ---
+# v core::structs::cPixel
 # CALL >
 cdef np.ndarray[np.int32_t, ndim=2] cpixel2arr(cPixel** pixels, int n):
     """Convert an cPixel C-array into a numpy array."""
@@ -6716,9 +6715,9 @@ cdef np.ndarray[np.int32_t, ndim=2] cpixel2arr(cPixel** pixels, int n):
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Feature
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 def features_neighbors_id2obj(features, missing_action="error"):
     _name_ = "features_neighbors_id2obj"
@@ -6742,9 +6741,9 @@ def features_neighbors_id2obj(features, missing_action="error"):
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Feature
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 def features_neighbors_obj2id(features, names=None):
     if isinstance(features, dict):
@@ -6765,9 +6764,9 @@ def features_neighbors_obj2id(features, names=None):
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Feature
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 cpdef void associate_features(
     str name1,
@@ -6842,9 +6841,9 @@ cpdef void associate_features(
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Feature
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 cpdef int resolve_indirect_associations(
     str name1, list features1, str name2, list features2, str name3, list features3,
@@ -6938,9 +6937,9 @@ cpdef int resolve_indirect_associations(
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::Feature
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::Feature
 # CALL >
 def features_associates_obj2id(features, names=None):
     """Replace feature objects in associated features by feature ids."""
@@ -6966,8 +6965,8 @@ def features_associates_obj2id(features, names=None):
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
+# > --- CALLERS ---
+# v --- CALLING ---
 # CALL >
 def features_associates_id2obj(
     features_named,
@@ -7035,9 +7034,9 @@ def features_associates_id2obj(
 
 
 # CALL <
-# > CALLERS:
+# > --- CALLERS ---
 # > identification::cyclones_to_features
-# < CALLING:
+# v --- CALLING ---
 # CALL >
 def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
     """Extract pixels, center, and extrema from old-style cyclone feature."""
@@ -7076,10 +7075,10 @@ def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
 
 
 # CALL <
-# > CALLERS:
-# < CALLING:
-# < identification::oldfeature_to_pixels
-# < identification::Feature
+# > --- CALLERS ---
+# v --- CALLING ---
+# v core::identification::oldfeature_to_pixels
+# v core::identification::Feature
 # CALL >
 def cyclones_to_features(ts, cyclones, slp, lon, lat, vb=True, out=None):
     """Convert old-style cyclone features into new-style Feature objects."""
