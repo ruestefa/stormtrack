@@ -50,27 +50,50 @@ from .typedefs import Constants
 TS_FMT_DEFAULT = None
 
 
+# FeatureTracker
+# compute_tracking_probabilities
+# merge_tracks
+# dbg_check_features_cregion_pixels
+# new_track_id
+# FeatureTrackSplitter
+# vertex2str
+# edge2str
+# all_combinations
+# successor_combinations_extend
+# FeatureTrack_rebuild
+# FeatureTrack
+# track_graph_add_feature
+# track_graph_add_edge
+# remerge_partial_tracks
+# TrackFeatureMerger
+# \<\(FeatureTracker\|compute_tracking_probabilities\|merge_tracks\|dbg_check_features_cregion_pixels\|new_track_id\|FeatureTrackSplitter\|vertex2str\|edge2str\|all_combinations\|successor_combinations_extend\|FeatureTrack_rebuild\|FeatureTrack\|track_graph_add_feature\|track_graph_add_edge\|remerge_partial_tracks\|TrackFeatureMerger\)\>
+
+
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# < CALLING:
+# < identification::features_grow
+# < identification::Feature
+# < identification::features_to_cregions
+# < structs::SuccessorCandidates
+# < structs::SuccessorCandidate
+# < structs::cGrid
+# < tables::pixel_region_table_init_regions
+# < typedefs::Constants
+# < typedefs::Grid
+# < typedefs::cregions_create
+# < typedefs::cregions_link_region
+# < typedefs::cregion_overlaps_tables
+# < typedefs::cregion_overlap_n_tables
+# < tracking::dbg_check_features_cregion_pixels
+# < tracking::FeatureTrack
+# < tracking::all_combinations
+# < tracking::successor_combinations_extend
+# < tracking::compute_tracking_probabilities
+# < tracking::track_graph_add_feature
+# < tracking::track_graph_add_edge
+# < tracking::merge_tracks
+# < tracking::new_track_id
 # CALL >
 cdef class FeatureTracker:
 
@@ -1314,26 +1337,10 @@ cdef class FeatureTracker:
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrackSplitter::recompute_tracking_probabilities
+# > tracking::FeatureTrack::_compute_successor_probabilities
+# < CALLING:
 # CALL >
 cdef void compute_tracking_probabilities(
     float* p_tot,
@@ -1363,26 +1370,10 @@ cdef void compute_tracking_probabilities(
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrack::merge_partial_tracks
+# > tracking::FeatureTrack::_merge_tracks
+# < CALLING:
 # CALL >
 def merge_tracks(tracks, active_tracks=None):
     cdef bint debug = False
@@ -1452,26 +1443,12 @@ def merge_tracks(tracks, active_tracks=None):
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTracker::extend_tracks
+# > tracking::FeatureTracker::_extend_tracks_core
+# > tracking::FeatureTracker::_finish_track
+# < CALLING:
+# < identification::Feature
 # CALL >
 cpdef void dbg_check_features_cregion_pixels(list features) except *:
     cdef Feature feature
@@ -1491,26 +1468,10 @@ cpdef void dbg_check_features_cregion_pixels(list features) except *:
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrack::new_track_id
+# > tracking::FeatureTrackSplitter::split
+# < CALLING:
 # CALL >
 def new_track_id(np.uint64_t ts, set used_ids):
     cdef np.uint64_t new_id
@@ -1523,26 +1484,15 @@ def new_track_id(np.uint64_t ts, set used_ids):
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrack::split
+# > tracking::FeatureTrack_rebuild
+# < CALLING:
+# < tracking::vertex2str
+# < tracking::edge2str
+# < tracking::new_track_id
+# < tracking::FeatureTrack
+# < tracking::compute_tracking_probabilities
 # CALL >
 cdef class FeatureTrackSplitter:
 
@@ -2181,54 +2131,24 @@ cdef class FeatureTrackSplitter:
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrackSplitter::split
+# > tracking::FeatureTrackSplitter::_adapt_vertex_type_parent
+# > tracking::FeatureTrackSplitter::_adapt_vertex_type_child
+# < CALLING:
 # CALL >
-# DBG_PERMANENT <
+# DBG_PERMANENT <<<
 def vertex2str(vertex):
     return "[{vertex['feature'].id}@{vertex['ts']}: {vertex['type']}]"
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrackSplitter::split
+# > tracking::FeatureTrackSplitter::_process_branching_vertex
+# < CALLING:
 # CALL >
+# DBG_PERMANENT <<<
 def edge2str(edge):
     return (
         f"[{edge.graph.vs[edge.source]['feature'].id}]<("
@@ -2239,30 +2159,12 @@ def edge2str(edge):
         f"{edge['p_overlap'] or -1:5.3f})>"
         f"[{edge.graph.vs[edge.target]['feature'].id}]"
     )
-# DBG_PERMANENT >
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrack::_combine_candidates
+# < CALLING:
 # CALL >
 cdef list all_combinations(list elements, int nmin, int nmax):
     return list(
@@ -2274,26 +2176,11 @@ cdef list all_combinations(list elements, int nmin, int nmax):
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrack::_combine_candidates
+# < CALLING:
+# < structs::SuccessorCandidates
+# < structs::SuccessorCandidate
 # CALL >
 cdef void successor_combinations_extend(
     SuccessorCandidates* combinations, int max_children,
@@ -2356,52 +2243,31 @@ cdef void successor_combinations_extend(
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrack::__reduce__
+# < CALLING:
+# < tracking::FeatureTrack
 # CALL >
 cpdef FeatureTrack FeatureTrack_rebuild(np.uint64_t id_, object graph, dict config):
     return FeatureTrack(id_=id_, graph=graph, config=config)
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > io::rebuild_tracks
+# > tracking::TrackFeatureMerger::__cinit__
+# > tracking::remerge_partial_tracks
+# > tracking::FeatureTrackSplitter::split
+# > tracking::FeatureTrackSplitter::_split_graph
+# < CALLING:
+# < identification::Feature
+# < typedefs::Constants
+# < tracking::track_graph_add_feature
+# < tracking::FeatureTrack_rebuild
+# < tracking::track_graph_add_edge
+# < tracking::FeatureTrackSplitter
+# < tracking::TrackFeatureMerger
+# < tracking::merge_tracks
 # CALL >
 # SR_TODO turn into proper extension class (i.e. cythonize methods etc.)
 cdef class FeatureTrack:
@@ -2965,7 +2831,7 @@ cdef class FeatureTrack:
         if cache and __name__ in self._cache:
             return self._cache[__name__]
 
-        # SR_TMP <
+        # SR_TMP < SR_TODO remove this if possible
         # # Collect sizes at available timesteps
         # ns_ts =  [[f.n for f in fs] for fs in self.features_ts()]
 
@@ -4062,26 +3928,12 @@ cdef class FeatureTrack:
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrack::_assign_successors
+# > tracking::FeatureTrack::__cinit__
+# > tracking::FeatureTrack::from_features_linear
+# > tracking::FeatureTrack::from_old_track
+# < CALLING:
 # CALL >
 def track_graph_add_feature(graph, feature, attrs=None):
     if attrs is None:
@@ -4099,26 +3951,11 @@ def track_graph_add_feature(graph, feature, attrs=None):
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrack::from_features_linear
+# > tracking::FeatureTrack::from_old_track
+# > tracking::FeatureTrack::_assign_successors
+# < CALLING:
 # CALL >
 def track_graph_add_edge(graph, vertex1, vertex2, attrs=None):
     # print(f"add edge: {fid1} -> {fid2}")
@@ -4138,26 +3975,10 @@ def track_graph_add_edge(graph, vertex1, vertex2, attrs=None):
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > io::read_feature_files
+# < CALLING:
+# < tracking::FeatureTrack
 # CALL >
 def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
     """Reconstruct partial tracks.
@@ -4219,26 +4040,12 @@ def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# > tracking::FeatureTrack::merge_features
+# < CALLING:
+# < identification::Feature
+# < identification::merge_adjacent_features
+# < tracking::FeatureTrack
 # CALL >
 cdef class TrackFeatureMerger:
 
@@ -4875,29 +4682,13 @@ cdef class TrackFeatureMerger:
                 )
             vertex["type"] = new_type
 
+
 # Feature wrapper class for compatibility with old-style tracking
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# < CALLING:
+# < identification::Feature
 # CALL >
 class TrackableFeature_Oldstyle(Feature):
     """Wrapper class for Feature which is compatible with the old-style tracking."""
@@ -5026,26 +4817,9 @@ class TrackableFeature_Oldstyle(Feature):
 
 
 # CALL <
-# CALLERS:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
-# CALLING:
-# distance::TODO
-# grid::TODO
-# identification::TODO
-# io::TODO
-# structs::TODO
-# tables::TODO
-# tracking::TODO
-# typedefs::TODO
-# utilities::TODO
+# > CALLERS:
+# < CALLING:
+# < identification::Feature
 # CALL >
 class TrackableFeatureCombination_Oldstyle(TrackableFeature_Oldstyle):
 
@@ -5106,5 +4880,3 @@ class TrackableFeatureCombination_Oldstyle(TrackableFeature_Oldstyle):
             f"{type(self).__name__}[{self.id_str()}]: some but not all features are "
             f"unassigned"
         )
-
-TrackableFeature_Oldstyle.cls_combination = TrackableFeatureCombination_Oldstyle

@@ -6,56 +6,22 @@ cimport numpy as np
 # Local
 from .identification cimport Feature
 from .identification cimport features_to_cregions
-from .structs cimport cConstants
 from .structs cimport cGrid
+from .structs cimport SuccessorCandidate
+from .structs cimport SuccessorCandidates
 from .tables cimport PixelRegionTable
-from .tables cimport neighbor_link_stat_table_alloc
-from .tables cimport neighbor_link_stat_table_reset
-from .tables cimport pixel_region_table_alloc
-from .tables cimport pixel_region_table_cleanup
 from .tables cimport pixel_region_table_init_regions
-from .tables cimport pixel_region_table_reset
-from .tables cimport pixel_region_table_reset_regions
 from .typedefs cimport Constants
 from .typedefs cimport Grid
 from .typedefs cimport cPixel
 from .typedefs cimport cRegion
 from .typedefs cimport cRegions
-from .typedefs cimport cregion_cleanup
 from .typedefs cimport cregion_conf_default
-from .typedefs cimport cregion_overlap_n
 from .typedefs cimport cregion_overlap_n_tables
-from .typedefs cimport cregion_overlaps
 from .typedefs cimport cregion_overlaps_tables
-from .typedefs cimport cregions_cleanup
 from .typedefs cimport cregions_create
-from .typedefs cimport cregions_init
 from .typedefs cimport cregions_link_region
-from .typedefs cimport grid_cleanup
-from .typedefs cimport grid_create
 from .typedefs cimport grid_create_empty
-from .typedefs cimport grid_new_region
-from .typedefs cimport grid_new_regions
-from .typedefs cimport grid_reset
-
-
-cdef struct SuccessorCandidate:
-    cRegion*      parent
-    cRegion**      children
-    np.float32_t *p_shares
-    np.int32_t   *n_overlaps
-    int n
-    int max
-    int direction
-    float p_tot
-    float p_size
-    float p_overlap
-
-
-cdef struct SuccessorCandidates:
-    SuccessorCandidate* candidates
-    int n
-    int max
 
 
 cdef class FeatureTracker:

@@ -3,10 +3,7 @@
 cimport numpy as np
 
 # Local
-from .structs cimport NeighborLinkStatTable
-from .structs cimport PixelDoneTable
 from .structs cimport PixelRegionTable
-from .structs cimport PixelStatusTable
 from .structs cimport cConstants
 from .structs cimport cGrid
 from .structs cimport cPixel
@@ -15,7 +12,6 @@ from .structs cimport cRegionConf
 from .structs cimport cRegions
 from .structs cimport cRegionsStore
 from .structs cimport cregion_conf_default
-from .structs cimport cregions_store_create
 from .structs cimport get_matching_neighbor_id
 from .structs cimport grid_create_empty
 from .structs cimport pixeltype
@@ -27,9 +23,7 @@ from .tables cimport neighbor_link_stat_table_cleanup
 from .tables cimport neighbor_link_stat_table_init
 from .tables cimport neighbor_link_stat_table_reset
 from .tables cimport neighbor_link_stat_table_reset
-from .tables cimport neighbor_link_stat_table_reset_pixels
 from .tables cimport pixel_done_table_cleanup
-from .tables cimport pixel_done_table_reset
 from .tables cimport pixel_region_table_alloc
 from .tables cimport pixel_region_table_cleanup
 from .tables cimport pixel_region_table_reset
@@ -37,6 +31,51 @@ from .tables cimport pixel_status_table_alloc
 from .tables cimport pixel_status_table_cleanup
 from .tables cimport pixel_status_table_reset
 from .tables cimport pixel_status_table_reset
+
+
+# default_constants
+# Constants
+# Grid
+# grid_create
+# grid_create_pixels
+# grid_set_values
+# grid_reset
+# grid_cleanup
+# grid_new_region
+# grid_new_regions
+# cregion_get_unique_id
+# cregion_init
+# cregion_reset
+# cregion_cleanup
+# cregion_insert_pixels_coords
+# cregion_insert_pixel
+# cregion_insert_pixel_nogil
+# cregion_remove_pixel
+# cregion_remove_connected
+# cregion_merge
+# cregion_reset_boundaries
+# cregion_determine_boundaries
+# cregion_overlaps
+# cregion_overlaps_tables
+# cregion_overlap_n
+# cregion_overlap_n_tables
+# cregion_overlap_n_mask
+# cregions_get_unique_id
+# cregions_init
+# cregions_create
+# cregions_reset
+# cregions_cleanup
+# cregions_link_region
+# cregions_move
+# cregions_connect
+# cregions_find_connected
+# cregions_determine_boundaries
+# dbg_check_connected
+# cpixel_set_region
+# cpixel2d_create
+# cpixels_reset
+# cpixel_get_neighbor
+# \<\(default_constants\|Constants\|Grid\|grid_create\|grid_create_pixels\|grid_set_values\|grid_reset\|grid_cleanup\|grid_new_region\|grid_new_regions\|cregion_get_unique_id\|cregion_init\|cregion_reset\|cregion_cleanup\|cregion_insert_pixels_coords\|cregion_insert_pixel\|cregion_insert_pixel_nogil\|cregion_remove_pixel\|cregion_remove_connected\|cregion_merge\|cregion_reset_boundaries\|cregion_determine_boundaries\|cregion_overlaps\|cregion_overlaps_tables\|cregion_overlap_n\|cregion_overlap_n_tables\|cregion_overlap_n_mask\|cregions_get_unique_id\|cregions_init\|cregions_create\|cregions_reset\|cregions_cleanup\|cregions_link_region\|cregions_move\|cregions_connect\|cregions_find_connected\|cregions_determine_boundaries\|dbg_check_connected\|cpixel_set_region\|cpixel2d_create\|cpixels_reset\|cpixel_get_neighbor\)\>
 
 
 cpdef Constants default_constants(

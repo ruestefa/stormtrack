@@ -3,10 +3,6 @@
 cimport numpy as np
 
 # Local
-from .structs cimport NeighborLinkStatTable
-from .structs cimport PixelDoneTable
-from .structs cimport PixelRegionTable
-from .structs cimport PixelStatusTable
 from .structs cimport cConstants
 from .structs cimport cGrid
 from .structs cimport cPixel
@@ -25,7 +21,6 @@ from .tables cimport neighbor_link_stat_table_reset_pixels
 from .tables cimport pixel_done_table_alloc
 from .tables cimport pixel_done_table_init
 from .tables cimport pixel_done_table_reset
-from .tables cimport pixel_region_table_alloc
 from .tables cimport pixel_region_table_alloc_grid
 from .tables cimport pixel_region_table_alloc_pixels
 from .tables cimport pixel_region_table_grow
@@ -61,12 +56,10 @@ from .typedefs cimport cregions_find_connected
 from .typedefs cimport cregions_link_region
 from .typedefs cimport cregions_move
 from .typedefs cimport cregions_reset
-from .typedefs cimport dbg_check_connected
 from .typedefs cimport default_constants
 from .typedefs cimport grid_cleanup
 from .typedefs cimport grid_create
 from .typedefs cimport grid_new_region
-from .typedefs cimport grid_new_regions
 from .typedefs cimport pixeltype
 from .typedefs cimport pixeltype_background
 from .typedefs cimport pixeltype_feature
@@ -113,12 +106,6 @@ cdef list cregions_create_features(
     cConstants *constants,
         list used_ids=?,
 )
-
-
-cdef struct cField2D:
-    cPixel** pixels
-    np.int32_t nx
-    np.int32_t ny
 
 
 cdef class Field2D:

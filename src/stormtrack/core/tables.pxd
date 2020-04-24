@@ -16,6 +16,37 @@ from .structs cimport cRegions
 from .structs cimport get_matching_neighbor_id
 
 
+# pixel_done_table_alloc
+# pixel_done_table_init
+# pixel_done_table_reset
+# pixel_done_table_cleanup
+# pixel_region_table_alloc
+# pixel_region_table_alloc_grid
+# pixel_region_table_alloc_pixels
+# pixel_region_table_init_regions
+# pixel_region_table_insert_region
+# pixel_region_table_reset
+# pixel_region_table_reset_regions
+# pixel_region_table_reset_slots
+# pixel_region_table_grow
+# pixel_region_table_reset_region
+# pixel_region_table_cleanup
+# cregion_rank_slots_insert_region
+# cregion_rank_slots_reset
+# cregion_rank_slots_copy
+# pixel_status_table_init_feature
+# pixel_status_table_reset_feature
+# pixel_status_table_alloc
+# pixel_status_table_cleanup
+# pixel_status_table_reset
+# neighbor_link_stat_table_alloc
+# neighbor_link_stat_table_reset
+# neighbor_link_stat_table_reset_pixels
+# neighbor_link_stat_table_cleanup
+# neighbor_link_stat_table_init
+# \<\(pixel_done_table_alloc\|pixel_done_table_init\|pixel_done_table_reset\|pixel_done_table_cleanup\|pixel_region_table_alloc\|pixel_region_table_alloc_grid\|pixel_region_table_alloc_pixels\|pixel_region_table_init_regions\|pixel_region_table_insert_region\|pixel_region_table_reset\|pixel_region_table_reset_regions\|pixel_region_table_reset_slots\|pixel_region_table_grow\|pixel_region_table_reset_region\|pixel_region_table_cleanup\|cregion_rank_slots_insert_region\|cregion_rank_slots_reset\|cregion_rank_slots_copy\|pixel_status_table_init_feature\|pixel_status_table_reset_feature\|pixel_status_table_alloc\|pixel_status_table_cleanup\|pixel_status_table_reset\|neighbor_link_stat_table_alloc\|neighbor_link_stat_table_reset\|neighbor_link_stat_table_reset_pixels\|neighbor_link_stat_table_cleanup\|neighbor_link_stat_table_init\)\>
+
+
 cdef void pixel_done_table_alloc(PixelDoneTable* table, cConstants* constants)
 
 
