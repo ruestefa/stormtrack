@@ -131,8 +131,8 @@ cdef class FeatureTracker:
 
 
 # :call: > --- CALLERS ---
-# :call: > tracking::FeatureTrack::_compute_successor_probabilities
-# :call: > tracking::FeatureTrackSplitter::recompute_tracking_probabilities
+# :call: > core::tracking::FeatureTrack::_compute_successor_probabilities
+# :call: > core::tracking::FeatureTrackSplitter::recompute_tracking_probabilities
 cdef void compute_tracking_probabilities(
     float* p_tot,
     float* p_size,
@@ -148,8 +148,8 @@ cdef void compute_tracking_probabilities(
 
 
 # :call: > --- CALLERS ---
-# :call: > tracking::FeatureTrack::split
-# :call: > tracking::FeatureTrack_rebuild
+# :call: > core::tracking::FeatureTrack::split
+# :call: > core::tracking::FeatureTrack_rebuild
 cdef class FeatureTrackSplitter:
     cdef public:
         set used_ids
@@ -162,18 +162,18 @@ cdef class FeatureTrackSplitter:
 
 
 # :call: > --- CALLERS ---
-# :call: > tracking::FeatureTrack::__reduce__
+# :call: > core::tracking::FeatureTrack::__reduce__
 cpdef FeatureTrack FeatureTrack_rebuild(
     np.uint64_t id_, object graph, dict config,
 )
 
 
 # :call: > --- CALLERS ---
-# :call: > io::rebuild_tracks
-# :call: > tracking::FeatureTrackSplitter::_split_graph
-# :call: > tracking::FeatureTrackSplitter::split
-# :call: > tracking::TrackFeatureMerger::__cinit__
-# :call: > tracking::remerge_partial_tracks
+# :call: > core::io::rebuild_tracks
+# :call: > core::tracking::FeatureTrackSplitter::_split_graph
+# :call: > core::tracking::FeatureTrackSplitter::split
+# :call: > core::tracking::TrackFeatureMerger::__cinit__
+# :call: > core::tracking::remerge_partial_tracks
 cdef class FeatureTrack:
     cdef public:
         object graph
@@ -197,7 +197,7 @@ cdef class FeatureTrack:
 
 
 # :call: > --- CALLERS ---
-# :call: > tracking::FeatureTrack::merge_features
+# :call: > core::tracking::FeatureTrack::merge_features
 cdef class TrackFeatureMerger:
     cdef readonly:
         FeatureTrack track

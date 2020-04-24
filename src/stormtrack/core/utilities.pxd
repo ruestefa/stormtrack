@@ -4,9 +4,9 @@ cimport numpy as np
 
 
 # :call: > --- CALLERS ---
-# :call: > identification::Feature::__cinit__
-# :call: > identification::Feature::__repr__
-# :call: > identification::Feature::unset_track
+# :call: > core::identification::Feature::__cinit__
+# :call: > core::identification::Feature::__repr__
+# :call: > core::identification::Feature::unset_track
 # cdef np.float32_t NAN_F32
 # cdef np.float64_t NAN_F64
 # cdef np.int16_t   NAN_I16
