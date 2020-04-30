@@ -59,11 +59,11 @@ from ..utils.various import NoIndentEncoder
 # read_masks
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::identify_features::*
 # :call: > stormtrack::track_features::*
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::__tmp__write_tracks_features_as_graphs
 # :call: v stormtrack::core::io::_collect_jdat_features
 # :call: v stormtrack::core::io::write_feature_pixels
@@ -337,9 +337,9 @@ def write_feature_file(
                 pickle.dump(graphs_table, fo)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::write_feature_file
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def write_feature_pixels(outfile, *, feature_name, features, mode, silent=False):
     """Write all feature pixels to an npz archive (shells/holes separately).
 
@@ -380,9 +380,9 @@ def write_feature_pixels(outfile, *, feature_name, features, mode, silent=False)
         raise Exception(f"unknown file format: {outfile}")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::write_feature_file
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def _collect_jdat_features(features, timesteps, pixel_store_mode):
     """Collect data of features and add it to json data dict."""
     jdat_features = []
@@ -413,9 +413,9 @@ def _collect_jdat_features(features, timesteps, pixel_store_mode):
     return jdat_features
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::write_feature_file
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::tracks_to_graphs
 def __tmp__write_tracks_features_as_graphs(
     outfile,
@@ -482,8 +482,8 @@ def __tmp__write_tracks_features_as_graphs(
                         grp_fid.create_dataset("values", data=values)
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::track_to_graph
 def tracks_to_graphs(tracks, *, separate_pixels=False, store_values=False):
     """Reduce tracks to graphs with data to rebuild tracks and features."""
@@ -507,9 +507,9 @@ def tracks_to_graphs(tracks, *, separate_pixels=False, store_values=False):
     return output
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::tracks_to_graphs
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def track_to_graph(track, *, separate_pixels=False, store_values=False):
     """Reduce track to graph with data to rebuild track and features.
 
@@ -569,8 +569,8 @@ def track_to_graph(track, *, separate_pixels=False, store_values=False):
     return output
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 def distribute_tracks_across_outfiles(
     tracks,
     timesteps_outfiles,
@@ -740,10 +740,10 @@ def distribute_tracks_across_outfiles(
     return outfiles_tracks
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::read_feature_file
 # :call: > stormtrack::track_features::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::features_read_pixels
 # :call: v stormtrack::core::io::read_feature_file
 # :call: v stormtrack::core::io::select_tracks_features
@@ -924,11 +924,11 @@ def read_feature_files(
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::read_feature_files
 # :call: > stormtrack::track_features::*
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::_rebuild_tracks_from_graphs
 # :call: v stormtrack::core::io::features_read_pixels
 # :call: v stormtrack::core::io::jdat_remove_noindent
@@ -1484,10 +1484,10 @@ def read_feature_file(
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::_rebuild_tracks_from_graphs
 # :call: > stormtrack::core::io::read_feature_file
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::track_is_outside_timestep_range
 def read_track_graphs(
     graphfile,
@@ -1644,9 +1644,9 @@ def read_track_graphs(
     return output
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::read_feature_file
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # SR_TMP <<<
 def jdat_remove_noindent(jdat):
     for key, val in jdat.items():
@@ -1660,9 +1660,9 @@ def jdat_remove_noindent(jdat):
             jdat[key] = val.value
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::read_feature_file
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::read_track_graphs
 # :call: v stormtrack::core::io::rebuild_features
 # :call: v stormtrack::core::io::rebuild_tracks
@@ -1903,10 +1903,10 @@ def _rebuild_tracks_from_graphs(
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::_rebuild_tracks_from_graphs
 # :call: > stormtrack::core::io::read_feature_file
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::_rebuild_features_core
 # :call: v stormtrack::core::io::read_feature_pixels
 def rebuild_features(
@@ -2085,10 +2085,10 @@ def rebuild_features(
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::read_feature_file
 # :call: > stormtrack::core::io::read_feature_files
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::read_feature_pixels
 def features_read_pixels(
     feature_name,
@@ -2226,10 +2226,10 @@ def features_read_pixels(
             print(" " * w, end="\r", flush=True)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::_rebuild_tracks_from_graphs
 # :call: > stormtrack::core::io::read_feature_file
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::track_is_outside_timestep_range
 # :call: v stormtrack::core::tracking::FeatureTrack
 def rebuild_tracks(
@@ -2349,10 +2349,10 @@ def rebuild_tracks(
     return dict(tracks=tracks, nskip_tracks=nskip_tracks,)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::read_track_graphs
 # :call: > stormtrack::core::io::rebuild_tracks
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def track_is_outside_timestep_range(
     ts_start,
     ts_end,
@@ -2398,10 +2398,10 @@ def track_is_outside_timestep_range(
     return skip_track
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::features_read_pixels
 # :call: > stormtrack::core::io::rebuild_features
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::io::_read_feature_pixels_core
 def read_feature_pixels(pixelfile, *args, **kwas):
     """Read feature pixels from npz archive (including shells and holes).
@@ -2423,9 +2423,9 @@ def read_feature_pixels(pixelfile, *args, **kwas):
             return _read_feature_pixels_core(fi, *args, **kwas)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::read_feature_pixels
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def _read_feature_pixels_core(
     fi,
     names,
@@ -2544,9 +2544,9 @@ def _read_feature_pixels_core(
     return pixel_tables
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::rebuild_features
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 def _rebuild_features_core(
     jdat,
@@ -2656,10 +2656,10 @@ def _rebuild_features_core(
     return features
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::read_feature_file
 # :call: > stormtrack::core::io::read_feature_files
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def select_tracks_features(
     *,
     tracks=None,
@@ -2759,8 +2759,8 @@ def select_tracks_features(
     }
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 def read_masks(infile, lon, lat, silent=False, dtype=bool):
     """Read mask shells and holes and turn them into mask fields."""
 

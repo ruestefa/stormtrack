@@ -67,7 +67,7 @@ from .typedefs cimport pixeltype_none
 from .utilities cimport NAN_UI64
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::extra::front_surgery::*
 cdef void cregions_merge_connected_inplace(
     cRegions* cregions,
@@ -79,7 +79,7 @@ cdef void cregions_merge_connected_inplace(
 ) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
 # :call: > test_stormtrack::test_core::test_features::test_features::*
 cpdef list features_grow(
@@ -94,7 +94,7 @@ cpdef list features_grow(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::identification::features_find_neighbors_core
@@ -114,7 +114,7 @@ cdef void features_to_cregions(
 ) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -133,7 +133,7 @@ cdef list cregions_create_features(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Feature_rebuild
 # :call: > stormtrack::core::identification::_replace_feature_associations
 # :call: > stormtrack::core::identification::associate_features
@@ -293,7 +293,7 @@ cdef class Feature:
     cpdef void reset_vertex(self) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -306,7 +306,7 @@ cdef class Feature:
 cpdef void features_reset_cregion(list features, bint warn=?) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::extra::front_surgery::*
 # :call: > test_stormtrack::test_core::test_features::test_features::*
 cpdef void features_find_neighbors(

@@ -117,9 +117,9 @@ import numpy as np
 # grid_new_region
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::categorize_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 cdef inline int sign(int num):
     if num >= 0:
         return 1
@@ -127,7 +127,7 @@ cdef inline int sign(int num):
         return -1
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::identify_features::*
 # :call: > stormtrack::core::identification::Feature::derive_boundaries_from_pixels
 # :call: > stormtrack::core::identification::Feature::derive_holes_from_pixels
@@ -147,7 +147,7 @@ cdef inline int sign(int num):
 # :call: > test_stormtrack::test_core::test_features::test_regions::*
 # :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
 # :call: > test_stormtrack::utils::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::typedefs::Constants
 cpdef Constants default_constants(
     # SR_TODO remove nx, ny (use from Grid)
@@ -158,7 +158,7 @@ cpdef Constants default_constants(
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::collect_adjacent_pixels
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
@@ -168,7 +168,7 @@ cpdef Constants default_constants(
 # :call: > stormtrack::core::identification::regiongrow_advance_boundary
 # :call: > stormtrack::core::typedefs::_determine_boundary_pixels_raw
 # :call: > stormtrack::core::typedefs::cregions_store_extend
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 cdef np.uint64_t cregion_get_unique_id():
     global CREGION_NEXT_ID
     cdef np.uint64_t rid = CREGION_NEXT_ID
@@ -176,7 +176,7 @@ cdef np.uint64_t cregion_get_unique_id():
     return rid
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::identification::features_find_neighbors
@@ -189,7 +189,7 @@ cdef np.uint64_t cregion_get_unique_id():
 # :call: > stormtrack::core::tracking::FeatureTracker::__cinit__
 # :call: > stormtrack::core::typedefs::Grid::__cinit__
 # :call: > stormtrack::core::typedefs::default_constants
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cConstants
 cdef class Constants:
 
@@ -213,7 +213,7 @@ cdef class Constants:
         return &(self._cconstants)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::collect_adjacent_pixels
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
@@ -224,7 +224,7 @@ cdef class Constants:
 # :call: > stormtrack::core::identification::regiongrow_advance_boundary
 # :call: > stormtrack::core::typedefs::_determine_boundary_pixels_raw
 # :call: > stormtrack::core::typedefs::cregions_store_extend
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionConf
@@ -311,10 +311,10 @@ cdef void cregion_init(cRegion* cregion, cRegionConf cregion_conf, np.uint64_t r
                     cregion.holes[i][j] = NULL
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::pixels_find_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cregion_insert_pixel
@@ -340,8 +340,8 @@ cdef void cregion_insert_pixels_coords(
         cregion_insert_pixel(cregion, cpixel, link_region, unlink_pixels)
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cpixel2d_create
@@ -362,7 +362,7 @@ cdef void _cregion_create_pixels(
     cpixels = NULL
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::assign_cpixel
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -379,7 +379,7 @@ cdef void _cregion_create_pixels(
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
 # :call: > stormtrack::core::typedefs::cregion_insert_pixels_coords
 # :call: > stormtrack::core::typedefs::cregion_merge
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_extend_pixels
@@ -414,9 +414,9 @@ cdef void cregion_insert_pixel(
         cpixel_set_region(cpixel, cregion)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_background_neighbor_pixels
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_extend_pixels_nogil
@@ -445,11 +445,11 @@ cdef void cregion_insert_pixel_nogil(
         cpixel_set_region(cpixel, cregion)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::collect_adjacent_pixels
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_remove_pixel_from_holes
@@ -465,9 +465,9 @@ cdef void cregion_remove_pixel(cRegion* cregion, cPixel* cpixel):
     _cregion_remove_pixel_from_holes(cregion, cpixel)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_insert_pixel_nogil
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_remove_pixel_from_holes_nogil
@@ -480,9 +480,9 @@ cdef void cregion_remove_pixel_nogil(cRegion* cregion, cPixel* cpixel) nogil:
     _cregion_remove_pixel_from_holes_nogil(cregion, cpixel)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_remove_pixel
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 @profile(False)
@@ -511,9 +511,9 @@ cdef inline void _cregion_remove_pixel_from_pixels(cRegion* cregion, cPixel* cpi
             break
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_remove_pixel_nogil
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 @profile(False)
@@ -535,9 +535,9 @@ cdef inline void _cregion_remove_pixel_from_pixels_nogil(
             break
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_remove_pixel
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_shell_remove_gaps
@@ -556,9 +556,9 @@ cdef inline void _cregion_remove_pixel_from_shells(cRegion* cregion, cPixel* cpi
                 break
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_remove_pixel_nogil
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_shell_remove_gaps_nogil
@@ -579,9 +579,9 @@ cdef inline void _cregion_remove_pixel_from_shells_nogil(
                 break
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_remove_pixel
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_hole_remove_gaps
@@ -600,9 +600,9 @@ cdef inline void _cregion_remove_pixel_from_holes(cRegion* cregion, cPixel* cpix
             return
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_remove_pixel_nogil
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_hole_remove_gaps_nogil
@@ -623,9 +623,9 @@ cdef inline void _cregion_remove_pixel_from_holes_nogil(
             return
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_extend_pixels
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef inline void cregion_pixels_remove_gaps(cRegion* cregion, int i_start):
     cdef int i
@@ -640,9 +640,9 @@ cdef inline void cregion_pixels_remove_gaps(cRegion* cregion, int i_start):
     cregion.pixels_iend = cregion.pixels_n
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_extend_pixels_nogil
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef inline void cregion_pixels_remove_gaps_nogil(cRegion* cregion, int i_start) nogil:
     cdef int i
@@ -657,9 +657,9 @@ cdef inline void cregion_pixels_remove_gaps_nogil(cRegion* cregion, int i_start)
     cregion.pixels_iend = cregion.pixels_n
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_shells
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef inline void _cregion_shell_remove_gaps(cRegion* cregion, int i_shell, int i_start):
     cdef int i
@@ -676,9 +676,9 @@ cdef inline void _cregion_shell_remove_gaps(cRegion* cregion, int i_shell, int i
         cregion.shells[i_shell][i] = NULL
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_shells_nogil
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef inline void _cregion_shell_remove_gaps_nogil(
     cRegion* cregion, int i_shell, int i_start,
@@ -697,9 +697,9 @@ cdef inline void _cregion_shell_remove_gaps_nogil(
         cregion.shells[i_shell][i] = NULL
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_holes
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef inline void _cregion_hole_remove_gaps(cRegion* cregion, int i_hole, int i_start):
     cdef int i
@@ -716,9 +716,9 @@ cdef inline void _cregion_hole_remove_gaps(cRegion* cregion, int i_hole, int i_s
         cregion.holes[i_hole][i] = NULL
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_holes_nogil
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef inline void _cregion_hole_remove_gaps_nogil(
     cRegion* cregion, int i_hole, int i_start,
@@ -737,10 +737,10 @@ cdef inline void _cregion_hole_remove_gaps_nogil(
         cregion.holes[i_hole][i] = NULL
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
 # :call: > stormtrack::core::typedefs::_cregion_extend_shell
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_extend_shell
@@ -770,10 +770,10 @@ cdef void _cregion_insert_shell_pixel(cRegion* cregion, int i_shell, cPixel* cpi
         _cregion_reconnect_pixel(cregion, cpixel, warn=True)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
 # :call: > stormtrack::core::typedefs::_cregion_extend_hole
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_extend_hole
@@ -801,10 +801,10 @@ cdef void _cregion_insert_hole_pixel(cRegion* cregion, int i_hole, cPixel* cpixe
         _cregion_reconnect_pixel(cregion, cpixel, warn=True)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_insert_hole_pixel
 # :call: > stormtrack::core::typedefs::_cregion_insert_shell_pixel
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cpixel_set_region
@@ -831,9 +831,9 @@ cdef void _cregion_reconnect_pixel(
     cpixel_set_region(cpixel, cregion)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cregion_pixels_remove_gaps
@@ -866,9 +866,9 @@ cdef void _cregion_extend_pixels(cRegion* cregion):
     cregion.pixels_max = nmax_new
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_insert_pixel_nogil
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cregion_pixels_remove_gaps_nogil
@@ -901,9 +901,9 @@ cdef void _cregion_extend_pixels_nogil(cRegion* cregion) nogil:
     cregion.pixels_max = nmax_new
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_insert_pixel_nogil
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 cdef void _cregion_extend_shell(cRegion* cregion, int i_shell):
@@ -932,10 +932,10 @@ cdef void _cregion_extend_shell(cRegion* cregion, int i_shell):
     # print("< _cregion_extend_shell")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_insert_hole_pixel
 # :call: > stormtrack::core::typedefs::_cregion_new_hole
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 cdef void _cregion_extend_hole(cRegion* cregion, int i_hole):
@@ -962,9 +962,9 @@ cdef void _cregion_extend_hole(cRegion* cregion, int i_hole):
     # print("< _cregion_extend_hole")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_new_shell
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 cdef void _cregion_extend_shells(cRegion* cregion):
@@ -1002,9 +1002,9 @@ cdef void _cregion_extend_shells(cRegion* cregion):
     # print("< _cregion_extend_shells")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_new_hole
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 cdef void _cregion_extend_holes(cRegion* cregion):
@@ -1042,9 +1042,9 @@ cdef void _cregion_extend_holes(cRegion* cregion):
     # print("< _cregion_extend_holes")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_extend_shell
 # :call: v stormtrack::core::typedefs::_cregion_extend_shells
@@ -1059,9 +1059,9 @@ cdef void _cregion_new_shell(cRegion* cregion):
         _cregion_extend_shells(cregion)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_extend_hole
 # :call: v stormtrack::core::typedefs::_cregion_extend_holes
@@ -1076,9 +1076,9 @@ cdef void _cregion_new_hole(cRegion* cregion):
         _cregion_extend_holes(cregion)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregions_connect
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_extend_connected
 cdef void _cregion_add_connected(cRegion* cregion, cRegion* cregion_other):
@@ -1097,9 +1097,9 @@ cdef void _cregion_add_connected(cRegion* cregion, cRegion* cregion_other):
         _cregion_extend_connected(cregion)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_add_connected
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef void _cregion_extend_connected(cRegion* cregion):
     cdef bint debug = False
@@ -1122,12 +1122,12 @@ cdef void _cregion_extend_connected(cRegion* cregion):
     free(tmp)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::extract_subregions_level
 # :call: > stormtrack::core::typedefs::cregion_cleanup
 # :call: > stormtrack::core::typedefs::cregions_reset
 # :call: > stormtrack::core::typedefs::cregions_store_reset
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cpixel_unlink_region
@@ -1182,9 +1182,9 @@ cdef void cregion_reset(cRegion* cregion, bint unlink_pixels, bint reset_connect
     cregion.holes_n = 0
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_reset
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cpixel_set_region
@@ -1203,9 +1203,9 @@ cdef inline void _cpixel_unlink_region(cPixel* cpixel, cRegion* cregion) nogil:
         cpixel.is_feature_boundary = False
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_reset
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cregion_remove_connected
 cdef inline void _cregion_reset_connected(cRegion* cregion, bint unlink):
@@ -1218,9 +1218,9 @@ cdef inline void _cregion_reset_connected(cRegion* cregion, bint unlink):
     cregion.connected_n = 0
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_reset_connected
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef void cregion_remove_connected(cRegion* cregion, cRegion* cregion_other):
     cdef int i
@@ -1236,7 +1236,7 @@ cdef void cregion_remove_connected(cRegion* cregion, cRegion* cregion_other):
     cregion.connected[cregion.connected_n] = NULL
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Feature::cleanup_cregion
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::collect_adjacent_pixels
@@ -1250,7 +1250,7 @@ cdef void cregion_remove_connected(cRegion* cregion, cRegion* cregion_other):
 # :call: > stormtrack::core::typedefs::cregions_cleanup
 # :call: > stormtrack::core::typedefs::cregions_link_region
 # :call: > stormtrack::core::typedefs::cregions_store_cleanup
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cregion_reset
 cdef void cregion_cleanup(cRegion* cregion, bint unlink_pixels, bint reset_connected):
@@ -1311,9 +1311,9 @@ cdef void cregion_cleanup(cRegion* cregion, bint unlink_pixels, bint reset_conne
         log.debug("> cregion_cleanup")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::find_existing_region
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cregion_cleanup
 # :call: v stormtrack::core::typedefs::cregion_insert_pixel
@@ -1332,12 +1332,12 @@ cdef cRegion* cregion_merge(cRegion* cregion1, cRegion* cregion2):
     return cregion1
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::feature_to_cregion
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
@@ -1351,7 +1351,7 @@ cdef void cregion_determine_boundaries(cRegion* cregion, cGrid* grid) except *:
     free(cregions.regions)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -1359,7 +1359,7 @@ cdef void cregion_determine_boundaries(cRegion* cregion, cGrid* grid) except *:
 # :call: > stormtrack::core::identification::features_to_cregions
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::typedefs::cregion_determine_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
@@ -1396,9 +1396,9 @@ cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except 
         log.warning(f"{n_empty}/{cregions.n} regions empty")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -1560,9 +1560,9 @@ cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) exce
     cregions_cleanup(&cboundaries, cleanup_regions=True)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -1829,9 +1829,9 @@ cdef cRegions _reconstruct_boundaries(cRegion* boundary_pixels, cGrid* grid) exc
     return boundaries
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 cdef bint _find_link_to_continue(
@@ -1884,9 +1884,9 @@ cdef bint _find_link_to_continue(
     return done
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -2127,9 +2127,9 @@ cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
     return boundary_is_shell
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::categorize_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 cdef int neighbor_pixel_angle(
     cPixel* cpixel1, cPixel* cpixel2, bint minus=True,
@@ -2167,9 +2167,9 @@ cdef int neighbor_pixel_angle(
     return angle
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 cdef bint _extract_closed_path(cRegion* boundary):
@@ -2314,9 +2314,9 @@ cdef bint _extract_closed_path(cRegion* boundary):
     return True
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::categorize_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 cdef void categorize_boundary_is_shell(
     int ib_sel, int* d_angles, int n_da, bint* boundary_is_shell,
 ):
@@ -2342,9 +2342,9 @@ cdef void categorize_boundary_is_shell(
         )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::categorize_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 cdef bint boundary_must_be_a_shell(int n_pixels_eff, cGrid* grid):
     """Check whether a boundary is too short to be a hole.
@@ -2367,9 +2367,9 @@ cdef bint boundary_must_be_a_shell(int n_pixels_eff, cGrid* grid):
         exit(1)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::categorize_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 cdef void cregion_check_validity(cRegion* cregion, int idx) except *:
@@ -2383,10 +2383,10 @@ cdef void cregion_check_validity(cRegion* cregion, int idx) except *:
         )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
 # :call: > stormtrack::core::typedefs::cregions_find_northernmost_uncategorized_region
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 cdef cPixel* cregion_northernmost_pixel(cRegion* cregion):
@@ -2408,9 +2408,9 @@ cdef cPixel* cregion_northernmost_pixel(cRegion* cregion):
     return selection
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::categorize_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::typedefs::cregion_northernmost_pixel
@@ -2434,9 +2434,9 @@ cdef int cregions_find_northernmost_uncategorized_region(
     return ib_sel
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef void cregion_reset_boundaries(cRegion* cregion):
     cdef int i_pixel
@@ -2460,9 +2460,9 @@ cdef void cregion_reset_boundaries(cRegion* cregion):
     cregion.holes_n = 0
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -2628,10 +2628,10 @@ cdef cRegion _determine_boundary_pixels_raw(cRegion* cregion, cGrid* grid):
     return boundary_pixels
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_determine_boundary_pixels_raw
 # :call: > stormtrack::core::typedefs::grid_create_pixels
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::typedefs::_cpixel_get_neighbor
@@ -2668,9 +2668,9 @@ cdef inline int _collect_neighbors(
     return n_neighbors
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cpixel_count_neighbors_in_cregion
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::typedefs::_cpixel_get_neighbor
 cdef cPixel* cpixel_get_neighbor(
@@ -2684,10 +2684,10 @@ cdef cPixel* cpixel_get_neighbor(
     return _cpixel_get_neighbor(cpixel, index, cpixels, nx, ny, connectivity)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > typedefs:_collect_neighbors
 # :call: > typedefs:cpixel_get_neighbor
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 @profile(False)
 @boundscheck(False)
@@ -2766,9 +2766,9 @@ cdef inline cPixel* _cpixel_get_neighbor(
     return NULL
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTracker::_extend_tracks_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::PixelRegionTable
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_overlap_core
@@ -2783,9 +2783,9 @@ cdef bint cregion_overlaps_tables(
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_overlap_core
 cdef int cregion_overlap_n(cRegion* cregion, cRegion* cregion_other):
@@ -2795,9 +2795,9 @@ cdef int cregion_overlap_n(cRegion* cregion, cRegion* cregion_other):
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTracker::_compute_successor_probabilities
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::PixelRegionTable
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_overlap_core
@@ -2810,11 +2810,11 @@ cdef int cregion_overlap_n_tables(
     return _cregion_overlap_core(cregion, cregion_other, table, table_other, count=True)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregion_overlap_n
 # :call: > stormtrack::core::typedefs::cregion_overlap_n_tables
 # :call: > stormtrack::core::typedefs::cregion_overlaps_tables
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::PixelRegionTable
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -2914,9 +2914,9 @@ cdef int _cregion_overlap_core(
     return n_overlap
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 @boundscheck(False)
@@ -2933,9 +2933,9 @@ cdef int cregion_overlap_n_mask(cRegion* cregion, np.ndarray[np.uint8_t, ndim=2]
     return n
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_overlap_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 cdef void cregion_determine_bbox(
@@ -2970,9 +2970,9 @@ cdef void cregion_determine_bbox(
                 upper_right.y = cpixel.y
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregions_create
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 cdef np.uint64_t cregions_get_unique_id():
     global CREGIONS_NEXT_ID
     cdef np.uint64_t rid = CREGIONS_NEXT_ID
@@ -2980,9 +2980,9 @@ cdef np.uint64_t cregions_get_unique_id():
     return rid
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregions_create
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegions
 cdef void cregions_init(cRegions* cregions):
     cregions.id = 99999999
@@ -2991,7 +2991,7 @@ cdef void cregions_init(cRegions* cregions):
     cregions.regions = NULL
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -3010,7 +3010,7 @@ cdef void cregions_init(cRegions* cregions):
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
 # :call: > stormtrack::core::typedefs::cregion_determine_boundaries
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::typedefs::cregions_get_unique_id
@@ -3032,7 +3032,7 @@ cdef cRegions cregions_create(int nmax):
     return cregions
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::assign_cpixel
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -3046,7 +3046,7 @@ cdef cRegions cregions_create(int nmax):
 # :call: > stormtrack::core::tracking::FeatureTracker::_find_successor_candidates
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::typedefs::cregion_cleanup
@@ -3072,9 +3072,9 @@ cdef void cregions_link_region(
     cregions.n += 1
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregions_link_region
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
 cdef void cregions_extend(cRegions* cregions):
@@ -3105,9 +3105,9 @@ cdef void cregions_extend(cRegions* cregions):
     cregions.max = nmax_new
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions_merge_connected_inplace
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegions
 cdef void cregions_move(cRegions* source, cRegions* target):
     cdef bint debug = False
@@ -3123,9 +3123,9 @@ cdef void cregions_move(cRegions* source, cRegions* target):
     source.max = 0
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::typedefs::cregion_reset
 cdef void cregions_reset(cRegions* cregions):
@@ -3138,7 +3138,7 @@ cdef void cregions_reset(cRegions* cregions):
     cregions.n = 0
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -3152,7 +3152,7 @@ cdef void cregions_reset(cRegions* cregions):
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::typedefs::cregion_cleanup
 cdef void cregions_cleanup(cRegions* cregions, bint cleanup_regions):
@@ -3181,11 +3181,11 @@ cdef void cregions_cleanup(cRegions* cregions, bint cleanup_regions):
     #     log.debug("> cregions_cleanup")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::features_neighbors_to_cregions_connected
 # :call: > stormtrack::core::identification::grow_cregion_rec
 # :call: > stormtrack::core::typedefs::cregions_find_connected
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_add_connected
 cdef void cregions_connect(cRegion* cregion1, cRegion* cregion2):
@@ -3194,14 +3194,14 @@ cdef void cregions_connect(cRegion* cregion1, cRegion* cregion2):
     _cregion_add_connected(cregion2, cregion1)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 # :call: > stormtrack::core::identification::features_find_neighbors_core
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -3303,9 +3303,9 @@ cdef void cregions_find_connected(
     dbg_check_connected(cregions, _name_+"(1)")  # SR_DBG_PERMANENT
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregions_find_connected
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
 # SR_DBG_PERMANENT
@@ -3339,14 +3339,14 @@ cdef void dbg_check_connected(cRegions* cregions, str msg) except *:
                 exit(8)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::assign_cpixel
 # :call: > stormtrack::core::typedefs::_cpixel_unlink_region
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
 # :call: > stormtrack::core::typedefs::_cregion_reconnect_pixel
 # :call: > stormtrack::core::typedefs::cregion_insert_pixel
 # :call: > stormtrack::core::typedefs::cregion_insert_pixel_nogil
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 cdef void cpixel_set_region(cPixel* cpixel, cRegion* cregion) nogil:
@@ -3362,9 +3362,9 @@ cdef void cpixel_set_region(cPixel* cpixel, cRegion* cregion) nogil:
     cpixel.region = cregion
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_reset
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::pixeltype::pixeltype_none
 cdef void cpixels_reset(cPixel** cpixels, np.int32_t nx, np.int32_t ny):
@@ -3380,10 +3380,10 @@ cdef void cpixels_reset(cPixel** cpixels, np.int32_t nx, np.int32_t ny):
             cpixels[x][y].type = pixeltype_none
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_cregion_create_pixels
 # :call: > stormtrack::core::typedefs::grid_create_pixels
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::pixeltype::pixeltype_none
 cdef cPixel* cpixel2d_create(int n) nogil:
@@ -3414,9 +3414,9 @@ cdef cPixel* cpixel2d_create(int n) nogil:
     return cpixels
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_new_region
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionsStore
 # :call: v stormtrack::core::typedefs::cregions_store_extend
@@ -3459,9 +3459,9 @@ cdef cRegion* cregions_store_get_new_region(cRegionsStore* store):
     return cregion
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_reset
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegionsStore
 # :call: v stormtrack::core::typedefs::cregion_reset
 cdef void cregions_store_reset(cRegionsStore* store):
@@ -3476,9 +3476,9 @@ cdef void cregions_store_reset(cRegionsStore* store):
     store.i_next_region = 0
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::cregions_store_get_new_region
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionConf
 # :call: v stormtrack::core::structs::cRegionsStore
@@ -3515,9 +3515,9 @@ cdef void cregions_store_extend(cRegionsStore* store):
     store.i_next_region = 0
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_cleanup
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegionsStore
 # :call: v stormtrack::core::typedefs::cregion_cleanup
 cdef void cregions_store_cleanup(cRegionsStore* store):
@@ -3537,14 +3537,14 @@ cdef void cregions_store_cleanup(cRegionsStore* store):
     store.i_next_region = 0
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::identify_features
 # :call: > stormtrack::core::tracking::FeatureTracker::__cinit__
 # :call: > stormtrack::core::tracking::FeatureTracker::_swap_grids
 # :call: > stormtrack::track_features::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_alloc
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_reset
@@ -3610,7 +3610,7 @@ cdef class Grid:
             )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -3620,7 +3620,7 @@ cdef class Grid:
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::core::typedefs::Grid::__cinit__
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::grid_create_empty
@@ -3663,7 +3663,7 @@ cdef void grid_reset(cGrid* grid) except *:
         )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -3673,7 +3673,7 @@ cdef void grid_reset(cGrid* grid) except *:
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::core::typedefs::Grid::__dealloc__
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_cleanup
 # :call: v stormtrack::core::tables::pixel_done_table_cleanup
@@ -3714,9 +3714,9 @@ cdef void grid_cleanup(cGrid* grid) except *:
     cregions_store_cleanup(&grid._regions)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_create
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::typedefs::_collect_neighbors
@@ -3761,9 +3761,9 @@ cdef void grid_create_pixels(cGrid* grid, np.float32_t[:, :] fld) except *:
             cpixel.neighbors_n = n_neigh
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::Grid::set_values
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 @boundscheck(False)
@@ -3783,7 +3783,7 @@ cdef void grid_set_values(cGrid* grid, np.float32_t[:, :] fld) except *:
             cpixel.v = fld[i, j]
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::assign_cpixel
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -3794,7 +3794,7 @@ cdef void grid_set_values(cGrid* grid, np.float32_t[:, :] fld) except *:
 # :call: > stormtrack::core::identification::features_to_cregions
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cregions_store_get_new_region

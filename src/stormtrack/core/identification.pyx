@@ -168,9 +168,9 @@ DEFAULT_TYPE_CODES = dict(
 # fmt: on
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::find_features_2d_threshold
 # :call: v stormtrack::core::identification::split_regiongrow_levels
 # :call: v stormtrack::core::typedefs::Grid
@@ -265,9 +265,9 @@ def identify_features(
     return features
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > test_stormtrack::test_core::test_features::test_regions::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: v stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: v stormtrack::core::structs::cConstants
@@ -369,9 +369,9 @@ def find_features_2d_threshold_seeded(
         )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::find_features_2d_threshold_seeded
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::c_find_features_2d_threshold_seeds_core
 # :call: v stormtrack::core::identification::cregions_create_features(
 # :call: v stormtrack::core::identification::cregions_merge_connected
@@ -493,9 +493,9 @@ cdef list _find_features_threshold_random_seeds(
     return features
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::find_features_2d_threshold_seeded
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::c_find_features_2d_threshold_seeds_core
 # :call: v stormtrack::core::identification::cregions_create_features
 # :call: v stormtrack::core::identification::cregions_merge_connected
@@ -607,10 +607,10 @@ cdef list c_find_features_2d_threshold_seeds(
     return features
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::assign_cpixel
 # :call: v stormtrack::core::identification::grow_cregion_rec
 # :call: v stormtrack::core::identification::pop_random_unassigned_pixel
@@ -739,9 +739,9 @@ cdef void c_find_features_2d_threshold_seeds_core(
     if debug: log.debug("> c_find_features_2d_threshold_seeds_core")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::assign_cpixel
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
@@ -865,9 +865,9 @@ cdef void grow_cregion_rec(
         log.debug("> grow_cregion_rec")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 cdef np.ndarray[np.int32_t, ndim=2] init_random_seeds(cGrid* grid):
     cdef np.ndarray[np.int32_t, ndim=2] inds = np.empty(
@@ -883,9 +883,9 @@ cdef np.ndarray[np.int32_t, ndim=2] init_random_seeds(cGrid* grid):
     return inds
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 @cython.boundscheck(False)
@@ -918,17 +918,17 @@ cdef cPixel* pop_random_unassigned_pixel(
     raise Exception(err)
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 @cython.cdivision(True)
 cdef inline int random_int(int min, int max):
     # srand(42) # for testing
     return int(rand() / RAND_MAX * (max - 1))
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::cregions_merge_connected
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cGrid
@@ -957,12 +957,12 @@ cdef void cregions_merge_connected_inplace(
     cregions_move(&cregions_merged, cregions)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::cregions_merge_connected_inplace
 # :call: > stormtrack::core::identification::merge_adjacent_features
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::_cregions_merge_connected_core
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cGrid
@@ -1046,9 +1046,9 @@ cdef cRegions cregions_merge_connected(
     return cregions_out
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions_merge_connected
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::collect_pixels
 # :call: v stormtrack::core::identification::cregion_collect_connected_regions
 # :call: v stormtrack::core::structs::cConstants
@@ -1155,9 +1155,9 @@ cdef void _cregions_merge_connected_core(
         log.debug(f"\n+++ LOOP DONE +++ in {iter_i} iterations")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -1195,8 +1195,8 @@ cdef int collect_pixels(
     return i_pixels_feature
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::structs::cPixel
 # SR_TODO eliminate (only used in old cyclone id code)
@@ -1235,9 +1235,9 @@ cdef Feature create_feature(
     return feature
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::_cregion_collect_connected_regions_rec
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
@@ -1264,9 +1264,9 @@ cdef int cregion_collect_connected_regions(
     return connected_regions_n
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregion_collect_connected_regions
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
 cdef void _cregion_collect_connected_regions_rec(
@@ -1315,10 +1315,10 @@ cdef void _cregion_collect_connected_regions_rec(
         )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds_core
 # :call: > stormtrack::core::identification::grow_cregion_rec
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -1360,10 +1360,10 @@ cdef void assign_cpixel(
         log.debug(f"> assign_cpixel ({cpixel.x}, {cpixel.y}) FEATURE {cregion.id}")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::identify_features
 # :call: > test_stormtrack::test_core::test_features::test_regions::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::cregions_create_features
 # :call: v stormtrack::core::identification::eliminate_regions_by_size
 # :call: v stormtrack::core::identification::features_reset_cregion
@@ -1535,9 +1535,9 @@ def find_features_2d_threshold(
     return features
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::find_features_2d_threshold
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::typedefs::cregion_cleanup
@@ -1571,9 +1571,9 @@ cdef void eliminate_regions_by_size(
     # print(f"> eliminate_regions_by_size ({nold} -> {nnew})")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::find_features_2d_threshold
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cregion_merge
@@ -1684,10 +1684,10 @@ cdef inline cRegion* find_existing_region(
     return cregion
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::TrackFeatureMerger::run
 # :call: > test_stormtrack::test_core::test_features::test_features::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::cregions_create_features
 # :call: v stormtrack::core::identification::cregions_merge_connected
@@ -1810,9 +1810,9 @@ def merge_adjacent_features(
     return merged_features
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::_replace_feature_associations
 # :call: v stormtrack::core::identification::cregions_create_features
@@ -1995,10 +1995,10 @@ cpdef list feature_split_regiongrow(
     return subfeatures
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
 # :call: > test_stormtrack::test_core::test_features::test_features::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::cfeatures_grow_core
 # :call: v stormtrack::core::identification::cpixel2arr
@@ -2142,9 +2142,9 @@ cpdef list features_grow(
         return features_grown
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::features_grow
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::assert_no_unambiguously_assigned_pixels
 # :call: v stormtrack::core::identification::regiongrow_advance_boundary
 # :call: v stormtrack::core::structs::cGrid
@@ -2320,9 +2320,9 @@ cdef void cfeatures_grow_core(
     if debug: log.debug("> cfeatures_grow_core")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::feature_split_regiongrow
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 cpdef void _replace_feature_associations(
     Feature feature, list seed_features, list subfeatures,
@@ -2475,10 +2475,10 @@ cpdef void _replace_feature_associations(
                     break
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::identify_features
 # :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::csplit_regiongrow_levels
 # :call: v stormtrack::core::typedefs::default_constants
 def split_regiongrow_levels(
@@ -2536,9 +2536,9 @@ def split_regiongrow_levels(
     return subfeatures
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::split_regiongrow_levels
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::cregions_create_features
 # :call: v stormtrack::core::identification::csplit_regiongrow_levels_core
 # :call: v stormtrack::core::identification::features_reset_cregion
@@ -2747,9 +2747,9 @@ cdef list csplit_regiongrow_levels(
     return subfeatures
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::csplit_regiongrow_core
 # :call: v stormtrack::core::identification::extract_subregions_level
 # :call: v stormtrack::core::structs::cGrid
@@ -2890,9 +2890,9 @@ cdef void csplit_regiongrow_levels_core(
     # print("> csplit_regiongrow_levels_core")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::collect_adjacent_pixels
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
@@ -3053,9 +3053,9 @@ cdef void extract_subregions_level(
         log.debug(f"> extract_subregions_level {cregions_sub.n}")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::extract_subregions_level
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -3117,10 +3117,10 @@ cdef void collect_adjacent_pixels(
     # print("> collect_adjacent_pixels")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels_core
 # :call: > stormtrack::core::identification::feature_split_regiongrow
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::assert_no_unambiguously_assigned_pixels
 # :call: v stormtrack::core::identification::regiongrow_advance_boundary
 # :call: v stormtrack::core::structs::cGrid
@@ -3272,10 +3272,10 @@ cdef void csplit_regiongrow_core(
         log.debug("> csplit_regiongrow_core")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef void assert_no_unambiguously_assigned_pixels(
     cRegion* cfeature, np.int8_t** pixel_status_table,
@@ -3293,10 +3293,10 @@ cdef void assert_no_unambiguously_assigned_pixels(
             raise Exception(f"pixel_status_table[{x}][{y}] == 2")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::regiongrow_assign_pixel
 # :call: v stormtrack::core::identification::regiongrow_resolve_multi_assignments
 # :call: v stormtrack::core::structs::cGrid
@@ -3531,10 +3531,10 @@ cdef void regiongrow_advance_boundary(
         log.debug("> regiongrow_advance_boundary")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::determine_shared_boundary_pixels
 # :call: > stormtrack::core::identification::regiongrow_advance_boundary
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::resolve_multi_assignment
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
@@ -3621,9 +3621,9 @@ cdef void regiongrow_resolve_multi_assignments(
         log.debug("> regiongrow_resolve_multi_assignments")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::regiongrow_resolve_multi_assignments
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::dbg_print_selected_regions
 # :call: v stormtrack::core::identification::resolve_multi_assignment_best_connected_region
 # :call: v stormtrack::core::identification::resolve_multi_assignment_biggest_region
@@ -3695,9 +3695,9 @@ cdef cRegionRankSlot* resolve_multi_assignment(
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::resolve_multi_assignment
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionRankSlots
 # DBG_PERMANENT<<<
@@ -3719,9 +3719,9 @@ cdef void dbg_print_selected_regions(
         )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::resolve_multi_assignment
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::cpixel_count_neighbors_in_cregion
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
@@ -3804,9 +3804,9 @@ cdef void resolve_multi_assignment_best_connected_region(
         )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::resolve_multi_assignment
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionRankSlots
@@ -3847,9 +3847,9 @@ cdef void resolve_multi_assignment_biggest_region(
     # )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::resolve_multi_assignment
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionRankSlots
@@ -3898,9 +3898,9 @@ cdef void resolve_multi_assignment_strongest_region(
     # )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::resolve_multi_assignment
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionRankSlots
@@ -3951,9 +3951,9 @@ cdef void resolve_multi_assignment_mean_strongest_region(
     # )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::resolve_multi_assignment_best_connected_region
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -4021,9 +4021,9 @@ cdef void cpixel_count_neighbors_in_cregion(
                     log.debug(" => indirect neighbor no. {n_direct_neighbors[0]}")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::regiongrow_advance_boundary
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -4101,9 +4101,9 @@ cdef bint regiongrow_assign_pixel(
     return newly_assigned
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > test_stormtrack::test_core::test_features::test_features::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::c_find_extrema_2d
 cpdef find_minima_2d(fld, n=4, nmax_extrema=100):
     if n not in [4, 8, 12, 20]:
@@ -4111,8 +4111,8 @@ cpdef find_minima_2d(fld, n=4, nmax_extrema=100):
     return c_find_extrema_2d(fld, n, -1, nmax_extrema)
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::c_find_extrema_2d
 cpdef find_maxima_2d(fld, n=4, nmax_extrema=100):
     if n not in [4, 8, 12, 20]:
@@ -4120,10 +4120,10 @@ cpdef find_maxima_2d(fld, n=4, nmax_extrema=100):
     return c_find_extrema_2d(fld, n, 1, nmax_extrema)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::find_maxima_2d
 # :call: > stormtrack::core::identification::find_minima_2d
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::_c_find_extrema_2d_core
 cdef np.ndarray[np.int32_t, ndim=2] c_find_extrema_2d(
     np.float32_t[:, :] fld, int n, np.float32_t sign, int nmax_extrema,
@@ -4137,9 +4137,9 @@ cdef np.ndarray[np.int32_t, ndim=2] c_find_extrema_2d(
     return extrema[:n_extrema, :]
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::c_find_extrema_2d
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef int _c_find_extrema_2d_core(
@@ -4216,7 +4216,7 @@ cdef int _c_find_extrema_2d_core(
     return n_extrema
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::identification::features_find_neighbors_core
@@ -4224,7 +4224,7 @@ cdef int _c_find_extrema_2d_core(
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::dbg_check_features_cregion_pixels
 # :call: v stormtrack::core::identification::dbg_features_check_unique_pixels
@@ -4324,9 +4324,9 @@ cdef void features_to_cregions(
     dbg_check_features_cregion_pixels(features) # SR_DBG_PERMANENT
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::features_to_cregions
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # SR_DBG <<<
 def dbg_features_check_unique_pixels(features):
     # Check uniqueness of pixels
@@ -4354,9 +4354,9 @@ def dbg_features_check_unique_pixels(features):
             fo.write(err+"\n")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::features_to_cregions
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # SR_DBG <<<
 cpdef void dbg_check_features_cregion_pixels(list features) except *:
     cdef Feature feature
@@ -4375,9 +4375,9 @@ cpdef void dbg_check_features_cregion_pixels(list features) except *:
                     fo.write(err+"\n")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::features_to_cregions
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
@@ -4438,10 +4438,10 @@ cdef void features_neighbors_to_cregions_connected(
             cregions_connect(cregion, cregion_neighbor)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::identification::features_to_cregions
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cGrid
@@ -4532,12 +4532,12 @@ cdef void feature_to_cregion(
         log.debug(f"> feature_to_cregion ({feature.id})")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Feature::derive_boundaries_from_pixels
 # :call: > stormtrack::core::identification::Feature::derive_holes_from_pixels
 # :call: > stormtrack::core::identification::Feature::derive_shells_from_pixels
 # :call: > test_stormtrack::test_core::test_features::test_boundaries::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegion
@@ -4641,11 +4641,11 @@ cpdef tuple pixels_find_boundaries(
     return shells, holes
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Field2D::__init__
 # :call: > stormtrack::core::identification::Field2D::get
 # :call: > stormtrack::core::identification::Field2D::list
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Field2D
 cdef class Pixel:
 
@@ -4667,8 +4667,8 @@ cdef class Pixel:
         return self.fld.get_neighbors(self)
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Pixel
 cdef class Field2D:
 
@@ -4708,9 +4708,9 @@ cdef class Field2D:
 _TRACK_REGISTER = {}
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Feature::__reduce__
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 cpdef Feature Feature_rebuild(
     np.ndarray values,  # 0
@@ -4761,7 +4761,7 @@ cpdef Feature Feature_rebuild(
     return feature
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Feature_rebuild
 # :call: > stormtrack::core::identification::_replace_feature_associations
 # :call: > stormtrack::core::identification::associate_features
@@ -4807,7 +4807,7 @@ cpdef Feature Feature_rebuild(
 # :call: > test_stormtrack::test_core::test_features::test_features::*
 # :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
 # :call: > test_stormtrack::utils::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature_rebuild
 # :call: v stormtrack::core::identification::_feature__from_jdat__pixels_from_tables
 # :call: v stormtrack::core::identification::pixels_find_boundaries
@@ -5765,9 +5765,9 @@ cdef class Feature:
         return self.shell[hull.vertices]
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Feature::from_jdat
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 cpdef tuple _feature__from_jdat__pixels_from_tables(
     dict jdat, dict pixel_tables, str name, bint pixels_missing,
 ):
@@ -5837,8 +5837,8 @@ cpdef tuple _feature__from_jdat__pixels_from_tables(
     return pixels, values, shells, holes
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 cpdef feature2d_from_jdat(
     dict jdat,
@@ -5879,7 +5879,7 @@ cpdef feature2d_from_jdat(
     return feature
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -5889,7 +5889,7 @@ cpdef feature2d_from_jdat(
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 cpdef void features_reset_cregion(list features, bint warn=True) except *:
     if features is None:
@@ -5899,10 +5899,10 @@ cpdef void features_reset_cregion(list features, bint warn=True) except *:
         feature.reset_cregion(warn)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::extra::front_surgery::*
 # :call: > test_stormtrack::test_core::test_features::test_features::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::features_find_neighbors_core
 # :call: v stormtrack::core::identification::features_reset_cregion
 # :call: v stormtrack::core::structs::cConstants
@@ -5943,9 +5943,9 @@ cpdef void features_find_neighbors(
     features_reset_cregion(features, warn=False)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::features_find_neighbors
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::cregions2features_connected2neighbors
 # :call: v stormtrack::core::identification::features_to_cregions
@@ -6008,7 +6008,7 @@ cdef void features_find_neighbors_core(
     cregions_cleanup(&cregions, cleanup_regions=True)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -6017,7 +6017,7 @@ cdef void features_find_neighbors_core(
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::cpixel2arr
 # :call: v stormtrack::core::identification::cregions2features_connected2neighbors
@@ -6123,10 +6123,10 @@ cdef list cregions_create_features(
     return features
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions_create_features
 # :call: > stormtrack::core::identification::features_find_neighbors_core
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::cregion_find_corresponding_feature
 # :call: v stormtrack::core::identification::determine_shared_boundary_pixels
@@ -6232,9 +6232,9 @@ cdef void cregions2features_connected2neighbors(
     cregion_cleanup(&cregion_bg, unlink_pixels=True, reset_connected=True)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::regiongrow_resolve_multi_assignments
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
@@ -6477,9 +6477,9 @@ cdef void determine_shared_boundary_pixels(
     cregion_cleanup(&boundary_pixels, unlink_pixels=False, reset_connected=True)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::_find_background_neighbor_pixels
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegion
@@ -6530,9 +6530,9 @@ cdef void initialize_surrounding_background_region(
         )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::initialize_surrounding_background_region
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cregion_insert_pixel_nogil
@@ -6556,9 +6556,9 @@ cdef inline void _find_background_neighbor_pixels(
                     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::structs::cRegion
 cdef Feature cregion_find_corresponding_feature(
@@ -6584,10 +6584,10 @@ cdef Feature cregion_find_corresponding_feature(
     return feature
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions_create_features
 # :call: > stormtrack::core::identification::features_grow
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 cdef np.ndarray[np.int32_t, ndim=2] cpixel2arr(cPixel** pixels, int n):
     """Convert an cPixel C-array into a numpy array."""
@@ -6599,8 +6599,8 @@ cdef np.ndarray[np.int32_t, ndim=2] cpixel2arr(cPixel** pixels, int n):
     return arr
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 def features_neighbors_id2obj(features, missing_action="error"):
     _name_ = "features_neighbors_id2obj"
@@ -6623,8 +6623,8 @@ def features_neighbors_id2obj(features, missing_action="error"):
         feature.neighbors = neighbors
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 def features_neighbors_obj2id(features, names=None):
     if isinstance(features, dict):
@@ -6644,8 +6644,8 @@ def features_neighbors_obj2id(features, names=None):
             ]
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 cpdef void associate_features(
     str name1,
@@ -6719,8 +6719,8 @@ cpdef void associate_features(
                     feature2.associates[name1].append(feature1.id)
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 cpdef int resolve_indirect_associations(
     str name1, list features1, str name2, list features2, str name3, list features3,
@@ -6813,8 +6813,8 @@ cpdef int resolve_indirect_associations(
     return n_assoc
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 def features_associates_obj2id(features, names=None):
     """Replace feature objects in associated features by feature ids."""
@@ -6839,8 +6839,8 @@ def features_associates_obj2id(features, names=None):
                 ]
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 def features_associates_id2obj(
     features_named,
     names=None,
@@ -6906,9 +6906,9 @@ def features_associates_id2obj(
                 log.warning("{n} associated features not found: {s_missing_ids}")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cyclones_to_features
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
     """Extract pixels, center, and extrema from old-style cyclone feature."""
 
@@ -6945,9 +6945,9 @@ def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::identify_features::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::oldfeature_to_pixels
 # :call: v stormtrack::core::identification::Feature
 def cyclones_to_features(ts, cyclones, slp, lon, lat, vb=True, out=None):

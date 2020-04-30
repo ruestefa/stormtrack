@@ -16,36 +16,36 @@ from .structs cimport cRegions
 from .structs cimport get_matching_neighbor_id
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 cdef void pixel_done_table_alloc(PixelDoneTable* table, cConstants* constants)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::extract_subregions_level
 cdef void pixel_done_table_init(
     PixelDoneTable table, cRegion* cregion, np.float32_t level,
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::extract_subregions_level
 cdef void pixel_done_table_reset(PixelDoneTable table, cRegion* cregion)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_cleanup
 cdef void pixel_done_table_cleanup(PixelDoneTable table, cConstants* constants)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::Grid::__cinit__
 cdef void pixel_region_table_alloc(
     PixelRegionTable* table, int n_slots, cConstants* constants,
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -59,7 +59,7 @@ cdef void pixel_region_table_alloc_grid(
 ) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -69,7 +69,7 @@ cdef void pixel_region_table_alloc_pixels(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
@@ -81,7 +81,7 @@ cdef void pixel_region_table_init_regions(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::determine_shared_boundary_pixels
 # :call: > stormtrack::core::identification::regiongrow_resolve_multi_assignments
 cdef void pixel_region_table_insert_region(
@@ -93,7 +93,7 @@ cdef void pixel_region_table_insert_region(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::typedefs::Grid::reset_tables
@@ -103,13 +103,13 @@ cdef void pixel_region_table_reset(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 cdef void pixel_region_table_reset_regions(
     PixelRegionTable table, cRegions* cregions,
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::regiongrow_resolve_multi_assignments
 # :call: > stormtrack::core::tables::pixel_region_table_reset
 # :call: > stormtrack::core::tables::pixel_region_table_reset_region
@@ -118,14 +118,14 @@ cdef void pixel_region_table_reset_slots(
 ) nogil
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels_core
 cdef void pixel_region_table_grow(
     PixelRegionTable table, cRegion* cfeature, int n_slots_new,
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -135,14 +135,14 @@ cdef void pixel_region_table_reset_region(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_cleanup
 cdef void pixel_region_table_cleanup(
     PixelRegionTable table, np.int32_t nx, np.int32_t ny,
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::resolve_multi_assignment_best_connected_region
 # :call: > stormtrack::core::identification::resolve_multi_assignment_biggest_region
 # :call: > stormtrack::core::identification::resolve_multi_assignment_mean_strongest_region
@@ -153,7 +153,7 @@ cdef void cregion_rank_slots_insert_region(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::resolve_multi_assignment_best_connected_region
 # :call: > stormtrack::core::identification::resolve_multi_assignment_biggest_region
 # :call: > stormtrack::core::identification::resolve_multi_assignment_mean_strongest_region
@@ -162,14 +162,14 @@ cdef void cregion_rank_slots_insert_region(
 cdef void cregion_rank_slots_reset(cRegionRankSlots* slots) nogil
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::resolve_multi_assignment_biggest_region
 # :call: > stormtrack::core::identification::resolve_multi_assignment_mean_strongest_region
 # :call: > stormtrack::core::identification::resolve_multi_assignment_strongest_region
 cdef cRegionRankSlots cregion_rank_slots_copy(cRegionRankSlots* slots)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
 cdef void pixel_status_table_init_feature(
@@ -177,13 +177,13 @@ cdef void pixel_status_table_init_feature(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
 cdef void pixel_status_table_reset_feature(PixelStatusTable table, cRegion* cfeature)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -194,18 +194,18 @@ cdef void pixel_status_table_reset_feature(PixelStatusTable table, cRegion* cfea
 cdef void pixel_status_table_alloc(PixelStatusTable* table, cConstants* constants)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_cleanup
 cdef void pixel_status_table_cleanup(PixelStatusTable table, np.int32_t nx)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::Grid::reset_tables
 # :call: > stormtrack::core::typedefs::grid_reset
 cdef void pixel_status_table_reset(PixelStatusTable table, np.int32_t nx, np.int32_t ny)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -221,7 +221,7 @@ cdef void neighbor_link_stat_table_alloc(
 ) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::typedefs::Grid::reset_tables
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
@@ -231,21 +231,21 @@ cdef void neighbor_link_stat_table_reset(
 ) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels_core
 cdef void neighbor_link_stat_table_reset_pixels(
     NeighborLinkStatTable table, cRegion* cregion, int n_neighbors_max,
 ) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_cleanup
 cdef void neighbor_link_stat_table_cleanup(
     NeighborLinkStatTable table, np.int32_t nx, np.int32_t ny,
 ) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
 cdef void neighbor_link_stat_table_init(
     NeighborLinkStatTable table, cRegion* boundary_pixels, cConstants* constants,

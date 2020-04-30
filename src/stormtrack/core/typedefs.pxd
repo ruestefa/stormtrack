@@ -33,7 +33,7 @@ from .tables cimport pixel_status_table_reset
 from .tables cimport pixel_status_table_reset
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Feature::derive_boundaries_from_pixels
 # :call: > stormtrack::core::identification::Feature::derive_holes_from_pixels
 # :call: > stormtrack::core::identification::Feature::derive_shells_from_pixels
@@ -58,7 +58,7 @@ cpdef Constants default_constants(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::identification::features_find_neighbors
@@ -84,7 +84,7 @@ cdef class Constants:
     cdef cConstants* to_c(self)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::identify_features
@@ -107,7 +107,7 @@ cdef class Grid:
     cdef void reset_tables(self)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -120,7 +120,7 @@ cdef class Grid:
 cdef cGrid grid_create(np.float32_t[:, :] fld, cConstants constants) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_create
 # :call: > stormtrack::extra::front_surgery::*
 cdef void grid_create_pixels(cGrid* grid, np.float32_t[:, :] fld) except *
@@ -137,7 +137,7 @@ cdef void grid_create_pixels(cGrid* grid, np.float32_t[:, :] fld) except *
 cdef void grid_reset(cGrid* grid) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -150,7 +150,7 @@ cdef void grid_reset(cGrid* grid) except *
 cdef void grid_cleanup(cGrid* grid) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::assign_cpixel
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -167,7 +167,7 @@ cdef cRegion* grid_new_region(cGrid* grid) except *
 cdef int CREGION_NEXT_ID = 0
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::collect_adjacent_pixels
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
@@ -180,7 +180,7 @@ cdef int CREGION_NEXT_ID = 0
 cdef np.uint64_t cregion_get_unique_id()
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::collect_adjacent_pixels
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
@@ -194,7 +194,7 @@ cdef np.uint64_t cregion_get_unique_id()
 cdef void cregion_init(cRegion* cregion, cRegionConf cregion_conf, np.uint64_t rid)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::extract_subregions_level
 # :call: > stormtrack::core::typedefs::cregion_cleanup
 # :call: > stormtrack::core::typedefs::cregions_reset
@@ -202,7 +202,7 @@ cdef void cregion_init(cRegion* cregion, cRegionConf cregion_conf, np.uint64_t r
 cdef void cregion_reset(cRegion* cregion, bint unlink_pixels, bint reset_connected)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Feature::cleanup_cregion
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::collect_adjacent_pixels
@@ -219,7 +219,7 @@ cdef void cregion_reset(cRegion* cregion, bint unlink_pixels, bint reset_connect
 cdef void cregion_cleanup(cRegion* cregion, bint unlink_pixels, bint reset_connected)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 cdef void cregion_insert_pixels_coords(
@@ -231,7 +231,7 @@ cdef void cregion_insert_pixels_coords(
 ) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::assign_cpixel
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -253,7 +253,7 @@ cdef void cregion_insert_pixel(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_background_neighbor_pixels
 # SR_TMP_NOGIL <<<
 cdef void cregion_insert_pixel_nogil(
@@ -261,19 +261,19 @@ cdef void cregion_insert_pixel_nogil(
 ) nogil
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::collect_adjacent_pixels
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::typedefs::cregion_insert_pixel
 cdef void cregion_remove_pixel(cRegion* cregion, cPixel* cpixel)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::find_existing_region
 cdef cRegion* cregion_merge(cRegion* cregion1, cRegion* cregion2)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::feature_to_cregion
 # :call: > stormtrack::core::identification::pixels_find_boundaries
@@ -281,7 +281,7 @@ cdef cRegion* cregion_merge(cRegion* cregion1, cRegion* cregion2)
 cdef void cregion_determine_boundaries(cRegion* cregion, cGrid* grid) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTracker::_extend_tracks_core
 cdef bint cregion_overlaps_tables(
     cRegion* cregion,
@@ -291,12 +291,12 @@ cdef bint cregion_overlaps_tables(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::extra::front_surgery::*
 cdef int cregion_overlap_n(cRegion* cregion, cRegion* cregion_other)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTracker::_compute_successor_probabilities
 cdef int cregion_overlap_n_tables(
     cRegion* cregion,
@@ -306,7 +306,7 @@ cdef int cregion_overlap_n_tables(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 cdef int cregion_overlap_n_mask(cRegion* cregion, np.ndarray[np.uint8_t, ndim=2] mask)
 
@@ -314,7 +314,7 @@ cdef int cregion_overlap_n_mask(cRegion* cregion, np.ndarray[np.uint8_t, ndim=2]
 cdef int CREGIONS_NEXT_ID = 0
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -336,12 +336,12 @@ cdef int CREGIONS_NEXT_ID = 0
 cdef cRegions cregions_create(int nmax)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels_core
 cdef void cregions_reset(cRegions* cregions)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -358,7 +358,7 @@ cdef void cregions_reset(cRegions* cregions)
 cdef void cregions_cleanup(cRegions* cregions, bint cleanup_regions)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::assign_cpixel
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -377,19 +377,19 @@ cdef void cregions_link_region(
 )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions_merge_connected_inplace
 cdef void cregions_move(cRegions* source, cRegions* target)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::features_neighbors_to_cregions_connected
 # :call: > stormtrack::core::identification::grow_cregion_rec
 # :call: > stormtrack::core::typedefs::cregions_find_connected
 cdef void cregions_connect(cRegion* cregion1, cRegion* cregion2)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -401,7 +401,7 @@ cdef void cregions_find_connected(
 ) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cfeatures_grow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_core
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -412,7 +412,7 @@ cdef void cregions_find_connected(
 cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::assign_cpixel
 # :call: > stormtrack::core::typedefs::_cpixel_unlink_region
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
@@ -422,7 +422,7 @@ cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except 
 cdef void cpixel_set_region(cPixel* cpixel, cRegion* cregion) nogil
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::cpixel_count_neighbors_in_cregion
 cdef cPixel* cpixel_get_neighbor(
         cPixel* cpixel,

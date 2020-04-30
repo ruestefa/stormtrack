@@ -23,11 +23,11 @@ cimport numpy as np
 # SuccessorCandidates
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::structs::cGrid
 # :call: > stormtrack::core::structs::grid_create_empty
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::_cregions_merge_connected_core
 # :call: v stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: v stormtrack::core::identification::c_find_features_2d_threshold_seeds
@@ -66,9 +66,9 @@ cdef struct cConstants:
     np.uint8_t n_neighbors_max # SR_TODO rename to pixel_neighbors_max
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::structs::cPixel
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::grow_cregion_rec
 # :call: v stormtrack::core::typedefs::cpixel2d_create
 # :call: v stormtrack::core::typedefs::cpixels_reset
@@ -78,7 +78,7 @@ cdef enum pixeltype:
     pixeltype_feature
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::_find_background_neighbor_pixels
 # :call: > stormtrack::core::identification::assign_cpixel
@@ -161,7 +161,7 @@ cdef enum pixeltype:
 # :call: > stormtrack::core::typedefs::grid_create_pixels
 # :call: > stormtrack::core::typedefs::grid_set_values
 # :call: > stormtrack::core::typedefs::neighbor_pixel_angle
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::pixeltype
 cdef struct cPixel:
@@ -180,8 +180,8 @@ cdef struct cPixel:
     bint is_feature_boundary
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 cdef struct cField2D:
     cPixel** pixels
@@ -189,7 +189,7 @@ cdef struct cField2D:
     np.int32_t ny
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: > stormtrack::core::identification::cfeatures_grow_core
@@ -202,7 +202,7 @@ cdef struct cField2D:
 # :call: > stormtrack::core::structs::cregion_conf_default
 # :call: > stormtrack::core::typedefs::cregion_init
 # :call: > stormtrack::core::typedefs::cregions_store_extend
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 cdef struct cRegionConf:
     int connected_max
     int pixels_max
@@ -212,7 +212,7 @@ cdef struct cRegionConf:
     int hole_max
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::collect_adjacent_pixels
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
@@ -226,7 +226,7 @@ cdef struct cRegionConf:
 # :call: > stormtrack::core::typedefs::_determine_boundary_pixels_raw
 # :call: > stormtrack::core::typedefs::cregions_store_extend
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegionConf
 cdef inline cRegionConf cregion_conf_default():
     cdef cRegionConf conf = cRegionConf(
@@ -240,7 +240,7 @@ cdef inline cRegionConf cregion_conf_default():
     return conf
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Feature::set_cregion
 # :call: > stormtrack::core::identification::_cregion_collect_connected_regions_rec
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
@@ -362,7 +362,7 @@ cdef inline cRegionConf cregion_conf_default():
 # :call: > stormtrack::core::typedefs::grid_new_region
 # :call: > stormtrack::core::typedefs::grid_new_regions
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 cdef struct cRegion:
     np.uint64_t id
@@ -386,7 +386,7 @@ cdef struct cRegion:
     int* hole_max
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregion_collect_connected_regions_rec
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
@@ -436,7 +436,7 @@ cdef struct cRegion:
 # :call: > stormtrack::core::typedefs::dbg_check_connected
 # :call: > stormtrack::core::typedefs::grid_new_regions
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef struct cRegions:
     cRegion** regions
@@ -445,30 +445,30 @@ cdef struct cRegions:
     np.uint64_t id
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tables::neighbor_link_stat_table_init
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 @cython.cdivision
 cdef inline np.uint8_t get_matching_neighbor_id(np.uint8_t ind, int nmax) nogil:
     cdef int mind = (ind + nmax / 2) % nmax
     return mind
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::regiongrow_resolve_multi_assignments
 # :call: > stormtrack::core::identification::resolve_multi_assignment
 # :call: > stormtrack::core::tables::cregion_rank_slots_copy
 # :call: > stormtrack::core::tables::cregion_rank_slots_extend
 # :call: > stormtrack::core::tables::pixel_region_table_alloc
 # :call: > stormtrack::core::tables::pixel_region_table_alloc_pixel
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 cdef struct cRegionRankSlot:
     cRegion* region
     np.int8_t rank
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::dbg_print_selected_regions
 # :call: > stormtrack::core::identification::regiongrow_resolve_multi_assignments
 # :call: > stormtrack::core::identification::resolve_multi_assignment
@@ -481,14 +481,14 @@ cdef struct cRegionRankSlot:
 # :call: > stormtrack::core::tables::cregion_rank_slots_insert_region
 # :call: > stormtrack::core::tables::pixel_region_table_alloc
 # :call: > stormtrack::core::tables::pixel_region_table_alloc_grid
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 cdef struct cRegionRankSlots:
     cRegionRankSlot* slots
     int max
     int n
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tables::_pixel_region_table_cleanup_entry
 # :call: > stormtrack::core::tables::pixel_region_table_alloc
 # :call: > stormtrack::core::tables::pixel_region_table_alloc_grid
@@ -506,47 +506,47 @@ cdef struct cRegionRankSlots:
 # :call: > stormtrack::core::typedefs::_cregion_overlap_core
 # :call: > stormtrack::core::typedefs::cregion_overlap_n_tables
 # :call: > stormtrack::core::typedefs::cregion_overlaps_tables
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 ctypedef cRegionRankSlots** PixelRegionTable
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tables::pixel_status_table_alloc
 # :call: > stormtrack::core::tables::pixel_status_table_cleanup
 # :call: > stormtrack::core::tables::pixel_status_table_init_feature
 # :call: > stormtrack::core::tables::pixel_status_table_reset
 # :call: > stormtrack::core::tables::pixel_status_table_reset_feature
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 ctypedef np.int8_t** PixelStatusTable
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tables::pixel_done_table_alloc
 # :call: > stormtrack::core::tables::pixel_done_table_cleanup
 # :call: > stormtrack::core::tables::pixel_done_table_init
 # :call: > stormtrack::core::tables::pixel_done_table_reset
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 ctypedef bint **PixelDoneTable
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tables::neighbor_link_stat_table_alloc
 # :call: > stormtrack::core::tables::neighbor_link_stat_table_reset
 # :call: > stormtrack::core::tables::neighbor_link_stat_table_reset_pixels
 # :call: > stormtrack::core::tables::neighbor_link_stat_table_cleanup
 # :call: > stormtrack::core::tables::neighbor_link_stat_table_init
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 ctypedef np.int8_t ***NeighborLinkStatTable
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::structs::cGrid
 # :call: > stormtrack::core::structs::cregions_store_create
 # :call: > stormtrack::core::typedefs::cregions_store_cleanup
 # :call: > stormtrack::core::typedefs::cregions_store_extend
 # :call: > stormtrack::core::typedefs::cregions_store_get_new_region
 # :call: > stormtrack::core::typedefs::cregions_store_reset
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef struct cRegionsStore:
     cRegion** blocks
@@ -556,9 +556,9 @@ cdef struct cRegionsStore:
     int i_next_region
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::structs::grid_create_empty
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegionsStore
 cdef inline cRegionsStore cregions_store_create():
     return cRegionsStore(
@@ -570,7 +570,7 @@ cdef inline cRegionsStore cregions_store_create():
         )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: > stormtrack::core::identification::assign_cpixel
@@ -625,7 +625,7 @@ cdef inline cRegionsStore cregions_store_create():
 # :call: > stormtrack::core::typedefs::grid_reset
 # :call: > stormtrack::core::typedefs::grid_set_values
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegionsStore
@@ -640,10 +640,10 @@ cdef struct cGrid:
     cRegionsStore _regions
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::typedefs::grid_create
 # :call: > stormtrack::extra::front_surgery::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cregions_store_create
@@ -661,9 +661,9 @@ cdef inline cGrid grid_create_empty(cConstants constants):
         )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::structs::SuccessorCandidates
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef struct SuccessorCandidate:
     cRegion*      parent
@@ -678,8 +678,8 @@ cdef struct SuccessorCandidate:
     float p_overlap
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::SuccessorCandidate
 cdef struct SuccessorCandidates:
     SuccessorCandidate* candidates

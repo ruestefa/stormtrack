@@ -25,7 +25,7 @@ from .typedefs cimport cregions_link_region
 from .typedefs cimport grid_create_empty
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > test_stormtrack::test_core::test_tracking::test_branched_tracks::*
 # :call: > test_stormtrack::test_core::test_tracking::test_simple_tracks::*
 # :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
@@ -133,7 +133,7 @@ cdef class FeatureTracker:
     cdef  object _merge_tracks(self, list tracks)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::split
 # :call: > stormtrack::core::tracking::FeatureTrack_rebuild
 # :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
@@ -148,7 +148,7 @@ cdef class FeatureTrackSplitter:
         bint debug
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::rebuild_tracks
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::_split_graph
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::split
@@ -178,7 +178,7 @@ cdef class FeatureTrack:
     cpdef void merge_features(self, Constants constants) except *
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::merge_features
 # :call: > test_stormtrack::test_core::test_tracking::test_merge_features::*
 cdef class TrackFeatureMerger:

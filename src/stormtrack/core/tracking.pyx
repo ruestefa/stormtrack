@@ -68,12 +68,12 @@ TS_FMT_DEFAULT = None
 # TrackFeatureMerger
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::track_features::*
 # :call: > test_stormtrack::test_core::test_tracking::test_branched_tracks::*
 # :call: > test_stormtrack::test_core::test_tracking::test_simple_tracks::*
 # :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::features_grow
 # :call: v stormtrack::core::identification::features_to_cregions
@@ -1337,10 +1337,10 @@ cdef class FeatureTracker:
         free(tmp)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::_compute_successor_probabilities
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::recompute_tracking_probabilities
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 cdef void compute_tracking_probabilities(
     float* p_tot,
     float* p_size,
@@ -1368,10 +1368,10 @@ cdef void compute_tracking_probabilities(
         p_tot[0] += f_overlap*p_overlap[0]
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::_merge_tracks
 # :call: > stormtrack::core::tracking::FeatureTrack::merge_partial_tracks
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def merge_tracks(tracks, active_tracks=None):
     cdef bint debug = False
     if debug:
@@ -1439,11 +1439,11 @@ def merge_tracks(tracks, active_tracks=None):
     return target_track
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTracker::_extend_tracks_core
 # :call: > stormtrack::core::tracking::FeatureTracker::_finish_track
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 cpdef void dbg_check_features_cregion_pixels(list features) except *:
     cdef Feature feature
@@ -1462,10 +1462,10 @@ cpdef void dbg_check_features_cregion_pixels(list features) except *:
                     fo.write(err+"\n")
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::new_track_id
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::split
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def new_track_id(np.uint64_t ts, set used_ids):
     cdef np.uint64_t new_id
     new_id = ts*10000
@@ -1476,11 +1476,11 @@ def new_track_id(np.uint64_t ts, set used_ids):
     return new_id
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::split
 # :call: > stormtrack::core::tracking::FeatureTrack_rebuild
 # :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::tracking::FeatureTrack
 # :call: v stormtrack::core::tracking::compute_tracking_probabilities
 # :call: v stormtrack::core::tracking::edge2str
@@ -2122,20 +2122,20 @@ cdef class FeatureTrackSplitter:
         return edges
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::_adapt_vertex_type_child
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::_adapt_vertex_type_parent
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::split
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # DBG_PERMANENT <<<
 def vertex2str(vertex):
     return "[{vertex['feature'].id}@{vertex['ts']}: {vertex['type']}]"
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::_process_branching_vertex
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::split
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # DBG_PERMANENT <<<
 def edge2str(edge):
     return (
@@ -2149,9 +2149,9 @@ def edge2str(edge):
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::_combine_candidates
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 cdef list all_combinations(list elements, int nmin, int nmax):
     return list(
         itertools.chain.from_iterable(
@@ -2161,9 +2161,9 @@ cdef list all_combinations(list elements, int nmin, int nmax):
     )
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::_combine_candidates
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::structs::SuccessorCandidate
 # :call: v stormtrack::core::structs::SuccessorCandidates
 cdef void successor_combinations_extend(
@@ -2226,15 +2226,15 @@ cdef void successor_combinations_extend(
     combinations.max = nmax_new
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::__reduce__
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::tracking::FeatureTrack
 cpdef FeatureTrack FeatureTrack_rebuild(np.uint64_t id_, object graph, dict config):
     return FeatureTrack(id_=id_, graph=graph, config=config)
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::rebuild_tracks
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::_split_graph
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::split
@@ -2242,7 +2242,7 @@ cpdef FeatureTrack FeatureTrack_rebuild(np.uint64_t id_, object graph, dict conf
 # :call: > stormtrack::core::tracking::remerge_partial_tracks
 # :call: > test_stormtrack::test_core::test_tracking::test_merge_features::*
 # :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::tracking::FeatureTrackSplitter
 # :call: v stormtrack::core::tracking::FeatureTrack_rebuild
@@ -3909,12 +3909,12 @@ cdef class FeatureTrack:
         return track
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::__cinit__
 # :call: > stormtrack::core::tracking::FeatureTrack::_assign_successors
 # :call: > stormtrack::core::tracking::FeatureTrack::from_features_linear
 # :call: > stormtrack::core::tracking::FeatureTrack::from_old_track
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def track_graph_add_feature(graph, feature, attrs=None):
     if attrs is None:
         attrs = {}
@@ -3930,11 +3930,11 @@ def track_graph_add_feature(graph, feature, attrs=None):
     return vertex
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::_assign_successors
 # :call: > stormtrack::core::tracking::FeatureTrack::from_features_linear
 # :call: > stormtrack::core::tracking::FeatureTrack::from_old_track
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 def track_graph_add_edge(graph, vertex1, vertex2, attrs=None):
     # print(f"add edge: {fid1} -> {fid2}")
     if vertex1["ts"] == vertex2["ts"]:
@@ -3952,10 +3952,10 @@ def track_graph_add_edge(graph, vertex1, vertex2, attrs=None):
     return graph.es[-1]
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::io::read_feature_files
 # :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::tracking::FeatureTrack
 def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
     """Reconstruct partial tracks.
@@ -4016,10 +4016,10 @@ def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
     return tracks_mended
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::tracking::FeatureTrack::merge_features
 # :call: > test_stormtrack::test_core::test_tracking::test_merge_features::*
-# :call: v --- CALLING ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::merge_adjacent_features
 # :call: v stormtrack::core::tracking::FeatureTrack
@@ -4661,8 +4661,8 @@ cdef class TrackFeatureMerger:
 
 # Feature wrapper class for compatibility with old-style tracking
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 class TrackableFeature_Oldstyle(Feature):
     """Wrapper class for Feature which is compatible with the old-style tracking."""
@@ -4790,8 +4790,8 @@ class TrackableFeature_Oldstyle(Feature):
         return self.event() is None
 
 
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
+# :call: > --- callers ---
+# :call: v --- calling ---
 # :call: v stormtrack::core::identification::Feature
 class TrackableFeatureCombination_Oldstyle(TrackableFeature_Oldstyle):
 

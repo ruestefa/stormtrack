@@ -3,7 +3,7 @@
 cimport numpy as np
 
 
-# :call: > --- CALLERS ---
+# :call: > --- callers ---
 # :call: > stormtrack::core::identification::Feature::__cinit__
 # :call: > stormtrack::core::identification::Feature::__repr__
 # :call: > stormtrack::core::identification::Feature::unset_track
