@@ -131,8 +131,8 @@ cdef class FeatureTracker:
 
 
 # :call: > --- CALLERS ---
-# :call: > core::tracking::FeatureTrack::_compute_successor_probabilities
-# :call: > core::tracking::FeatureTrackSplitter::recompute_tracking_probabilities
+# :call: > stormtrack::core::tracking::FeatureTrack::_compute_successor_probabilities
+# :call: > stormtrack::core::tracking::FeatureTrackSplitter::recompute_tracking_probabilities
 cdef void compute_tracking_probabilities(
     float* p_tot,
     float* p_size,
@@ -148,8 +148,8 @@ cdef void compute_tracking_probabilities(
 
 
 # :call: > --- CALLERS ---
-# :call: > core::tracking::FeatureTrack::split
-# :call: > core::tracking::FeatureTrack_rebuild
+# :call: > stormtrack::core::tracking::FeatureTrack::split
+# :call: > stormtrack::core::tracking::FeatureTrack_rebuild
 cdef class FeatureTrackSplitter:
     cdef public:
         set used_ids
@@ -162,18 +162,18 @@ cdef class FeatureTrackSplitter:
 
 
 # :call: > --- CALLERS ---
-# :call: > core::tracking::FeatureTrack::__reduce__
+# :call: > stormtrack::core::tracking::FeatureTrack::__reduce__
 cpdef FeatureTrack FeatureTrack_rebuild(
     np.uint64_t id_, object graph, dict config,
 )
 
 
 # :call: > --- CALLERS ---
-# :call: > core::io::rebuild_tracks
-# :call: > core::tracking::FeatureTrackSplitter::_split_graph
-# :call: > core::tracking::FeatureTrackSplitter::split
-# :call: > core::tracking::TrackFeatureMerger::__cinit__
-# :call: > core::tracking::remerge_partial_tracks
+# :call: > stormtrack::core::io::rebuild_tracks
+# :call: > stormtrack::core::tracking::FeatureTrackSplitter::_split_graph
+# :call: > stormtrack::core::tracking::FeatureTrackSplitter::split
+# :call: > stormtrack::core::tracking::TrackFeatureMerger::__cinit__
+# :call: > stormtrack::core::tracking::remerge_partial_tracks
 cdef class FeatureTrack:
     cdef public:
         object graph
@@ -197,7 +197,7 @@ cdef class FeatureTrack:
 
 
 # :call: > --- CALLERS ---
-# :call: > core::tracking::FeatureTrack::merge_features
+# :call: > stormtrack::core::tracking::FeatureTrack::merge_features
 cdef class TrackFeatureMerger:
     cdef readonly:
         FeatureTrack track
