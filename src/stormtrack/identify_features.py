@@ -28,7 +28,6 @@ from .core.identification import features_grow
 from .core.identification import identify_features as identify_features_core
 from .core.io import write_feature_file
 from .core.typedefs import default_constants
-from .core.typedefs import Grid
 from .extra.cyclone_id.identify import identify_features as identify_cyclones_core
 from .extra.cyclone_id import config as cycl_cfg
 from .extra.fronts.fronts import identify_fronts

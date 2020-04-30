@@ -26,6 +26,9 @@ from .typedefs cimport grid_create_empty
 
 
 # :call: > --- CALLERS ---
+# :call: > test_stormtrack::test_core::test_tracking::test_branched_tracks::*
+# :call: > test_stormtrack::test_core::test_tracking::test_simple_tracks::*
+# :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
 cdef class FeatureTracker:
     cdef public:
         float f_overlap
@@ -150,6 +153,7 @@ cdef void compute_tracking_probabilities(
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::tracking::FeatureTrack::split
 # :call: > stormtrack::core::tracking::FeatureTrack_rebuild
+# :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
 cdef class FeatureTrackSplitter:
     cdef public:
         set used_ids
@@ -174,6 +178,8 @@ cpdef FeatureTrack FeatureTrack_rebuild(
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::split
 # :call: > stormtrack::core::tracking::TrackFeatureMerger::__cinit__
 # :call: > stormtrack::core::tracking::remerge_partial_tracks
+# :call: > test_stormtrack::test_core::test_tracking::test_merge_features::*
+# :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
 cdef class FeatureTrack:
     cdef public:
         object graph
@@ -198,6 +204,7 @@ cdef class FeatureTrack:
 
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::tracking::FeatureTrack::merge_features
+# :call: > test_stormtrack::test_core::test_tracking::test_merge_features::*
 cdef class TrackFeatureMerger:
     cdef readonly:
         FeatureTrack track

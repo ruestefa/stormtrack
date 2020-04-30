@@ -68,14 +68,11 @@ TS_FMT_DEFAULT = None
 # TrackFeatureMerger
 
 
-# CALL_TODO stormtrack::track_features
-# CALL_TODO test_stormtrack::test_core::test_tracking::test_split_tracks
-# CALL_TODO test_stormtrack::test_core::test_tracking::test_simple_tracks
-# CALL_TODO test_stormtrack::test_core::test_tracking::test_merge_features
-# CALL_TODO test_stormtrack::test_core::test_tracking::test_branched_tracks
-
-
 # :call: > --- CALLERS ---
+# :call: > stormtrack::track_features::*
+# :call: > test_stormtrack::test_core::test_tracking::test_branched_tracks::*
+# :call: > test_stormtrack::test_core::test_tracking::test_simple_tracks::*
+# :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::features_grow
@@ -1482,6 +1479,7 @@ def new_track_id(np.uint64_t ts, set used_ids):
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::tracking::FeatureTrack::split
 # :call: > stormtrack::core::tracking::FeatureTrack_rebuild
+# :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::tracking::FeatureTrack
 # :call: v stormtrack::core::tracking::compute_tracking_probabilities
@@ -2242,6 +2240,8 @@ cpdef FeatureTrack FeatureTrack_rebuild(np.uint64_t id_, object graph, dict conf
 # :call: > stormtrack::core::tracking::FeatureTrackSplitter::split
 # :call: > stormtrack::core::tracking::TrackFeatureMerger::__cinit__
 # :call: > stormtrack::core::tracking::remerge_partial_tracks
+# :call: > test_stormtrack::test_core::test_tracking::test_merge_features::*
+# :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::tracking::FeatureTrackSplitter
@@ -3954,6 +3954,7 @@ def track_graph_add_edge(graph, vertex1, vertex2, attrs=None):
 
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::io::read_feature_files
+# :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::tracking::FeatureTrack
 def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
@@ -4017,6 +4018,7 @@ def remerge_partial_tracks(subtracks, counter=False, is_subperiod=False):
 
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::tracking::FeatureTrack::merge_features
+# :call: > test_stormtrack::test_core::test_tracking::test_merge_features::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::merge_adjacent_features

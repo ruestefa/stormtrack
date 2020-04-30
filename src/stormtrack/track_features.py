@@ -426,11 +426,6 @@ def _run_feature_input__tss__seq(
     features_ts,
     infiles_tss_sorted_i,
 ):
-    # if grid is None:
-    #    nx, ny = lon2d.shape
-    #    const = default_constants(nx=nx, ny=ny)
-    #    grid = Grid(const)
-
     for timesteps_i, infile in infiles_tss_sorted_i:
         run_feature_input(
             features_ts,
@@ -474,11 +469,6 @@ def _run_feature_tracking__tss(
     timestep_prev,
     infiles_tss_sorted_i,
 ):
-    # if grid is None:
-    #    nx, ny = lon2d.shape
-    #    const = default_constants(nx=nx, ny=ny)
-    #    grid = Grid(const)
-
     for timesteps_in, infile in infiles_tss_sorted_i:
         run_tracking_timesteps(
             tracker,

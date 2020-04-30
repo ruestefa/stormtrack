@@ -133,16 +133,8 @@ except ImportError:
 # oldfeature_to_pixels
 # cyclones_to_features
 
-# CALL_TODO stormtrack::identify_features
+
 # CALL_TODO stormtrack::extra::front_surgery
-# CALL_TODO stormtrack::extra::front_surgery
-# CALL_TODO test_stormtrack::test_core::test_tracking::test_split_tracks
-# CALL_TODO test_stormtrack::test_core::test_features::test_features
-# CALL_TODO test_stormtrack::test_core::test_features::test_regions
-# CALL_TODO test_stormtrack::test_core::test_features::test_boundaries
-# CALL_TODO test_stormtrack::test_core::test_features::test_split_regiongrow
-# CALL_TODO test_stormtrack::test_core::test_features::test_area_lonlat
-# CALL_TODO test_stormtrack::utils
 
 
 # Default type codes for feature id for common feature types
@@ -276,6 +268,7 @@ def identify_features(
 
 
 # :call: > --- CALLERS ---
+# :call: > test_stormtrack::test_core::test_features::test_regions::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: v stormtrack::core::identification::c_find_features_2d_threshold_seeds
@@ -1370,6 +1363,7 @@ cdef void assign_cpixel(
 
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::identification::identify_features
+# :call: > test_stormtrack::test_core::test_features::test_regions::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::cregions_create_features
 # :call: v stormtrack::core::identification::eliminate_regions_by_size
@@ -1693,6 +1687,7 @@ cdef inline cRegion* find_existing_region(
 
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::tracking::TrackFeatureMerger::run
+# :call: > test_stormtrack::test_core::test_features::test_features::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::cregions_create_features
@@ -1817,6 +1812,7 @@ def merge_adjacent_features(
 
 
 # :call: > --- CALLERS ---
+# :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::_replace_feature_associations
@@ -2002,6 +1998,7 @@ cpdef list feature_split_regiongrow(
 
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
+# :call: > test_stormtrack::test_core::test_features::test_features::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::cfeatures_grow_core
@@ -2481,6 +2478,7 @@ cpdef void _replace_feature_associations(
 
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::identification::identify_features
+# :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::csplit_regiongrow_levels
 # :call: v stormtrack::core::typedefs::default_constants
@@ -4105,6 +4103,7 @@ cdef bint regiongrow_assign_pixel(
 
 
 # :call: > --- CALLERS ---
+# :call: > test_stormtrack::test_core::test_features::test_features::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::c_find_extrema_2d
 cpdef find_minima_2d(fld, n=4, nmax_extrema=100):
@@ -4537,6 +4536,7 @@ cdef void feature_to_cregion(
 # :call: > stormtrack::core::identification::Feature::derive_boundaries_from_pixels
 # :call: > stormtrack::core::identification::Feature::derive_holes_from_pixels
 # :call: > stormtrack::core::identification::Feature::derive_shells_from_pixels
+# :call: > test_stormtrack::test_core::test_features::test_boundaries::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cGrid
@@ -4801,6 +4801,10 @@ cpdef Feature Feature_rebuild(
 # :call: > stormtrack::core::tracking::TrackableFeatureCombination_Oldstyle::overlaps
 # :call: > stormtrack::core::tracking::TrackableFeature_Oldstyle
 # :call: > stormtrack::core::tracking::dbg_check_features_cregion_pixels
+# :call: > test_stormtrack::test_core::test_features::test_area_lonlat::*
+# :call: > test_stormtrack::test_core::test_features::test_features::*
+# :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
+# :call: > test_stormtrack::utils::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::Feature_rebuild
 # :call: v stormtrack::core::identification::_feature__from_jdat__pixels_from_tables
@@ -5893,6 +5897,7 @@ cpdef void features_reset_cregion(list features, bint warn=True) except *:
 
 
 # :call: > --- CALLERS ---
+# :call: > test_stormtrack::test_core::test_features::test_features::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::features_find_neighbors_core
 # :call: v stormtrack::core::identification::features_reset_cregion
@@ -6936,6 +6941,7 @@ def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
 
 
 # :call: > --- CALLERS ---
+# :call: > stormtrack::identify_features::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::oldfeature_to_pixels
 # :call: v stormtrack::core::identification::Feature

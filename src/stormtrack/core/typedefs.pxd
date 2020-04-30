@@ -45,6 +45,13 @@ from .tables cimport pixel_status_table_reset
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::core::identification::split_regiongrow_levels
+# :call: > stormtrack::identify_features::*
+# :call: > stormtrack::track_features::*
+# :call: > test_stormtrack::test_core::test_features::test_boundaries::*
+# :call: > test_stormtrack::test_core::test_features::test_features::*
+# :call: > test_stormtrack::test_core::test_features::test_regions::*
+# :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
+# :call: > test_stormtrack::utils::*
 cpdef Constants default_constants(
     int nx, int ny, int connectivity=?, int n_neighbors_max=?,
 )
@@ -82,6 +89,7 @@ cdef class Constants:
 # :call: > stormtrack::core::identification::identify_features
 # :call: > stormtrack::core::tracking::FeatureTracker::__cinit__
 # :call: > stormtrack::core::tracking::FeatureTracker::_swap_grids
+# :call: > stormtrack::track_features::*
 cdef class Grid:
     cdef readonly:
         Constants constants

@@ -90,6 +90,7 @@ cdef Feature create_feature(
 
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
+# :call: > test_stormtrack::test_core::test_features::test_features::*
 cpdef list features_grow(
     int n,
     list features,
@@ -235,6 +236,10 @@ cpdef Feature Feature_rebuild(
 # :call: > stormtrack::core::tracking::TrackableFeatureCombination_Oldstyle::overlaps
 # :call: > stormtrack::core::tracking::TrackableFeature_Oldstyle
 # :call: > stormtrack::core::tracking::dbg_check_features_cregion_pixels
+# :call: > test_stormtrack::test_core::test_features::test_area_lonlat::*
+# :call: > test_stormtrack::test_core::test_features::test_features::*
+# :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
+# :call: > test_stormtrack::utils::*
 cdef class Feature:
     cdef readonly:
         np.uint64_t id
@@ -361,6 +366,7 @@ cpdef void features_reset_cregion(list features, bint warn=?) except *
 
 
 # :call: > --- CALLERS ---
+# :call: > test_stormtrack::test_core::test_features::test_features::*
 cpdef void features_find_neighbors(
         list features, Constants constants=?, np.int32_t nx=?, np.int32_t ny=?,
     )

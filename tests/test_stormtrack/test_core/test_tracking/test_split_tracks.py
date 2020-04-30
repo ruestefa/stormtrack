@@ -12,7 +12,6 @@ import numpy as np
 import igraph as ig
 
 # First-party
-from stormtrack.core.identification import Feature
 from stormtrack.core.tracking import FeatureTrack
 from stormtrack.core.tracking import FeatureTracker
 from stormtrack.core.tracking import FeatureTrackSplitter

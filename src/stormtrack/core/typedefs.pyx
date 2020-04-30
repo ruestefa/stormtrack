@@ -120,9 +120,6 @@ import numpy as np
 
 
 # CALL_TODO stormtrack::extra::front_surgery
-# CALL_TODO test_stormtrack::test_core::test_features::test_boundaries
-# CALL_TODO test_stormtrack::test_core::test_features::test_split_regiongrow
-# CALL_TODO test_stormtrack::utils
 
 
 # :call: > --- CALLERS ---
@@ -136,6 +133,7 @@ cdef inline int sign(int num):
 
 
 # :call: > --- CALLERS ---
+# :call: > stormtrack::identify_features::*
 # :call: > stormtrack::core::identification::Feature::derive_boundaries_from_pixels
 # :call: > stormtrack::core::identification::Feature::derive_holes_from_pixels
 # :call: > stormtrack::core::identification::Feature::derive_shells_from_pixels
@@ -147,6 +145,12 @@ cdef inline int sign(int num):
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::core::identification::split_regiongrow_levels
+# :call: > stormtrack::track_features::*
+# :call: > test_stormtrack::test_core::test_features::test_boundaries::*
+# :call: > test_stormtrack::test_core::test_features::test_features::*
+# :call: > test_stormtrack::test_core::test_features::test_regions::*
+# :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
+# :call: > test_stormtrack::utils::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::typedefs::Constants
 cpdef Constants default_constants(
@@ -3553,6 +3557,7 @@ cdef void cregions_store_cleanup(cRegionsStore* store):
 # :call: > stormtrack::core::identification::identify_features
 # :call: > stormtrack::core::tracking::FeatureTracker::__cinit__
 # :call: > stormtrack::core::tracking::FeatureTracker::_swap_grids
+# :call: > stormtrack::track_features::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_alloc
