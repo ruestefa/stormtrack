@@ -53,6 +53,7 @@ cdef void pixel_region_table_alloc(
 # :call: > stormtrack::core::identification::features_find_neighbors
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::merge_adjacent_features
+# :call: > stormtrack::extra::front_surgery::*
 cdef void pixel_region_table_alloc_grid(
     PixelRegionTable* table, cConstants* constants,
 ) except *
@@ -189,6 +190,7 @@ cdef void pixel_status_table_reset_feature(PixelStatusTable table, cRegion* cfea
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::extra::front_surgery::*
 cdef void pixel_status_table_alloc(PixelStatusTable* table, cConstants* constants)
 
 
@@ -213,6 +215,7 @@ cdef void pixel_status_table_reset(PixelStatusTable table, np.int32_t nx, np.int
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::extra::front_surgery::*
 cdef void neighbor_link_stat_table_alloc(
     NeighborLinkStatTable* table, cConstants* constants,
 ) except *

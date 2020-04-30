@@ -59,12 +59,10 @@ from ..utils.various import NoIndentEncoder
 # read_masks
 
 
-# CALL_TODO stormtrack::extra::front_surgery
-
-
 # :call: > --- CALLERS ---
 # :call: > stormtrack::identify_features::*
 # :call: > stormtrack::track_features::*
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::io::__tmp__write_tracks_features_as_graphs
 # :call: v stormtrack::core::io::_collect_jdat_features
@@ -929,6 +927,7 @@ def read_feature_files(
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::io::read_feature_files
 # :call: > stormtrack::track_features::*
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::io::_rebuild_tracks_from_graphs
 # :call: v stormtrack::core::io::features_read_pixels

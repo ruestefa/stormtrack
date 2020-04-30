@@ -134,9 +134,6 @@ except ImportError:
 # cyclones_to_features
 
 
-# CALL_TODO stormtrack::extra::front_surgery
-
-
 # Default type codes for feature id for common feature types
 # fmt: off
 DEFAULT_TYPE_CODES = dict(
@@ -172,6 +169,7 @@ DEFAULT_TYPE_CODES = dict(
 
 
 # :call: > --- CALLERS ---
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::find_features_2d_threshold
 # :call: v stormtrack::core::identification::split_regiongrow_levels
@@ -929,6 +927,7 @@ cdef inline int random_int(int min, int max):
 
 
 # :call: > --- CALLERS ---
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::cregions_merge_connected
 # :call: v stormtrack::core::structs::cConstants
@@ -4224,6 +4223,7 @@ cdef int _c_find_extrema_2d_core(
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::dbg_check_features_cregion_pixels
@@ -4801,6 +4801,7 @@ cpdef Feature Feature_rebuild(
 # :call: > stormtrack::core::tracking::TrackableFeatureCombination_Oldstyle::overlaps
 # :call: > stormtrack::core::tracking::TrackableFeature_Oldstyle
 # :call: > stormtrack::core::tracking::dbg_check_features_cregion_pixels
+# :call: > stormtrack::extra::front_surgery::*
 # :call: > test_stormtrack::test_core::test_features::test_area_lonlat::*
 # :call: > test_stormtrack::test_core::test_features::test_features::*
 # :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
@@ -5886,6 +5887,7 @@ cpdef feature2d_from_jdat(
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::merge_adjacent_features
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::Feature
 cpdef void features_reset_cregion(list features, bint warn=True) except *:
@@ -5897,6 +5899,7 @@ cpdef void features_reset_cregion(list features, bint warn=True) except *:
 
 
 # :call: > --- CALLERS ---
+# :call: > stormtrack::extra::front_surgery::*
 # :call: > test_stormtrack::test_core::test_features::test_features::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::features_find_neighbors_core
@@ -6012,6 +6015,7 @@ cdef void features_find_neighbors_core(
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::merge_adjacent_features
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::identification::cpixel2arr

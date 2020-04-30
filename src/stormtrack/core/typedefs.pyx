@@ -119,9 +119,6 @@ import numpy as np
 # grid_new_regions
 
 
-# CALL_TODO stormtrack::extra::front_surgery
-
-
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::typedefs::categorize_boundaries
 # :call: v --- CALLING ---
@@ -146,6 +143,7 @@ cdef inline int sign(int num):
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::core::identification::split_regiongrow_levels
 # :call: > stormtrack::track_features::*
+# :call: > stormtrack::extra::front_surgery::*
 # :call: > test_stormtrack::test_core::test_features::test_boundaries::*
 # :call: > test_stormtrack::test_core::test_features::test_features::*
 # :call: > test_stormtrack::test_core::test_features::test_regions::*
@@ -1340,6 +1338,7 @@ cdef cRegion* cregion_merge(cRegion* cregion1, cRegion* cregion2):
 # :call: > stormtrack::core::identification::_cregions_merge_connected_core
 # :call: > stormtrack::core::identification::feature_to_cregion
 # :call: > stormtrack::core::identification::pixels_find_boundaries
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegion
@@ -2801,6 +2800,7 @@ cdef bint cregion_overlaps_tables(
 
 
 # :call: > --- CALLERS ---
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::_cregion_overlap_core
@@ -3026,6 +3026,7 @@ cdef void cregions_init(cRegions* cregions):
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
 # :call: > stormtrack::core::typedefs::cregion_determine_boundaries
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
@@ -3062,6 +3063,7 @@ cdef cRegions cregions_create(int nmax):
 # :call: > stormtrack::core::tracking::FeatureTracker::_find_successor_candidates
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
 # :call: > stormtrack::core::typedefs::grid_new_regions
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
@@ -3167,6 +3169,7 @@ cdef void cregions_reset(cRegions* cregions):
 # :call: > stormtrack::core::identification::features_find_neighbors_core
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::typedefs::cregion_cleanup
@@ -3215,6 +3218,7 @@ cdef void cregions_connect(cRegion* cregion1, cRegion* cregion2):
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 # :call: > stormtrack::core::identification::features_find_neighbors_core
 # :call: > stormtrack::core::identification::merge_adjacent_features
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cPixel
@@ -3633,6 +3637,7 @@ cdef class Grid:
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cGrid
@@ -3652,6 +3657,7 @@ cdef cGrid grid_create(np.float32_t[:, :] fld, cConstants constants) except *:
 # :call: > stormtrack::core::tables::pixel_status_table_reset
 # :call: > stormtrack::core::typedefs::cpixels_reset
 # :call: > stormtrack::core::typedefs::cregions_store_reset
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLERS ---
 # :call: v stormtrack::core::typedefs::Grid::reset
 cdef void grid_reset(cGrid* grid) except *:
@@ -3684,6 +3690,7 @@ cdef void grid_reset(cGrid* grid) except *:
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::core::typedefs::Grid::__dealloc__
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_cleanup
@@ -3732,6 +3739,7 @@ cdef void grid_cleanup(cGrid* grid) except *:
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::typedefs::_collect_neighbors
 # :call: v stormtrack::core::typedefs::cpixel2d_create
+# :call: > stormtrack::extra::front_surgery::*
 @boundscheck(False)
 @wraparound(False)
 cdef void grid_create_pixels(cGrid* grid, np.float32_t[:, :] fld) except *:

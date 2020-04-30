@@ -23,12 +23,10 @@ cimport numpy as np
 # SuccessorCandidates
 
 
-# CALL_TODO stormtrack::extra::front_surgery
-
-
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::structs::cGrid
 # :call: > stormtrack::core::structs::grid_create_empty
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::identification::_cregions_merge_connected_core
 # :call: v stormtrack::core::identification::_find_features_threshold_random_seeds
@@ -227,6 +225,7 @@ cdef struct cRegionConf:
 # :call: > stormtrack::core::identification::regiongrow_advance_boundary
 # :call: > stormtrack::core::typedefs::_determine_boundary_pixels_raw
 # :call: > stormtrack::core::typedefs::cregions_store_extend
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cRegionConf
 cdef inline cRegionConf cregion_conf_default():
@@ -362,6 +361,7 @@ cdef inline cRegionConf cregion_conf_default():
 # :call: > stormtrack::core::typedefs::dbg_check_connected
 # :call: > stormtrack::core::typedefs::grid_new_region
 # :call: > stormtrack::core::typedefs::grid_new_regions
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cPixel
 cdef struct cRegion:
@@ -435,6 +435,7 @@ cdef struct cRegion:
 # :call: > stormtrack::core::typedefs::cregions_reset
 # :call: > stormtrack::core::typedefs::dbg_check_connected
 # :call: > stormtrack::core::typedefs::grid_new_regions
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cRegion
 cdef struct cRegions:
@@ -623,6 +624,7 @@ cdef inline cRegionsStore cregions_store_create():
 # :call: > stormtrack::core::typedefs::grid_new_regions
 # :call: > stormtrack::core::typedefs::grid_reset
 # :call: > stormtrack::core::typedefs::grid_set_values
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cPixel
@@ -640,6 +642,7 @@ cdef struct cGrid:
 
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::typedefs::grid_create
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cConstants
 # :call: v stormtrack::core::structs::cGrid

@@ -59,9 +59,6 @@ import numpy as np
 # get_direct_neighbor_index
 
 
-# CALL_TODO stormtrack::extra::front_surgery
-
-
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 # :call: v --- CALLING ---
@@ -184,6 +181,7 @@ cdef void pixel_region_table_alloc(
 # :call: > stormtrack::core::identification::features_find_neighbors
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::merge_adjacent_features
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::PixelRegionTable
 # :call: v stormtrack::core::structs::cConstants
@@ -610,6 +608,7 @@ cdef void pixel_status_table_reset_feature(PixelStatusTable table, cRegion* cfea
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::PixelStatusTable
 # :call: v stormtrack::core::structs::cConstants
@@ -662,6 +661,7 @@ cdef void pixel_status_table_cleanup(PixelStatusTable table, np.int32_t nx):
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::NeighborLinkStatTable
 # :call: v stormtrack::core::structs::cConstants

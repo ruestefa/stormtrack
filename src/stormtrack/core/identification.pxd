@@ -68,6 +68,7 @@ from .utilities cimport NAN_UI64
 
 
 # :call: > --- CALLERS ---
+# :call: > stormtrack::extra::front_surgery::*
 cdef void cregions_merge_connected_inplace(
     cRegions* cregions,
     cGrid* grid,
@@ -110,6 +111,7 @@ cpdef list features_grow(
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
+# :call: > stormtrack::extra::front_surgery::*
 cdef void features_to_cregions(
     list regions_list,
     int n_regions,
@@ -130,6 +132,7 @@ cdef void features_to_cregions(
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::merge_adjacent_features
+# :call: > stormtrack::extra::front_surgery::*
 cdef list cregions_create_features(
     cRegions* cregions,
     np.uint64_t base_id,
@@ -236,6 +239,7 @@ cpdef Feature Feature_rebuild(
 # :call: > stormtrack::core::tracking::TrackableFeatureCombination_Oldstyle::overlaps
 # :call: > stormtrack::core::tracking::TrackableFeature_Oldstyle
 # :call: > stormtrack::core::tracking::dbg_check_features_cregion_pixels
+# :call: > stormtrack::extra::front_surgery::*
 # :call: > test_stormtrack::test_core::test_features::test_area_lonlat::*
 # :call: > test_stormtrack::test_core::test_features::test_features::*
 # :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
@@ -362,10 +366,12 @@ cdef class Feature:
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::merge_adjacent_features
+# :call: > stormtrack::extra::front_surgery::*
 cpdef void features_reset_cregion(list features, bint warn=?) except *
 
 
 # :call: > --- CALLERS ---
+# :call: > stormtrack::extra::front_surgery::*
 # :call: > test_stormtrack::test_core::test_features::test_features::*
 cpdef void features_find_neighbors(
         list features, Constants constants=?, np.int32_t nx=?, np.int32_t ny=?,
