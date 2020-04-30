@@ -134,23 +134,6 @@ cdef class FeatureTracker:
 
 
 # :call: > --- CALLERS ---
-# :call: > stormtrack::core::tracking::FeatureTrack::_compute_successor_probabilities
-# :call: > stormtrack::core::tracking::FeatureTrackSplitter::recompute_tracking_probabilities
-cdef void compute_tracking_probabilities(
-    float* p_tot,
-    float* p_size,
-    float* p_overlap,
-    int n_parent,
-    int n_child,
-    int n_overlap,
-    float f_size,
-    float f_overlap,
-    float min_p_size,
-    float min_p_overlap
-) except *
-
-
-# :call: > --- CALLERS ---
 # :call: > stormtrack::core::tracking::FeatureTrack::split
 # :call: > stormtrack::core::tracking::FeatureTrack_rebuild
 # :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
@@ -163,13 +146,6 @@ cdef class FeatureTrackSplitter:
 
     cdef:
         bint debug
-
-
-# :call: > --- CALLERS ---
-# :call: > stormtrack::core::tracking::FeatureTrack::__reduce__
-cpdef FeatureTrack FeatureTrack_rebuild(
-    np.uint64_t id_, object graph, dict config,
-)
 
 
 # :call: > --- CALLERS ---

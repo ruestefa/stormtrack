@@ -4645,7 +4645,8 @@ cpdef tuple pixels_find_boundaries(
 # :call: > stormtrack::core::identification::Field2D::__init__
 # :call: > stormtrack::core::identification::Field2D::get
 # :call: > stormtrack::core::identification::Field2D::list
-# :call: v --- CALLING ---Field2D
+# :call: v --- CALLING ---
+# :call: v stormtrack::core::identification::Field2D
 cdef class Pixel:
 
     def __init__(Pixel self, int x, int y, float v, Field2D fld, np.uint64_t id):

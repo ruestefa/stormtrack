@@ -80,16 +80,6 @@ cdef void cregions_merge_connected_inplace(
 
 
 # :call: > --- CALLERS ---
-cdef Feature create_feature(
-    cPixel** pixels_feature,
-    int n_pixels_feature,
-    np.int32_t[:] center,
-    np.int32_t[:, :] extrema,
-    np.uint64_t feature_id,
-)
-
-
-# :call: > --- CALLERS ---
 # :call: > stormtrack::core::tracking::FeatureTracker::extend_tracks
 # :call: > test_stormtrack::test_core::test_features::test_features::*
 cpdef list features_grow(
@@ -144,61 +134,6 @@ cdef list cregions_create_features(
 
 
 # :call: > --- CALLERS ---
-cdef class Field2D:
-    cdef readonly:
-        np.int32_t nx
-        np.int32_t ny
-        list _fld
-
-    cdef list get_neighbors(Field2D self, Pixel pixel)
-
-    cpdef list pixels(Field2D self)
-
-    cdef Pixel get(Field2D self, int i, int j)
-
-
-# :call: > --- CALLERS ---
-# :call: > stormtrack::core::identification::Field2D::__init__
-# :call: > stormtrack::core::identification::Field2D::get
-# :call: > stormtrack::core::identification::Field2D::list
-cdef class Pixel:
-    cdef readonly:
-        np.uint64_t id
-        np.int32_t x
-        np.int32_t y
-        double v
-        Field2D fld
-
-    cdef public:
-        pixeltype type
-        int region
-
-    cpdef list neighbors(Pixel self)
-
-
-# :call: > --- CALLERS ---
-# :call: > stormtrack::core::identification::Feature::__reduce__
-cpdef Feature Feature_rebuild(
-    np.ndarray values,
-    np.ndarray pixels,
-    np.ndarray center,
-    np.ndarray extrema,
-    list shells,
-    list holes,
-    np.uint64_t id,
-    np.uint64_t track_id,
-    str vertex_name,
-    np.uint64_t timestep,
-    dict properties,
-    dict associates,
-    list neighbors,
-    dict _cache,
-    dict _shared_boundary_pixels,
-    dict _shared_boundary_pixels_unique,
-)
-
-
-# :call: > --- CALLERS ---
 # :call: > stormtrack::core::identification::Feature_rebuild
 # :call: > stormtrack::core::identification::_replace_feature_associations
 # :call: > stormtrack::core::identification::associate_features
@@ -243,6 +178,7 @@ cpdef Feature Feature_rebuild(
 # :call: > test_stormtrack::test_core::test_features::test_area_lonlat::*
 # :call: > test_stormtrack::test_core::test_features::test_features::*
 # :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
+# :call: > test_stormtrack::test_core::test_tracking::test_split_tracks::*
 # :call: > test_stormtrack::utils::*
 cdef class Feature:
     cdef readonly:

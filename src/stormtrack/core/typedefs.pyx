@@ -84,7 +84,6 @@ import numpy as np
 # _collect_neighbors
 # cpixel_get_neighbor
 # _cpixel_get_neighbor
-# cregion_overlaps
 # cregion_overlaps_tables
 # cregion_overlap_n
 # cregion_overlap_n_tables
@@ -116,7 +115,6 @@ import numpy as np
 # grid_create_pixels
 # grid_set_values
 # grid_new_region
-# grid_new_regions
 
 
 # :call: > --- CALLERS ---
@@ -2769,20 +2767,6 @@ cdef inline cPixel* _cpixel_get_neighbor(
 
 
 # :call: > --- CALLERS ---
-# :call: v --- CALLING ---
-# :call: v stormtrack::core::structs::cRegion
-# :call: v stormtrack::core::typedefs::_cregion_overlap_core
-cdef bint cregion_overlaps(cRegion* cregion, cRegion* cregion_other):
-    """Check whether two cregions overlap cregions."""
-    cdef int n = _cregion_overlap_core(
-        cregion, cregion_other, table=NULL, table_other=NULL, count=False,
-    )
-    if n > 0:
-        return True
-    return False
-
-
-# :call: > --- CALLERS ---
 # :call: > stormtrack::core::tracking::FeatureTracker::_extend_tracks_core
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::PixelRegionTable
@@ -2829,7 +2813,6 @@ cdef int cregion_overlap_n_tables(
 # :call: > --- CALLERS ---
 # :call: > stormtrack::core::typedefs::cregion_overlap_n
 # :call: > stormtrack::core::typedefs::cregion_overlap_n_tables
-# :call: > stormtrack::core::typedefs::cregion_overlaps
 # :call: > stormtrack::core::typedefs::cregion_overlaps_tables
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::PixelRegionTable
@@ -3062,7 +3045,6 @@ cdef cRegions cregions_create(int nmax):
 # :call: > stormtrack::core::tracking::FeatureTracker::_extend_tracks_core
 # :call: > stormtrack::core::tracking::FeatureTracker::_find_successor_candidates
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: > stormtrack::core::typedefs::grid_new_regions
 # :call: > stormtrack::extra::front_surgery::*
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cRegion
@@ -3812,30 +3794,9 @@ cdef void grid_set_values(cGrid* grid, np.float32_t[:, :] fld) except *:
 # :call: > stormtrack::core::identification::features_to_cregions
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: > stormtrack::core::typedefs::grid_new_regions
 # :call: v --- CALLING ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::typedefs::cregions_store_get_new_region
 cdef cRegion* grid_new_region(cGrid* grid) except *:
     return cregions_store_get_new_region(&grid._regions)
-
-
-# :call: > --- CALLERS ---
-# :call: v --- CALLING ---
-# :call: v stormtrack::core::structs::cGrid
-# :call: v stormtrack::core::structs::cRegion
-# :call: v stormtrack::core::structs::cRegions
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::cregions_link_region
-# :call: v stormtrack::core::typedefs::grid_new_region
-cdef cRegions grid_new_regions(cGrid* grid, int n) except *:
-    cdef int i
-    cdef cRegions cregions = cregions_create(n)
-    cdef cRegion* cregion
-    for i in range(n):
-        cregion = grid_new_region(grid)
-        cregions_link_region(
-            &cregions, cregion, cleanup=False, unlink_pixels=False,
-        )
-    return cregions

@@ -126,11 +126,6 @@ cdef cGrid grid_create(np.float32_t[:, :] fld, cConstants constants) except *
 cdef void grid_create_pixels(cGrid* grid, np.float32_t[:, :] fld) except *
 
 
-# :call: > --- CALLERS ---
-# :call: > stormtrack::core::typedefs::Grid::set_values
-cdef void grid_set_values(cGrid* grid, np.float32_t[:, :] fld) except *
-
-
 # :call: > --- CALLING ---
 # :call: > stormtrack::core::structs::cGrid
 # :call: > stormtrack::core::tables::neighbor_link_stat_table_reset
@@ -166,12 +161,7 @@ cdef void grid_cleanup(cGrid* grid) except *
 # :call: > stormtrack::core::identification::features_to_cregions
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: > stormtrack::core::typedefs::grid_new_regions
 cdef cRegion* grid_new_region(cGrid* grid) except *
-
-
-# :call: > --- CALLERS ---
-cdef cRegions grid_new_regions(cGrid* grid, int n) except *
 
 
 cdef int CREGION_NEXT_ID = 0
@@ -279,18 +269,8 @@ cdef void cregion_remove_pixel(cRegion* cregion, cPixel* cpixel)
 
 
 # :call: > --- CALLERS ---
-# :call: > stormtrack::core::typedefs::_cregion_reset_connected
-cdef void cregion_remove_connected(cRegion* cregion, cRegion* cregion_other)
-
-
-# :call: > --- CALLERS ---
 # :call: > stormtrack::core::identification::find_existing_region
 cdef cRegion* cregion_merge(cRegion* cregion1, cRegion* cregion2)
-
-
-# :call: > --- CALLERS ---
-# :call: > stormtrack::core::typedefs::cregions_determine_boundaries
-cdef void cregion_reset_boundaries(cRegion* cregion)
 
 
 # :call: > --- CALLERS ---
@@ -299,10 +279,6 @@ cdef void cregion_reset_boundaries(cRegion* cregion)
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::extra::front_surgery::*
 cdef void cregion_determine_boundaries(cRegion* cregion, cGrid* grid) except *
-
-
-# :call: > --- CALLERS ---
-cdef bint cregion_overlaps(cRegion* cregion, cRegion* cregion_other)
 
 
 # :call: > --- CALLERS ---
@@ -336,16 +312,6 @@ cdef int cregion_overlap_n_mask(cRegion* cregion, np.ndarray[np.uint8_t, ndim=2]
 
 
 cdef int CREGIONS_NEXT_ID = 0
-
-
-# :call: > --- CALLERS ---
-# :call: > stormtrack::core::typedefs::cregions_create
-cdef np.uint64_t cregions_get_unique_id()
-
-
-# :call: > --- CALLERS ---
-# :call: > stormtrack::core::typedefs::cregions_create
-cdef void cregions_init(cRegions* cregions)
 
 
 # :call: > --- CALLERS ---
@@ -405,7 +371,6 @@ cdef void cregions_cleanup(cRegions* cregions, bint cleanup_regions)
 # :call: > stormtrack::core::tracking::FeatureTracker::_extend_tracks_core
 # :call: > stormtrack::core::tracking::FeatureTracker::_find_successor_candidates
 # :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: > stormtrack::core::typedefs::grid_new_regions
 # :call: > stormtrack::extra::front_surgery::*
 cdef void cregions_link_region(
     cRegions* cregions, cRegion* cregion, bint cleanup, bint unlink_pixels,
@@ -448,11 +413,6 @@ cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except 
 
 
 # :call: > --- CALLERS ---
-# :call: > stormtrack::core::typedefs::cregions_find_connected
-cdef void dbg_check_connected(cRegions* cregions, str msg) except *
-
-
-# :call: > --- CALLERS ---
 # :call: > stormtrack::core::identification::assign_cpixel
 # :call: > stormtrack::core::typedefs::_cpixel_unlink_region
 # :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
@@ -460,17 +420,6 @@ cdef void dbg_check_connected(cRegions* cregions, str msg) except *
 # :call: > stormtrack::core::typedefs::cregion_insert_pixel
 # :call: > stormtrack::core::typedefs::cregion_insert_pixel_nogil
 cdef void cpixel_set_region(cPixel* cpixel, cRegion* cregion) nogil
-
-
-# :call: > --- CALLERS ---
-# :call: > stormtrack::core::typedefs::_cregion_create_pixels
-# :call: > stormtrack::core::typedefs::grid_create_pixels
-cdef cPixel* cpixel2d_create(int n) nogil
-
-
-# :call: > --- CALLERS ---
-# :call: > stormtrack::core::typedefs::grid_reset
-cdef void cpixels_reset(cPixel** cpixels, np.int32_t nx, np.int32_t ny)  # SR_TMP
 
 
 # :call: > --- CALLERS ---
