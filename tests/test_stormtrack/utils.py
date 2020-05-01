@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # First-party
-from stormtrack.core.typedefs import default_constants
+from stormtrack.core.constants import default_constants
 from stormtrack.core.identification import Feature
 
 

@@ -43,7 +43,7 @@ import shapely.geometry as geo
 # Local
 from .identification import features_grow
 from .identification import merge_adjacent_features
-from .typedefs import Constants
+from .constants import Constants
 
 
 # TS_FMT_DEFAULT = "%Y%m%d%H"
@@ -90,12 +90,12 @@ TS_FMT_DEFAULT = None
 # :call: v stormtrack::core::tracking::successor_combinations_extend
 # :call: v stormtrack::core::tracking::track_graph_add_edge
 # :call: v stormtrack::core::tracking::track_graph_add_feature
-# :call: v stormtrack::core::typedefs::Constants
-# :call: v stormtrack::core::typedefs::Grid
-# :call: v stormtrack::core::typedefs::cregion_overlap_n_tables
-# :call: v stormtrack::core::typedefs::cregion_overlaps_tables
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::cregions_link_region
+# :call: v stormtrack::core::constants::Constants
+# :call: v stormtrack::core::grid::Grid
+# :call: v stormtrack::core::cregion::cregion_overlap_n_tables
+# :call: v stormtrack::core::cregion::cregion_overlaps_tables
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::cregions::cregions_link_region
 cdef class FeatureTracker:
 
     def __cinit__(self, *,
@@ -2250,7 +2250,7 @@ cpdef FeatureTrack FeatureTrack_rebuild(np.uint64_t id_, object graph, dict conf
 # :call: v stormtrack::core::tracking::merge_tracks
 # :call: v stormtrack::core::tracking::track_graph_add_edge
 # :call: v stormtrack::core::tracking::track_graph_add_feature
-# :call: v stormtrack::core::typedefs::Constants
+# :call: v stormtrack::core::constants::Constants
 # SR_TODO turn into proper extension class (i.e. cythonize methods etc.)
 cdef class FeatureTrack:
     gr_attrs = set()

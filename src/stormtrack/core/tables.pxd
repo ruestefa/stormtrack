@@ -34,12 +34,12 @@ cdef void pixel_done_table_reset(PixelDoneTable table, cRegion* cregion)
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::grid_cleanup
+# :call: > stormtrack::core::grid::grid_cleanup
 cdef void pixel_done_table_cleanup(PixelDoneTable table, cConstants* constants)
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::core::grid::Grid::__cinit__
 cdef void pixel_region_table_alloc(
     PixelRegionTable* table, int n_slots, cConstants* constants,
 )
@@ -96,8 +96,8 @@ cdef void pixel_region_table_insert_region(
 # :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
 # :call: > stormtrack::core::identification::find_features_2d_threshold
-# :call: > stormtrack::core::typedefs::Grid::reset_tables
-# :call: > stormtrack::core::typedefs::grid_reset
+# :call: > stormtrack::core::grid::Grid::reset_tables
+# :call: > stormtrack::core::grid::grid_reset
 cdef void pixel_region_table_reset(
     PixelRegionTable table, np.int32_t x, np.int32_t y,
 )
@@ -136,7 +136,7 @@ cdef void pixel_region_table_reset_region(
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::grid_cleanup
+# :call: > stormtrack::core::grid::grid_cleanup
 cdef void pixel_region_table_cleanup(
     PixelRegionTable table, np.int32_t nx, np.int32_t ny,
 )
@@ -189,19 +189,19 @@ cdef void pixel_status_table_reset_feature(PixelStatusTable table, cRegion* cfea
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::identification::find_features_2d_threshold
-# :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::core::grid::Grid::__cinit__
 # :call: > stormtrack::extra::front_surgery::*
 cdef void pixel_status_table_alloc(PixelStatusTable* table, cConstants* constants)
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::grid_cleanup
+# :call: > stormtrack::core::grid::grid_cleanup
 cdef void pixel_status_table_cleanup(PixelStatusTable table, np.int32_t nx)
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::Grid::reset_tables
-# :call: > stormtrack::core::typedefs::grid_reset
+# :call: > stormtrack::core::grid::Grid::reset_tables
+# :call: > stormtrack::core::grid::grid_reset
 cdef void pixel_status_table_reset(PixelStatusTable table, np.int32_t nx, np.int32_t ny)
 
 
@@ -214,7 +214,7 @@ cdef void pixel_status_table_reset(PixelStatusTable table, np.int32_t nx, np.int
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::identification::pixels_find_boundaries
-# :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::core::grid::Grid::__cinit__
 # :call: > stormtrack::extra::front_surgery::*
 cdef void neighbor_link_stat_table_alloc(
     NeighborLinkStatTable* table, cConstants* constants,
@@ -223,9 +223,9 @@ cdef void neighbor_link_stat_table_alloc(
 
 # :call: > --- callers ---
 # :call: > stormtrack::core::identification::find_features_2d_threshold
-# :call: > stormtrack::core::typedefs::Grid::reset_tables
-# :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: > stormtrack::core::typedefs::grid_reset
+# :call: > stormtrack::core::grid::Grid::reset_tables
+# :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
+# :call: > stormtrack::core::grid::grid_reset
 cdef void neighbor_link_stat_table_reset(
         NeighborLinkStatTable table, cConstants* constants,
 ) except *
@@ -239,14 +239,14 @@ cdef void neighbor_link_stat_table_reset_pixels(
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::grid_cleanup
+# :call: > stormtrack::core::grid::grid_cleanup
 cdef void neighbor_link_stat_table_cleanup(
     NeighborLinkStatTable table, np.int32_t nx, np.int32_t ny,
 ) except *
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::_reconstruct_boundaries
+# :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
 cdef void neighbor_link_stat_table_init(
     NeighborLinkStatTable table, cRegion* boundary_pixels, cConstants* constants,
 ) except *

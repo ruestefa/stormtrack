@@ -4,25 +4,25 @@ cimport cython
 cimport numpy as np
 
 # Local
+from .constants cimport Constants
+from .cregion cimport cregion_conf_default
+from .cregion cimport cregion_overlap_n_tables
+from .cregion cimport cregion_overlaps_tables
+from .cregions cimport cregions_create
+from .cregions cimport cregions_link_region
+from .grid cimport Grid
+from .grid cimport grid_create_empty
 from .identification cimport Feature
 from .identification cimport features_grow
 from .identification cimport features_to_cregions
-from .structs cimport cGrid
 from .structs cimport SuccessorCandidate
 from .structs cimport SuccessorCandidates
+from .structs cimport cGrid
+from .structs cimport cPixel
+from .structs cimport cRegion
+from .structs cimport cRegions
 from .tables cimport PixelRegionTable
 from .tables cimport pixel_region_table_init_regions
-from .typedefs cimport Constants
-from .typedefs cimport Grid
-from .typedefs cimport cPixel
-from .typedefs cimport cRegion
-from .typedefs cimport cRegions
-from .typedefs cimport cregion_conf_default
-from .typedefs cimport cregion_overlap_n_tables
-from .typedefs cimport cregion_overlaps_tables
-from .typedefs cimport cregions_create
-from .typedefs cimport cregions_link_region
-from .typedefs cimport grid_create_empty
 
 
 # :call: > --- callers ---

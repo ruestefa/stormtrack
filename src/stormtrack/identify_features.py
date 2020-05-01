@@ -22,12 +22,12 @@ import numpy as np
 import scipy as sp
 
 # Local
+from .core.constants import default_constants
 from .core.identification import cyclones_to_features
 from .core.identification import DEFAULT_TYPE_CODES
 from .core.identification import features_grow
 from .core.identification import identify_features as identify_features_core
 from .core.io import write_feature_file
-from .core.typedefs import default_constants
 from .extra.cyclone_id.identify import identify_features as identify_cyclones_core
 from .extra.cyclone_id import config as cycl_cfg
 from .extra.fronts.fronts import identify_fronts

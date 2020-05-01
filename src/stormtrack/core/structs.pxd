@@ -4,25 +4,6 @@ cimport cython
 cimport numpy as np
 
 
-# cConstants
-# pixeltype
-# cPixel
-# cField2D
-# cRegionConf
-# cregion_conf_default
-# cRegion
-# cRegions
-# get_matching_neighbor_id
-# cRegionRankSlot
-# cRegionRankSlots
-# cRegionsStore
-# cregions_store_create
-# cGrid
-# grid_create_empty
-# SuccessorCandidate
-# SuccessorCandidates
-
-
 # :call: > --- callers ---
 # :call: > stormtrack::core::structs::cGrid
 # :call: > stormtrack::core::structs::grid_create_empty
@@ -54,11 +35,11 @@ cimport numpy as np
 # :call: v stormtrack::core::tables::pixel_region_table_alloc
 # :call: v stormtrack::core::tables::pixel_region_table_alloc_grid
 # :call: v stormtrack::core::tables::pixel_status_table_alloc
-# :call: v stormtrack::core::typedefs::Constants::__cinit__
-# :call: v stormtrack::core::typedefs::Constants::to_c
-# :call: v stormtrack::core::typedefs::_collect_neighbors
-# :call: v stormtrack::core::typedefs::cregions_find_connected
-# :call: v stormtrack::core::typedefs::grid_create
+# :call: v stormtrack::core::constants::Constants::__cinit__
+# :call: v stormtrack::core::constants::Constants::to_c
+# :call: v stormtrack::core::cregion::_collect_neighbors
+# :call: v stormtrack::core::cregions::cregions_find_connected
+# :call: v stormtrack::core::grid::grid_create
 cdef struct cConstants:
     np.int32_t nx
     np.int32_t ny
@@ -70,8 +51,8 @@ cdef struct cConstants:
 # :call: > stormtrack::core::structs::cPixel
 # :call: v --- calling ---
 # :call: v stormtrack::core::identification::grow_cregion_rec
-# :call: v stormtrack::core::typedefs::cpixel2d_create
-# :call: v stormtrack::core::typedefs::cpixels_reset
+# :call: v stormtrack::core::cpixel::cpixel2d_create
+# :call: v stormtrack::core::cpixel::cpixels_reset
 cdef enum pixeltype:
     pixeltype_none
     pixeltype_background
@@ -115,52 +96,51 @@ cdef enum pixeltype:
 # :call: > stormtrack::core::tables::pixel_done_table_reset
 # :call: > stormtrack::core::tables::pixel_region_table_init_regions
 # :call: > stormtrack::core::tables::pixel_status_table_init_feature
-# :call: > stormtrack::core::typedefs::_collect_neighbors
-# :call: > stormtrack::core::typedefs::_cpixel_get_neighbor
-# :call: > stormtrack::core::typedefs::_cpixel_unlink_region
-# :call: > stormtrack::core::typedefs::_cregion_create_pixels
-# :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
-# :call: > stormtrack::core::typedefs::_cregion_extend_hole
-# :call: > stormtrack::core::typedefs::_cregion_extend_holes
-# :call: > stormtrack::core::typedefs::_cregion_extend_pixels
-# :call: > stormtrack::core::typedefs::_cregion_extend_pixels_nogil
-# :call: > stormtrack::core::typedefs::_cregion_extend_shell
-# :call: > stormtrack::core::typedefs::_cregion_extend_shells
-# :call: > stormtrack::core::typedefs::_cregion_insert_hole_pixel
-# :call: > stormtrack::core::typedefs::_cregion_insert_shell_pixel
-# :call: > stormtrack::core::typedefs::_cregion_overlap_core
-# :call: > stormtrack::core::typedefs::_cregion_reconnect_pixel
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_holes
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_holes_nogil
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_pixels
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_pixels_nogil
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_shells
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_shells_nogil
-# :call: > stormtrack::core::typedefs::_determine_boundary_pixels_raw
-# :call: > stormtrack::core::typedefs::_extract_closed_path
-# :call: > stormtrack::core::typedefs::_find_link_to_continue
-# :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: > stormtrack::core::typedefs::categorize_boundaries
-# :call: > stormtrack::core::typedefs::cpixel2d_create
-# :call: > stormtrack::core::typedefs::cpixel_get_neighbor
-# :call: > stormtrack::core::typedefs::cpixel_set_region
-# :call: > stormtrack::core::typedefs::cpixels_reset
-# :call: > stormtrack::core::typedefs::cregion_check_validity
-# :call: > stormtrack::core::typedefs::cregion_determine_bbox
-# :call: > stormtrack::core::typedefs::cregion_init
-# :call: > stormtrack::core::typedefs::cregion_insert_pixel
-# :call: > stormtrack::core::typedefs::cregion_insert_pixel_nogil
-# :call: > stormtrack::core::typedefs::cregion_insert_pixels_coords
-# :call: > stormtrack::core::typedefs::cregion_northernmost_pixel
-# :call: > stormtrack::core::typedefs::cregion_overlap_n_mask
-# :call: > stormtrack::core::typedefs::cregion_remove_pixel
-# :call: > stormtrack::core::typedefs::cregion_remove_pixel_nogil
-# :call: > stormtrack::core::typedefs::cregion_reset
-# :call: > stormtrack::core::typedefs::cregions_find_connected
-# :call: > stormtrack::core::typedefs::cregions_find_northernmost_uncategorized_region
-# :call: > stormtrack::core::typedefs::grid_create_pixels
-# :call: > stormtrack::core::typedefs::grid_set_values
-# :call: > stormtrack::core::typedefs::neighbor_pixel_angle
+# :call: > stormtrack::core::cregion::_collect_neighbors
+# :call: > stormtrack::core::cregion::_cpixel_get_neighbor
+# :call: > stormtrack::core::cregion::_cpixel_unlink_region
+# :call: > stormtrack::core::cregion_boundaries::_cregion_determine_boundaries_core
+# :call: > stormtrack::core::cregion::_cregion_extend_hole
+# :call: > stormtrack::core::cregion::_cregion_extend_holes
+# :call: > stormtrack::core::cregion::_cregion_extend_pixels
+# :call: > stormtrack::core::cregion::_cregion_extend_pixels_nogil
+# :call: > stormtrack::core::cregion::_cregion_extend_shell
+# :call: > stormtrack::core::cregion::_cregion_extend_shells
+# :call: > stormtrack::core::cregion::_cregion_insert_hole_pixel
+# :call: > stormtrack::core::cregion::_cregion_insert_shell_pixel
+# :call: > stormtrack::core::cregion::_cregion_overlap_core
+# :call: > stormtrack::core::cregion::_cregion_reconnect_pixel
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_holes
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_holes_nogil
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_pixels
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_pixels_nogil
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_shells
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_shells_nogil
+# :call: > stormtrack::core::cregion::_determine_boundary_pixels_raw
+# :call: > stormtrack::core::cregion::_extract_closed_path
+# :call: > stormtrack::core::cregion::_find_link_to_continue
+# :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
+# :call: > stormtrack::core::cregions::categorize_boundaries
+# :call: > stormtrack::core::cpixel::cpixel2d_create
+# :call: > stormtrack::core::cregion::cpixel_get_neighbor
+# :call: > stormtrack::core::cregion::cpixel_set_region
+# :call: > stormtrack::core::cpixel::cpixels_reset
+# :call: > stormtrack::core::cregion::cregion_check_validity
+# :call: > stormtrack::core::cregion::cregion_determine_bbox
+# :call: > stormtrack::core::cregion::cregion_init
+# :call: > stormtrack::core::cregion::cregion_insert_pixel
+# :call: > stormtrack::core::cregion::cregion_insert_pixel_nogil
+# :call: > stormtrack::core::cregion::cregion_insert_pixels_coords
+# :call: > stormtrack::core::cregion::cregion_northernmost_pixel
+# :call: > stormtrack::core::cregion::cregion_overlap_n_mask
+# :call: > stormtrack::core::cregion::cregion_remove_pixel
+# :call: > stormtrack::core::cregion::cregion_remove_pixel_nogil
+# :call: > stormtrack::core::cregion::cregion_reset
+# :call: > stormtrack::core::cregions::cregions_find_connected
+# :call: > stormtrack::core::cregions::cregions_find_northernmost_uncategorized_region
+# :call: > stormtrack::core::grid::grid_create_pixels
+# :call: > stormtrack::core::grid::grid_set_values
+# :call: > stormtrack::core::cpixel::cpixel_angle_to_neighbor
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::pixeltype
@@ -200,8 +180,8 @@ cdef struct cField2D:
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::pixels_find_boundaries
 # :call: > stormtrack::core::structs::cregion_conf_default
-# :call: > stormtrack::core::typedefs::cregion_init
-# :call: > stormtrack::core::typedefs::cregions_store_extend
+# :call: > stormtrack::core::cregion::cregion_init
+# :call: > stormtrack::core::cregions_store::cregions_store_extend
 # :call: v --- calling ---
 cdef struct cRegionConf:
     int connected_max
@@ -223,8 +203,8 @@ cdef struct cRegionConf:
 # :call: > stormtrack::core::identification::features_grow
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::identification::regiongrow_advance_boundary
-# :call: > stormtrack::core::typedefs::_determine_boundary_pixels_raw
-# :call: > stormtrack::core::typedefs::cregions_store_extend
+# :call: > stormtrack::core::cregion::_determine_boundary_pixels_raw
+# :call: > stormtrack::core::cregions_store::cregions_store_extend
 # :call: > stormtrack::extra::front_surgery::*
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegionConf
@@ -295,72 +275,70 @@ cdef inline cRegionConf cregion_conf_default():
 # :call: > stormtrack::core::tables::pixel_region_table_reset_region
 # :call: > stormtrack::core::tables::pixel_status_table_init_feature
 # :call: > stormtrack::core::tables::pixel_status_table_reset_feature
-# :call: > stormtrack::core::typedefs::_cpixel_unlink_region
-# :call: > stormtrack::core::typedefs::_cregion_add_connected
-# :call: > stormtrack::core::typedefs::_cregion_create_pixels
-# :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
-# :call: > stormtrack::core::typedefs::_cregion_extend_hole
-# :call: > stormtrack::core::typedefs::_cregion_extend_holes
-# :call: > stormtrack::core::typedefs::_cregion_extend_pixels
-# :call: > stormtrack::core::typedefs::_cregion_extend_pixels_nogil
-# :call: > stormtrack::core::typedefs::_cregion_extend_shell
-# :call: > stormtrack::core::typedefs::_cregion_extend_shells
-# :call: > stormtrack::core::typedefs::_cregion_hole_remove_gaps
-# :call: > stormtrack::core::typedefs::_cregion_hole_remove_gaps_nogil
-# :call: > stormtrack::core::typedefs::_cregion_insert_hole_pixel
-# :call: > stormtrack::core::typedefs::_cregion_insert_shell_pixel
-# :call: > stormtrack::core::typedefs::_cregion_new_hole
-# :call: > stormtrack::core::typedefs::_cregion_new_shell
-# :call: > stormtrack::core::typedefs::_cregion_overlap_core
-# :call: > stormtrack::core::typedefs::_cregion_reconnect_pixel
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_holes
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_holes_nogil
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_pixels
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_pixels_nogil
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_shells
-# :call: > stormtrack::core::typedefs::_cregion_remove_pixel_from_shells_nogil
-# :call: > stormtrack::core::typedefs::_cregion_reset_connected
-# :call: > stormtrack::core::typedefs::_cregion_shell_remove_gaps
-# :call: > stormtrack::core::typedefs::_cregion_shell_remove_gaps_nogil
-# :call: > stormtrack::core::typedefs::_determine_boundary_pixels_raw
-# :call: > stormtrack::core::typedefs::_extract_closed_path
-# :call: > stormtrack::core::typedefs::_find_link_to_continue
-# :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: > stormtrack::core::typedefs::categorize_boundaries
-# :call: > stormtrack::core::typedefs::cpixel_set_region
-# :call: > stormtrack::core::typedefs::cregion_check_validity
-# :call: > stormtrack::core::typedefs::cregion_cleanup
-# :call: > stormtrack::core::typedefs::cregion_determine_bbox
-# :call: > stormtrack::core::typedefs::cregion_determine_boundaries
-# :call: > stormtrack::core::typedefs::cregion_init
-# :call: > stormtrack::core::typedefs::cregion_insert_pixel
-# :call: > stormtrack::core::typedefs::cregion_insert_pixel_nogil
-# :call: > stormtrack::core::typedefs::cregion_insert_pixels_coords
-# :call: > stormtrack::core::typedefs::cregion_merge
-# :call: > stormtrack::core::typedefs::cregion_northernmost_pixel
-# :call: > stormtrack::core::typedefs::cregion_overlap_n
-# :call: > stormtrack::core::typedefs::cregion_overlap_n_mask
-# :call: > stormtrack::core::typedefs::cregion_overlap_n_tables
-# :call: > stormtrack::core::typedefs::cregion_overlaps
-# :call: > stormtrack::core::typedefs::cregion_overlaps_tables
-# :call: > stormtrack::core::typedefs::cregion_pixels_remove_gaps
-# :call: > stormtrack::core::typedefs::cregion_pixels_remove_gaps_nogil
-# :call: > stormtrack::core::typedefs::cregion_remove_connected
-# :call: > stormtrack::core::typedefs::cregion_remove_pixel
-# :call: > stormtrack::core::typedefs::cregion_remove_pixel_nogil
-# :call: > stormtrack::core::typedefs::cregion_reset
-# :call: > stormtrack::core::typedefs::cregion_reset_boundaries
-# :call: > stormtrack::core::typedefs::cregions_connect
-# :call: > stormtrack::core::typedefs::cregions_create
-# :call: > stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: > stormtrack::core::typedefs::cregions_extend
-# :call: > stormtrack::core::typedefs::cregions_find_connected
-# :call: > stormtrack::core::typedefs::cregions_link_region
-# :call: > stormtrack::core::typedefs::cregions_store_extend
-# :call: > stormtrack::core::typedefs::cregions_store_get_new_region
-# :call: > stormtrack::core::typedefs::dbg_check_connected
-# :call: > stormtrack::core::typedefs::grid_new_region
-# :call: > stormtrack::core::typedefs::grid_new_regions
+# :call: > stormtrack::core::cregion::_cpixel_unlink_region
+# :call: > stormtrack::core::cregion::_cregion_add_connected
+# :call: > stormtrack::core::cregion_boundaries::_cregion_determine_boundaries_core
+# :call: > stormtrack::core::cregion::_cregion_extend_hole
+# :call: > stormtrack::core::cregion::_cregion_extend_holes
+# :call: > stormtrack::core::cregion::_cregion_extend_pixels
+# :call: > stormtrack::core::cregion::_cregion_extend_pixels_nogil
+# :call: > stormtrack::core::cregion::_cregion_extend_shell
+# :call: > stormtrack::core::cregion::_cregion_extend_shells
+# :call: > stormtrack::core::cregion::_cregion_hole_remove_gaps
+# :call: > stormtrack::core::cregion::_cregion_hole_remove_gaps_nogil
+# :call: > stormtrack::core::cregion::_cregion_insert_hole_pixel
+# :call: > stormtrack::core::cregion::_cregion_insert_shell_pixel
+# :call: > stormtrack::core::cregion::_cregion_new_hole
+# :call: > stormtrack::core::cregion::_cregion_new_shell
+# :call: > stormtrack::core::cregion::_cregion_overlap_core
+# :call: > stormtrack::core::cregion::_cregion_reconnect_pixel
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_holes
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_holes_nogil
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_pixels
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_pixels_nogil
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_shells
+# :call: > stormtrack::core::cregion::_cregion_remove_pixel_from_shells_nogil
+# :call: > stormtrack::core::cregion::_cregion_reset_connected
+# :call: > stormtrack::core::cregion::_cregion_shell_remove_gaps
+# :call: > stormtrack::core::cregion::_cregion_shell_remove_gaps_nogil
+# :call: > stormtrack::core::cregion::_determine_boundary_pixels_raw
+# :call: > stormtrack::core::cregion::_extract_closed_path
+# :call: > stormtrack::core::cregion::_find_link_to_continue
+# :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
+# :call: > stormtrack::core::cregions::categorize_boundaries
+# :call: > stormtrack::core::cregion::cpixel_set_region
+# :call: > stormtrack::core::cregion::cregion_check_validity
+# :call: > stormtrack::core::cregion::cregion_cleanup
+# :call: > stormtrack::core::cregion::cregion_determine_bbox
+# :call: > stormtrack::core::cregion_boundaries::cregion_determine_boundaries
+# :call: > stormtrack::core::cregion::cregion_init
+# :call: > stormtrack::core::cregion::cregion_insert_pixel
+# :call: > stormtrack::core::cregion::cregion_insert_pixel_nogil
+# :call: > stormtrack::core::cregion::cregion_insert_pixels_coords
+# :call: > stormtrack::core::cregion::cregion_merge
+# :call: > stormtrack::core::cregion::cregion_northernmost_pixel
+# :call: > stormtrack::core::cregion::cregion_overlap_n
+# :call: > stormtrack::core::cregion::cregion_overlap_n_mask
+# :call: > stormtrack::core::cregion::cregion_overlap_n_tables
+# :call: > stormtrack::core::cregion::cregion_overlaps
+# :call: > stormtrack::core::cregion::cregion_overlaps_tables
+# :call: > stormtrack::core::cregion::cregion_pixels_remove_gaps
+# :call: > stormtrack::core::cregion::cregion_pixels_remove_gaps_nogil
+# :call: > stormtrack::core::cregion::cregion_remove_connected
+# :call: > stormtrack::core::cregion::cregion_remove_pixel
+# :call: > stormtrack::core::cregion::cregion_remove_pixel_nogil
+# :call: > stormtrack::core::cregion::cregion_reset
+# :call: > stormtrack::core::cregion::cregion_reset_boundaries
+# :call: > stormtrack::core::cregion::cregion_connect_with
+# :call: > stormtrack::core::cregions::cregions_create
+# :call: > stormtrack::core::cregion_boundaries::cregions_determine_boundaries
+# :call: > stormtrack::core::cregions::cregions_extend
+# :call: > stormtrack::core::cregions::cregions_find_connected
+# :call: > stormtrack::core::cregions::cregions_link_region
+# :call: > stormtrack::core::cregions_store::cregions_store_extend
+# :call: > stormtrack::core::cregions_store::cregions_store_get_new_region
+# :call: > stormtrack::core::cregions::_cregions_check_connected
+# :call: > stormtrack::core::grid::grid_create_cregion
 # :call: > stormtrack::extra::front_surgery::*
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
@@ -419,22 +397,21 @@ cdef struct cRegion:
 # :call: > stormtrack::core::tables::pixel_region_table_init_regions
 # :call: > stormtrack::core::tables::pixel_region_table_reset_regions
 # :call: > stormtrack::core::tables::pixel_status_table_init_feature
-# :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
-# :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: > stormtrack::core::typedefs::categorize_boundaries
-# :call: > stormtrack::core::typedefs::cregion_determine_boundaries
-# :call: > stormtrack::core::typedefs::cregions_cleanup
-# :call: > stormtrack::core::typedefs::cregions_create
-# :call: > stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: > stormtrack::core::typedefs::cregions_extend
-# :call: > stormtrack::core::typedefs::cregions_find_connected
-# :call: > stormtrack::core::typedefs::cregions_find_northernmost_uncategorized_region
-# :call: > stormtrack::core::typedefs::cregions_init
-# :call: > stormtrack::core::typedefs::cregions_link_region
-# :call: > stormtrack::core::typedefs::cregions_move
-# :call: > stormtrack::core::typedefs::cregions_reset
-# :call: > stormtrack::core::typedefs::dbg_check_connected
-# :call: > stormtrack::core::typedefs::grid_new_regions
+# :call: > stormtrack::core::cregion_boundaries::_cregion_determine_boundaries_core
+# :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
+# :call: > stormtrack::core::cregions::categorize_boundaries
+# :call: > stormtrack::core::cregion_boundaries::cregion_determine_boundaries
+# :call: > stormtrack::core::cregions::cregions_cleanup
+# :call: > stormtrack::core::cregions::cregions_create
+# :call: > stormtrack::core::cregion_boundaries::cregions_determine_boundaries
+# :call: > stormtrack::core::cregions::cregions_extend
+# :call: > stormtrack::core::cregions::cregions_find_connected
+# :call: > stormtrack::core::cregions::cregions_find_northernmost_uncategorized_region
+# :call: > stormtrack::core::cregions::cregions_init
+# :call: > stormtrack::core::cregions::cregions_link_region
+# :call: > stormtrack::core::cregions::cregions_move
+# :call: > stormtrack::core::cregions::cregions_reset
+# :call: > stormtrack::core::cregions::_cregions_check_connected
 # :call: > stormtrack::extra::front_surgery::*
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
@@ -447,7 +424,7 @@ cdef struct cRegions:
 
 # :call: > --- callers ---
 # :call: > stormtrack::core::tables::neighbor_link_stat_table_init
-# :call: > stormtrack::core::typedefs::_reconstruct_boundaries
+# :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
 # :call: v --- calling ---
 @cython.cdivision
 cdef inline np.uint8_t get_matching_neighbor_id(np.uint8_t ind, int nmax) nogil:
@@ -503,9 +480,9 @@ cdef struct cRegionRankSlots:
 # :call: > stormtrack::core::tables::pixel_region_table_reset_region
 # :call: > stormtrack::core::tables::pixel_region_table_reset_regions
 # :call: > stormtrack::core::tables::pixel_region_table_reset_slots
-# :call: > stormtrack::core::typedefs::_cregion_overlap_core
-# :call: > stormtrack::core::typedefs::cregion_overlap_n_tables
-# :call: > stormtrack::core::typedefs::cregion_overlaps_tables
+# :call: > stormtrack::core::cregion::_cregion_overlap_core
+# :call: > stormtrack::core::cregion::cregion_overlap_n_tables
+# :call: > stormtrack::core::cregion::cregion_overlaps_tables
 # :call: v --- calling ---
 ctypedef cRegionRankSlots** PixelRegionTable
 
@@ -542,10 +519,10 @@ ctypedef np.int8_t ***NeighborLinkStatTable
 # :call: > --- callers ---
 # :call: > stormtrack::core::structs::cGrid
 # :call: > stormtrack::core::structs::cregions_store_create
-# :call: > stormtrack::core::typedefs::cregions_store_cleanup
-# :call: > stormtrack::core::typedefs::cregions_store_extend
-# :call: > stormtrack::core::typedefs::cregions_store_get_new_region
-# :call: > stormtrack::core::typedefs::cregions_store_reset
+# :call: > stormtrack::core::cregions_store::cregions_store_cleanup
+# :call: > stormtrack::core::cregions_store::cregions_store_extend
+# :call: > stormtrack::core::cregions_store::cregions_store_get_new_region
+# :call: > stormtrack::core::cregions_store::cregions_store_reset
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 cdef struct cRegionsStore:
@@ -609,21 +586,20 @@ cdef inline cRegionsStore cregions_store_create():
 # :call: > stormtrack::core::identification::resolve_multi_assignment
 # :call: > stormtrack::core::identification::resolve_multi_assignment_best_connected_region
 # :call: > stormtrack::core::structs::grid_create_empty
-# :call: > stormtrack::core::typedefs::Grid::to_c
-# :call: > stormtrack::core::typedefs::_cregion_determine_boundaries_core
-# :call: > stormtrack::core::typedefs::_determine_boundary_pixels_raw
-# :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: > stormtrack::core::typedefs::boundary_must_be_a_shell
-# :call: > stormtrack::core::typedefs::categorize_boundaries
-# :call: > stormtrack::core::typedefs::cregion_determine_boundaries
-# :call: > stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: > stormtrack::core::typedefs::grid_cleanup
-# :call: > stormtrack::core::typedefs::grid_create
-# :call: > stormtrack::core::typedefs::grid_create_pixels
-# :call: > stormtrack::core::typedefs::grid_new_region
-# :call: > stormtrack::core::typedefs::grid_new_regions
-# :call: > stormtrack::core::typedefs::grid_reset
-# :call: > stormtrack::core::typedefs::grid_set_values
+# :call: > stormtrack::core::grid::Grid::to_c
+# :call: > stormtrack::core::cregion_boundaries::_cregion_determine_boundaries_core
+# :call: > stormtrack::core::cregion::_determine_boundary_pixels_raw
+# :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
+# :call: > stormtrack::core::cregions::boundary_must_be_a_shell
+# :call: > stormtrack::core::cregions::categorize_boundaries
+# :call: > stormtrack::core::cregion_boundaries::cregion_determine_boundaries
+# :call: > stormtrack::core::cregion_boundaries::cregions_determine_boundaries
+# :call: > stormtrack::core::grid::grid_cleanup
+# :call: > stormtrack::core::grid::grid_create
+# :call: > stormtrack::core::grid::grid_create_pixels
+# :call: > stormtrack::core::grid::grid_create_cregion
+# :call: > stormtrack::core::grid::grid_reset
+# :call: > stormtrack::core::grid::grid_set_values
 # :call: > stormtrack::extra::front_surgery::*
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cConstants
@@ -641,7 +617,7 @@ cdef struct cGrid:
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::grid_create
+# :call: > stormtrack::core::grid::grid_create
 # :call: > stormtrack::extra::front_surgery::*
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cConstants

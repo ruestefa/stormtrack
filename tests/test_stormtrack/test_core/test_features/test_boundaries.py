@@ -10,8 +10,8 @@ from unittest import TestCase
 import numpy as np
 
 # First-party
+from stormtrack.core.constants import default_constants
 from stormtrack.core.identification import pixels_find_boundaries
-from stormtrack.core.typedefs import default_constants
 
 # Local
 from ...utils import assertBoundaries

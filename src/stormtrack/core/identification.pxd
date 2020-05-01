@@ -3,6 +3,33 @@
 cimport numpy as np
 
 # Local
+from .constants cimport Constants
+from .constants cimport default_constants
+from .cregion cimport cpixel_get_neighbor
+from .cregion cimport cpixel_set_region
+from .cregion cimport cregion_cleanup
+from .cregion cimport cregion_connect_with
+from .cregion cimport cregion_get_unique_id
+from .cregion cimport cregion_init
+from .cregion cimport cregion_insert_pixel
+from .cregion cimport cregion_insert_pixel_nogil  # SR_TMP_NOGIL
+from .cregion cimport cregion_insert_pixels_coords
+from .cregion cimport cregion_merge
+from .cregion cimport cregion_overlap_n_mask
+from .cregion cimport cregion_remove_pixel
+from .cregion cimport cregion_reset
+from .cregion_boundaries cimport cregion_determine_boundaries
+from .cregion_boundaries cimport cregions_determine_boundaries
+from .cregions cimport cregions_cleanup
+from .cregions cimport cregions_create
+from .cregions cimport cregions_find_connected
+from .cregions cimport cregions_link_region
+from .cregions cimport cregions_move
+from .cregions cimport cregions_reset
+from .grid cimport Grid
+from .grid cimport grid_cleanup
+from .grid cimport grid_create
+from .grid cimport grid_create_cregion
 from .structs cimport cConstants
 from .structs cimport cGrid
 from .structs cimport cPixel
@@ -10,6 +37,10 @@ from .structs cimport cRegion
 from .structs cimport cRegionConf
 from .structs cimport cRegions
 from .structs cimport cregion_conf_default
+from .structs cimport pixeltype
+from .structs cimport pixeltype_background
+from .structs cimport pixeltype_feature
+from .structs cimport pixeltype_none
 from .tables cimport cRegionRankSlot
 from .tables cimport cRegionRankSlots
 from .tables cimport cregion_rank_slots_copy
@@ -33,37 +64,6 @@ from .tables cimport pixel_status_table_alloc
 from .tables cimport pixel_status_table_init_feature
 from .tables cimport pixel_status_table_reset
 from .tables cimport pixel_status_table_reset_feature
-from .typedefs cimport Constants
-from .typedefs cimport Grid
-from .typedefs cimport cpixel_get_neighbor
-from .typedefs cimport cpixel_set_region
-from .typedefs cimport cregion_cleanup
-from .typedefs cimport cregion_determine_boundaries
-from .typedefs cimport cregion_get_unique_id
-from .typedefs cimport cregion_init
-from .typedefs cimport cregion_insert_pixel
-from .typedefs cimport cregion_insert_pixel_nogil  # SR_TMP_NOGIL
-from .typedefs cimport cregion_insert_pixels_coords
-from .typedefs cimport cregion_merge
-from .typedefs cimport cregion_overlap_n_mask
-from .typedefs cimport cregion_remove_pixel
-from .typedefs cimport cregion_reset
-from .typedefs cimport cregions_cleanup
-from .typedefs cimport cregions_connect
-from .typedefs cimport cregions_create
-from .typedefs cimport cregions_determine_boundaries
-from .typedefs cimport cregions_find_connected
-from .typedefs cimport cregions_link_region
-from .typedefs cimport cregions_move
-from .typedefs cimport cregions_reset
-from .typedefs cimport default_constants
-from .typedefs cimport grid_cleanup
-from .typedefs cimport grid_create
-from .typedefs cimport grid_new_region
-from .typedefs cimport pixeltype
-from .typedefs cimport pixeltype_background
-from .typedefs cimport pixeltype_feature
-from .typedefs cimport pixeltype_none
 from .utilities cimport NAN_UI64
 
 

@@ -24,41 +24,6 @@ import cython
 import numpy as np
 
 
-# pixel_done_table_alloc
-# pixel_done_table_init
-# pixel_done_table_reset
-# pixel_done_table_cleanup
-# pixel_region_table_alloc
-# pixel_region_table_alloc_grid
-# pixel_region_table_alloc_pixels
-# pixel_region_table_insert_region
-# cregion_rank_slots_insert_region
-# cregion_rank_slots_extend
-# pixel_region_table_alloc_pixel
-# pixel_region_table_init_regions
-# pixel_region_table_grow
-# pixel_region_table_cleanup_pixels
-# pixel_region_table_reset
-# pixel_region_table_reset_region
-# pixel_region_table_reset_regions
-# pixel_region_table_reset_slots
-# cregion_rank_slots_reset
-# cregion_rank_slots_copy
-# _pixel_region_table_cleanup_entry
-# pixel_region_table_cleanup
-# pixel_status_table_init_feature
-# pixel_status_table_reset_feature
-# pixel_status_table_alloc
-# pixel_status_table_reset
-# pixel_status_table_cleanup
-# neighbor_link_stat_table_alloc
-# neighbor_link_stat_table_reset
-# neighbor_link_stat_table_reset_pixels
-# neighbor_link_stat_table_cleanup
-# neighbor_link_stat_table_init
-# get_direct_neighbor_index
-
-
 # :call: > --- callers ---
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 # :call: v --- calling ---
@@ -111,7 +76,7 @@ cdef void pixel_done_table_reset(PixelDoneTable table, cRegion* cregion):
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::grid_cleanup
+# :call: > stormtrack::core::grid::grid_cleanup
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::PixelDoneTable
 # :call: v stormtrack::core::structs::cConstants
@@ -123,7 +88,7 @@ cdef void pixel_done_table_cleanup(PixelDoneTable table, cConstants* constants):
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::core::grid::Grid::__cinit__
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::PixelRegionTable
 # :call: v stormtrack::core::structs::cConstants
@@ -408,8 +373,8 @@ cdef void pixel_region_table_cleanup_pixels(PixelRegionTable table, cRegion* cre
 # :call: > --- callers ---
 # :call: > stormtrack::core::identification::cregions2features_connected2neighbors
 # :call: > stormtrack::core::identification::find_features_2d_threshold
-# :call: > stormtrack::core::typedefs::Grid::reset_tables
-# :call: > stormtrack::core::typedefs::grid_reset
+# :call: > stormtrack::core::grid::Grid::reset_tables
+# :call: > stormtrack::core::grid::grid_reset
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::PixelRegionTable
 # :call: v stormtrack::core::tables::pixel_region_table_reset_slots
@@ -514,7 +479,7 @@ cdef void _pixel_region_table_cleanup_entry(PixelRegionTable table, int x, int y
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::grid_cleanup
+# :call: > stormtrack::core::grid::grid_cleanup
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::PixelRegionTable
 # :call: v stormtrack::core::tables::_pixel_region_table_cleanup_entry
@@ -607,7 +572,7 @@ cdef void pixel_status_table_reset_feature(PixelStatusTable table, cRegion* cfea
 # :call: > stormtrack::core::identification::csplit_regiongrow_levels
 # :call: > stormtrack::core::identification::feature_split_regiongrow
 # :call: > stormtrack::core::identification::find_features_2d_threshold
-# :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::core::grid::Grid::__cinit__
 # :call: > stormtrack::extra::front_surgery::*
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::PixelStatusTable
@@ -626,8 +591,8 @@ cdef void pixel_status_table_alloc(PixelStatusTable* table, cConstants* constant
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::Grid::reset_tables
-# :call: > stormtrack::core::typedefs::grid_reset
+# :call: > stormtrack::core::grid::Grid::reset_tables
+# :call: > stormtrack::core::grid::grid_reset
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::PixelStatusTable
 cdef void pixel_status_table_reset(
@@ -641,7 +606,7 @@ cdef void pixel_status_table_reset(
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::grid_cleanup
+# :call: > stormtrack::core::grid::grid_cleanup
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::PixelStatusTable
 cdef void pixel_status_table_cleanup(PixelStatusTable table, np.int32_t nx):
@@ -660,7 +625,7 @@ cdef void pixel_status_table_cleanup(PixelStatusTable table, np.int32_t nx):
 # :call: > stormtrack::core::identification::find_features_2d_threshold
 # :call: > stormtrack::core::identification::merge_adjacent_features
 # :call: > stormtrack::core::identification::pixels_find_boundaries
-# :call: > stormtrack::core::typedefs::Grid::__cinit__
+# :call: > stormtrack::core::grid::Grid::__cinit__
 # :call: > stormtrack::extra::front_surgery::*
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::NeighborLinkStatTable
@@ -689,9 +654,9 @@ cdef void neighbor_link_stat_table_alloc(
 
 # :call: > --- callers ---
 # :call: > stormtrack::core::identification::find_features_2d_threshold
-# :call: > stormtrack::core::typedefs::Grid::reset_tables
-# :call: > stormtrack::core::typedefs::_reconstruct_boundaries
-# :call: > stormtrack::core::typedefs::grid_reset
+# :call: > stormtrack::core::grid::Grid::reset_tables
+# :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
+# :call: > stormtrack::core::grid::grid_reset
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::NeighborLinkStatTable
 # :call: v stormtrack::core::structs::cConstants
@@ -729,7 +694,7 @@ cdef void neighbor_link_stat_table_reset_pixels(
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::grid_cleanup
+# :call: > stormtrack::core::grid::grid_cleanup
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::NeighborLinkStatTable
 cdef void neighbor_link_stat_table_cleanup(
@@ -746,7 +711,7 @@ cdef void neighbor_link_stat_table_cleanup(
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::typedefs::_reconstruct_boundaries
+# :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::NeighborLinkStatTable
 # :call: v stormtrack::core::structs::cConstants

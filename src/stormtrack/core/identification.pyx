@@ -173,8 +173,8 @@ DEFAULT_TYPE_CODES = dict(
 # :call: v --- calling ---
 # :call: v stormtrack::core::identification::find_features_2d_threshold
 # :call: v stormtrack::core::identification::split_regiongrow_levels
-# :call: v stormtrack::core::typedefs::Grid
-# :call: v stormtrack::core::typedefs::default_constants
+# :call: v stormtrack::core::grid::Grid
+# :call: v stormtrack::core::constants::default_constants
 def identify_features(
     fld,
     feature_name,
@@ -271,8 +271,8 @@ def identify_features(
 # :call: v stormtrack::core::identification::_find_features_threshold_random_seeds
 # :call: v stormtrack::core::identification::c_find_features_2d_threshold_seeds
 # :call: v stormtrack::core::structs::cConstants
-# :call: v stormtrack::core::typedefs::Constants
-# :call: v stormtrack::core::typedefs::default_constants
+# :call: v stormtrack::core::constants::Constants
+# :call: v stormtrack::core::constants::default_constants
 def find_features_2d_threshold_seeded(
     field_raw,
     *,
@@ -384,11 +384,11 @@ def find_features_2d_threshold_seeded(
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_alloc
 # :call: v stormtrack::core::tables::pixel_region_table_alloc_grid
 # :call: v stormtrack::core::tables::pixel_status_table_alloc
-# :call: v stormtrack::core::typedefs::Grid
-# :call: v stormtrack::core::typedefs::cregions_cleanup
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::grid_cleanup
-# :call: v stormtrack::core::typedefs::grid_create
+# :call: v stormtrack::core::grid::Grid
+# :call: v stormtrack::core::cregions::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::grid::grid_cleanup
+# :call: v stormtrack::core::grid::grid_create
 cdef list _find_features_threshold_random_seeds(
     np.float32_t [:, :] field_raw,
     np.float32_t lower_threshold,
@@ -507,10 +507,10 @@ cdef list _find_features_threshold_random_seeds(
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_alloc
 # :call: v stormtrack::core::tables::pixel_region_table_alloc_grid
 # :call: v stormtrack::core::tables::pixel_status_table_alloc
-# :call: v stormtrack::core::typedefs::cregions_cleanup
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::grid_cleanup
-# :call: v stormtrack::core::typedefs::grid_create
+# :call: v stormtrack::core::cregions::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::grid::grid_cleanup
+# :call: v stormtrack::core::grid::grid_create
 cdef list c_find_features_2d_threshold_seeds(
     np.float32_t [:, :] field_raw,
     np.float32_t lower_threshold,
@@ -747,7 +747,7 @@ cdef void c_find_features_2d_threshold_seeds_core(
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::structs::pixeltype
-# :call: v stormtrack::core::typedefs::cregions_connect
+# :call: v stormtrack::core::cregion::cregion_connect_with
 cdef void grow_cregion_rec(
     cPixel* cpixel_center,
     np.float32_t lower_threshold,
@@ -809,7 +809,7 @@ cdef void grow_cregion_rec(
                     log.debug(
                         f"< connect {cpixel_center.region.id} {other_cpixel.region.id}"
                     )
-                cregions_connect(cpixel_center.region, other_cpixel.region)
+                cregion_connect_with(cpixel_center.region, other_cpixel.region)
 
         elif ctype == pixeltype_none:
             if debug:
@@ -934,7 +934,7 @@ cdef inline int random_int(int min, int max):
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegionConf
 # :call: v stormtrack::core::structs::cRegions
-# :call: v stormtrack::core::typedefs::cregions_move
+# :call: v stormtrack::core::cregions::cregions_move
 cdef void cregions_merge_connected_inplace(
     cRegions* cregions,
     cGrid* grid,
@@ -970,8 +970,8 @@ cdef void cregions_merge_connected_inplace(
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionConf
 # :call: v stormtrack::core::structs::cRegions
-# :call: v stormtrack::core::typedefs::cregions_cleanup
-# :call: v stormtrack::core::typedefs::cregions_create
+# :call: v stormtrack::core::cregions::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_create
 cdef cRegions cregions_merge_connected(
     cRegions* cregions,
     cGrid* grid,
@@ -1056,10 +1056,10 @@ cdef cRegions cregions_merge_connected(
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
-# :call: v stormtrack::core::typedefs::cregion_determine_boundaries
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v stormtrack::core::typedefs::cregions_link_region
-# :call: v stormtrack::core::typedefs::grid_new_region
+# :call: v stormtrack::core::cregion_boundaries::cregion_determine_boundaries
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
+# :call: v stormtrack::core::cregions::cregions_link_region
+# :call: v stormtrack::core::grid::grid_create_cregion
 cdef void _cregions_merge_connected_core(
     cRegions* cregions_out,
     cRegions* cregions,
@@ -1142,7 +1142,7 @@ cdef void _cregions_merge_connected_core(
             continue
 
         # Create new feature from the collected pixels
-        cfeature = grid_new_region(grid)
+        cfeature = grid_create_cregion(grid)
         cregions_link_region(cregions_out, cfeature, cleanup=False, unlink_pixels=False)
         for i in range(n_pixels_feature):
             cregion_insert_pixel(
@@ -1323,10 +1323,10 @@ cdef void _cregion_collect_connected_regions_rec(
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
-# :call: v stormtrack::core::typedefs::cpixel_set_region
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v stormtrack::core::typedefs::cregions_link_region
-# :call: v stormtrack::core::typedefs::grid_new_region
+# :call: v stormtrack::core::cregion::cpixel_set_region
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
+# :call: v stormtrack::core::cregions::cregions_link_region
+# :call: v stormtrack::core::grid::grid_create_cregion
 cdef void assign_cpixel(
     cPixel* cpixel,
     np.float32_t lower_threshold,
@@ -1351,7 +1351,7 @@ cdef void assign_cpixel(
     # current region if there is one, or to a new region otherwise
     cpixel.type = pixeltype_feature
     if cregion is NULL:
-        cregion = grid_new_region(grid)
+        cregion = grid_create_cregion(grid)
         cregions_link_region(cregions, cregion, cleanup=False, unlink_pixels=False)
     cpixel_set_region(cpixel, cregion)
     cdef bint link_region=False, unlink_pixel=False
@@ -1380,14 +1380,14 @@ cdef void assign_cpixel(
 # :call: v stormtrack::core::tables::pixel_region_table_reset
 # :call: v stormtrack::core::tables::pixel_status_table_alloc
 # :call: v stormtrack::core::tables::pixel_status_table_reset
-# :call: v stormtrack::core::typedefs::Constants
-# :call: v stormtrack::core::typedefs::Grid
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: v stormtrack::core::typedefs::cregions_link_region
-# :call: v stormtrack::core::typedefs::default_constants
-# :call: v stormtrack::core::typedefs::grid_new_region
+# :call: v stormtrack::core::constants::Constants
+# :call: v stormtrack::core::grid::Grid
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::cregion_boundaries::cregions_determine_boundaries
+# :call: v stormtrack::core::cregions::cregions_link_region
+# :call: v stormtrack::core::constants::default_constants
+# :call: v stormtrack::core::grid::grid_create_cregion
 def find_features_2d_threshold(
     np.float32_t[:, :] field_raw,
     *,
@@ -1469,7 +1469,7 @@ def find_features_2d_threshold(
                 cpixel = &cgrid.pixels[i][j]
             cregion = find_existing_region(cgrid, i, j, loop_order)
             if cregion is NULL:
-                cregion = grid_new_region(cgrid)
+                cregion = grid_create_cregion(cgrid)
                 cregions_link_region(
                     &cregions, cregion, cleanup=False, unlink_pixels=False,
                 )
@@ -1540,7 +1540,7 @@ def find_features_2d_threshold(
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
-# :call: v stormtrack::core::typedefs::cregion_cleanup
+# :call: v stormtrack::core::cregion::cregion_cleanup
 cdef void eliminate_regions_by_size(
     cRegions* cregions, int minsize, int maxsize,
 ) except *:
@@ -1576,7 +1576,7 @@ cdef void eliminate_regions_by_size(
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegion
-# :call: v stormtrack::core::typedefs::cregion_merge
+# :call: v stormtrack::core::cregion::cregion_merge
 # SR_TODO: Consider 4 vs. 8 connectivity
 cdef inline cRegion* find_existing_region(
     cGrid* grid, np.int32_t x, np.int32_t y, int loop_order,
@@ -1699,12 +1699,12 @@ cdef inline cRegion* find_existing_region(
 # :call: v stormtrack::core::structs::cregion_conf_default
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_alloc
 # :call: v stormtrack::core::tables::pixel_region_table_alloc_grid
-# :call: v stormtrack::core::typedefs::Constants
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::cregions_find_connected
-# :call: v stormtrack::core::typedefs::default_constants
-# :call: v stormtrack::core::typedefs::grid_cleanup
-# :call: v stormtrack::core::typedefs::grid_create
+# :call: v stormtrack::core::constants::Constants
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::cregions::cregions_find_connected
+# :call: v stormtrack::core::constants::default_constants
+# :call: v stormtrack::core::grid::grid_cleanup
+# :call: v stormtrack::core::grid::grid_create
 # SR_TODO add option to only merge features of the connecting pixels exceed
 # SR_TODO a certaion threshold (requires passing the field/values, obviously)
 def merge_adjacent_features(
@@ -1829,13 +1829,13 @@ def merge_adjacent_features(
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_alloc
 # :call: v stormtrack::core::tables::pixel_region_table_alloc_grid
 # :call: v stormtrack::core::tables::pixel_status_table_alloc
-# :call: v stormtrack::core::typedefs::Constants
-# :call: v stormtrack::core::typedefs::cregion_remove_pixel
-# :call: v stormtrack::core::typedefs::cregions_cleanup
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::default_constants
-# :call: v stormtrack::core::typedefs::grid_cleanup
-# :call: v stormtrack::core::typedefs::grid_create
+# :call: v stormtrack::core::constants::Constants
+# :call: v stormtrack::core::cregion::cregion_remove_pixel
+# :call: v stormtrack::core::cregions::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::constants::default_constants
+# :call: v stormtrack::core::grid::grid_cleanup
+# :call: v stormtrack::core::grid::grid_create
 cpdef list feature_split_regiongrow(
     Feature feature,
     list seed_features,
@@ -2010,10 +2010,10 @@ cpdef list feature_split_regiongrow(
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::structs::cregion_conf_default
-# :call: v stormtrack::core::typedefs::Constants
-# :call: v stormtrack::core::typedefs::Grid
-# :call: v stormtrack::core::typedefs::cregions_cleanup
-# :call: v stormtrack::core::typedefs::cregions_create
+# :call: v stormtrack::core::constants::Constants
+# :call: v stormtrack::core::grid::Grid
+# :call: v stormtrack::core::cregions::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_create
 cpdef list features_grow(
     int n,
     list features,
@@ -2157,17 +2157,17 @@ cpdef list features_grow(
 # :call: v stormtrack::core::tables::pixel_region_table_reset_region
 # :call: v stormtrack::core::tables::pixel_status_table_init_feature
 # :call: v stormtrack::core::tables::pixel_status_table_reset_feature
-# :call: v stormtrack::core::typedefs::cregion_cleanup
-# :call: v stormtrack::core::typedefs::cregion_get_unique_id
-# :call: v stormtrack::core::typedefs::cregion_init
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v stormtrack::core::typedefs::cregion_insert_pixels_coords
-# :call: v stormtrack::core::typedefs::cregions_cleanup
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: v stormtrack::core::typedefs::cregions_find_connected
-# :call: v stormtrack::core::typedefs::cregions_link_region
-# :call: v stormtrack::core::typedefs::grid_new_region
+# :call: v stormtrack::core::cregion::cregion_cleanup
+# :call: v stormtrack::core::cregion::cregion_get_unique_id
+# :call: v stormtrack::core::cregion::cregion_init
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
+# :call: v stormtrack::core::cregion::cregion_insert_pixels_coords
+# :call: v stormtrack::core::cregions::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::cregion_boundaries::cregions_determine_boundaries
+# :call: v stormtrack::core::cregions::cregions_find_connected
+# :call: v stormtrack::core::cregions::cregions_link_region
+# :call: v stormtrack::core::grid::grid_create_cregion
 cdef void cfeatures_grow_core(
     int ngrow, cRegions* cregions_orig, cRegions* cregions_grown, cGrid* grid,
 ) except *:
@@ -2213,7 +2213,7 @@ cdef void cfeatures_grow_core(
     # 'Activate' new subregions
     for i in range(n_regions):
         cregions_link_region(
-            cregions_grown, grid_new_region(grid), cleanup=False, unlink_pixels=False,
+            cregions_grown, grid_create_cregion(grid), cleanup=False, unlink_pixels=False,
         )
 
     # Initialize pixel status table for feature
@@ -2243,7 +2243,7 @@ cdef void cfeatures_grow_core(
         k = cregions_grown.n - n_regions + i
         cregion = cregions_grown.regions[k]
         cregion_seeds = cregions_orig.regions[i]
-        cregion_iter = grid_new_region(grid)
+        cregion_iter = grid_create_cregion(grid)
         cregions_link_region(
             &features_iteration_seeds, cregion_iter, cleanup=False, unlink_pixels=False,
         )
@@ -2480,7 +2480,7 @@ cpdef void _replace_feature_associations(
 # :call: > test_stormtrack::test_core::test_features::test_split_regiongrow::*
 # :call: v --- calling ---
 # :call: v stormtrack::core::identification::csplit_regiongrow_levels
-# :call: v stormtrack::core::typedefs::default_constants
+# :call: v stormtrack::core::constants::default_constants
 def split_regiongrow_levels(
     features,
     levels,
@@ -2555,17 +2555,17 @@ def split_regiongrow_levels(
 # :call: v stormtrack::core::tables::pixel_region_table_alloc_pixels
 # :call: v stormtrack::core::tables::pixel_region_table_reset_region
 # :call: v stormtrack::core::tables::pixel_status_table_alloc
-# :call: v stormtrack::core::typedefs::Constants
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v stormtrack::core::typedefs::cregion_overlap_n_mask
-# :call: v stormtrack::core::typedefs::cregions_cleanup
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: v stormtrack::core::typedefs::cregions_find_connected
-# :call: v stormtrack::core::typedefs::cregions_link_region
-# :call: v stormtrack::core::typedefs::grid_cleanup
-# :call: v stormtrack::core::typedefs::grid_create
-# :call: v stormtrack::core::typedefs::grid_new_region
+# :call: v stormtrack::core::constants::Constants
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
+# :call: v stormtrack::core::cregion::cregion_overlap_n_mask
+# :call: v stormtrack::core::cregions::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::cregion_boundaries::cregions_determine_boundaries
+# :call: v stormtrack::core::cregions::cregions_find_connected
+# :call: v stormtrack::core::cregions::cregions_link_region
+# :call: v stormtrack::core::grid::grid_cleanup
+# :call: v stormtrack::core::grid::grid_create
+# :call: v stormtrack::core::grid::grid_create_cregion
 cdef list csplit_regiongrow_levels(
     list features,
     np.ndarray[np.float32_t, ndim=1] levels,
@@ -2700,7 +2700,7 @@ cdef list csplit_regiongrow_levels(
 
             # SR_TODO Figure out if this can be removed!
             # Not exactly sure why I'm removing gaps in pixels array here...
-            cregion = grid_new_region(&grid)
+            cregion = grid_create_cregion(&grid)
             cregions_link_region(
                 &subfeatures_final, cregion, cleanup=False, unlink_pixels=False,
             )
@@ -2758,12 +2758,12 @@ cdef list csplit_regiongrow_levels(
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_reset_pixels
 # :call: v stormtrack::core::tables::pixel_region_table_grow
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v stormtrack::core::typedefs::cregions_cleanup
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::cregions_link_region
-# :call: v stormtrack::core::typedefs::cregions_reset
-# :call: v stormtrack::core::typedefs::grid_new_region
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
+# :call: v stormtrack::core::cregions::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::cregions::cregions_link_region
+# :call: v stormtrack::core::cregions::cregions_reset
+# :call: v stormtrack::core::grid::grid_create_cregion
 cdef void csplit_regiongrow_levels_core(
     cRegion* cfeature,
     cRegions* subfeatures_tmp,
@@ -2821,7 +2821,7 @@ cdef void csplit_regiongrow_levels_core(
             # If no seed has been found, this subfeature is finished
             if subfeatures_seeds.n == 0:
                 # print("region finished!")
-                cregion = grid_new_region(grid)
+                cregion = grid_create_cregion(grid)
                 cregions_link_region(
                     subfeatures_final, cregion, cleanup=False, unlink_pixels=False,
                 )
@@ -2865,7 +2865,7 @@ cdef void csplit_regiongrow_levels_core(
         # Collect new subfeatures in 'temporary storage'
         cregions_reset(subfeatures_tmp)
         for i in range(subfeatures_new.n):
-            cregion = grid_new_region(grid)
+            cregion = grid_create_cregion(grid)
             cregions_link_region(
                 subfeatures_tmp, cregion, cleanup=False, unlink_pixels=False,
             )
@@ -2901,13 +2901,13 @@ cdef void csplit_regiongrow_levels_core(
 # :call: v stormtrack::core::structs::cregion_conf_default
 # :call: v stormtrack::core::tables::pixel_done_table_init
 # :call: v stormtrack::core::tables::pixel_done_table_reset
-# :call: v stormtrack::core::typedefs::cregion_get_unique_id
-# :call: v stormtrack::core::typedefs::cregion_init
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v stormtrack::core::typedefs::cregion_reset
-# :call: v stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: v stormtrack::core::typedefs::cregions_link_region
-# :call: v stormtrack::core::typedefs::grid_new_region
+# :call: v stormtrack::core::cregion::cregion_get_unique_id
+# :call: v stormtrack::core::cregion::cregion_init
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
+# :call: v stormtrack::core::cregion::cregion_reset
+# :call: v stormtrack::core::cregion_boundaries::cregions_determine_boundaries
+# :call: v stormtrack::core::cregions::cregions_link_region
+# :call: v stormtrack::core::grid::grid_create_cregion
 cdef void extract_subregions_level(
     cRegion* cregion,
     cRegions* cregions_sub,
@@ -2971,7 +2971,7 @@ cdef void extract_subregions_level(
 
         # Reset tmp region; store subregion if all requirements met
         if valid_subregion:
-            cregion_sub = grid_new_region(grid)
+            cregion_sub = grid_create_cregion(grid)
             cregions_link_region(
                 cregions_sub, cregion_sub, cleanup=False, unlink_pixels=False,
             )
@@ -3060,11 +3060,11 @@ cdef void extract_subregions_level(
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cregion_conf_default
-# :call: v stormtrack::core::typedefs::cregion_cleanup
-# :call: v stormtrack::core::typedefs::cregion_get_unique_id
-# :call: v stormtrack::core::typedefs::cregion_init
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v stormtrack::core::typedefs::cregion_remove_pixel
+# :call: v stormtrack::core::cregion::cregion_cleanup
+# :call: v stormtrack::core::cregion::cregion_get_unique_id
+# :call: v stormtrack::core::cregion::cregion_init
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
+# :call: v stormtrack::core::cregion::cregion_remove_pixel
 cdef void collect_adjacent_pixels(
     cPixel* cpixel,
     cRegion* cregion,
@@ -3132,13 +3132,13 @@ cdef void collect_adjacent_pixels(
 # :call: v stormtrack::core::tables::pixel_region_table_reset_region
 # :call: v stormtrack::core::tables::pixel_status_table_init_feature
 # :call: v stormtrack::core::tables::pixel_status_table_reset_feature
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
-# :call: v stormtrack::core::typedefs::cregions_cleanup
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: v stormtrack::core::typedefs::cregions_find_connected
-# :call: v stormtrack::core::typedefs::cregions_link_region
-# :call: v stormtrack::core::typedefs::grid_new_region
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
+# :call: v stormtrack::core::cregions::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::cregion_boundaries::cregions_determine_boundaries
+# :call: v stormtrack::core::cregions::cregions_find_connected
+# :call: v stormtrack::core::cregions::cregions_link_region
+# :call: v stormtrack::core::grid::grid_create_cregion
 cdef void csplit_regiongrow_core(
     cRegion* cfeature,
     cRegions* cregions_seeds,
@@ -3166,7 +3166,7 @@ cdef void csplit_regiongrow_core(
     for i in range(n_subregions):
         cregions_link_region(
             subfeature_cregions,
-            grid_new_region(grid),
+            grid_create_cregion(grid),
             cleanup=False,
             unlink_pixels=False,
         )
@@ -3196,7 +3196,7 @@ cdef void csplit_regiongrow_core(
         k = subfeature_cregions.n - n_subregions + i
         cregion = subfeature_cregions.regions[k]
         cregion_seeds = cregions_seeds.regions[i]
-        cregion_iter = grid_new_region(grid)
+        cregion_iter = grid_create_cregion(grid)
         cregions_link_region(
             &subfeatures_iteration_seeds,
             cregion_iter,
@@ -3304,10 +3304,10 @@ cdef void assert_no_unambiguously_assigned_pixels(
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::structs::cregion_conf_default
-# :call: v stormtrack::core::typedefs::cregion_cleanup
-# :call: v stormtrack::core::typedefs::cregion_get_unique_id
-# :call: v stormtrack::core::typedefs::cregion_init
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
+# :call: v stormtrack::core::cregion::cregion_cleanup
+# :call: v stormtrack::core::cregion::cregion_get_unique_id
+# :call: v stormtrack::core::cregion::cregion_init
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
 cdef void regiongrow_advance_boundary(
     cRegions* subfeatures_iteration_seeds,
     cRegions* subfeature_cregions,
@@ -3957,7 +3957,7 @@ cdef void resolve_multi_assignment_mean_strongest_region(
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
-# :call: v stormtrack::core::typedefs::cpixel_get_neighbor
+# :call: v stormtrack::core::cregion::cpixel_get_neighbor
 cdef void cpixel_count_neighbors_in_cregion(
     cPixel* cpixel,
     cRegion* cregion,
@@ -4027,7 +4027,7 @@ cdef void cpixel_count_neighbors_in_cregion(
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
 @cython.profile(False)
 cdef bint regiongrow_assign_pixel(
     cPixel* cpixel,
@@ -4235,9 +4235,9 @@ cdef int _c_find_extrema_2d_core(
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionConf
 # :call: v stormtrack::core::structs::cRegions
-# :call: v stormtrack::core::typedefs::cregions_determine_boundaries
-# :call: v stormtrack::core::typedefs::cregions_link_region
-# :call: v stormtrack::core::typedefs::grid_new_region
+# :call: v stormtrack::core::cregion_boundaries::cregions_determine_boundaries
+# :call: v stormtrack::core::cregions::cregions_link_region
+# :call: v stormtrack::core::grid::grid_create_cregion
 cdef void features_to_cregions(
     list features,
     int n_regions,
@@ -4288,7 +4288,7 @@ cdef void features_to_cregions(
             else:
                 log.warning(f"{msg} clean up existing")
                 feature.cleanup_cregion(unlink_pixels=False, reset_connected=False)
-        cregion = grid_new_region(grid)
+        cregion = grid_create_cregion(grid)
         # if debug: log.debug("create new cregion at {}".format(<long>cregion))
         cregions_link_region(cregions, cregion, cleanup=False, unlink_pixels=False)
 
@@ -4381,7 +4381,7 @@ cpdef void dbg_check_features_cregion_pixels(list features) except *:
 # :call: v stormtrack::core::identification::Feature
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
-# :call: v stormtrack::core::typedefs::cregions_connect
+# :call: v stormtrack::core::cregion::cregion_connect_with
 cdef void features_neighbors_to_cregions_connected(
     list features_list, cRegions* cregions, bint ignore_missing_neighbors,
 ) except *:
@@ -4435,7 +4435,7 @@ cdef void features_neighbors_to_cregions_connected(
                         f"feature {feature.id}: missing neighbor {feature_neighbor.id}"
                     )
                 continue
-            cregions_connect(cregion, cregion_neighbor)
+            cregion_connect_with(cregion, cregion_neighbor)
 
 
 # :call: > --- callers ---
@@ -4448,9 +4448,9 @@ cdef void features_neighbors_to_cregions_connected(
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionConf
 # :call: v stormtrack::core::structs::cRegions
-# :call: v stormtrack::core::typedefs::cregion_determine_boundaries
-# :call: v stormtrack::core::typedefs::cregion_init
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
+# :call: v stormtrack::core::cregion_boundaries::cregion_determine_boundaries
+# :call: v stormtrack::core::cregion::cregion_init
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
 cdef void feature_to_cregion(
     Feature feature,
     cRegion* cregion,
@@ -4543,14 +4543,14 @@ cdef void feature_to_cregion(
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegionConf
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_alloc
-# :call: v stormtrack::core::typedefs::Constants
-# :call: v stormtrack::core::typedefs::cregion_determine_boundaries
-# :call: v stormtrack::core::typedefs::cregion_get_unique_id
-# :call: v stormtrack::core::typedefs::cregion_init
-# :call: v stormtrack::core::typedefs::cregion_insert_pixels_coords
-# :call: v stormtrack::core::typedefs::default_constants
-# :call: v stormtrack::core::typedefs::grid_cleanup
-# :call: v stormtrack::core::typedefs::grid_create
+# :call: v stormtrack::core::constants::Constants
+# :call: v stormtrack::core::cregion_boundaries::cregion_determine_boundaries
+# :call: v stormtrack::core::cregion::cregion_get_unique_id
+# :call: v stormtrack::core::cregion::cregion_init
+# :call: v stormtrack::core::cregion::cregion_insert_pixels_coords
+# :call: v stormtrack::core::constants::default_constants
+# :call: v stormtrack::core::grid::grid_cleanup
+# :call: v stormtrack::core::grid::grid_create
 cpdef tuple pixels_find_boundaries(
     np.ndarray[np.int32_t, ndim=2] pixels,
     Constants constants = None,
@@ -4812,8 +4812,8 @@ cpdef Feature Feature_rebuild(
 # :call: v stormtrack::core::identification::_feature__from_jdat__pixels_from_tables
 # :call: v stormtrack::core::identification::pixels_find_boundaries
 # :call: v stormtrack::core::structs::cRegion
-# :call: v stormtrack::core::typedefs::cregion_cleanup
-# :call: v stormtrack::core::typedefs::default_constants
+# :call: v stormtrack::core::cregion::cregion_cleanup
+# :call: v stormtrack::core::constants::default_constants
 # :call: v stormtrack::core::utilities::NAN_UI64
 cdef class Feature:
 
@@ -5909,10 +5909,10 @@ cpdef void features_reset_cregion(list features, bint warn=True) except *:
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::tables::neighbor_link_stat_table_alloc
 # :call: v stormtrack::core::tables::pixel_region_table_alloc_grid
-# :call: v stormtrack::core::typedefs::Constants
-# :call: v stormtrack::core::typedefs::default_constants
-# :call: v stormtrack::core::typedefs::grid_cleanup
-# :call: v stormtrack::core::typedefs::grid_create
+# :call: v stormtrack::core::constants::Constants
+# :call: v stormtrack::core::constants::default_constants
+# :call: v stormtrack::core::grid::grid_cleanup
+# :call: v stormtrack::core::grid::grid_create
 cpdef void features_find_neighbors(
     list features, Constants constants = None, np.int32_t nx = 0, np.int32_t ny = 0,
 ):
@@ -5953,9 +5953,9 @@ cpdef void features_find_neighbors(
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::structs::cregion_conf_default
-# :call: v stormtrack::core::typedefs::cregions_cleanup
-# :call: v stormtrack::core::typedefs::cregions_create
-# :call: v stormtrack::core::typedefs::cregions_find_connected
+# :call: v stormtrack::core::cregions::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_create
+# :call: v stormtrack::core::cregions::cregions_find_connected
 cdef void features_find_neighbors_core(
     list features, cGrid* grid, cConstants* constants,
 ) except *:
@@ -6025,7 +6025,7 @@ cdef void features_find_neighbors_core(
 # :call: v stormtrack::core::structs::cGrid
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cRegions
-# :call: v stormtrack::core::typedefs::cregions_cleanup
+# :call: v stormtrack::core::cregions::cregions_cleanup
 cdef list cregions_create_features(
     cRegions* cregions,
     np.uint64_t base_id,
@@ -6137,9 +6137,9 @@ cdef list cregions_create_features(
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::structs::cregion_conf_default
 # :call: v stormtrack::core::tables::pixel_region_table_reset
-# :call: v stormtrack::core::typedefs::cregion_cleanup
-# :call: v stormtrack::core::typedefs::cregion_get_unique_id
-# :call: v stormtrack::core::typedefs::cregion_init
+# :call: v stormtrack::core::cregion::cregion_cleanup
+# :call: v stormtrack::core::cregion::cregion_get_unique_id
+# :call: v stormtrack::core::cregion::cregion_init
 # need to keep track of which cregion corresponds to which feature, I guess
 cdef void cregions2features_connected2neighbors(
     cRegions* cregions,
@@ -6241,10 +6241,10 @@ cdef void cregions2features_connected2neighbors(
 # :call: v stormtrack::core::structs::cRegion
 # :call: v stormtrack::core::structs::cregion_conf_default
 # :call: v stormtrack::core::tables::pixel_region_table_insert_region
-# :call: v stormtrack::core::typedefs::cregion_cleanup
-# :call: v stormtrack::core::typedefs::cregion_get_unique_id
-# :call: v stormtrack::core::typedefs::cregion_init
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel
+# :call: v stormtrack::core::cregion::cregion_cleanup
+# :call: v stormtrack::core::cregion::cregion_get_unique_id
+# :call: v stormtrack::core::cregion::cregion_init
+# :call: v stormtrack::core::cregion::cregion_insert_pixel
 cdef void determine_shared_boundary_pixels(
     dict shared_boundary_pixels,
     dict shared_boundary_pixels_unique,
@@ -6535,7 +6535,7 @@ cdef void initialize_surrounding_background_region(
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
-# :call: v stormtrack::core::typedefs::cregion_insert_pixel_nogil
+# :call: v stormtrack::core::cregion::cregion_insert_pixel_nogil
 cdef inline void _find_background_neighbor_pixels(
     cRegion* cregion_bg, cPixel* cpixel, bint link_region, int n_neighbors_max,
 ) nogil:

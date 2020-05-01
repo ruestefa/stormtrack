@@ -1,4 +1,16 @@
 __init__.py
+constants.pxd
+constants.pyx
+cpixel.pxd
+cpixel.pyx
+cregion.pxd
+cregion.pyx
+cregion_boundaries.pxd
+cregion_boundaries.pyx
+cregions.pxd
+cregions.pyx
+cregions_store.pxd
+cregions_store.pyx
 grid.pxd
 grid.pyx
 identification.pxd
@@ -9,7 +21,5 @@ tables.pxd
 tables.pyx
 tracking.pxd
 tracking.pyx
-typedefs.pxd
-typedefs.pyx
 utilities.pxd
 utilities.pyx

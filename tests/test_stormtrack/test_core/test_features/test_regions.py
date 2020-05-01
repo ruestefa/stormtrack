@@ -11,9 +11,9 @@ from unittest import TestCase
 import numpy as np
 
 # First-party
+from stormtrack.core.constants import default_constants
 from stormtrack.core.identification import find_features_2d_threshold
 from stormtrack.core.identification import find_features_2d_threshold_seeded
-from stormtrack.core.typedefs import default_constants
 
 
 # log.getLogger().addHandler(log.StreamHandler(sys.stdout))

@@ -10,10 +10,10 @@ from unittest import TestCase
 import numpy as np
 
 # First-party
+from stormtrack.core.constants import default_constants
 from stormtrack.core.identification import Feature
 from stormtrack.core.identification import feature_split_regiongrow
 from stormtrack.core.identification import split_regiongrow_levels
-from stormtrack.core.typedefs import default_constants
 
 # Local
 from ...utils import TestFeatures_Base
