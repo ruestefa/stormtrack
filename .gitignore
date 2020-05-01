@@ -1,3 +1,7 @@
+
+# Directory for local files, e.g., temporary scripts
+/local/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
