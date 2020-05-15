@@ -46,6 +46,7 @@ import shapely.ops
 from cython.parallel import prange
 
 # Local
+from .constants import default_constants
 from ..utils.spatial import points_area_lonlat_reg
 from ..utils.spatial import paths_lonlat_to_mask
 try:
@@ -211,7 +212,7 @@ def identify_features(
             fld = np.where(topo_mask > 0, 0.0, fld).astype(np.float32)
 
     if grid is None:
-        const = default_constants.default(nx=nx, ny=ny)
+        const = default_constants(nx=nx, ny=ny)
         grid = Grid(const)
     grid.set_values(fld)
 
@@ -1524,11 +1525,6 @@ def find_features_2d_threshold(
         cconstants,
     )
 
-    # SR_TMP <
-    # Reset up grid
-    # grid.reset()
-    # SR_TMP >
-
     features_reset_cregion(features, warn=False)
 
     if debug: log.debug("> find_features_threshold")
@@ -1552,8 +1548,10 @@ cdef void eliminate_regions_by_size(
     for i in range(nold):
         if cregions.regions[i] is NULL:
             continue
-        if (cregions.regions[i].pixels_n < max(1, minsize) or
-                (maxsize > 0 and cregions.regions[i].pixels_n > maxsize)):
+        if (
+            cregions.regions[i].pixels_n < max(1, minsize)
+            or (maxsize > 0 and cregions.regions[i].pixels_n > maxsize)
+        ):
             # SR_TODO is reset_connected necessary?
             cregion_cleanup(
                 cregions.regions[i], unlink_pixels=True, reset_connected=True,

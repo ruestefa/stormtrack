@@ -66,6 +66,7 @@ cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except 
             log.debug(" -> region {cregion.id}")
         cregion_reset_boundaries(cregion)
 
+    cdef int i  # SR_DBG
     if debug:
         log.debug("determine new boundaries")
     cdef int n_empty=0
@@ -81,9 +82,10 @@ cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except 
             _cregion_determine_boundaries_core(cregion, grid)
         except:
             msg = f"error identifying boundaries of cregion {cregion.id}"
+            pixels = []
             if debug_dump:
                 dump_file = f"dump_cregion_{cregion.id}.py"
-                cregion_dump(cregion, dump_file)
+                cregion_dump(cregion, dump_file, grid.constants)
                 msg += f"; dumped pixels to file: {dump_file}"
             raise Exception(msg)
     if n_empty > 0:
