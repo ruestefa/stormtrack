@@ -15,7 +15,7 @@ which ${EXE} >/dev/null 2>&1 || {
 # ------------------------------------------------------------------------------
 
 args=(num_procs front_type)
-opts=(ts_start ts_end)
+opts=(dts ts_start ts_end)
 if [ ${#} -lt ${#args[@]} ]
 then
     echo "error: expected ${#args[@]} arguments, got ${#}" >&2
@@ -32,11 +32,14 @@ num_procs=${1}
 # Front type: 'cold' or 'warm'
 front_type=${2}
 
+# Optional: time step delta
+dts=${3:-1}
+
 # Optional: start time step
-ts_start=${3:-2000090100}
+ts_start=${4:-2000090100}
 
 # Optional: end time step
-ts_end=${4:-2000113021}
+ts_end=${5:-2000113021}
 
 # ------------------------------------------------------------------------------
 
@@ -68,7 +71,6 @@ esac
 # ------------------------------------------------------------------------------
 
 # Run
-dts=1  # Time step delta
 skip_start=0  # Skip first N outputs
 skip_end=0  # Skip last N outputs
 
