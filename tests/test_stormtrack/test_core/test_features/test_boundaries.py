@@ -573,8 +573,116 @@ class FindBoundaries_NestedShells(TestBoundaries_Base):
     def test_8c(s):
         const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
         shells, holes = pixels_find_boundaries(s.pixels, constants=const)
-        # ? holes = sorted(holes, key=lambda i: len(i), reverse=True)
         s.assertBoundaries(shells, s.shells8, holes, s.holes8)
+
+
+class FindBoundaries_RealCase(TestBoundaries_Base):
+
+    def setUp(s):
+        _, X = 0, 1
+        # fmt: off
+        s.fld = np.array(
+            [ #  0 1 2 3 4  5 6 7 8 9 10 1 2 3 4 15 6 7 8 9 10 1 2 3 4
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,_,_,_,_], #  9
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,_,_,_,_], #  8
+                [X,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,_,_,_,_], #  7
+                [X,X,X,X,X, X,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,_,_,_,_], #  6
+                [X,X,X,X,X, X,X,X,X,_, _,_,_,_,_, _,_,_,_,_, _,_,_,_,_], # 35
+
+                [_,X,X,X,X, X,X,X,X,X, X,_,_,_,_, _,_,_,_,_, _,_,_,_,_], #  4
+                [_,_,X,X,X, X,X,X,X,X, X,X,X,_,_, _,_,_,_,_, _,_,_,_,_], #  3
+                [_,_,_,X,X, X,X,X,X,X, X,X,X,X,_, _,_,_,_,_, _,_,_,_,_], #  2
+                [_,_,_,_,_, X,X,X,X,X, X,X,X,X,X, X,_,_,_,_, _,_,_,_,_], #  1
+                [_,_,_,_,_, _,X,X,X,X, X,X,X,X,X, X,X,_,_,_, _,_,_,_,_], # 30
+
+                [_,_,_,_,_, _,X,X,X,X, X,X,X,X,X, X,_,_,_,_, _,_,_,_,_], #  9
+                [_,_,_,_,_, _,X,X,X,X, X,X,X,X,X, _,_,_,_,_, _,_,_,_,_], #  8
+                [_,_,_,_,_, _,X,X,X,X, X,X,X,X,_, _,_,_,_,_, _,_,_,_,_], #  7
+                [_,_,_,_,_, _,X,X,X,X, X,X,X,X,_, _,_,_,_,_, _,_,_,_,_], #  6
+                [_,_,_,_,_, _,_,X,X,X, X,X,X,_,_, _,_,_,_,_, _,_,_,_,_], # 25
+
+                [_,_,_,_,_, _,_,X,X,X, X,X,X,X,X, _,_,_,_,_, _,_,_,_,_], #  4
+                [_,_,_,_,_, _,_,X,X,X, X,X,X,X,X, X,X,_,_,_, _,_,_,_,_], #  3
+                [_,_,_,_,_, _,_,_,X,X, X,X,X,X,X, _,X,X,_,_, _,_,_,_,_], #  2
+                [_,_,_,_,_, _,_,_,X,X, X,X,X,X,X, _,_,_,_,_, _,_,_,_,_], #  1
+                [_,_,_,_,_, _,_,_,_,X, X,X,X,X,X, _,_,X,_,X, X,X,X,_,_], # 20
+
+                [_,_,_,_,_, _,_,_,_,_, X,X,X,X,X, X,X,X,X,X, X,X,X,X,_], #  9
+                [_,_,_,_,_, _,_,_,_,_, _,X,X,X,X, X,X,X,X,_, _,X,_,_,_], #  8
+                [_,_,_,_,_, _,_,_,_,_, _,_,X,X,X, X,X,X,X,_, _,X,X,_,_], #  7
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,X,X, X,X,X,_,_, X,X,X,_,_], #  6
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,X, X,X,_,_,_, _,X,X,_,_], # 15
+
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,X, X,X,_,X,_, _,_,X,_,_], #  4
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, X,X,X,X,_, _,_,X,X,_], #  3
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, X,X,X,X,X, _,_,X,X,_], #  2
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,X,X,X,X, _,_,X,X,_], #  1
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,X,X,X,X, X,X,X,X,_], #  0
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,X,X,X,X, X,X,X,_,_], # 10
+
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,X,X,X,X, X,_,X,_,_], #  9
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,X,X,X,X, X,_,_,_,_], #  8
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, X,X,X,X,X, X,_,_,_,_], #  7
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, X,X,X,X,X, X,_,_,_,_], #  6
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,X, X,X,X,X,X, X,_,_,_,_], #  5
+
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,X, X,X,X,X,X, X,_,_,_,_], #  4
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,X, X,X,X,_,_, _,_,_,_,_], #  3
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,X, _,X,X,_,_, _,_,_,_,_], #  2
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,X, _,_,_,_,_, _,_,_,_,_], #  1
+                [_,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,_,_,_,_, _,_,_,_,_], #  0
+            ] #  0 1 2 3 4  5 6 7 8 9 10 1 2 3 4 15 6 7 8 9 10 1 2 3 4
+        ).T[:, ::-1]
+        # fmt: on
+
+        s.nx, s.ny = s.fld.shape
+        s.pixels = np.dstack(np.where(s.fld > 0))[0].astype(np.int32)
+
+        # 4-connectivity
+        # fmt: off
+        s.shells4 = [
+            # np.array(
+            #     [
+            #     # ...
+            #     ]
+            # ),
+        ]
+        s.holes4 = [
+            # np.array(
+            #     [
+            #     # ...
+            #     ]
+            # ),
+        ]
+        # fmt: on
+
+        # 8-connectivity
+        # fmt: off
+        s.shells8 = [
+            # np.array(
+            #     [
+            #     # ...
+            #     ]
+            # ),
+        ]
+        s.holes8 = [
+            # np.array(
+            #     [
+            #     # ...
+            #     ]
+            # ),
+        ]
+        # fmt: on
+
+    def test_4c(s):
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=4)
+        shells, holes = pixels_find_boundaries(s.pixels, constants=const)
+        s.assertBoundaries(shells, s.shells4, holes, s.holes4)
+
+    def test_8c(s):
+        const = default_constants(nx=s.nx, ny=s.ny, connectivity=8)
+        shells, holes = pixels_find_boundaries(s.pixels, constants=const)
+        s.assertBoundaries(shells, s.shells4, holes, s.holes4)
 
 
 if __name__ == "__main__":

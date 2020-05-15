@@ -4607,16 +4607,6 @@ cpdef tuple pixels_find_boundaries(
     cregion_determine_boundaries(&cregion, &grid)
 
     # Extract shell
-    # SR_ONE_SHELL < TODO remove once multiple shells per feature properly implemented
-    # - cdef cPixel* cpixel
-    # - cdef np.ndarray[np.int32_t, ndim=2] shell = np.empty(
-    # -     [cregion.shell_n, 2], dtype=np.int32,
-    # - )
-    # - for i in range(cregion.shell_n):
-    # -     cpixel = cregion.shell[i]
-    # -     shell[i, 0] = cpixel.x
-    # -     shell[i, 1] = cpixel.y
-    # SR_ONE_SHELL >
     cdef list shells = []
     cdef np.ndarray[np.int32_t, ndim=2] shell
     for i in range(cregion.shells_n):
