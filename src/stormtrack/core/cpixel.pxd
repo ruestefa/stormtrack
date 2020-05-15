@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 # Third-party
 cimport numpy as np

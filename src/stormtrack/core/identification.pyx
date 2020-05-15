@@ -226,8 +226,8 @@ def identify_features(
             base_id=base_id,
             grid=grid,
         )
-    except Exception as e:
-        raise Exception(f"error identifying features: {e.__class__.__name__}({e})")
+    except:
+        raise Exception("error identifying features")
     if not silent:
         log.info(
             f"identified {len(features)} '{feature_name}' features based on range "
@@ -5747,8 +5747,8 @@ cdef class Feature:
         if self._vertex_name is not None:
             try:
                 return self.track().graph.vs.find(self._vertex_name)
-            except Exception as e:
-                raise Exception(f"error retrieving vertex '{self._vertex_name}': {e}")
+            except:
+                raise Exception(f"error retrieving vertex '{self._vertex_name}'")
 
     cpdef void set_vertex(self, object vertex) except *:
         self._vertex_name = vertex["name"]

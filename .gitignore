@@ -80,33 +80,36 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# pyenv
+# Pyenv
 .python-version
 
-# celery beat schedule file
+# Celery beat schedule file
 celerybeat-schedule
 
 # SageMath parsed files
 *.sage.py
 
-# dotenv
+# Dotenv
 .env
 
-# virtualenv
+# Virtualenv
 .venv
 .venvs
 venv/
 venvs/
 
-# Spyder project settings
+# Spyder
 .spyderproject
 .spyproject
 
-# Rope project settings
+# Rope
 .ropeproject
 
-# mkdocs documentation
+# Mkdocs
 /site
 
-# mypy
+# Mypy
 .mypy_cache/
+
+# Vim
+.*.swp

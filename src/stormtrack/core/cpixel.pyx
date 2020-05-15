@@ -1,8 +1,11 @@
-# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+TODO
+"""
 
 from __future__ import print_function
 
-# # C: C libraries
+# C: C libraries
 from libc.stdlib cimport malloc
 
 # C: Third-party
@@ -10,7 +13,7 @@ cimport cython
 cimport numpy as np
 from cython.parallel cimport prange
 
-# # Standard library
+# Standard library
 import logging as log
 
 # Third-party

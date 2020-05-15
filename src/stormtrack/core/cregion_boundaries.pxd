@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 # Third-party
 cimport numpy as np
 
 # Local
+from .debug cimport cregion_dump
 from .structs cimport cGrid
 from .structs cimport cPixel
 from .structs cimport cRegion

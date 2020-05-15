@@ -1,4 +1,4 @@
-# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 from __future__ import print_function
 
@@ -52,6 +52,7 @@ cdef void cregion_determine_boundaries(cRegion* cregion, cGrid* grid) except *:
 # :call: v stormtrack::core::cregion::cregion_reset_boundaries
 cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except *:
     cdef bint debug = False
+    cdef bint debug_dump = True
     if debug:
         log.debug("< cregions_determine_boundaries")
     cdef int i_region
@@ -76,7 +77,15 @@ cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except 
             log.warning(f"cregion {cregion.id} empty")
             n_empty += 1
             continue
-        _cregion_determine_boundaries_core(cregion, grid)
+        try:
+            _cregion_determine_boundaries_core(cregion, grid)
+        except:
+            msg = f"error identifying boundaries of cregion {cregion.id}"
+            if debug_dump:
+                dump_file = f"dump_cregion_{cregion.id}.py"
+                cregion_dump(cregion, dump_file)
+                msg += f"; dumped pixels to file: {dump_file}"
+            raise Exception(msg)
     if n_empty > 0:
         log.warning(f"{n_empty}/{cregions.n} regions empty")
 

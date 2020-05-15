@@ -11,6 +11,8 @@ cregions.pxd
 cregions.pyx
 cregions_store.pxd
 cregions_store.pyx
+debug.pxd
+debug.pyx
 grid.pxd
 grid.pyx
 identification.pxd
