@@ -3920,7 +3920,7 @@ def track_graph_add_feature(graph, feature, attrs=None):
         attrs = {}
     name = str(feature.id)
     # print(f"add_vertex {name}: {feature.id}")
-    if name in graph.vs.select(name):
+    if name in graph.vs.select(name=name):
         log.error(f"track_graph_add_vertex: feature {name} already in graph")
         exit(4)
     graph.add_vertex(name)

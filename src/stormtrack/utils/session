@@ -1,5 +1,5 @@
 # __init__.py
-array.py
+array.pyx
 netcdf.py
 proj_lonlat.py
 spatial.pyx

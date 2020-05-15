@@ -1,5 +1,17 @@
 # !/usr/bin/env python3
 
+from __future__ import print_function
+
+# C: C libraries
+from libc.stdlib cimport free
+from libc.stdlib cimport malloc
+
+# C: Third-party
+cimport numpy as np
+
+# Standard library
+import unicodedata
+
 # Third-party
 import numpy as np
 
@@ -87,7 +99,7 @@ def reduce_grid_resolution(fld, stride, mode):
     return fld_out
 
 
-def _reduce_grid_resolution_1d__core(
+cdef void _reduce_grid_resolution_1d__core(
     np.float32_t [:] fld_in, np.float32_t [:] fld_out, int stride, int imode,
 ):
     cdef int half_stride = int((stride - 1)/2)
@@ -113,7 +125,7 @@ def _reduce_grid_resolution_1d__core(
             fld_out[io] /= box_size
 
 
-def _reduce_grid_resolution_2d__core(
+cdef void _reduce_grid_resolution_2d__core(
     np.float32_t [:, :] fld_in, np.float32_t [:, :] fld_out, int stride, int imode,
 ):
     cdef int half_stride = int((stride - 1)/2)
@@ -543,10 +555,6 @@ def decompose_holy_rectangular_mask(mask):
     return out
 
 
-# CALL <
-# > CALLERS:
-# > utilities::decompose_holy_rectangular_mask
-# CALL >
 cdef void _decompose_holy_rectangular_mask__core(
     np.uint8_t[:, :] mask, np.int32_t[:, :] out, int nx, int ny,
 ):
