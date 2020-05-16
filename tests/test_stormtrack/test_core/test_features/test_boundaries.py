@@ -17,8 +17,10 @@ from stormtrack.core.identification import pixels_find_boundaries
 from ...utils import assertBoundaries
 
 
-# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-# log.getLogger().setLevel(log.DEBUG)
+# SR_DBG <
+log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+log.getLogger().setLevel(log.DEBUG)
+# SR_DBG >
 
 
 class TestBoundaries_Base(TestCase):
@@ -580,7 +582,6 @@ class FindBoundaries_RealCase(TestBoundaries_Base):
 
     def setUp(s):
 
-        # Note:
         # The crash that triggered the introduction of this test only occurred
         # for a specific order of the pixels; if they were sorted or shuffled,
         # there was no error. Therefore, the pixels are specified directly in
@@ -588,6 +589,7 @@ class FindBoundaries_RealCase(TestBoundaries_Base):
         # triggered the introduction of the `~_shuffle` tests to ensure that the
         # boundaries do not depend of the order of the feature pixels.
 
+        # Define feature pixels (must be in this order, as described above)
         s.nx, s.ny = 100, 100
         # fmt: off
         s.pixels = np.array(
@@ -636,6 +638,61 @@ class FindBoundaries_RealCase(TestBoundaries_Base):
             ],
             np.int32,
         )
+
+        # Independently define the same feature again, but based on a grid array
+        # This only serves as a visual aid during debugging/development!
+        _, X = 0, 1
+        # fmt: off
+        arr = np.array(
+            [ # 50 1 2 3 4 5 6 7 8 9 60 1 2 3 4 5 6 7 8 9 70 1 2 3 4 5 6 7 8 9 80 1 2 3 4 5 6 7 8 9 90 1 2 3 4 5 6 7 8 9
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 99
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,X,_,_, _,_,_,X,X,X,X,_,_,_, _,_,_,_,_,_,_,_,_,_], # 98
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,X,X,_,X, X,X,X,X,X,X,X,X,X,_, _,_,_,_,_,_,_,_,_,_], # 97
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,X,X,X,X, X,X,_,_,_,_,X,X,_,_, _,_,_,_,_,_,_,_,_,_], # 96
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,X,X,_,_, X,_,_,_,_,_,X,X,X,X, X,X,X,X,_,_,_,_,_,_], # 95
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,X,X,_,_, _,_,_,_,X,X,X,X,X,X, X,X,X,X,_,_,_,_,_,_], # 94
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,X,X,X, _,_,X,X,X,X,X,X,X,X, X,X,X,X,_,_,_,_,_,_], # 93
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,X,_,X,X,X,X, X,_,_,X,X,X,X,X,X,X, X,X,X,X,X,X,_,_,_,_], # 92
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,X,_,_,_, _,_,_,X,X,_,_,X,X,X, X,X,X,X,X,X,X,X,X,X, X,X,X,X,X,X,_,_,_,_], # 91
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,X,X,X,_,_, _,_,_,X,_,_,_,X,X,X, X,X,X,X,X,_,_,_,_,_, X,X,X,X,X,_,_,_,_,_], # 90
+             
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,X,X,X,X,_, _,_,X,X,X,X,X,X,X,X, X,X,X,_,_,_,_,_,_,_, _,_,X,X,X,X,X,_,_,_], # 89
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,X,X,X,X,X,X, X,_,X,X,X,X,X,X,X,X, X,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 88
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,X,X,X,X,X,X,X, X,X,X,X,X,X,X,X,X,X, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 87
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,X,X,X,X,X,X,X, X,X,X,X,X,X,X,X,X,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 86
+                [_,_,_,_,_,_,_,_,_,_, _,_,X,X,X,X,X,X,X,X, X,X,X,X,X,X,X,X,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 85
+                [_,_,_,_,_,_,_,_,_,_, _,_,X,X,X,X,X,X,X,X, X,X,X,X,X,X,X,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 84
+                [_,_,_,_,_,_,_,_,_,_, _,X,X,X,X,X,X,X,X,X, X,X,X,X,X,X,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 83
+                [_,_,_,_,_,_,_,_,_,_, _,X,X,X,X,X,X,X,X,X, X,X,X,X,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 82
+                [_,_,_,_,_,_,_,_,_,_, _,X,X,X,X,X,X,X,X,X, X,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 81
+                [_,_,_,_,_,_,_,_,_,_, X,X,X,X,X,X,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 80
+             
+                [_,_,_,_,_,_,_,_,_,_, X,X,X,X,X,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 79
+                [_,_,_,_,_,_,_,_,_,_, X,X,X,X,X,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 78
+                [_,_,_,_,_,_,_,_,_,_, X,X,X,X,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 77
+                [_,_,_,_,_,_,_,_,_,_, X,X,X,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 76
+                [_,_,_,_,_,_,_,_,_,X, X,X,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 75
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 74
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 73
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 72
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 71
+                [_,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_, _,_,_,_,_,_,_,_,_,_], # 70
+            ] # 50 1 2 3 4 5 6 7 8 9 60 1 2 3 4 5 6 7 8 9 70 1 2 3 4 5 6 7 8 9 80 1 2 3 4 5 6 7 8 9 90 1 2 3 4 5 6 7 8 9
+        ).T[:, ::-1]
+        fld = np.concatenate(
+            [np.zeros([100, 70]), np.concatenate([np.zeros([50, 30]), arr], axis=0)],
+            axis=1
+        )
+        # fmt: on
+
+        # Derive the pixels from the grid array above (which only serves as a
+        # visual aid); they must be the same as those defined before, only
+        # in different order (and, as stated above, order may matter when it
+        # comes to triggering the bug that motivated this whole test)
+        pixels = np.dstack(np.where(fld > 0))[0].astype(np.int32)
+        assert fld.shape == (s.nx, s.ny)
+        assert sorted(pixels.tolist()) == sorted(s.pixels.tolist())
+        # If no error is raised, then the grid array matches the pixels above
 
         # 4-connectivity
         # fmt: off
