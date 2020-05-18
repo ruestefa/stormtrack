@@ -78,16 +78,18 @@ cdef void cregions_determine_boundaries(cRegions* cregions, cGrid* grid) except 
             log.warning(f"cregion {cregion.id} empty")
             n_empty += 1
             continue
-        try:
-            _cregion_determine_boundaries_core(cregion, grid)
-        except:
-            msg = f"error identifying boundaries of cregion {cregion.id}"
-            pixels = []
-            if debug_dump:
-                dump_file = f"dump_cregion_{cregion.id}.py"
-                cregion_dump(cregion, dump_file, grid.constants)
-                msg += f"; dumped pixels to file: {dump_file}"
-            raise Exception(msg)
+        # SR_DBG < disable intermediate catch for pytest
+        # try:
+        _cregion_determine_boundaries_core(cregion, grid)
+        # except:
+        #     msg = f"error identifying boundaries of cregion {cregion.id}"
+        #     pixels = []
+        #     if debug_dump:
+        #         dump_file = f"dump_cregion_{cregion.id}.py"
+        #         cregion_dump(cregion, dump_file, grid.constants)
+        #         msg += f"; dumped pixels to file: {dump_file}"
+        #     raise Exception(msg)
+        # SR_DBG >
     if n_empty > 0:
         log.warning(f"{n_empty}/{cregions.n} regions empty")
 

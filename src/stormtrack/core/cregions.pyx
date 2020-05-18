@@ -64,7 +64,7 @@ cdef void cregions_init(cRegions* cregions):
 # :call: v stormtrack::core::cpixel::cpixel_angle_to_neighbor
 # :call: v stormtrack::core::cregion::sign
 cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
-    cdef bint debug = False
+    cdef bint debug = True  # SR_DBG
     if debug:
         log.debug(f"< categorize_boundaries: {boundaries.n}")
     cdef int ib
