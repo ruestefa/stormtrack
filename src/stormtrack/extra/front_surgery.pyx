@@ -238,7 +238,8 @@ cpdef void run_front_surgery_main(
 
             # Allocate new cregions if necessary
             if cfronts_new is NULL:
-                if debug: log.debug("allocate new cregions")
+                if debug:
+                    log.debug("allocate new cregions")
                 cfronts_new = <cRegions*>malloc(n_categories*sizeof(cRegions))
                 for i in range(n_categories):
                     cfronts_new[i] = cregions_create(50)
@@ -313,7 +314,8 @@ cpdef void run_front_surgery_main(
             base_id = timesteps_ts["old"]*1e5
 
             # Convert back to Feature objects
-            if debug: log.debug(">>> cfronts_old -> fronts_old")
+            if debug:
+                log.debug(">>> cfronts_old -> fronts_old")
             fronts_old = cfronts2fronts(
                 cfronts_old,
                 n_categories,
@@ -514,7 +516,8 @@ cdef void _run_front_surgery_core(
     if fronts_raw is not None:
         # SR_TMP <
         # Convert features to cregions
-        if debug: log.debug("<<< fronts_raw -> cfronts_raw")
+        if debug:
+            log.debug("<<< fronts_raw -> cfronts_raw")
         n_features = len(fronts_raw)
         cfronts_raw = cregions_create(n_features)
         features_to_cregions(
@@ -1505,7 +1508,8 @@ cdef void _front_surgery_temporal_core(
 
     # Old/clutter1
     if cfronts_old is not NULL:
-        if debug: log.debug("compare features with those at previous timestep")
+        if debug:
+            log.debug("compare features with those at previous timestep")
         i_source = category_clutter1
         i_target = category_large
         info = "now <-> old"
@@ -1526,7 +1530,8 @@ cdef void _front_surgery_temporal_core(
 
     # New/clutter1
     if cfronts_new is not NULL:
-        if debug: log.debug("compare features with those at subsequent timestep")
+        if debug:
+            log.debug("compare features with those at subsequent timestep")
         i_source = category_clutter1
         i_target = category_medium
         info = "now <-> new"
@@ -1547,7 +1552,8 @@ cdef void _front_surgery_temporal_core(
 
     # Old/clutter0
     if cfronts_old is not NULL:
-        if debug: log.debug("compare features with those at previous timestep")
+        if debug:
+            log.debug("compare features with those at previous timestep")
         i_source = category_clutter0
         i_target = category_medium
         info = "now <-> old"
@@ -1568,7 +1574,8 @@ cdef void _front_surgery_temporal_core(
 
     # New/clutter0
     if cfronts_new is not NULL:
-        if debug: log.debug("compare features with those at subsequent timestep")
+        if debug:
+            log.debug("compare features with those at subsequent timestep")
         i_source = category_clutter0
         i_target = category_medium
         info = "now <-> new"
