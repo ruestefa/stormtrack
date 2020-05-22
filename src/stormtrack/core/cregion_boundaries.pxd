@@ -13,6 +13,7 @@ from .structs cimport get_matching_neighbor_id
 
 
 # SR_TMP <
+from .cpixel cimport cpixel_angle_to_neighbor
 from .cregion cimport _cregion_insert_hole_pixel
 from .cregion cimport _cregion_insert_shell_pixel
 from .cregion cimport _cregion_new_hole
@@ -25,7 +26,7 @@ from .cregion cimport cregion_cleanup
 from .cregion cimport cregion_insert_pixel
 from .cregion cimport cregion_northernmost_pixel
 from .cregion cimport cregion_reset_boundaries
-from .cregions cimport categorize_boundaries
+from .cregion cimport cregion_check_validity
 from .cregions cimport cregions_cleanup
 from .cregions cimport cregions_create
 from .cregions cimport cregions_link_region

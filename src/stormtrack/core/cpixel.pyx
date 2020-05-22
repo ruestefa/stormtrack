@@ -21,7 +21,7 @@ import numpy as np
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::cregions::categorize_boundaries
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 cdef int cpixel_angle_to_neighbor(

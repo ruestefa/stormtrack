@@ -120,7 +120,7 @@ cdef enum pixeltype:
 # :call: > stormtrack::core::cregion::_extract_closed_path
 # :call: > stormtrack::core::cregion::_find_link_to_continue
 # :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
-# :call: > stormtrack::core::cregions::categorize_boundaries
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
 # :call: > stormtrack::core::cpixel::cpixel2d_create
 # :call: > stormtrack::core::cregion::cpixel_get_neighbor
 # :call: > stormtrack::core::cregion::cpixel_set_region
@@ -137,7 +137,7 @@ cdef enum pixeltype:
 # :call: > stormtrack::core::cregion::cregion_remove_pixel_nogil
 # :call: > stormtrack::core::cregion::cregion_reset
 # :call: > stormtrack::core::cregions::cregions_find_connected
-# :call: > stormtrack::core::cregions::cregions_find_northernmost_uncategorized_region
+# :call: > stormtrack::core::cregion_boundaries::cregions_find_northernmost_uncategorized_region
 # :call: > stormtrack::core::grid::grid_create_pixels
 # :call: > stormtrack::core::grid::grid_set_values
 # :call: > stormtrack::core::cpixel::cpixel_angle_to_neighbor
@@ -305,7 +305,7 @@ cdef inline cRegionConf cregion_conf_default():
 # :call: > stormtrack::core::cregion::_extract_closed_path
 # :call: > stormtrack::core::cregion::_find_link_to_continue
 # :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
-# :call: > stormtrack::core::cregions::categorize_boundaries
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
 # :call: > stormtrack::core::cregion::cpixel_set_region
 # :call: > stormtrack::core::cregion::cregion_check_validity
 # :call: > stormtrack::core::cregion::cregion_cleanup
@@ -399,14 +399,14 @@ cdef struct cRegion:
 # :call: > stormtrack::core::tables::pixel_status_table_init_feature
 # :call: > stormtrack::core::cregion_boundaries::_cregion_determine_boundaries_core
 # :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
-# :call: > stormtrack::core::cregions::categorize_boundaries
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
 # :call: > stormtrack::core::cregion_boundaries::cregion_determine_boundaries
 # :call: > stormtrack::core::cregions::cregions_cleanup
 # :call: > stormtrack::core::cregions::cregions_create
 # :call: > stormtrack::core::cregion_boundaries::cregions_determine_boundaries
 # :call: > stormtrack::core::cregions::cregions_extend
 # :call: > stormtrack::core::cregions::cregions_find_connected
-# :call: > stormtrack::core::cregions::cregions_find_northernmost_uncategorized_region
+# :call: > stormtrack::core::cregion_boundaries::cregions_find_northernmost_uncategorized_region
 # :call: > stormtrack::core::cregions::cregions_init
 # :call: > stormtrack::core::cregions::cregions_link_region
 # :call: > stormtrack::core::cregions::cregions_move
@@ -590,8 +590,8 @@ cdef inline cRegionsStore cregions_store_create():
 # :call: > stormtrack::core::cregion_boundaries::_cregion_determine_boundaries_core
 # :call: > stormtrack::core::cregion::_determine_boundary_pixels_raw
 # :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
-# :call: > stormtrack::core::cregions::boundary_must_be_a_shell
-# :call: > stormtrack::core::cregions::categorize_boundaries
+# :call: > stormtrack::core::cregion_boundaries::boundary_must_be_a_shell
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
 # :call: > stormtrack::core::cregion_boundaries::cregion_determine_boundaries
 # :call: > stormtrack::core::cregion_boundaries::cregions_determine_boundaries
 # :call: > stormtrack::core::grid::grid_cleanup

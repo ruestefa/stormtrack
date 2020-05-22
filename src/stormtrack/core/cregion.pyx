@@ -903,7 +903,7 @@ cdef bint _extract_closed_path(cRegion* boundary):
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::cregions::categorize_boundaries
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion
@@ -920,7 +920,7 @@ cdef void cregion_check_validity(cRegion* cregion, int idx) except *:
 
 # :call: > --- callers ---
 # :call: > stormtrack::core::cregion_boundaries::_reconstruct_boundaries
-# :call: > stormtrack::core::cregions::cregions_find_northernmost_uncategorized_region
+# :call: > stormtrack::core::cregion_boundaries::cregions_find_northernmost_uncategorized_region
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
 # :call: v stormtrack::core::structs::cRegion

@@ -27,7 +27,6 @@ cdef int CREGIONS_NEXT_ID = 0
 # SR_TMP <
 cdef np.uint64_t cregions_get_unique_id()
 cdef void cregions_init(cRegions* cregions)
-cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *
 cdef void cregions_extend(cRegions* cregions)
 # SR_TMP >
 
