@@ -9,7 +9,7 @@ from .structs cimport pixeltype_none
 
 
 # SR_TMP <
-cdef int cpixel_angle_to_neighbor(cPixel* cpixel1, cPixel* cpixel2, bint minus=?) except -1
 cdef void cpixels_reset(cPixel** cpixels, np.int32_t nx, np.int32_t ny)
 cdef cPixel* cpixel2d_create(int n) nogil
+cdef bint cpixel_equals(cPixel *this, cPixel *other) except -1
 # SR_TMP >

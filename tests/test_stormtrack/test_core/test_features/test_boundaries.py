@@ -8,6 +8,7 @@ from unittest import TestCase
 
 # Third-party
 import numpy as np
+import pytest
 
 # First-party
 from stormtrack.core.constants import default_constants
@@ -96,18 +97,17 @@ class FindBoundaries_OneHole_FarInside(TestBoundaries_Base):
         _, X = 0, 1
         # fmt: off
         s.fld = np.array(
-            [ #  0 1 2 3 4  5 6
-                [_,X,_,_,_, _,_], # 8
-                [_,X,_,_,_, X,_], # 7
-                [_,X,X,X,X, X,X], # 6
-                [_,X,X,X,X, X,X], # 5
-
-                [_,X,X,_,_, X,X], # 4
-                [_,X,X,X,X, X,X], # 3
-                [_,X,X,X,X, X,_], # 2
-                [_,_,X,X,X, _,_], # 1
-                [_,_,_,_,_, _,_], # 0
-            ] #  0 1 2 3 4  5 6
+            [ #  0 1 2 3 4 5 6
+                [_,X,_,_,_,_,_], # 8
+                [_,X,_,_,_,X,_], # 7
+                [_,X,X,X,X,X,X], # 6
+                [_,X,X,X,X,X,X], # 5
+                [_,X,X,_,_,X,X], # 4
+                [_,X,X,X,X,X,X], # 3
+                [_,X,X,X,X,X,_], # 2
+                [_,_,X,X,X,_,_], # 1
+                [_,_,_,_,_,_,_], # 0
+            ] #  0 1 2 3 4 5 6
         ).T[:, ::-1]
         # fmt: on
         s.nx, s.ny = s.fld.shape
@@ -578,6 +578,7 @@ class FindBoundaries_NestedShells(TestBoundaries_Base):
         s.assertBoundaries(shells, s.shells8, holes, s.holes8)
 
 
+# @pytest.mark.skip("WIP")
 class FindBoundaries_RealCase(TestBoundaries_Base):
 
     def setUp(s):

@@ -17,7 +17,6 @@ from .cregion cimport cregion_cleanup
 from .cregion cimport _cregion_reset_connected
 from .cregion cimport cregion_connect_with
 from .cregion cimport cregion_reset
-from .cpixel cimport cpixel_angle_to_neighbor
 # SR_TMP >
 
 

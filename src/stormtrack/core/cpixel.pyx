@@ -21,46 +21,6 @@ import numpy as np
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
-# :call: v --- calling ---
-# :call: v stormtrack::core::structs::cPixel
-cdef int cpixel_angle_to_neighbor(
-    cPixel* cpixel1, cPixel* cpixel2, bint minus=True,
-) except -1:
-
-    cdef int dx = cpixel1.x - cpixel2.x
-    cdef int dy = cpixel1.y - cpixel2.y
-    cdef int angle
-
-    if dx == 1 and dy == 0:
-        angle = 0
-    elif dx == 1 and dy == 1:
-        angle = 45
-    elif dx == 0 and dy == 1:
-        angle = 90
-    elif dx == -1 and dy == 1:
-        angle = 135
-    elif dx == -1 and dy == 0:
-        angle = 180
-    elif dx == -1 and dy == -1:
-        angle = 225
-    elif dx == 0 and dy == -1:
-        angle = 270
-    elif dx == 1 and dy == -1:
-        angle = 315
-    else:
-        raise Exception(
-            f"cannot derive angle between ({cpixel1.x}, {cpixel1.y}) and "
-            f"({cpixel2.x}, {cpixel2.y})"
-        )
-
-    if minus and angle > 180:
-        angle -= 360
-
-    return angle
-
-
-# :call: > --- callers ---
 # :call: > stormtrack::core::grid::grid_reset
 # :call: v --- calling ---
 # :call: v stormtrack::core::structs::cPixel
@@ -109,3 +69,13 @@ cdef cPixel* cpixel2d_create(int n) nogil:
         cpixel.is_seed = False
         cpixel.is_feature_boundary = False
     return cpixels
+
+
+# :call: > --- callers ---
+# :call: v --- calling ---
+# :call: v stormtrack::core::structs::cPixel
+cdef bint cpixel_equals(cPixel *this, cPixel *other) except -1:
+    if this.x == other.x and this.y == other.y:
+        return True
+    else:
+        return False

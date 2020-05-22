@@ -165,7 +165,7 @@ cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) exce
     cregion_cleanup(&boundary_pixels, unlink_pixels=False, reset_connected=True)
 
     # Categorize boundaries as shells or holes
-    cdef bint* boundary_is_shell = categorize_boundaries(&cboundaries, grid)
+    cdef bint* boundaries_is_shell = categorize_boundaries(&cboundaries, grid)
 
     # Transfer shells into original cregion
     cdef int i_bnd
@@ -179,7 +179,7 @@ cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) exce
     for i_bnd in range(cboundaries.n):
         cboundary = cboundaries.regions[i_bnd]
         n_pixels = cboundary.pixels_n
-        if boundary_is_shell[i_bnd]:
+        if boundaries_is_shell[i_bnd]:
             i_shell += 1
             _cregion_new_shell(cregion)
         else:
@@ -205,7 +205,7 @@ cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) exce
             cpixel = cpixels_tmp[i_pixel]
             if cpixel is not NULL:
                 cpixel_set_region(cpixel, cregion)
-                if boundary_is_shell[i_bnd]:
+                if boundaries_is_shell[i_bnd]:
                     _cregion_insert_shell_pixel(cregion, i_shell, cpixel)
                 else:
                     _cregion_insert_hole_pixel(cregion, i_hole, cpixel)
@@ -243,7 +243,7 @@ cdef void _cregion_determine_boundaries_core(cRegion* cregion, cGrid* grid) exce
     # SR_ONE_SHELL >
 
     # Cleanup
-    free(boundary_is_shell)
+    free(boundaries_is_shell)
     cregions_cleanup(&cboundaries, cleanup_regions=True)
 
 
@@ -519,298 +519,469 @@ cdef cRegions _reconstruct_boundaries(cRegion* boundary_pixels, cGrid* grid) exc
 # :call: > --- callers ---
 # :call: > stormtrack::core::cregion_boundaries::_cregion_determine_boundaries_core
 # :call: v --- calling ---
-# :call: v stormtrack::core::structs::cGrid
-# :call: v stormtrack::core::structs::cPixel
-# :call: v stormtrack::core::structs::cRegion
-# :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::cregion::cregion_check_validity
-# :call: v stormtrack::core::cregion_boundaries::boundary_must_be_a_shell
 # :call: v stormtrack::core::cregion_boundaries::categorize_boundary_is_shell
 # :call: v stormtrack::core::cregion_boundaries::cregions_find_northernmost_uncategorized_region
-# :call: v stormtrack::core::cpixel::cpixel_angle_to_neighbor
-# :call: v stormtrack::core::cregion::sign
+# :call: v stormtrack::core::structs::cGrid
+# :call: v stormtrack::core::structs::cRegion
+# :call: v stormtrack::core::structs::cRegions
 cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
+    """Categorize boundaries as shell or hole.
+    
+    Algorithm:
+    
+    - Find the uncategorized boundary with the northernmost pixel.
+      It must be a shell, because all other boundaries are either contained
+      by it (holes or nested shells), or other shells located further south.
+    
+    - Mark all pixels inside this shell, and collect all uncategorized
+      boundaries comprised of such pixels (one match is sufficient, but if
+      one pixel matches, then all should; check that in debug mode).
+    
+    - Among these boundaries, select the northernmost, which (by the same
+      logic as before) must be a hole. Then mark all contained pixels and
+      select all nested boundaries. Repeat until there are no more nested
+      boundaries.
+    
+    - Repeat until all boundaries have been assigned.
+    
+    """
     cdef bint debug = False
-    # cdef bint debug = True  # SR_DBG
     if debug:
         log.debug(f"< categorize_boundaries: {boundaries.n}")
-    cdef int ib
-    cdef int ib_sel
-    cdef int ic
-    cdef int dx
-    cdef int dy
-    cdef int d_angle
-    cdef int n_bnds = boundaries.n
-    cdef int n_pixels
-    cdef bint* boundary_is_shell = <bint*>malloc(n_bnds*sizeof(bint))
-    cdef bint* categorized = <bint*>malloc(n_bnds*sizeof(bint))
-    for ib in range(n_bnds):
-        categorized[ib] = False
-    cdef cRegion* boundary
-    cdef cPixel* cpixel
-    cdef cPixel* cpixel_sel
-    cdef cPixel* cpixel_pre2
-    cdef cPixel* cpixel_pre
-    for ib in range(n_bnds):
-        if categorized[ib]:
-            continue
-        boundary = boundaries.regions[ib]
-    #
-    # Algorithm:
-    #
-    # - Find the uncategorized boundary with the northernmost pixel.
-    #   It must be a shell, because all other boundaries are either contained
-    #   by it (holes or nested shells), or other shells located further south.
-    #
-    # - Mark all pixels inside this shell, and collect all uncategorized
-    #   boundaries comprised of such pixels (one match is sufficient, but if
-    #   one pixel matches, then all should; check that in debug mode).
-    #
-    # - Among these boundaries, select the northernmost, which (by the same
-    #   logic as before) must be a hole. Then mark all contained pixels and
-    #   select all nested boundaries. Repeat until there are no more nested
-    #   boundaries.
-    #
-    # - Repeat until all boundaries have been assigned.
-    #
-    cdef int* d_angles = NULL
-    cdef int* angles = NULL
-    cdef int i_angle
-    cdef int n_angle
-    cdef int i_d_angle
-    cdef int n_d_angle
-    cdef int i_px_idcs
-    cdef int n_px_idcs
-    cdef int* px_idcs = NULL
-    cdef int angle_pre
-    cdef int n_pixels_eff
+    cdef bint* boundaries_is_shell = <bint*>malloc(boundaries.n * sizeof(bint))
+    cdef bint* boundaries_is_categorized = <bint*>malloc(boundaries.n * sizeof(bint))
+    cdef int i_bnd
+    for i_bnd in range(boundaries.n):
+        boundaries_is_categorized[i_bnd] = False
+    cdef cRegion* boundary = NULL
     cdef int iter_i
     cdef int iter_max=10000
     for iter_i in range(iter_max):
         if debug:
             log.debug(f"  ----- ITER {iter_i} ({iter_i + 1:,}/{iter_max:,}) -----")
-
-        # Select unprocessed boundary with northernost pixel
-        ib_sel = cregions_find_northernmost_uncategorized_region(boundaries, categorized)
-        if debug:
-            log.debug(f"northernmost uncategorized region: {ib_sel}")
-        if ib_sel < 0:
-            # All boundaries categorized!
-            if debug:
-                log.debug(f"  ----- DONE {iter_i} ({iter_i + 1}/{iter_max}) -----")
-            break
-        boundary = boundaries.regions[ib_sel]
-        cregion_check_validity(boundary, ib_sel)
-        n_pixels = boundary.pixels_n
-        if debug:
-            log.debug(f"  process boundary {ib_sel} ({ib_sel + 1}/{n_bnds}) ({n_pixels} px)")
-
-        # SR_DBG_NOW <
-        # - print(f"\n boundary # {ib_sel} ({n_pixels}):")
-        # - for i in range(n_pixels):
-        # -     print(f" {i:2} ({boundary.pixels[i].x:2},{boundary.pixels[i].y:2})")
-        # SR_DBG_NOW >
-
-        d_angles = <int*>malloc(n_pixels*sizeof(int))
-        angles   = <int*>malloc(n_pixels*sizeof(int))
-        px_idcs  = <int*>malloc(n_pixels*sizeof(int))
-        for i in range(n_pixels):
-            d_angles[i] = 999
-            angles  [i] = 999
-            px_idcs [i] = 999
-        i_angle = -1
-        n_angle = 0
-        i_d_angle = -1
-        n_d_angle = 0
-        i_px_idcs = -1
-        n_px_idcs = 0
-
-        if debug: print(f"<<<<< ({n_pixels})") # SR_DBG_NOW
-
-        # Determine the sense of rotation of the boundary
-        cpixel_pre = boundary.pixels[n_pixels - 2]
-        angle_pre = -999
-        n_pixels_eff = n_pixels
-        for i_px in range(n_pixels):
-
-            # Check in advance if boundary must be a shell to prevent issues
-            if boundary_must_be_a_shell(n_pixels_eff, grid):
-                boundary_is_shell[ib_sel] = True
-                categorized[ib_sel] = True
-                if debug:
-                    log.debug(
-                        f"  boundary # {ib_sel} too short ({n_pixels} px) "
-                        f"to be a hole ({grid.constants.connectivity}-connectivity)"
-                    )
-                break
-
-            i_px_idcs += 1
-            n_px_idcs += 1
-            px_idcs[i_px_idcs] = i_px
-            cpixel = boundary.pixels[i_px]
-            # - print('# ', i_px, px_idcs[i_angle], (i_px_idcs, n_px_idcs), (i_angle, n_angle), (i_d_angle, n_d_angle), (cpixel.x, cpixel.y)) # SR_DBG_NOW
-
-            # Determine angle from previous to current pixel
-            angle = cpixel_angle_to_neighbor(cpixel, cpixel_pre)
-            i_angle += 1
-            n_angle += 1
-            angles[i_angle] = angle
-            px_idcs[i_angle] = i_px
-            if debug: print(f"    ({cpixel_pre.x}, {cpixel_pre.y}) -> ({cpixel.x}, {cpixel.y}): {angle}")  # SR_DBG_NOW
-
-            if angle_pre != -999:
-                d_angle = angle - angle_pre
-                if abs(d_angle) > 180:
-                    # Limit to +-180
-                    d_angle = d_angle - sign(d_angle) * 360
-                i_d_angle += 1
-                n_d_angle += 1
-                d_angles[i_d_angle] = d_angle
-
-                if d_angle == 180:
-                    # Change to opposite direction indicates an isolated
-                    # boundary pixel, which can simply be ignored
-                    # # SR_TMP <
-                    # if i_px_idcs < 2:
-                    #     raise NotImplementedError(f"i_px_idcs: {i_px_idcs} < 2")
-                    # # SR_TMP >
-                    cpixel_pre2 = boundary.pixels[px_idcs[i_px_idcs - 2]]
-
-                    # print(
-                    #     f"! {i_px_idcs - 2:2}/{px_idcs[i_px_idcs - 2]:2}"
-                    #     f"({cpixel_pre2.x:2},{cpixel_pre2.y:2})"
-                    #     f" {i_px_idcs - 1:2}/{px_idcs[i_px_idcs - 1]:2}"
-                    #     f"({cpixel_pre1.x:2},{cpixel_pre.y:2})"
-                    #     f" {i_px_idcs - 0:2}/{px_idcs[i_px_idcs - 0]:2}"
-                    #     f"({cpixel.x:2},{cpixel.y:2})"
-                    # )
-                    # raise Exception("ambiguous angle: 180 or -180?")
-
-                    # # SR_DBG <
-                    # if cpixel_pre2.x != cpixel.x:
-                    #     raise Exception("x_pre2 != x", cpixel_pre2.x, cpixel.x)
-                    # if cpixel_pre2.y != cpixel.y:
-                    #     raise Exception("y_pre2 != y", cpixel_pre2.y, cpixel.y)
-                    # # SR_DBG >
-
-                    # SR_DBG_NOW <
-                    # - print()
-                    # - for i in range(n_angle): print(i, i_angle, n_angle, angles[i])
-                    # - print()
-                    # - for i in range(n_d_angle): print(i, i_d_angle, n_d_angle, d_angles[i])
-                    # - print()
-                    # - for i in range(n_px_idcs): print(i, i_px_idcs, n_px_idcs, px_idcs[i])
-                    # - print()
-                    # SR_DBG_NOW >
-
-                    i_px_idcs  = max(i_px_idcs  - 2, -1)
-                    n_px_idcs  = max(n_px_idcs  - 2,  0)
-                    i_d_angle = max(i_d_angle - 2, -1)
-                    n_d_angle = max(n_d_angle - 2,  0)
-                    i_angle  = max(i_angle  - 2, -1)
-                    n_angle  = max(n_angle  - 2,  0)
-                    n_pixels_eff -= 2
-                    angle_pre = angles[i_angle]
-                    cpixel_pre = cpixel
-
-                    # SR_DBG_NOW <
-                    # - print()
-                    # - for i in range(n_angle): print(i, i_angle, n_angle, angles[i])
-                    # - print()
-                    # - for i in range(n_d_angle): print(i, i_d_angle, n_d_angle, d_angles[i])
-                    # - print()
-                    # - for i in range(n_px_idcs): print(i, i_px_idcs, n_px_idcs, px_idcs[i])
-                    # - print()
-                    # - print((i_px_idcs, n_px_idcs), (i_d_angle, n_d_angle), (i_angle, n_angle), n_pixels_eff, angle_pre)
-                    # - print(" OK cpixel_pre2 == cpixel")
-                    # SR_DBG_NOW >
-                    continue
-                # SR_TMP >
-
-                # DBG_BLOCK <
-                if debug:
-                    log.debug(
-                        f"  {ic:2} ({cpixel_pre.x:2}, {cpixel_pre.y:2}) "
-                        f"-> ({cpixel.x:2}, {cpixel.y:2}) {angle_pre:4} "
-                        f"-> {angle:4} : {d_angle:4}"
-                    )
-                # DBG_BLOCK >
-
-            cpixel_pre = cpixel
-            angle_pre = angle
-
-        if not categorized[ib_sel]:
-            categorize_boundary_is_shell(ib_sel, d_angles, n_d_angle, boundary_is_shell)
-            categorized[ib_sel] = True
-
-        free(angles)
-        free(d_angles)
-        free(px_idcs)
-    else:
-        raise Exception(
-            f"categorize_boundaries: timed out after {iter_max:,} iterations"
+        i_bnd_sel = cregions_find_northernmost_uncategorized_region(
+            boundaries, boundaries_is_categorized
         )
-
-    # Clean up
-    free(categorized)
-
+        if i_bnd_sel < 0:
+            break
+        boundary = boundaries.regions[i_bnd_sel]
+        cregion_check_validity(boundary, i_bnd_sel)
+        if debug:
+            log.debug(
+                f"  process boundary {i_bnd_sel} ({i_bnd_sel + 1}/{boundaries.n})"
+                f" ({boundary.pixels_n} px)"
+            )
+        boundaries_is_shell[i_bnd_sel] = categorize_boundary_is_shell(grid, boundary)
+        boundaries_is_categorized[i_bnd_sel] = True
+    else:
+        raise Exception(f"timeout after {iter_max:,} iterations")
+    if debug:
+        log.debug(f"  ----- DONE {iter_i} ({iter_i + 1}/{iter_max}) -----")
+    free(boundaries_is_categorized)
     if debug:
         log.debug("> categorize_boundaries: done")
-
-    return boundary_is_shell
+    return boundaries_is_shell
 
 
 # :call: > --- callers ---
 # :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
 # :call: v --- calling ---
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle_advance
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle_curr
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle_init
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle_new
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle_next
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle_prev
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle_reset
+# :call: v stormtrack::core::cregion_boundaries::cpixel_angle_to_neighbor
 # :call: v stormtrack::core::structs::cGrid
-cdef bint boundary_must_be_a_shell(int n_pixels_eff, cGrid* grid) except -1:
-    """Check whether a boundary is too short to be a hole.
-
-    Hole boundaries have a minimum length of four pixels for 4-connectivity and
-    eight pixels for 8-connectivity, respectively, plus one because the first
-    pixel is contained twice. Any shorter boundary must be a shell because it
-    is too short to enclose a hole!
-
-    This may be checked explicitly in advance to avoid problems that may be
-    caused by such short boundaries further down the line.
-
-    """
-    if grid.constants.connectivity == 4:
-        return n_pixels_eff < 9
-    elif grid.constants.connectivity == 8:
-        return n_pixels_eff < 5
+# :call: v stormtrack::core::structs::cPixel
+# :call: v stormtrack::core::structs::cRegion
+cdef bint categorize_boundary_is_shell(cGrid *grid, cRegion *boundary) except -1:
+    cdef bint debug = False
+    cdef int i_px
+    cdef int i
+    cdef int n_px = boundary.pixels_n
+    cdef bint *skipped = <bint*>malloc(n_px * sizeof(bint))
+    for i in range(n_px):
+        skipped[i] = False
+    cdef cPixel *px_prev
+    cdef cPixel *px_curr
+    cdef cPixel *px_next
+    cdef int angle
+    cdef int angle_sum = 0
+    cdef cPixelCycle _pxs = cPixelCycle_new(debug=debug)
+    cdef cPixelCycle *pxs = &_pxs
+    cPixelCycle_init(pxs, boundary)
+    if pxs.n_eff == 0:
+        # No effective pixels: Must be a shell!
+        cPixelCycle_reset(pxs)
+        return True
+    for i in range(pxs.n_eff):
+        px_prev = cPixelCycle_prev(pxs)
+        px_curr = cPixelCycle_curr(pxs)
+        px_next = cPixelCycle_next(pxs)
+        angle = cpixel_angle_to_neighbor(px_prev, px_curr, px_next)
+        angle_sum += angle
+        if debug:
+            print(
+                f"[{i}] "
+                f"({px_prev.x}, {px_prev.y}) -> "
+                f"({px_curr.x}, {px_curr.y}) -> "
+                f"({px_next.x}, {px_next.y})"
+                f" : {angle} ({angle_sum})"
+            )
+        cPixelCycle_advance(pxs)
+    if angle_sum == -360:
+        return True
+    elif angle_sum == 360:
+        return False
     else:
-        log.error(f"invalid connectivity: {grid.constants.connectivity}")
-        exit(1)
+        raise Exception("angle sum not +-360", angle_sum)
+    cPixelCycle_reset(pxs)
 
 
 # :call: > --- callers ---
-# :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle__advance_to_unskipped
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle__i_next
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle__i_prev
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle__init_skip
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle_advance
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle_curr
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle_new
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle_next
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle_prev
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle_reset
+# :call: > stormtrack::core::cregion_boundaries::ategorize_boundary_is_shell
 # :call: v --- calling ---
-cdef void categorize_boundary_is_shell(
-    int ib_sel, int* d_angles, int n_d_angle, bint* boundary_is_shell,
-) except *:
-    # Sum up the angles
-    cdef int delta_angle_tot = 0
-    cdef int i_d_angle
-    for i_d_angle in range(n_d_angle):
-        # - print(f" {i_d_angle:2} {d_angles[i_d_angle]:4} {int(delta_angle_tot):4}")
-        delta_angle_tot += d_angles[i_d_angle]
-    # print(f"       {int(delta_angle_tot):4}")
+# :call: v stormtrack::core::structs::cRegion
+cdef struct cPixelCycle:
+    cRegion *_pixels
+    bint *_skip
+    int i
+    int n
+    int n_eff
+    bint debug
 
-    # Categorize the boundary
-    if delta_angle_tot == -360:
-        boundary_is_shell[ib_sel] = True
-        # print(">"*5+" SHELL")
-    elif delta_angle_tot == 360:
-        boundary_is_shell[ib_sel] = False
-        # print(">"*5+" SHELL")
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle_init
+# :call: > stormtrack::core::cregion_boundaries::PixelCycle_new
+# :call: > stormtrack::core::cregion_boundaries::ategorize_boundary_is_shell
+# :call: v --- calling ---
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle_reset
+cdef cPixelCycle cPixelCycle_new(bint debug=False) except *:
+    """Create a new instance of ``cPixelCycle``."""
+    self.debug = debug
+    if self.debug:
+        print("cPixelCycle: create new object")
+    cdef cPixelCycle self
+    self._pixels = NULL
+    self._skip = NULL
+    cPixelCycle_reset(&self)
+    return self
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundary_is_shell
+# :call: > stormtrack::core::cregion_boundaries::cPixelCycle_init
+# :call: v --- calling ---
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+cdef void cPixelCycle_reset(cPixelCycle *self) except *:
+    if self.debug:
+        print("cPixelCycle: reset")
+    if self._pixels is not NULL:
+        self._pixels = NULL
+    if self._skip is not NULL:
+        free(self._skip)
+        self._skip = NULL
+    self.i = -999
+    self.n = -999
+    self.n_eff = -999
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundary_is_shell
+# :call: v --- calling ---
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle__init_skip
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle_reset
+# :call: v stormtrack::core::structs::cRegion
+cdef void cPixelCycle_init(cPixelCycle *self, cRegion *pixels, int i=0) except *:
+    """Initialize a new instance of ``cPixelCycle``."""
+    cPixelCycle_reset(self)
+    cdef int i_px
+    cdef cPixel *px
+    if self.debug:
+        print(f"cPixelCycle: initialize with {pixels.pixels_n} pixels:")
+        for i_px in range(pixels.pixels_n):
+            px = pixels.pixels[i_px]
+            print(f"  ({px.x}, {px.y})")
+    self._pixels = pixels
+    self.i = i
+    self.n = pixels.pixels_n
+    self._skip = <bint*>malloc(self.n * sizeof(bint))
+    cPixelCycle__init_skip(self)
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::cPixelCycle_init
+# :call: v --- calling ---
+# :call: v stormtrack::core::cregion_boundaries::PixelCycle
+# :call: v stormtrack::core::cregion_boundaries::PixelCycle__advance_to_unskipped
+# :call: v stormtrack::core::cregion_boundaries::PixelCycle__i_next
+# :call: v stormtrack::core::cregion_boundaries::PixelCycle_curr
+# :call: v stormtrack::core::cregion_boundaries::PixelCycle_next
+# :call: v stormtrack::core::cregion_boundaries::PixelCycle_prev
+# :call: v stormtrack::core::structs::cPixel
+cdef void cPixelCycle__init_skip(cPixelCycle *self) except *:
+    """Skip redundant and isolated pixels that are categorization-irrelevant."""
+    if self.debug:
+        print(f"cPixelCycle: identify pixels to be skipped (tot: {self.n})")
+    cdef int i
+    cdef cPixel *px
+    for i in range(self.n):
+        self._skip[i] = False
+
+    # Skip redundant start/end pixel
+    if cpixel_equals(self._pixels.pixels[0], self._pixels.pixels[self.n - 1]):
+        self._skip[self.n - 1] = True
+        if self.debug:
+            px = self._pixels.pixels[self.n - 1]
+            print(f"  skip [{self.n - 1}] ({px.x}, {px.y}) (duplicate end)")
+
+    # Skip all isolated pixels, i.e., with only one neighbor (prev equals next)
+    cdef int i_bak
+    cdef int i_prev
+    cdef bint *skip_tmp = <bint*>malloc(self.n * sizeof(bint))
+    cdef int n_eff_bak = self.n_eff
+    cdef int iter_max = 99
+    cdef int iter_i
+    for iter_i in range(iter_max):
+        for i in range(self.n):
+            skip_tmp[i] = self._skip[i]
+        i_bak = self.i
+        for i in range(self.n):
+            j = i_bak + i
+            if j >= self.n:
+                j -= self.n
+            self.i = j
+            if cpixel_equals(cPixelCycle_prev(self), cPixelCycle_next(self)):
+                if self.debug:
+                    px = cPixelCycle_curr(self)
+                    print(f"  skip [{j}] ({px.x}, {px.y}) (isolated)")
+                skip_tmp[j] = True
+                skip_tmp[cPixelCycle__i_next(self)] = True
+        self.i = i_bak
+        self.n_eff = self.n
+        for i in range(self.n):
+            self._skip[i] = skip_tmp[i]
+            if self._skip[i]:
+                self.n_eff -= 1
+        if self.n_eff == 0:
+            # Only isolated pixels, e.g., a line: Must be a shell!
+            return
+        if self.debug:
+            print(f"  effective no. pixels: {self.n_eff}/{self.n}")
+        if self.n_eff == n_eff_bak:
+            break
+        n_eff_bak = self.n_eff
+    else:
+        raise Exception("timeout after {iter_i} iterations")
+    free(skip_tmp)
+    cPixelCycle__advance_to_unskipped(self)
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::cPixelCycle__init_skip
+# :call: > stormtrack::core::cregion_boundaries::cPixelCycle_advance
+# :call: v --- calling ---
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+cdef void cPixelCycle__advance_to_unskipped(cPixelCycle *self, int min_step=0) except *:
+    """Advance to the next unskipped pixel, if necessary."""
+    for i in range(self.n):
+        j = self.i + i
+        if j >= self.n:
+            j -= self.n
+        if i >= min_step and not self._skip[j]:
+            self.i = j
+            break
+    else:
+        raise Exception("no unskipped pixels")
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundary_is_shell
+# :call: v --- calling ---
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle__advance_to_unskipped
+cdef void cPixelCycle_advance(cPixelCycle *self) except *:
+    """Advance by one pixel."""
+    if self.debug:
+        print(f"cPixelCycle: advance from {self.i}")
+    cPixelCycle__advance_to_unskipped(self, min_step=1)
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundary_is_shell
+# :call: > stormtrack::core::cregion_boundaries::cPixelCycle__init_skip
+# :call: v --- calling ---
+# :call: v stormtrack::core::structs::cPixel
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+cdef cPixel *cPixelCycle_curr(cPixelCycle *self) except *:
+    """Get the current pixel."""
+    if self.debug:
+        print("cPixelCycle: get curr: ", end="")
+    cdef int i = self.i
+    if self._skip[i]:
+        raise Exception("current pixel cannot be skipped", self.i)
+    if self.debug:
+        print(f"[{i}] ", end="")
+    cdef cPixel *px = self._pixels.pixels[i]
+    if self.debug:
+        print(f"({px.x}, {px.y})")
+    return px
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundary_is_shell
+# :call: > stormtrack::core::cregion_boundaries::cPixelCycle__init_skip
+# :call: v --- calling ---
+# :call: v stormtrack::core::structs::cPixel
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle__i_prev
+cdef cPixel *cPixelCycle_prev(cPixelCycle *self) except *:
+    """Get the previous pixel."""
+    if self.debug:
+        print(f"cPixelCycle: get prev: ", end="")
+    cdef int i = cPixelCycle__i_prev(self)
+    if self.debug:
+        print(f"[{i}] ", end="")
+    cdef cPixel *px = self._pixels.pixels[i]
+    if self.debug:
+        print(f"({px.x}, {px.y})")
+    return px
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::cPixelCycle_prev
+# :call: v --- calling ---
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+cdef int cPixelCycle__i_prev(cPixelCycle *self) except -1:
+    """Get the index of the previous pixel."""
+    cdef int i
+    cdef int j
+    for j in range(self.n):
+        i = self.i - j - 1
+        if i < 0:
+            i += self.n
+        if not self._skip[i]:
+            break
+    else:
+        raise Exception("no prev pixel found")
+    return i
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundary_is_shell
+# :call: > stormtrack::core::cregion_boundaries::cPixelCycle__init_skip
+# :call: v --- calling ---
+# :call: v stormtrack::core::structs::cPixel
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle__i_next
+cdef cPixel *cPixelCycle_next(cPixelCycle *self) except *:
+    """Get the next pixel."""
+    if self.debug:
+        print(f"cPixelCycle: get next: ", end="")
+    cdef int i = cPixelCycle__i_next(self)
+    if self.debug:
+        print(f"[{i}] ", end="")
+    cdef cPixel *px = self._pixels.pixels[i]
+    if self.debug:
+        print(f"({px.x}, {px.y})")
+    return px
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::cPixelCycle__init_skip
+# :call: > stormtrack::core::cregion_boundaries::cPixelCycle_next
+# :call: v --- calling ---
+# :call: v stormtrack::core::cregion_boundaries::cPixelCycle
+cdef int cPixelCycle__i_next(cPixelCycle *self) except -1:
+    """Get the index of the next pixel."""
+    cdef int i
+    cdef int j
+    cdef int n = self._pixels.pixels_n
+    for j in range(n):
+        i = self.i + j + 1
+        if i >= n:
+            i -= n
+        if not self._skip[i]:
+            break
+    else:
+        raise Exception("no next pixel found")
+    return i
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::categorize_boundary_is_shell
+# :call: v --- calling ---
+# :call: v stormtrack::core::cregion_boundaries::_direction_between_pixels
+# :call: v stormtrack::core::structs::cPixel
+cdef int cpixel_angle_to_neighbor(
+    cPixel* cpixel0, cPixel* cpixel1, cPixel* cpixel2,
+) except -1:
+    cdef bint debug = False
+    cdef int dir1 = _direction_between_pixels(cpixel0, cpixel1)
+    cdef int dir2 = _direction_between_pixels(cpixel1, cpixel2)
+    cdef int angle
+    angle = dir2 - dir1
+    if angle > 180:
+        angle -= 360
+    elif angle < -180:
+        angle += 360
+    if debug:
+        print(
+            f"({cpixel0.x}, {cpixel0.y})-{dir1}->({cpixel1.x}, {cpixel1.y})"
+            f"-{dir2}->({cpixel2.x}, {cpixel2.y}): {angle}"
+        )
+    return angle
+
+
+# :call: > --- callers ---
+# :call: > stormtrack::core::cregion_boundaries::cpixel_angle_to_neighbor
+# :call: v --- calling ---
+# :call: v stormtrack::core::structs::cPixel
+cdef int _direction_between_pixels(cPixel* cpixel0, cPixel* cpixel1):
+    cdef dx = cpixel1.x - cpixel0.x
+    cdef dy = cpixel1.y - cpixel0.y
+    cdef int dir
+    if dx == 1 and dy == 0:
+        dir = 0
+    elif dx == 1 and dy == 1:
+        dir = 45
+    elif dx == 0 and dy == 1:
+        dir = 90
+    elif dx == -1 and dy == 1:
+        dir = 135
+    elif dx == -1 and dy == 0:
+        dir = 180
+    elif dx == -1 and dy == -1:
+        dir = 225
+    elif dx == 0 and dy == -1:
+        dir = 270
+    elif dx == 1 and dy == -1:
+        dir = 315
     else:
         raise Exception(
-            f"categorization of boundary # {ib_sel} failed: "
-            f"total angle {delta_angle_tot} != +-360"
+            f"cannot direction between pixels",
+            (cpixel0.x, cpixel0.y),
+            (cpixel1.x, cpixel1.y),
         )
+    return dir
 
 
 # :call: > --- callers ---
@@ -820,30 +991,20 @@ cdef void categorize_boundary_is_shell(
 # :call: v stormtrack::core::structs::cRegions
 # :call: v stormtrack::core::cregion::cregion_northernmost_pixel
 cdef int cregions_find_northernmost_uncategorized_region(
-    cRegions* boundaries, bint* categorized,
+    cRegions* boundaries, bint* boundaries_is_categorized,
 ) except -999:
     cdef cPixel* cpixel = NULL
     cdef cPixel* cpixel_sel = NULL
-    cdef int ib_sel = -1
-    cdef int ib
-    for ib in range(boundaries.n):
-        if not categorized[ib]:
-            cpixel = cregion_northernmost_pixel(boundaries.regions[ib])
+    cdef int i_bnd_sel = -1
+    cdef int i_bnd
+    for i_bnd in range(boundaries.n):
+        if not boundaries_is_categorized[i_bnd]:
+            cpixel = cregion_northernmost_pixel(boundaries.regions[i_bnd])
             if (
                 cpixel_sel is NULL
                 or cpixel.y > cpixel_sel.y
                 or cpixel.y == cpixel_sel.y and cpixel.x < cpixel_sel.x
             ):
                 cpixel_sel = cpixel
-                ib_sel = ib
-    return ib_sel
-
-
-# :call: > --- callers ---
-# :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
-# :call: v --- calling ---
-cdef inline int sign(int num):
-    if num >= 0:
-        return 1
-    else:
-        return -1
+                i_bnd_sel = i_bnd
+    return i_bnd_sel
