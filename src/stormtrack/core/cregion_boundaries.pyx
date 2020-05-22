@@ -539,7 +539,7 @@ cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
     cdef int ic
     cdef int dx
     cdef int dy
-    cdef int da
+    cdef int d_angle
     cdef int n_bnds = boundaries.n
     cdef int n_pixels
     cdef bint* boundary_is_shell = <bint*>malloc(n_bnds*sizeof(bint))
@@ -575,13 +575,13 @@ cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
     #
     cdef int* d_angles = NULL
     cdef int* angles = NULL
-    cdef int i_a
-    cdef int n_a
-    cdef int i_da
-    cdef int n_da
-    cdef int i_i
-    cdef int n_i
-    cdef int* px_inds = NULL
+    cdef int i_angle
+    cdef int n_angle
+    cdef int i_d_angle
+    cdef int n_d_angle
+    cdef int i_px_idcs
+    cdef int n_px_idcs
+    cdef int* px_idcs = NULL
     cdef int angle_pre
     cdef int n_pixels_eff
     cdef int iter_i
@@ -613,17 +613,17 @@ cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
 
         d_angles = <int*>malloc(n_pixels*sizeof(int))
         angles   = <int*>malloc(n_pixels*sizeof(int))
-        px_inds  = <int*>malloc(n_pixels*sizeof(int))
+        px_idcs  = <int*>malloc(n_pixels*sizeof(int))
         for i in range(n_pixels):
             d_angles[i] = 999
             angles  [i] = 999
-            px_inds [i] = 999
-        i_a = -1
-        n_a = 0
-        i_da = -1
-        n_da = 0
-        i_i = -1
-        n_i = 0
+            px_idcs [i] = 999
+        i_angle = -1
+        n_angle = 0
+        i_d_angle = -1
+        n_d_angle = 0
+        i_px_idcs = -1
+        n_px_idcs = 0
 
         if debug: print(f"<<<<< ({n_pixels})") # SR_DBG_NOW
 
@@ -644,43 +644,44 @@ cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
                     )
                 break
 
-            i_i += 1
-            n_i += 1
-            px_inds[i_i] = i_px
+            i_px_idcs += 1
+            n_px_idcs += 1
+            px_idcs[i_px_idcs] = i_px
             cpixel = boundary.pixels[i_px]
-            # - print('# ', i_px, px_inds[i_a], (i_i, n_i), (i_a, n_a), (i_da, n_da), (cpixel.x, cpixel.y)) # SR_DBG_NOW
+            # - print('# ', i_px, px_idcs[i_angle], (i_px_idcs, n_px_idcs), (i_angle, n_angle), (i_d_angle, n_d_angle), (cpixel.x, cpixel.y)) # SR_DBG_NOW
 
             # Determine angle from previous to current pixel
             angle = cpixel_angle_to_neighbor(cpixel, cpixel_pre)
-            i_a += 1
-            n_a += 1
-            angles[i_a] = angle
-            px_inds[i_a] = i_px
+            i_angle += 1
+            n_angle += 1
+            angles[i_angle] = angle
+            px_idcs[i_angle] = i_px
             if debug: print(f"    ({cpixel_pre.x}, {cpixel_pre.y}) -> ({cpixel.x}, {cpixel.y}): {angle}")  # SR_DBG_NOW
 
             if angle_pre != -999:
-                da = angle - angle_pre
-                if abs(da) > 180:
-                    da = da - sign(da) * 360
-                i_da += 1
-                n_da += 1
-                d_angles[i_da] = da
+                d_angle = angle - angle_pre
+                if abs(d_angle) > 180:
+                    # Limit to +-180
+                    d_angle = d_angle - sign(d_angle) * 360
+                i_d_angle += 1
+                n_d_angle += 1
+                d_angles[i_d_angle] = d_angle
 
-                if da == 180:
+                if d_angle == 180:
                     # Change to opposite direction indicates an isolated
                     # boundary pixel, which can simply be ignored
                     # # SR_TMP <
-                    # if i_i < 2:
-                    #     raise NotImplementedError(f"i_i: {i_i} < 2")
+                    # if i_px_idcs < 2:
+                    #     raise NotImplementedError(f"i_px_idcs: {i_px_idcs} < 2")
                     # # SR_TMP >
-                    cpixel_pre2 = boundary.pixels[px_inds[i_i - 2]]
+                    cpixel_pre2 = boundary.pixels[px_idcs[i_px_idcs - 2]]
 
                     # print(
-                    #     f"! {i_i - 2:2}/{px_inds[i_i - 2]:2}"
+                    #     f"! {i_px_idcs - 2:2}/{px_idcs[i_px_idcs - 2]:2}"
                     #     f"({cpixel_pre2.x:2},{cpixel_pre2.y:2})"
-                    #     f" {i_i - 1:2}/{px_inds[i_i - 1]:2}"
+                    #     f" {i_px_idcs - 1:2}/{px_idcs[i_px_idcs - 1]:2}"
                     #     f"({cpixel_pre1.x:2},{cpixel_pre.y:2})"
-                    #     f" {i_i - 0:2}/{px_inds[i_i - 0]:2}"
+                    #     f" {i_px_idcs - 0:2}/{px_idcs[i_px_idcs - 0]:2}"
                     #     f"({cpixel.x:2},{cpixel.y:2})"
                     # )
                     # raise Exception("ambiguous angle: 180 or -180?")
@@ -694,33 +695,33 @@ cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
 
                     # SR_DBG_NOW <
                     # - print()
-                    # - for i in range(n_a): print(i, i_a, n_a, angles[i])
+                    # - for i in range(n_angle): print(i, i_angle, n_angle, angles[i])
                     # - print()
-                    # - for i in range(n_da): print(i, i_da, n_da, d_angles[i])
+                    # - for i in range(n_d_angle): print(i, i_d_angle, n_d_angle, d_angles[i])
                     # - print()
-                    # - for i in range(n_i): print(i, i_i, n_i, px_inds[i])
+                    # - for i in range(n_px_idcs): print(i, i_px_idcs, n_px_idcs, px_idcs[i])
                     # - print()
                     # SR_DBG_NOW >
 
-                    i_i  = max(i_i  - 2, -1)
-                    n_i  = max(n_i  - 2,  0)
-                    i_da = max(i_da - 2, -1)
-                    n_da = max(n_da - 2,  0)
-                    i_a  = max(i_a  - 2, -1)
-                    n_a  = max(n_a  - 2,  0)
+                    i_px_idcs  = max(i_px_idcs  - 2, -1)
+                    n_px_idcs  = max(n_px_idcs  - 2,  0)
+                    i_d_angle = max(i_d_angle - 2, -1)
+                    n_d_angle = max(n_d_angle - 2,  0)
+                    i_angle  = max(i_angle  - 2, -1)
+                    n_angle  = max(n_angle  - 2,  0)
                     n_pixels_eff -= 2
-                    angle_pre = angles[i_a]
+                    angle_pre = angles[i_angle]
                     cpixel_pre = cpixel
 
                     # SR_DBG_NOW <
                     # - print()
-                    # - for i in range(n_a): print(i, i_a, n_a, angles[i])
+                    # - for i in range(n_angle): print(i, i_angle, n_angle, angles[i])
                     # - print()
-                    # - for i in range(n_da): print(i, i_da, n_da, d_angles[i])
+                    # - for i in range(n_d_angle): print(i, i_d_angle, n_d_angle, d_angles[i])
                     # - print()
-                    # - for i in range(n_i): print(i, i_i, n_i, px_inds[i])
+                    # - for i in range(n_px_idcs): print(i, i_px_idcs, n_px_idcs, px_idcs[i])
                     # - print()
-                    # - print((i_i, n_i), (i_da, n_da), (i_a, n_a), n_pixels_eff, angle_pre)
+                    # - print((i_px_idcs, n_px_idcs), (i_d_angle, n_d_angle), (i_angle, n_angle), n_pixels_eff, angle_pre)
                     # - print(" OK cpixel_pre2 == cpixel")
                     # SR_DBG_NOW >
                     continue
@@ -731,7 +732,7 @@ cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
                     log.debug(
                         f"  {ic:2} ({cpixel_pre.x:2}, {cpixel_pre.y:2}) "
                         f"-> ({cpixel.x:2}, {cpixel.y:2}) {angle_pre:4} "
-                        f"-> {angle:4} : {da:4}"
+                        f"-> {angle:4} : {d_angle:4}"
                     )
                 # DBG_BLOCK >
 
@@ -739,12 +740,12 @@ cdef bint* categorize_boundaries(cRegions* boundaries, cGrid* grid) except *:
             angle_pre = angle
 
         if not categorized[ib_sel]:
-            categorize_boundary_is_shell(ib_sel, d_angles, n_da, boundary_is_shell)
+            categorize_boundary_is_shell(ib_sel, d_angles, n_d_angle, boundary_is_shell)
             categorized[ib_sel] = True
 
         free(angles)
         free(d_angles)
-        free(px_inds)
+        free(px_idcs)
     else:
         raise Exception(
             f"categorize_boundaries: timed out after {iter_max:,} iterations"
@@ -788,27 +789,27 @@ cdef bint boundary_must_be_a_shell(int n_pixels_eff, cGrid* grid) except -1:
 # :call: > stormtrack::core::cregion_boundaries::categorize_boundaries
 # :call: v --- calling ---
 cdef void categorize_boundary_is_shell(
-    int ib_sel, int* d_angles, int n_da, bint* boundary_is_shell,
+    int ib_sel, int* d_angles, int n_d_angle, bint* boundary_is_shell,
 ) except *:
     # Sum up the angles
-    cdef int da_sum = 0
-    cdef int i_da
-    for i_da in range(n_da):
-        # - print(f" {i_da:2} {d_angles[i_da]:4} {int(da_sum):4}")
-        da_sum += d_angles[i_da]
-    # print(f"       {int(da_sum):4}")
+    cdef int delta_angle_tot = 0
+    cdef int i_d_angle
+    for i_d_angle in range(n_d_angle):
+        # - print(f" {i_d_angle:2} {d_angles[i_d_angle]:4} {int(delta_angle_tot):4}")
+        delta_angle_tot += d_angles[i_d_angle]
+    # print(f"       {int(delta_angle_tot):4}")
 
     # Categorize the boundary
-    if da_sum == -360:
+    if delta_angle_tot == -360:
         boundary_is_shell[ib_sel] = True
         # print(">"*5+" SHELL")
-    elif da_sum == 360:
+    elif delta_angle_tot == 360:
         boundary_is_shell[ib_sel] = False
         # print(">"*5+" SHELL")
     else:
         raise Exception(
             f"categorization of boundary # {ib_sel} failed: "
-            f"total angle {da_sum} != +-360"
+            f"total angle {delta_angle_tot} != +-360"
         )
 
 
