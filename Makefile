@@ -257,6 +257,11 @@ install-dev: install-test #CMD Install the package as editable with unpinned run
 	@echo -e "${ECHO_PREFIX}installing the package as editable with testing and development dependencies"
 	${PREFIX}python -m pip install -r requirements/dev-unpinned.txt
 
+.PHONY: install-offline
+install-offline: #CMD Install the package in editable mode without build isolation, which does not require an internet connection, but the dependencies must already be installed.
+	@echo -e "${ECHO_PREFIX}installing the package as editable without build isolation"
+	${PREFIX}python -m pip install --no-build-isolation -e .
+
 #==============================================================================
 # Version control
 #==============================================================================
