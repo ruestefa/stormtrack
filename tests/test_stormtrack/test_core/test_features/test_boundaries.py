@@ -19,8 +19,8 @@ from ...utils import assertBoundaries
 
 
 # SR_DBG <
-log.getLogger().addHandler(log.StreamHandler(sys.stdout))
-log.getLogger().setLevel(log.DEBUG)
+# log.getLogger().addHandler(log.StreamHandler(sys.stdout))
+# log.getLogger().setLevel(log.DEBUG)
 # SR_DBG >
 
 
@@ -580,7 +580,6 @@ class FindBoundaries_NestedShells(TestBoundaries_Base):
 
 # @pytest.mark.skip("WIP")
 class FindBoundaries_RealCase(TestBoundaries_Base):
-
     def setUp(s):
 
         # The crash that triggered the introduction of this test only occurred
