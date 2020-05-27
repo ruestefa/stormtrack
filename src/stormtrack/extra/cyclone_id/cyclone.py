@@ -6,7 +6,6 @@ import logging as log
 import os
 import re
 import sys
-from collections import OrderedDict
 from functools import total_ordering
 from pprint import pformat
 from pprint import pprint as pp
@@ -150,7 +149,7 @@ class Depression:
         return self.contour
 
     def get_info(self):
-        cont_entry = OrderedDict()
+        cont_entry = {}
         cont_entry["class"] = self.__class__.__name__
         cont_entry["id"] = self.id()
         cont_entry["minima_id"] = [m.id for m in self.minima()]
@@ -822,12 +821,12 @@ class Cyclone(TrackableFeatureBase):
                     "implemented"
                 ).format(self.__class__.__name__, path)
             )
-        info = OrderedDict()
+        info = {}
         info["class"] = self.__class__.__name__
         info["id"] = self.id()
         info["min_depth"] = self.min_depth()
         info["max_depth"] = self.max_depth()
-        fct = lambda lvl, xy: OrderedDict([("level", lvl), ("coordinates", xy)])
+        fct = lambda lvl, xy: {"level": lvl, "coordinates": xy}
         info["minima_id"] = [m.id for m in self.minima()]
         info["n_contours"] = self.n_contours()
         info["contours_id"] = [c.id for c in self.contours()]
@@ -1107,7 +1106,7 @@ class CycloneIOReaderJson(IOReaderJsonBase):
     # SR_TODO Remove get_header? Doesn't seem to be used for anything!
     def read_string(self, jstr, get_header=None):
 
-        jdat = json.loads(jstr, object_pairs_hook=OrderedDict)
+        jdat = json.loads(jstr)
 
         if "HEADER" in jdat:
             self._header = jdat["HEADER"]
@@ -1120,7 +1119,7 @@ class CycloneIOReaderJson(IOReaderJsonBase):
         self, jdat, get_header=None, include_tracker_config=False
     ):
 
-        data = OrderedDict()
+        data = {}
 
         if "CONFIG" in jdat:
             data["CONFIG"] = self.rebuild_config(jdat["CONFIG"], include_tracker_config)
@@ -1272,13 +1271,11 @@ class CycloneIOReaderJson(IOReaderJsonBase):
         """Analogous to rebuild_depressions, see description there!"""
 
         # Look-up table for Cyclone class types
-        cyclone_types = OrderedDict(
-            [
-                ("SCC", SingleCenterCyclone),
-                ("DCC", DoubleCenterCyclone),
-                ("TCC", TripleCenterCyclone),
-            ]
-        )
+        cyclone_types = {
+            "SCC": SingleCenterCyclone,
+            "DCC": DoubleCenterCyclone,
+            "TCC": TripleCenterCyclone,
+        }
 
         # Valid kwargs for Cyclone object initialization
         cyclone_kwargs_keys = ["id", "track", "event", "domain"]
@@ -1620,7 +1617,7 @@ class CycloneTrackIOReaderJson(CycloneIOReaderJson, FeatureTrackIOReaderJson):
         super().__init__(*args, **kwargs)
 
     def read_string(self, jstr, include_tracker_config=True):
-        jdat = json.loads(jstr, object_pairs_hook=OrderedDict)
+        jdat = json.loads(jstr)
 
         if "HEADER" in jdat:
             self._header = jdat["HEADER"]

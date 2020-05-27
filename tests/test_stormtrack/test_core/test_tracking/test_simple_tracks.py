@@ -6,7 +6,6 @@ import pytest
 import sys
 import unittest
 from unittest import TestCase
-from collections import OrderedDict as odict
 from copy import deepcopy
 
 # Third-party
@@ -289,9 +288,7 @@ class SimpleTrack__SplitMergeTrack(SimpleTrack__Base):
 
         # Extract properties to compare
         def extract_props(tracks, methods, kwas):
-            return [
-                odict([(m, getattr(t, m)(**kwas)) for m in methods]) for t in tracks
-            ]
+            return [{m: getattr(t, m)(**kwas) for m in methods} for t in tracks]
 
         props_in = extract_props(tracks_in, methods, kwas)
         props_split = extract_props(tracks_split, methods, kwas)

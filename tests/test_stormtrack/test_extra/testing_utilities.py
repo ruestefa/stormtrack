@@ -4,7 +4,6 @@ Utilities for idealized unit tests.
 
 # Standard library
 import random
-from collections import OrderedDict
 from pprint import pformat
 
 # Third-party
@@ -51,7 +50,7 @@ class ContourSimple(Polygon):
         )
 
     def get_info(self, paths=True):
-        cont_entry = OrderedDict()
+        cont_entry = {}
         cont_entry["id"] = self.id
         cont_entry["level"] = self.lvl
         if paths:

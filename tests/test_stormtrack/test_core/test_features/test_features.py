@@ -586,6 +586,7 @@ class TestFindMinimaNeighborhoodSize(TestCase):
     which are considered in the value comparison.
 
     """
+
     def setUp(s):
         _, X = 5, 4
         # fmt: off

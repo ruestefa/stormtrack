@@ -9,7 +9,6 @@ import pickle
 import pytest
 import sys
 import unittest
-from collections import OrderedDict as OD
 from unittest import TestCase
 from pprint import pprint
 from pprint import pformat
@@ -323,7 +322,7 @@ class TrackSimple(FeatureTrackBase):
 
 class AttributeObject:
     def __init__(self, **kwargs):
-        self._attrs = OD()
+        self._attrs = {}
         for key, val in kwargs.items():
             self._store_attr(key, val)
             setattr(self, key, val)
@@ -2771,111 +2770,76 @@ class TestTrackIO(TestCase):
             [fs((1.0, 1.5, 0.20), 4)],
         ]
         path = lambda i: s.features_straight[i][0].path()
-        s.jdat_straight = OD(
-            [
-                (
-                    "EVENTS",
-                    [
-                        OD(
-                            [
-                                ("class", FTEG),
-                                ("id", 0),
-                                ("track", 0),
-                                ("feature", 0),
-                                ("timestep", 0),
-                                ("prev", []),
-                                ("next", [1]),
-                            ]
-                        ),
-                        OD(
-                            [
-                                ("class", FTEC),
-                                ("id", 1),
-                                ("track", 0),
-                                ("feature", 1),
-                                ("timestep", 1),
-                                ("prev", [0]),
-                                ("next", [2]),
-                            ]
-                        ),
-                        OD(
-                            [
-                                ("class", FTEC),
-                                ("id", 2),
-                                ("track", 0),
-                                ("feature", 2),
-                                ("timestep", 2),
-                                ("prev", [1]),
-                                ("next", [3]),
-                            ]
-                        ),
-                        OD(
-                            [
-                                ("class", FTEC),
-                                ("id", 3),
-                                ("track", 0),
-                                ("feature", 3),
-                                ("timestep", 3),
-                                ("prev", [2]),
-                                ("next", [4]),
-                            ]
-                        ),
-                        OD(
-                            [
-                                ("class", FTES),
-                                ("id", 4),
-                                ("track", 0),
-                                ("feature", 4),
-                                ("timestep", 4),
-                                ("prev", [3]),
-                                ("next", []),
-                            ]
-                        ),
-                    ],
-                ),
-                (
-                    "FEATURES",
-                    [
-                        OD([("class", "FeatureSimple"), ("id", 0), ("path", path(0))]),
-                        OD([("class", "FeatureSimple"), ("id", 1), ("path", path(1))]),
-                        OD([("class", "FeatureSimple"), ("id", 2), ("path", path(2))]),
-                        OD([("class", "FeatureSimple"), ("id", 3), ("path", path(3))]),
-                        OD([("class", "FeatureSimple"), ("id", 4), ("path", path(4))]),
-                    ],
-                ),
-                (
-                    "TRACKS",
-                    [
-                        OD(
-                            [
-                                ("id", 0),
-                                ("starts", [0]),
-                                ("ends", [4]),
-                                ("events", [0, 1, 2, 3, 4]),
-                            ]
-                        )
-                    ],
-                ),
-            ]
-        )
+        s.jdat_straight = {
+            "EVENTS": [
+                {
+                    "class": FTEG,
+                    "id": 0,
+                    "track": 0,
+                    "feature": 0,
+                    "timestep": 0,
+                    "prev": [],
+                    "next": [1],
+                },
+                {
+                    "class": FTEC,
+                    "id": 1,
+                    "track": 0,
+                    "feature": 1,
+                    "timestep": 1,
+                    "prev": [0],
+                    "next": [2],
+                },
+                {
+                    "class": FTEC,
+                    "id": 2,
+                    "track": 0,
+                    "feature": 2,
+                    "timestep": 2,
+                    "prev": [1],
+                    "next": [3],
+                },
+                {
+                    "class": FTEC,
+                    "id": 3,
+                    "track": 0,
+                    "feature": 3,
+                    "timestep": 3,
+                    "prev": [2],
+                    "next": [4],
+                },
+                {
+                    "class": FTES,
+                    "id": 4,
+                    "track": 0,
+                    "feature": 4,
+                    "timestep": 4,
+                    "prev": [3],
+                    "next": [],
+                },
+            ],
+            "FEATURES": [
+                {"class": "FeatureSimple", "id": 0, "path": path(0)},
+                {"class": "FeatureSimple", "id": 1, "path": path(1)},
+                {"class": "FeatureSimple", "id": 2, "path": path(2)},
+                {"class": "FeatureSimple", "id": 3, "path": path(3)},
+                {"class": "FeatureSimple", "id": 4, "path": path(4)},
+            ],
+            "TRACKS": [
+                {"id": 0, "starts": [0], "ends": [4], "events": [0, 1, 2, 3, 4],}
+            ],
+        }
 
-        s.config = OD(
-            [
-                (
-                    "TRACKER",
-                    OD(
-                        [
-                            ("f_overlap", 0.5),
-                            ("f_area", 0.5),
-                            ("threshold", 0.0),
-                            ("min_overlap", 0.00001),
-                            ("max_area", 2.0),
-                            ("max_dist_rel", 1.5),
-                        ]
-                    ),
-                )
-            ]
-        )
+        s.config = {
+            "TRACKER": {
+                "f_overlap": 0.5,
+                "f_area": 0.5,
+                "threshold": 0.0,
+                "min_overlap": 0.00001,
+                "max_area": 2.0,
+                "max_dist_rel": 1.5,
+            },
+        }
         s.tracker = TrackerSimple(**s.config["TRACKER"])
 
         s.writer = FeatureTrackIOWriterJson()

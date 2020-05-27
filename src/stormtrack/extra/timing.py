@@ -4,7 +4,6 @@
 import logging as log
 import sys
 import time
-from collections import OrderedDict
 
 
 __all__ = []
@@ -39,9 +38,9 @@ def delete_timer(name):
 
 class Timer:
     def __init__(self, level=0):
-        self._timers = OrderedDict()
-        self._subtimers = OrderedDict()
-        self._start = OrderedDict()
+        self._timers = {}
+        self._subtimers = {}
+        self._start = {}
         self._timers["total"] = 0.0
         self._level = level
 
@@ -65,7 +64,7 @@ class Timer:
                 raise
         else:
             if timer not in self._subtimers:
-                self._subtimers[timer] = OrderedDict()
+                self._subtimers[timer] = {}
             self._subtimers[timer][subtimer] = Timer(level=self._level + 1)
         self._subtimers[timer][subtimer].reset_timers()
         return self._subtimers[timer][subtimer]

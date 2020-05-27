@@ -27,7 +27,6 @@ import itertools
 import logging as log
 import os
 import random
-from collections import OrderedDict as odict
 from copy import copy
 from copy import deepcopy
 from datetime import datetime
@@ -2328,7 +2327,7 @@ cdef class FeatureTrack:
         self.set_missing_features_stats(None)
 
         # Init names and functions for total track and missing features stats
-        # as odicts (keys: names; values: stats extraction functions)
+        # as dicts (keys: names; values: stats extraction functions)
         # These are used to ensure consistent ordering for comparable files
         self._init_total_track_stats_keys_fcts()
         self._init_missing_features_stats_keys_fcts()
@@ -2584,7 +2583,7 @@ cdef class FeatureTrack:
     def total_track_stats(self):
         if self._total_track_stats_lst is None:
             return None
-        return odict(self._total_track_stats_lst)
+        return dict(self._total_track_stats_lst)
     # SR_TMP >
 
     def reset_total_track_stats(self):
@@ -2642,7 +2641,7 @@ cdef class FeatureTrack:
     def missing_features_stats(self):
         if self._missing_features_stats_lst is None:
             return None
-        return odict(self._missing_features_stats_lst)
+        return dict(self._missing_features_stats_lst)
     # SR_TMP >
 
     def set_missing_features_stats(self, stats, ignore_missing=False):
@@ -2731,9 +2730,9 @@ cdef class FeatureTrack:
         stats_self = self.missing_features_stats
         stats_other = other.missing_features_stats
         if stats_self is None:
-            stats_self = odict([(k, []) for k in keys])
+            stats_self = {k: [] for k in keys}
         else:
-            stats_self = odict([(k, stats_self[k]) for k in keys])
+            stats_self = {k: stats_self[k] for k in keys}
 
         # Copy missing features from other that are not part of self
         fids = [f.id for f in self.features()]
@@ -3215,7 +3214,7 @@ cdef class FeatureTrack:
         #    ):
         #        centers_by_ts[ts].append(feature.center)
 
-        #    centers = list(odict(sorted(centers_by_ts.items())).values())
+        #    centers = list(dict(sorted(centers_by_ts.items())).values())
         # SR_TMP -
         timesteps = self.timesteps(total=total)
         centers = [[] for _ in timesteps]
@@ -4722,7 +4721,7 @@ class TrackableFeature_Oldstyle(Feature):
         return id(self)
 
     def get_info(self, path=True):
-        jdat = odict()
+        jdat = {}
         # jdat["class"] = self.__class__.__name__
         jdat["class"] = "GenericFeature"
         jdat["id"] = self.id()

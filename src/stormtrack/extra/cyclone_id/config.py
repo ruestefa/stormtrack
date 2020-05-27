@@ -7,7 +7,6 @@ import json
 import logging as log
 import os
 import sys
-from collections import OrderedDict
 from configparser import SafeConfigParser
 
 
@@ -16,8 +15,8 @@ __all__ = []
 
 # SR_TODO: Make this more compatible with optparse (cf. options_internal)
 def options():
-    return OrderedDict(
-        GENERAL={
+    return {
+        "GENERAL": {
             # Input
             "infile-path": {
                 "description": None,
@@ -121,7 +120,7 @@ def options():
                 "metavar": "BOOL",
             },
         },
-        IDENTIFY={
+        "IDENTIFY": {
             "timings-identify": {
                 "description": (
                     "Measure local timings in identification "
@@ -303,7 +302,7 @@ def options():
                 "metavar": "PATH",
             },
         },
-    )
+    }
 
 
 def get_config_args(args=sys.argv[1:]):

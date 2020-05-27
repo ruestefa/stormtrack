@@ -29,7 +29,6 @@ import functools
 import logging as log
 import os
 import sys
-from collections import OrderedDict as odict
 from copy import copy
 from copy import deepcopy
 from pprint import pprint
@@ -4994,7 +4993,7 @@ cdef class Feature:
     def stats(self):
         if self._stats_lst is None:
             self.compute_stats()
-        return odict(self._stats_lst)
+        return dict(self._stats_lst)
 
     def compute_stats(self):
         self._stats_lst = [("n", self.n)]
@@ -5609,7 +5608,7 @@ cdef class Feature:
         self.compute_stats()
         jdat["stats"] = self.stats
         for group in ["associates", "properties"]:
-            jdat[group] = odict()
+            jdat[group] = {}
             for key, val in sorted(getattr(self, group).items()):
                 jdat[group][key] = val
         return jdat

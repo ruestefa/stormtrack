@@ -10,7 +10,6 @@ import logging as log
 import os
 import re
 import sys
-from collections import OrderedDict as odict
 from copy import copy
 from copy import deepcopy
 from functools import total_ordering
@@ -141,7 +140,7 @@ def write_feature_file(
             msg = f"write {len(tracks)} {feature_name} tracks to {outfile}"
         log.info(msg)
 
-    jdat = odict()
+    jdat = {}
 
     # -- Header
 
@@ -237,6 +236,7 @@ def write_feature_file(
         for track in tracks:
             jdat_track = track.json_dict()
             jdat["tracks"].append(jdat_track)
+    breakpoint()
 
     if jdat_old:
         # Merge in old jdat dict
@@ -464,7 +464,7 @@ def __tmp__write_tracks_features_as_graphs(
 # :call: v stormtrack::core::io::track_to_graph
 def tracks_to_graphs(tracks, *, separate_pixels=False, store_values=False):
     """Reduce tracks to graphs with data to rebuild tracks and features."""
-    graphs_by_tid = odict()
+    graphs_by_tid = {}
     if separate_pixels:
         pixel_data_by_tid = {}
     for track in tracks:
@@ -1286,9 +1286,9 @@ def read_feature_file(
         # Import features
         if jdat["header"].get("link_features"):
             # Read features from linked files
-            _feature_files_tss = odict(
-                [(tuple(tss), fs) for tss, fs in jdat["header"]["feature_files_tss"]]
-            )
+            _feature_files_tss = {
+                tuple(tss): fs for tss, fs in jdat["header"]["feature_files_tss"]
+            }
             _feature_files = _feature_files_tss.values()
             read_pixelfile_now = read_pixelfile
             if optimize_pixelfile_input:

@@ -9,7 +9,6 @@ import logging as log
 import os
 import re
 import warnings
-from collections import OrderedDict as odict
 from multiprocessing import Pool
 from pprint import pprint
 
@@ -784,9 +783,9 @@ class IOWriterJsonBase:
 
         # Order the blocks (alphabetically if not specified otherwise)
         if not "block_order" in self._header:
-            block_list_raw = odict([(k, v) for k, v in sorted(self._cache.items())])
+            block_list_raw = {k: v for k, v in sorted(self._cache.items())}
         else:
-            block_list_raw = odict()
+            block_list_raw = {}
             names_all = list(self._cache.keys())
             for name in self._header["block_order"]:
                 if name in names_all:
@@ -852,10 +851,10 @@ class IOWriterJsonBase:
         self, name, objs, ind=2, max_ind_lvl=3, tags=None, **kwas
     ):
 
-        json_dict = odict()
+        json_dict = {}
 
         if tags:
-            json_dict[name] = odict()
+            json_dict[name] = {}
             for tag in tags:
                 json_dict[name][tag] = []
             for obj in sorted(objs):
@@ -884,7 +883,7 @@ class IOWriterJsonBase:
          - config: The config dict.
         """
         name = "CONFIG"
-        jdat = odict([(name, odict())])
+        jdat = {name: {}}
         for name_conf, conf in sorted(config.items()):
             log.info(
                 "write config section {nsc} to {nc}".format(nc=name, nsc=name_conf)

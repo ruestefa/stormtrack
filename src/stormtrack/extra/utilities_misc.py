@@ -7,7 +7,6 @@ import logging as log
 import multiprocessing as mp
 import os
 import sys
-from collections import OrderedDict
 from copy import copy
 from functools import total_ordering
 from pprint import pprint as pp
@@ -605,7 +604,7 @@ class Contour(geo.Polygon):
         return self.lvl is not None
 
     def get_info(self, paths=True):
-        cont_entry = OrderedDict()
+        cont_entry = {}
         cont_entry["id"] = self.id
         cont_entry["level"] = self.lvl
         if paths:
@@ -835,11 +834,8 @@ def _list_core(arg, name, fct, sep=None, seps=None):
 
 
 def order_dict(random_dict):
-    """Sort a dict and return it as an OrderedDict object."""
-    ordered_dict = OrderedDict()
-    for key, val in sorted(random_dict.items()):
-        ordered_dict[key] = val
-    return ordered_dict
+    """Sort a dict and return it as a dict."""
+    return dict(sorted(random_dict.items()))
 
 
 def threshold_at_timestep(thr, ts):
@@ -895,7 +891,8 @@ def threshold_at_timestep(thr, ts):
 
         # Determine thresholds sourrounding timestep
         for (thr0, thr1, ts0, ts1) in zip(
-                thrs_ref[: -1], thrs_ref[1:], tss_ref[: -1], tss_ref[1:]):
+            thrs_ref[:-1], thrs_ref[1:], tss_ref[:-1], tss_ref[1:]
+        ):
             if ts0 <= ts < ts1:
                 break
         else:

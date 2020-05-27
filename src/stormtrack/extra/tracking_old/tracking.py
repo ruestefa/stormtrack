@@ -8,7 +8,6 @@ import pprint
 import sys
 from datetime import datetime
 from datetime import timedelta
-from collections import OrderedDict
 from collections.abc import Sequence
 
 # Third-party
@@ -104,7 +103,7 @@ class TrackableFeatureBase:
         return False
 
     def get_info(self, path=True):
-        jdat = OrderedDict()
+        jdat = {}
         jdat["class"] = self.__class__.__name__
         jdat["id"] = self.id()
         if self.event():
@@ -290,7 +289,7 @@ class TrackableFeatureMean(TrackableFeatureBase):
         self._features.remove(feature)
 
     def get_info(self, path=True):
-        jdat = OrderedDict()
+        jdat = {}
         jdat["class"] = self.__class__.__name__
         jdat["id"] = self.id()
         jdat["features"] = [f.id() for f in self.features()]
@@ -398,7 +397,7 @@ class PeriodicTrackableFeatureBase:
         return cls.cls_mean(*args, **kwargs)
 
     def get_info(self, path=True):
-        jdat = OrderedDict()
+        jdat = {}
         jdat["class"] = self.__class__.__name__
         jdat["id"] = self.id()
         jdat["ids"] = [feature.id() for feature in self.features()]
@@ -767,7 +766,7 @@ class FeatureTrackEventBase:
             timestep = self.timestep()
         # SR_TMP>
 
-        jdat = OrderedDict()
+        jdat = {}
         jdat["class"] = self.__class__.__name__
         jdat["id"] = self.id()
         jdat["track"] = self.track().id()
@@ -1491,7 +1490,7 @@ class FeatureTrackBase:
             yield list(events)
 
     def get_info(self):
-        jdat = OrderedDict()
+        jdat = {}
         for key, val in [
             ("id", self.id()),
             ("n", self.n()),
@@ -4076,7 +4075,7 @@ class FeatureTrackIOReaderJson(IOReaderJsonBase):
         # self.track_factory = track_factory
 
     def read_string(self, jstr, include_tracker_config=False):
-        jdat = json.loads(jstr, object_pairs_hook=OrderedDict)
+        jdat = json.loads(jstr)
 
         if "HEADER" in jdat:
             self._header = jdat["HEADER"]
@@ -4087,7 +4086,7 @@ class FeatureTrackIOReaderJson(IOReaderJsonBase):
 
     def rebuild_tracks_full(self, jdat):
 
-        data = OrderedDict()
+        data = {}
 
         if "FEATURES" in jdat and jdat["FEATURES"]:
             data["FEATURES"] = self.rebuild_features(

@@ -5,7 +5,6 @@ import argparse
 import functools
 import os
 import sys
-from collections import OrderedDict as odict
 from copy import copy
 from datetime import datetime
 from multiprocessing import Pool
@@ -180,14 +179,14 @@ def write_front_fields(ifile, ofile, oflds, level, conf_comp, conf_out, var_sfx=
 
     title = "fronts on {} hPa".format(level)
     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    gattrs = odict([("title", title), ("creation_date", timestamp)])
+    gattrs = {"title": title, "creation_date": timestamp}
     for key in ["tvar", "n_diffuse", "min_grad", "minsize"]:
         gattrs[key] = conf_comp[key]
 
     # -- Collect output fields
 
     tvar = conf_comp["tvar"]
-    output = odict()
+    output = {}
 
     outvars = conf_out["outvars"]
 
@@ -198,15 +197,13 @@ def write_front_fields(ifile, ofile, oflds, level, conf_comp, conf_out, var_sfx=
             netcdf_derive_file(fi, fo)
 
             dims2d = ("time", "rlat", "rlon")
-            ncatts_base = odict(
-                [
-                    ("coordinates", "lon lat"),
-                    ("grid_mapping", "rotated_pole"),
-                    ("standard_name", "n/a"),
-                    ("long_name", "n/a"),
-                    ("units", "n/a"),
-                ]
-            )
+            ncatts_base = {
+                "coordinates": "lon lat",
+                "grid_mapping": "rotated_pole",
+                "standard_name": "n/a",
+                "long_name": "n/a",
+                "units": "n/a",
+            }
 
             if "finp" in outvars:
                 fld = np.expand_dims(oflds["tfld"], axis=0)  # add time dim

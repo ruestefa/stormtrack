@@ -4,7 +4,6 @@
 import logging as log
 import sys
 import unittest
-from collections import OrderedDict as odict
 from unittest import TestCase
 
 # Thirt-party
@@ -789,7 +788,7 @@ class SplitTrack_Probabilities_Simple(TestCase):
         #          \  //
         # (5)       [Z]
         #
-        s.features_tss = odict()
+        s.features_tss = {}
         s.features_tss[0] = [
             feature_rect(0, (0, 1), (1, 3), 0),
             feature_rect(1, (2, 0), (2, 0), 0),
