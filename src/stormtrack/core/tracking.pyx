@@ -2566,16 +2566,16 @@ cdef class FeatureTrack:
             ("n_holes", lambda f: 0 if f.holes is None else len(f.holes)),
             ("associates_n", lambda f: f.associates_n()),
             ("n", lambda f: int(f.n)),
-            ("sum", lambda f: fct_stat(np.nansum)),
-            ("min", lambda f: fct_stat(np.nanmin)),
-            ("max", lambda f: fct_stat(np.nanmax)),
-            ("mean", lambda f: fct_stat(np.nanmean)),
-            ("median", lambda f: fct_stat(np.nanmedian)),
-            ("abssum", lambda f: fct_stat(np.nansum)),
-            ("absmin", lambda f: fct_stat(np.nanmin)),
-            ("absmax", lambda f: fct_stat(np.nanmax)),
-            ("absmean", lambda f: fct_stat(np.nanmean)),
-            ("absmedian", lambda f: fct_stat(np.nanmedian)),
+            ("sum", fct_stat(np.nansum)),
+            ("min", fct_stat(np.nanmin)),
+            ("max", fct_stat(np.nanmax)),
+            ("mean", fct_stat(np.nanmean)),
+            ("median", fct_stat(np.nanmedian)),
+            ("abssum", fct_stat(np.nansum)),
+            ("absmin", fct_stat(np.nanmin)),
+            ("absmax", fct_stat(np.nanmax)),
+            ("absmean", fct_stat(np.nanmean)),
+            ("absmedian", fct_stat(np.nanmedian)),
         ]
 
     # SR_TMP < TODO turn into proper getter, or guard against assignment
@@ -2621,8 +2621,10 @@ cdef class FeatureTrack:
                 self._total_track_stats_lst.append((key, stats[key]))
 
     def n_missing_features(self):
-        if (self.missing_features_stats is None or
-                len(self.missing_features_stats["id"]) == 0):
+        if (
+            self.missing_features_stats is None
+            or len(self.missing_features_stats["id"]) == 0
+        ):
             if not self.is_complete():
                 raise Exception(
                     f"track {self.id}: incomplete yet lacks missing features stats"
@@ -3108,7 +3110,6 @@ cdef class FeatureTrack:
         if self.missing_features_stats is not None:
             means += self.missing_features_stats["absmed"]
         return np.median(means)
-
 
     def is_associated(self, nmin, *, **kwas):
         na = self.n_associated(**kwas)

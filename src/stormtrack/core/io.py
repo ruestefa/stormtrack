@@ -236,7 +236,6 @@ def write_feature_file(
         for track in tracks:
             jdat_track = track.json_dict()
             jdat["tracks"].append(jdat_track)
-    breakpoint()
 
     if jdat_old:
         # Merge in old jdat dict
