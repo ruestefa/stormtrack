@@ -119,7 +119,10 @@ split_tracks=-1
 
 # Input
 infile_const="data/crclim_const_lm_c.nc"
-indir="data/1hrly/{YYYY}/{MM}"
+case ${dts} in
+    3) indir="data/3hrly/{YYYY}/{MM}";;
+    *) indir="data/1hrly/{YYYY}/{MM}";;
+esac
 infile="lffd{YYYY}{MM}{DD}{HH}p.nc"
 
 # Ouptut
