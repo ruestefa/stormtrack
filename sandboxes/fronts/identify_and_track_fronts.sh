@@ -32,14 +32,19 @@ num_procs=${1}
 # Front type: 'cold' or 'warm'
 front_type=${2}
 
-# Optional: time step delta
-dts=${3:-1}
+# Defaults for optional arguments
+default_dts=3
+default_ts_start="2000090100"
+default_ts_end="2000113021"
 
-# Optional: start time step
-ts_start=${4:-2000090100}
+# Optional: Time step delta
+dts=${3:-${default_dts}}
 
-# Optional: end time step
-ts_end=${5:-2000113021}
+# Optional: Start time step
+ts_start=${4:-${default_ts_start}}
+
+# Optional: End time step
+ts_end=${5:-${default_ts_end}}
 
 # ------------------------------------------------------------------------------
 
@@ -59,11 +64,12 @@ fi
 
 # Check front type
 case ${front_type} in
-(cold|warm) ;;
-(*)
-    echo "error: front type: '${front_type}' neither 'cold' nor 'warm'" >&2
-    exit 1
-;;
+    cold|warm)
+    ;;
+    *)
+        echo "error: front type: '${front_type}' neither 'cold' nor 'warm'" >&2
+        exit 1
+    ;;
 esac
 
 # ------------------------------------------------------------------------------
@@ -119,8 +125,8 @@ split_tracks=-1
 
 # Input
 infile_const="data/crclim_const_lm_c.nc"
-case ${dts} in
-    3) indir="data/3hrly/{YYYY}/{MM}";;
+case $((dts % 3)) in
+    0) indir="data/3hrly/{YYYY}/{MM}";;
     *) indir="data/1hrly/{YYYY}/{MM}";;
 esac
 infile="lffd{YYYY}{MM}{DD}{HH}p.nc"
