@@ -205,8 +205,8 @@ def copy_file(
     else:
         log.info(f"copy file: {path} -> {dest}")
         if not dry:
-            if path.exists():
-                path.unlink()
+            if dest.exists():
+                dest.unlink()
             shutil.copyfile(path, dest)
 
 
