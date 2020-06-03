@@ -67,7 +67,7 @@ DEFAULT_DATA_PATH_FTP = "ftp://iacftp.ethz.ch/pub_read/ruestefa/stormtrack/sandb
     "--ftp-retry",
     help="Number of times a timed-out FTP download is retried.",
     type=int,
-    defualt=5,
+    default=5,
 )
 @click.option(
     "--dry/--no-dry", help="Don't copy any files.", default=False,
