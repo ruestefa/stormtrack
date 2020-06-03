@@ -160,7 +160,7 @@ def copy_file(
     if not dry:
         if dest.exists():
             if not force:
-                raise Exception("file exists", dest)
+                raise FileExistsError(str(dest))
             dest.unlink()
         dest.parent.mkdir(exist_ok=True, parents=True)
     if link_expr is not None and link_expr.match(path.name):
@@ -173,6 +173,10 @@ def copy_file(
             if path.exists():
                 path.unlink()
             shutil.copyfile(path, dest)
+
+
+class FTPDownloadError(Exception):
+    """An error occurred during a downloade via FPT."""
 
 
 @dataclass
@@ -216,14 +220,13 @@ class FTPPath:
         log.info(f"download file: {self.host}:{path} -> {dest}")
         if not self._dry:
             if dest.exists() and not self._force:
-                raise Exception("file exists", str(dest))
+                raise FileExistsError(str(dest))
             dest.parent.mkdir(exist_ok=True, parents=True)
             try:
                 self._ftp.retrbinary("RETR " + path.name, open(dest, "wb").write)
             except Exception as e:
-                breakpoint()
-                raise Exception(
-                    f"ftp download error: {type(e).__name__}: {e}",
+                raise FTPDownloadError(
+                    f"{type(e).__name__}: {e}",
                     {"host": self.host, "path": str(path), "dest": str(dest)},
                 )
 
