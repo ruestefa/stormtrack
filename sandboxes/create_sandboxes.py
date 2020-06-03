@@ -43,14 +43,14 @@ DEFAULT_DATA_PATH_FTP = "ftp://iacftp.ethz.ch/pub_read/ruestefa/stormtrack/sandb
     "dest", type=Path,
 )
 @click.option(
-    "--template-path",
-    help="Path to template (scripts etc.), including 'sandboxes/'.",
+    "--skeleton-path",
+    help="Path to sandbox seketon (scripts etc.), including 'sandboxes/'.",
     type=Path,
     default=DEFAULT_TEMPLATE_PATH,
 )
 @click.option(
     "--data-path-ftp",
-    help="FPT path to data, up and including 'sandboxes/'.",
+    help="FPT path to data, including 'sandboxes/'.",
     type=str,
     default=DEFAULT_DATA_PATH_FTP,
 )
@@ -64,25 +64,58 @@ DEFAULT_DATA_PATH_FTP = "ftp://iacftp.ethz.ch/pub_read/ruestefa/stormtrack/sandb
     default=False,
 )
 @click.option(
+    "--ftp-retry",
+    help="Number of times a timed-out FTP download is retried.",
+    type=int,
+    defualt=5,
+)
+@click.option(
     "--dry/--no-dry", help="Don't copy any files.", default=False,
 )
 @click.option(
+    "--dry-skeleton/--no-dry-skeleton",
+    help=(
+        "Show what would be done to create the sandbox skeleton (scripts etc.), but"
+        " don't copy any files."
+    ),
+    default=False,
+)
+@click.option(
     "--dry-data/--no-dry-data",
-    help="Create sandboxes, but don't copy any data files.",
+    help=(
+        "Show what data files would be copied, but don't copy any files."
+        " (Still requires access to the FTP server where the files are stored.)"
+    ),
     default=False,
 )
 @click.option(
     "-v", "vb", help="Pass once or more to increase the verbosity.", count=True,
 )
-def cli(dest, template_path, data_path_ftp, force, link_run_scripts, dry, dry_data, vb):
+def cli(
+    dest,
+    skeleton_path,
+    data_path_ftp,
+    force,
+    link_run_scripts,
+    ftp_retry,
+    dry,
+    dry_skeleton,
+    dry_data,
+    vb,
+):
     """Create sandboxes at DEST."""
     if dest.name != "sandboxes":
         dest /= "sandboxes"
+    if dry:
+        dry_skeleton = True
+        dry_data = True
     set_verbosity(vb)
-    copy_template(
-        template_path, dest, link=link_run_scripts, force=force, dry=dry, vb=vb
+    create_skeleton(
+        skeleton_path, dest, link=link_run_scripts, force=force, dry=dry_skeleton, vb=vb
     )
-    download_data_files(data_path_ftp, dest, force=force, dry=(dry or dry_data), vb=vb)
+    download_data(
+        data_path_ftp, dest, force=force, n_retry=ftp_retry, dry=dry_data, vb=vb
+    )
 
 
 def set_verbosity(level):
@@ -94,10 +127,10 @@ def set_verbosity(level):
         log.getLogger().setLevel(log.DEBUG)
 
 
-def copy_template(
+def create_skeleton(
     path: Path, dest: Path, *, force: bool, link: bool, dry: bool, vb: int
 ) -> None:
-    """Copy sandbox templates."""
+    """Create sandbox skeleton (scripts etc.)."""
     if dry:
         set_verbosity(max(1, vb))
     link_expr = r"\b.*\.sh\b" if link else None
@@ -105,14 +138,16 @@ def copy_template(
     set_verbosity(vb)
 
 
-def download_data_files(
-    path: str, dest: Path, *, force: bool, dry: bool, vb: int
+def download_data(
+    path: str, dest: Path, *, force: bool, n_retry: int, dry: bool, vb: int
 ) -> None:
-    """Download the data files from the FTP server."""
+    """Download data files from FTP server."""
     if dry:
         set_verbosity(max(1, vb))
     ftp_path = FTPPath.from_str(path)
-    ftp_path.download(dest, force=force, dry=dry)
+    ftp_path.download(
+        dest, FTPPathDownloadConfig(force=force, n_retry=n_retry, dry=dry)
+    )
     set_verbosity(vb)
 
 
@@ -180,14 +215,20 @@ class FTPDownloadError(Exception):
 
 
 @dataclass
+class FTPPathDownloadConfig:
+    n_retry: int = 5
+    force: bool = False
+    dry: bool = False
+
+
+@dataclass
 class FTPPath:
     host: str
     path: Path
 
     def __post_init__(self):
-        self._ftp: Optional[FTP] = None
-        self._dry: Optional[bool] = None
-        self._force: Optional[bool] = None
+        download_config: FTPPathDownloadConfig = FTPPathDownloadConfig()
+        self.ftp: Optional[FTP] = None
 
     @classmethod
     def from_str(cls, path: str, **kwargs) -> "FTPPath":
@@ -200,58 +241,80 @@ class FTPPath:
         return cls(host=match.group("host"), path=path, **kwargs)
 
     def download(
-        self, dest: Union[str, Path], *, force: bool = False, dry: bool = False
+        self, dest: Union[str, Path], config: Optional[FTPPathDownloadConfig] = None
     ) -> None:
         """Download files and folders under path from FTP host to dest."""
+        if config is not None:
+            self.download_config = config
         log.info(f"download {self.host}:{self.path} to {dest}")
-        self._dest = dest
-        self._force = force
-        self._dry = dry
-        with FTP(self.host) as self._ftp:
-            self._ftp.login()
+        with FTP(self.host) as self.ftp:
+            response = self.ftp.login("anonymous", "foo@bar.ch")
+            log.info(f"connecting to FTP host {self.host}: {response}")
             self._download_dir(self.path, dest)
-        self._ftp = None
-        self._dest = None
-        self._force = None
-        self._dry = None
+        self.ftp = None
 
-    def _download_file(self, path: Path, dest: Path) -> None:
+    def _download_file(
+        self, path: Path, dest: Path, force: Optional[bool] = None
+    ) -> None:
         """Download a file."""
+        if force is None:
+            force = self.download_config.force
         log.info(f"download file: {self.host}:{path} -> {dest}")
-        if not self._dry:
-            if dest.exists() and not self._force:
+        if not self.download_config.dry:
+            if dest.exists() and not force:
                 raise FileExistsError(str(dest))
             dest.parent.mkdir(exist_ok=True, parents=True)
             try:
-                self._ftp.retrbinary("RETR " + path.name, open(dest, "wb").write)
-            except Exception as e:
+                self.ftp.retrbinary("RETR " + path.name, open(dest, "wb").write)
+            except Exception as error:
                 raise FTPDownloadError(
-                    f"{type(e).__name__}: {e}",
-                    {"host": self.host, "path": str(path), "dest": str(dest)},
+                    {
+                        "cls": type(error),
+                        "msg": str(error),
+                        "host": self.host,
+                        "path": str(path),
+                        "dest": str(dest),
+                    },
                 )
 
     def _download_dir(self, path: Path, dest: Path) -> None:
         """Download a directory recursively."""
         log.debug(f"download dir: {self.host}:{path} -> {dest}")
-        cdir = self._ftp.pwd()
-        self._ftp.cwd(str(path))
-        for node in self._ftp.nlst():
+        cdir = self.ftp.pwd()
+        self.ftp.cwd(str(path))
+        for node in self.ftp.nlst():
             self._download_node(node, dest)
-        self._ftp.cwd(cdir)
+        self.ftp.cwd(cdir)
 
     def _download_node(self, node: str, dest: Path) -> None:
         """Download a file or directory."""
-        path = Path(self._ftp.pwd()) / Path(node)
+        path = Path(self.ftp.pwd()) / Path(node)
         log.debug(f"download node: {self.host}:{path} -> {dest}")
         dest = dest / Path(node)
-        wd = self._ftp.pwd()
+        wd = self.ftp.pwd()
         try:
-            self._ftp.cwd(str(path))
+            self.ftp.cwd(str(path))
         except ftplib.error_perm:
-            self._download_file(path, dest)
+            for i_try in range(self.download_config.n_retry):
+                force = self.download_config.force if i_try == 0 else True
+                try:
+                    self._download_file(path, dest, force)
+                except FTPDownloadError as error:
+                    if issubclass(error.args[0]["cls"], TimeoutError):
+                        if i_try == self.download_config.n_retry - 1:
+                            raise FTPDownloadError(
+                                "download failed after {i_try + 1) attemps"
+                            ) from error
+                        log.error(
+                            f"download timed out; retrying ({i_try + 1}/"
+                            f"{self.download_config.n_retry}) ..."
+                        )
+                        continue
+                    raise
+                break
         else:
             self._download_dir(path, dest)
-            self._ftp.cwd(wd)
+            self.ftp.cwd(wd)
 
 
 if __name__ == "__main__":
