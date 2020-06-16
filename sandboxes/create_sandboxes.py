@@ -22,6 +22,7 @@ from dataclasses import dataclass
 from ftplib import FTP
 from pathlib import Path
 from typing import Optional
+from typing import Pattern
 from typing import Sequence
 from typing import Union
 
@@ -120,7 +121,7 @@ def copy_tree(
     path: Path,
     dest: Path,
     force: bool = False,
-    link_expr: Optional[Union[str, re.Pattern]] = None,
+    link_expr: Optional[Union[str, Pattern]] = None,
     dry: bool = False,
 ) -> None:
     """Copy a directory tree.
