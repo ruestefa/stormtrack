@@ -60,8 +60,10 @@ dependencies = [
 ]
 
 scripts = [
-    "identify-features=stormtrack.identify_features:pre_main",
-    "track-features=stormtrack.track_features:pre_main",
+    "identify-features=stormtrack.identify_features:cli",
+    "track-features=stormtrack.track_features:cli",
+    "project-tracks=stormtrack.scripts.project_tracks:cli",
+    "inspect-tracks=stormtrack.scripts.inspect_tracks:cli",
 ]
 
 # Compile FORTRAN files

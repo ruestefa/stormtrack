@@ -2566,7 +2566,7 @@ def _rebuild_features_core(
             log.debug(f" ({ni}/{ntot}) {jdat_feature['id']}")
         if counter and ni % di == 0:
             msg = (
-                ".. {ni / ntot:3.0%} rebuilding {n_rebuild:,}/{ntot:,} "
+                f".. {ni / ntot:3.0%} rebuilding {n_rebuild:,}/{ntot:,} "
                 f"features ({period})"
             )
             try:

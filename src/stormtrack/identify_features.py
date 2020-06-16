@@ -1715,7 +1715,7 @@ def preproc_args__exe(parser, kwas, conf):
         conf["timings_measure"] = True
 
 
-def pre_main():
+def cli():
     parser = setup_parser()
     if len(sys.argv) == 1:
         parser.print_help()
@@ -1727,4 +1727,4 @@ def pre_main():
 
 
 if __name__ == "__main__":
-    pre_main()
+    cli()
