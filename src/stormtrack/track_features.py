@@ -30,7 +30,7 @@ from .core.io import write_feature_file
 from .core.tracking import FeatureTracker
 from .identify_features import get_info_features
 from .identify_features import identify_features as identify_features_core
-from .identify_features import read_lonlat
+from .identify_features import read_lonlat2d
 from .identify_features import read_topo
 from .utils.spatial import derive_lonlat_1d
 from .utils.various import TimestepGenerator
@@ -81,7 +81,7 @@ def main(
         timings["wait"] = mp.Value("d", 0.0)
 
     # Read lon/lat
-    lon2d, lat2d = read_lonlat(conf_in)
+    lon2d, lat2d = read_lonlat2d(conf_in)
     nx, ny = lon2d.shape
     print("GRID : {} x {}".format(nx, ny))
     conf_in["nx"] = nx

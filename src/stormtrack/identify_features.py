@@ -67,7 +67,7 @@ def main(
         timings["core_lst"] = []
 
     # Read grid parameters
-    lon, lat = read_lonlat(conf_in)
+    lon, lat = read_lonlat2d(conf_in)
     nx, ny = lon.shape
     conf_in["nx"] = nx
     conf_in["ny"] = ny
@@ -135,7 +135,7 @@ def main(
         ps.strip_dirs().sort_stats("tottime").print_stats(nlines)
 
 
-def read_lonlat(conf):
+def read_lonlat2d(conf):
 
     infile = conf["infile_lonlat"]
     name_lon, name_lat = conf["lonlat_names"]
@@ -149,10 +149,15 @@ def read_lonlat(conf):
         with h5py.File(infile) as fi:
             lon, lat = fi[name_lon], fi[name_lat]
     else:
-        print("< read " + infile)  # SR_DBG
         with nc4.Dataset(infile, "r") as fi:
             lon = fi["lon"][:]
             lat = fi["lat"][:]
+
+    if len(lon.shape) == 1:
+        assert len(lat.shape) == 1
+        nx, ny = lon.size, lat.size
+        lon = np.stack([lon] * ny, axis=1)
+        lat = np.stack([lat] * nx, axis=0)
 
     if transpose:
         lon = lon.T
@@ -675,22 +680,23 @@ def compute_front_fields(infile, conf_in, conf_preproc, conf_comp_fronts):
     """Read a field from disk (netCDF, npz) and preprocess it."""
 
     # Fetch some input arguments
-    informat = conf_in["input_format"]
-    fld_name = conf_in["varname"]
-    transpose = conf_in["infield_transpose"]
     fld_mirror = conf_in["infield_mirror"]
+    fld_name = conf_in["varname"]
+    informat = conf_in["input_format"]
     level = conf_in["infield_lvl"]
-    reduce_stride = conf_in["reduce_grid_stride"]
+    name_lon, name_lat = conf_in["lonlat_names"]
     reduce_mode = conf_in["reduce_grid_mode"]
+    reduce_stride = conf_in["reduce_grid_stride"]
+    transpose = conf_in["infield_transpose"]
 
     # Fetch some preprocessing arguments
-    mask_name = conf_preproc["mask_varname"]
+    add_refval = conf_preproc["add_refval"]
     mask_mirror = conf_preproc["mask_mirror"]
+    mask_name = conf_preproc["mask_varname"]
     mask_threshold_gt = conf_preproc["mask_threshold_gt"]
     mask_threshold_lt = conf_preproc["mask_threshold_lt"]
-    trim_boundaries_n = conf_preproc["trim_boundaries_n"]
     refval = conf_preproc["refval"]
-    add_refval = conf_preproc["add_refval"]
+    trim_boundaries_n = conf_preproc["trim_boundaries_n"]
 
     if informat != "field":
         err = ("input format must be 'field' to compute fronts, not '{}'").format(
@@ -699,7 +705,18 @@ def compute_front_fields(infile, conf_in, conf_preproc, conf_comp_fronts):
         raise ValueError(err)
 
     # Read raw input fields
-    iflds = fronts_read_raw_fields(infile, level, var_sfx=conf_comp_fronts["var_sfx"])
+    iflds = fronts_read_raw_fields(
+        infile,
+        level,
+        name_lon=name_lon,
+        name_lat=name_lat,
+        name_p=conf_comp_fronts["var_name_p"],
+        name_t=conf_comp_fronts["var_name_t"],
+        name_qv=conf_comp_fronts["var_name_qv"],
+        name_u=conf_comp_fronts["var_name_u"],
+        name_v=conf_comp_fronts["var_name_v"],
+        uv_stag=conf_comp_fronts["var_uv_stag"],
+    )
 
     if reduce_stride > 1:
         # Reduce grid resolution by striding
@@ -707,14 +724,21 @@ def compute_front_fields(infile, conf_in, conf_preproc, conf_comp_fronts):
             iflds[name] = reduce_grid_resolution(fld, reduce_stride, reduce_mode)
 
     # Compute front fields
-    kwas = copy(iflds)
-    kwas.update(conf_comp_fronts)
+    kwas = dict(iflds)
+    # SR_TMP < TODO cleaner solution
+    # kwas.update(conf_comp_fronts)
+    kwas.update(
+        {
+            k: v
+            for k, v in conf_comp_fronts.items()
+            if not k.startswith("var_name_") and k != "var_uv_stag"  # SR_TMP
+        }
+    )
+    # SR_TMP >
     # kwas["print_prefix"] = ""
     # kwas["verbose"] = False
     oflds = identify_fronts(**kwas)
-    _fmt = lambda s: "{}_{}{}".format(
-        s, conf_comp_fronts["tvar"], ""  # conf_comp_fronts["var_sfx"]
-    )
+    _fmt = lambda s: "{}_{}".format(s, conf_comp_fronts["tvar"])
     oflds = {_fmt(k): v for k, v in oflds.items()}
     fld = oflds[fld_name]
 

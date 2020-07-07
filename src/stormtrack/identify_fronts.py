@@ -79,7 +79,7 @@ def identify_fronts_ts(conf_in, conf_comp, conf_out, conf_exe, ts, ifile, ofile)
     # Read input fields
     if conf_exe["vb"] >= 1:
         print(pp_ts + " read {}".format(ifile))
-    iflds = read_fields(ifile, level, conf_comp["var_sfx"])
+    iflds = read_fields(ifile, level)
 
     # Identify fronts
     if conf_exe["vb"] >= 1:
@@ -94,72 +94,110 @@ def identify_fronts_ts(conf_in, conf_comp, conf_out, conf_exe, ts, ifile, ofile)
     # Write front fields to netCDF file
     if conf_exe["vb"] >= 1:
         print(pp_ts + " write {}".format(ofile))
-    write_front_fields(
-        ifile, ofile, oflds, level, conf_comp, conf_out, conf_comp["var_sfx"]
-    )
+    write_front_fields(ifile, ofile, oflds, level, conf_comp, conf_out)
 
     with its.get_lock():
         its.value += 1
 
 
-# ==============================================================================
+def read_fields(
+    ifile,
+    level,
+    *,
+    name_lon = "rlon",
+    name_lat = "rlat",
+    name_p = "pressure",
+    name_t = "T",
+    name_qv = "QV",
+    name_u = "U",
+    name_v = "V",
+    name_lon_stag = None,
+    name_lat_stag = None,
+    uv_stag = False,
+):
+    if not name_lon_stag:
+        name_lon_stag = f"s{name_lon}"
+    if not name_lat_stag:
+        name_lat_stag = f"s{name_lat}"
 
+    def read_var(fi, name, dimensions=None, *, scale_by_unit=None):
+        var = fi.variables[name]
+        arr = var[:].astype(np.float32)
+        if dimensions:
+            dimensions = list(dimensions)
+            var_dimensions = list(var.dimensions)
+            for idx, dim_var in enumerate(list(var_dimensions)):
+                if dim_var not in dimensions:
+                    if arr.shape[idx] != 1:
+                        raise NotImplementedError(
+                            f"drop dimension '{dim_var}' with length"
+                            f" {arr.shape[idx]} != 1"
+                        )
+                    arr = np.take(arr, 0, idx)
+                    var_dimensions.pop(idx)
+            for idx, dim in enumerate(dimensions):
+                try:
+                    idx_var = var_dimensions.index(dim)
+                except ValueError:
+                    raise Exception("unexpected dimension: {dim}")
+                if idx_var != idx:
+                    arr = np.swapaxes(arr, idx, idx_var)
+                    var_dimensions[idx], var_dimensions[idx_var] = (
+                        var_dimensions[idx_var], var_dimensions[idx]
+                    )
+            assert dimensions == var_dimensions  # SR_TMP
+        if scale_by_unit:
+            unit = var.units
+            fact = scale_by_unit.get(unit, 1.0)
+            arr *= fact
+        return arr
 
-def read_fields(ifile, level, var_sfx=""):
-
-    varnames = ["rlon", "rlat", "pressure", "T", "QV", "U", "V"]
     try:
         with nc4.Dataset(ifile, "r") as fi:
-            try:
-                rlon = fi.variables["rlon"][:]
-                rlat = fi.variables["rlat"][:]
-                P = fi.variables["pressure"][:]
-                T = fi.variables["T" + var_sfx][:][0]
-                QV = fi.variables["QV" + var_sfx][:][0]
-                U = fi.variables["U" + var_sfx][:][0]
-                V = fi.variables["V" + var_sfx][:][0]
-                assert fi.variables["T" + var_sfx].dimensions[0] == "time"
-            except KeyError as e:
-                err = ("variable {} not found in file '{}'; available: {}").format(
-                    e, ifile, ", ".join(fi.variables)
-                )
-                raise IOError(err) from None
+            lon = read_var(fi, name_lon)
+            lat = read_var(fi, name_lat)
+            P = read_var(fi, name_p, (name_p,), scale_by_unit={"Pa": 0.01})
+            dims = [name_p, name_lon, name_lat]
+            T = read_var(fi, name_t, dims)
+            QV = read_var(fi, name_qv, dims)
+            if not uv_stag:
+                dims_u = dims
+                dims_v = dims
+            else:
+                dims_u = [name_lon_stag if name == name_lon else name for name in dims]
+                dims_v = [name_lat_stag if name == name_lat else name for name in dims]
+            U = read_var(fi, name_u, dims_u)
+            V = read_var(fi, name_v, dims_v)
     except OSError as e:
         if "No such file or directory" in str(e):
             raise FileNotFoundError(ifile)
         raise
 
-    P /= 100  # Pa -> hPa
-
     n_levels = P.size
 
-    if n_levels == 1:
-        if P != level:
-            err = "level {} hPa not in {}".format(level, P)
-            raise Exception(err)
-    else:
-        # Get level index
-        try:
-            level_ind = P.tolist().index(level)
-        except ValueError:
-            err = "level {} hPa not in {}".format(level, P)
-            raise Exception(err)
+    # Get level index
+    try:
+        level_ind = P.tolist().index(level)
+    except ValueError:
+        err = "level {} hPa not in {}".format(level, P)
+        raise Exception(err)
 
-        # Extract level of interest
-        T = T[level_ind]
-        QV = QV[level_ind]
-        U = U[level_ind]
-        V = V[level_ind]
+    # Extract level of interest
+    T = T[level_ind]
+    QV = QV[level_ind]
+    U = U[level_ind]
+    V = V[level_ind]
 
     T -= 273.15  # K -> degC
 
-    destagger(U, axis=0)
-    destagger(V, axis=1)
+    if uv_stag:
+        destagger(U, axis=0)
+        destagger(V, axis=1)
 
     # Create uniform pressure field
     P = np.ones(T.shape, T.dtype, order="F") * level
 
-    return dict(lon=rlon, lat=rlat, P=P, T=T, QV=QV, U=U, V=V)
+    return dict(lon=lon, lat=lat, P=P, T=T, QV=QV, U=U, V=V)
 
 
 def destagger(fld, axis):
@@ -172,7 +210,7 @@ def destagger(fld, axis):
         raise NotImplementedError("axis {}".format(axis))
 
 
-def write_front_fields(ifile, ofile, oflds, level, conf_comp, conf_out, var_sfx=""):
+def write_front_fields(ifile, ofile, oflds, level, conf_comp, conf_out):
 
     nx, ny = oflds["fmask"].shape
     dims = [("time", 1), ("rlon", nx), ("rlat", ny)]
@@ -339,11 +377,45 @@ def parser_add_group__comp(parser, title="compute", preflag="", name="comp"):
         dest=name + "__tvar",
     )
     group.add_argument(
-        "--{}var-suffix".format(preflag),
-        help="suffix of raw input variables",
-        metavar="suffix",
-        default="",
-        dest=name + "__var_sfx",
+        "--{}var-name-p".format(preflag),
+        help="name of variable P (pressure)",
+        metavar="name",
+        default="P",
+        dest=name + "__var_name_p",
+    )
+    group.add_argument(
+        "--{}var-name-t".format(preflag),
+        help="name of variable T (temperature)",
+        metavar="name",
+        default="T",
+        dest=name + "__var_name_t",
+    )
+    group.add_argument(
+        "--{}var-name-qv".format(preflag),
+        help="name of variable QV (specific humidity)",
+        metavar="name",
+        default="QV",
+        dest=name + "__var_name_qv",
+    )
+    group.add_argument(
+        "--{}var-name-u".format(preflag),
+        help="name of variable U (zonal wind)",
+        metavar="name",
+        default="U",
+        dest=name + "__var_name_u",
+    )
+    group.add_argument(
+        "--{}var-name-v".format(preflag),
+        help="name of variable V (meridional wind)",
+        metavar="name",
+        default="V",
+        dest=name + "__var_name_v",
+    )
+    group.add_argument(
+        "--{}var-uv-staggered".format(preflag),
+        help="whether U and V are on semi-staggered grids",
+        action="store_true",
+        dest=name + "__var_uv_stag",
     )
     group.add_argument(
         "--{}stride".format(preflag),

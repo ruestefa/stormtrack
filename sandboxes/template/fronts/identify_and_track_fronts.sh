@@ -144,11 +144,16 @@ outfile="tracks_${feature_name}_raw_{YYYY}{MM}"
 # Input
 flags_in=()
 flags_in+=(-S ${ts_start} ${ts_end} ${dts})
-flags_in+=(--lonlat-names lon lat)
+flags_in+=(--lonlat-names rlon rlat)
 flags_in+=(--infile-lonlat="${infile_const}")
 flags_in+=(--topo-file="${infile_const}")
 flags_in+=(--infile-fmt="${indir}/${infile}")
-flags_in+=(--fronts-var-suffix="_hy50")
+flags_in+=(--fronts-var-name-p="pressure")
+flags_in+=(--fronts-var-name-t="T_hy50")
+flags_in+=(--fronts-var-name-qv="QV_hy50")
+flags_in+=(--fronts-var-name-u="U_hy50")
+flags_in+=(--fronts-var-name-v="V_hy50")
+flags_in+=(--fronts-var-uv-staggered)
 flags_in+=(--fronts-temp-var="${temp_var}")
 
 # Output
