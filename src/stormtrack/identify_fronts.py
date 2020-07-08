@@ -568,16 +568,15 @@ def preproc_args__exe(parser, kwas, conf):
     # SR_TMP>
 
 
-if __name__ == "__main__":
+def cli():
     parser = setup_parser()
     if len(sys.argv) == 1:
         parser.print_help()
         exit(1)
-    args = parser.parse_args()
-    try:
-        print_args(args)
-    except NameError:
-        pass
-    kwas = vars(args)
+    kwas = vars(parser.parse_args())
+    print_args(kwas)
     preproc_args(parser, kwas)
     main(**kwas)
+
+if __name__ == "__main__":
+    cli()
