@@ -1,8 +1,12 @@
 black
 bumpversion
+flake8
 ipdb
 ipython
+mypy
 # pluggy
+pylint
+rope
 # sphinx
 # twine
 # watchdog
