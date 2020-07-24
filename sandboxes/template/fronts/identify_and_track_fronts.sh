@@ -16,8 +16,7 @@ which ${EXE} >/dev/null 2>&1 || {
 
 args=(num_procs front_type)
 opts=(dts ts_start ts_end)
-if [ ${#} -lt ${#args[@]} ]
-then
+if [ ${#} -lt ${#args[@]} ]; then
     echo "error: expected ${#args[@]} arguments, got ${#}" >&2
     echo "usage: $(basename ${0}) ${args[@]} [${opts[@]}]" >&2
     exit 1
@@ -49,12 +48,10 @@ ts_end=${5:-${default_ts_end}}
 # ------------------------------------------------------------------------------
 
 # Check num_procs and determine whether to decouple the identification
-if [ ${num_procs} -eq 1 ]
-then
+if [ ${num_procs} -eq 1 ]; then
     decoupled_id=0
     num_procs_id=0
-elif [ ${num_procs} -ge 2 ]
-then
+elif [ ${num_procs} -ge 2 ]; then
     decoupled_id=1
     num_procs_id=$((num_procs - 1))
 else
@@ -64,11 +61,10 @@ fi
 
 # Check front type
 case ${front_type} in
-    cold|warm)
-    ;;
-    *)
-        echo "error: front type: '${front_type}' neither 'cold' nor 'warm'" >&2
-        exit 1
+cold | warm) ;;
+*)
+    echo "error: front type: '${front_type}' neither 'cold' nor 'warm'" >&2
+    exit 1
     ;;
 esac
 
@@ -77,8 +73,8 @@ esac
 # ------------------------------------------------------------------------------
 
 # Run
-skip_start=0  # Skip first N outputs
-skip_end=0  # Skip last N outputs
+skip_start=0 # Skip first N outputs
+skip_end=0   # Skip last N outputs
 
 # Data
 level=850
@@ -97,17 +93,20 @@ split_peak=-1
 topo_thresh=-1
 
 # Mid-monthly identification thresholds
-refyear="${ts_start:0:3}0"  # Either 2000 (clim) or 2080 (pgw)
+refyear="${ts_start:0:3}0" # Either 2000 (clim) or 2080 (pgw)
 case ${refyear} in
-    2000) threshs_farea_monthly=(
-          # Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec
-            4.0  4.0  5.0  6.0  7.0  8.0  8.0  8.0  7.0  6.0  5.0  4.0
-        ) ;;
-    2080) threshs_farea_monthly=(
-          # Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec
-            4.5  4.5  5.75 7.0  8.25 9.5  9.5  9.5  8.25 7.0  5.75 4.5
-        ) ;;
-    *) echo "invalid refyear '${refyear}'" >&2; exit 1;;
+2000) threshs_farea_monthly=(
+    # Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec
+    4.0 4.0 5.0 6.0 7.0 8.0 8.0 8.0 7.0 6.0 5.0 4.0
+) ;;
+2080) threshs_farea_monthly=(
+    # Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec
+    4.5 4.5 5.75 7.0 8.25 9.5 9.5 9.5 8.25 7.0 5.75 4.5
+) ;;
+*)
+    echo "invalid refyear '${refyear}'" >&2
+    exit 1
+    ;;
 esac
 
 # Tracking
@@ -116,7 +115,7 @@ min_p_overlap=0.1
 min_p_tot=0.4
 alpha=0.5
 max_children=6
-min_duration=$((6/dts))
+min_duration=$((6 / dts))
 split_tracks=-1
 
 # ------------------------------------------------------------------------------
@@ -126,8 +125,8 @@ split_tracks=-1
 # Input
 infile_const="data/crclim_const_lm_c.nc"
 case $((dts % 3)) in
-    0) indir="data/3hrly/{YYYY}/{MM}";;
-    *) indir="data/1hrly/{YYYY}/{MM}";;
+0) indir="data/3hrly/{YYYY}/{MM}" ;;
+*) indir="data/1hrly/{YYYY}/{MM}" ;;
 esac
 infile="lffd{YYYY}{MM}{DD}{HH}p.nc"
 
@@ -178,9 +177,12 @@ flags_idfy+=(--minsize=${minsize})
 flags_idfy+=(--trim-boundaries=${n_bnd_trim})
 flags_idfy+=(--topo-filter-threshold=${topo_thresh})
 case ${front_type} in
-    cold ) flags_idfy+=(--mask-nomirror) ;;
-    warm ) flags_idfy+=(--mask-mirror) ;;
-    *) echo "unknown front type: ${front_type}" >&2; exit 4;;
+cold) flags_idfy+=(--mask-nomirror) ;;
+warm) flags_idfy+=(--mask-mirror) ;;
+*)
+    echo "unknown front type: ${front_type}" >&2
+    exit 4
+    ;;
 esac
 flags_idfy+=(--fronts-diffuse=${n_smooth})
 
@@ -211,7 +213,11 @@ ${EXE} \
     ${flags_out[@]} \
     ${flags_idfy[@]} \
     ${flags_track[@]} \
-    ${flags_exe[@]} \
-|| { err=${?}; echo "exec error: exit ${err}" >&2; exit ${err}; }
+    ${flags_exe[@]} ||
+    {
+        err=${?}
+        echo "exec error: exit ${err}" >&2
+        exit ${err}
+    }
 
 # ------------------------------------------------------------------------------
