@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Third-party
-import cython
+# import cython
 import numpy as np
 
 # Local

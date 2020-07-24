@@ -84,10 +84,7 @@ def identify_fronts_ts(conf_in, conf_comp, conf_out, conf_exe, ts, ifile, ofile)
     # Identify fronts
     if conf_exe["vb"] >= 1:
         print(pp_ts + " identify frontal areas")
-    kwas = copy(iflds)
-    kwas["print_prefix"] = pp_ts
-    kwas.update(conf_comp)
-    oflds = identify_fronts(**kwas)
+    oflds = identify_fronts(**copy(iflds), **conf_comp, print_prefix=pp_ts)
     for fld in oflds.values():
         fld[fld == conf_comp["nan"]] = np.nan
 
@@ -104,16 +101,16 @@ def read_fields(
     ifile,
     level,
     *,
-    name_lon = "rlon",
-    name_lat = "rlat",
-    name_p = "pressure",
-    name_t = "T",
-    name_qv = "QV",
-    name_u = "U",
-    name_v = "V",
-    name_lon_stag = None,
-    name_lat_stag = None,
-    uv_stag = False,
+    name_lon="rlon",
+    name_lat="rlat",
+    name_p="pressure",
+    name_t="T",
+    name_qv="QV",
+    name_u="U",
+    name_v="V",
+    name_lon_stag=None,
+    name_lat_stag=None,
+    uv_stag=False,
 ):
     if not name_lon_stag:
         name_lon_stag = f"s{name_lon}"
@@ -143,7 +140,8 @@ def read_fields(
                 if idx_var != idx:
                     arr = np.swapaxes(arr, idx, idx_var)
                     var_dimensions[idx], var_dimensions[idx_var] = (
-                        var_dimensions[idx_var], var_dimensions[idx]
+                        var_dimensions[idx_var],
+                        var_dimensions[idx],
                     )
             assert dimensions == var_dimensions  # SR_TMP
         if scale_by_unit:
@@ -172,8 +170,6 @@ def read_fields(
         if "No such file or directory" in str(e):
             raise FileNotFoundError(ifile)
         raise
-
-    n_levels = P.size
 
     # Get level index
     try:
@@ -213,7 +209,6 @@ def destagger(fld, axis):
 def write_front_fields(ifile, ofile, oflds, level, conf_comp, conf_out):
 
     nx, ny = oflds["fmask"].shape
-    dims = [("time", 1), ("rlon", nx), ("rlat", ny)]
 
     title = "fronts on {} hPa".format(level)
     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
@@ -224,7 +219,6 @@ def write_front_fields(ifile, ofile, oflds, level, conf_comp, conf_out):
     # -- Collect output fields
 
     tvar = conf_comp["tvar"]
-    output = {}
 
     outvars = conf_out["outvars"]
 
@@ -277,12 +271,10 @@ def setup_parser():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-
-    input = parser_add_group__in(parser)
-    output = parser_add_group__out(parser)
-    comp = parser_add_group__comp(parser)
-    exe = parser_add_group__exe(parser)
-
+    parser_add_group__in(parser)
+    parser_add_group__out(parser)
+    parser_add_group__comp(parser)
+    parser_add_group__exe(parser)
     return parser
 
 
@@ -577,6 +569,7 @@ def cli():
     print_args(kwas)
     preproc_args(parser, kwas)
     main(**kwas)
+
 
 if __name__ == "__main__":
     cli()
