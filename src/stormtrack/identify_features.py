@@ -1,48 +1,42 @@
 #!/usr/bin/env python3
 
 # Standard library
-import sys
-import os
 import argparse
+import cProfile
 import functools
 import logging as log
 import pstats
-import cProfile
-from copy import copy
-from datetime import datetime
+import sys
 from multiprocessing import Pool
+from pprint import pformat
 from timeit import default_timer as timer
-from pprint import pprint, pformat
-from warnings import warn
 
 # Thirt-party
 import h5py
 import netCDF4 as nc4
 import numpy as np
-import scipy as sp
 
 # Local
 from .core.constants import default_constants
-from .core.identification import cyclones_to_features
 from .core.identification import DEFAULT_TYPE_CODES
+from .core.identification import cyclones_to_features
 from .core.identification import features_grow
 from .core.identification import identify_features as identify_features_core
 from .core.io import write_feature_file
-from .extra.cyclone_id.identify import identify_features as identify_cyclones_core
 from .extra.cyclone_id import config as cycl_cfg
+from .extra.cyclone_id.identify import identify_features as identify_cyclones_core
 from .extra.fronts.fronts import identify_fronts
 from .extra.io_misc import plot_cyclones_depressions_extrema
 from .extra.utilities_misc import Field2D
 from .extra.utilities_misc import threshold_at_timestep
-from .identify_fronts import read_fields as fronts_read_raw_fields
+from .identify_front_fields import read_fields as fronts_read_raw_fields
 from .utils.array import reduce_grid_resolution
 from .utils.netcdf import nc_read_var_list
 from .utils.netcdf import point_list_to_field
-from .utils.various import extract_args
-from .utils.various import ipython
-from .utils.various import print_args
 from .utils.various import TimestepGenerator
 from .utils.various import TimestepStringFormatter
+from .utils.various import extract_args
+from .utils.various import print_args
 
 
 log.basicConfig(format="%(message)s", level=log.INFO)
@@ -330,7 +324,7 @@ def read_identify_write_par_core(
     outfiles_ts,
 ):
     for timesteps_out__outfile in outfiles_ts:
-        timings_i = read_identify_write_core(
+        read_identify_write_core(
             conf_in,
             conf_out,
             conf_topo,
@@ -680,14 +674,12 @@ def compute_front_fields(infile, conf_in, conf_preproc, conf_comp_fronts):
     """Read a field from disk (netCDF, npz) and preprocess it."""
 
     # Fetch some input arguments
-    fld_mirror = conf_in["infield_mirror"]
     fld_name = conf_in["varname"]
     informat = conf_in["input_format"]
     level = conf_in["infield_lvl"]
     name_lon, name_lat = conf_in["lonlat_names"]
     reduce_mode = conf_in["reduce_grid_mode"]
     reduce_stride = conf_in["reduce_grid_stride"]
-    transpose = conf_in["infield_transpose"]
 
     # Fetch some preprocessing arguments
     add_refval = conf_preproc["add_refval"]
@@ -1061,8 +1053,10 @@ def read_input_field_lonlat(
 
 # SR_TMP< TODO solve issue with compoling fronts._libfronts on daint
 try:
-    from .identify_fronts import parser_add_group__comp as parser_add_group__comp_fronts
-    from .identify_fronts import preproc_args__comp as preproc_args__comp_fronts
+    from .identify_front_fields import (
+        parser_add_group__comp as parser_add_group__comp_fronts,
+    )
+    from .identify_front_fields import preproc_args__comp as preproc_args__comp_fronts
 except ImportError as e:
     msg = ("warning: fronts-related import failed: {}; cannot identify fronts!").format(
         e

@@ -62,7 +62,7 @@ dependencies = [
 scripts = [
     # Main
     "identify-features=stormtrack.identify_features:cli",
-    "identify-fronts=stormtrack.identify_fronts:cli",
+    "identify-front-fields=stormtrack.identify_front_fields:cli",
     "track-features=stormtrack.track_features:cli",
     # Additional
     "group-tracks=stormtrack.scripts.group_tracks:cli",

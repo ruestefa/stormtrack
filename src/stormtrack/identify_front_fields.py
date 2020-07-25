@@ -30,6 +30,15 @@ def main(conf_in, conf_out, conf_comp, conf_exe):
 
     conf_comp["verbose"] = conf_exe["vb"] > 1
 
+    # SR_TMP <
+    conf_in["var_name_p"] = conf_comp.pop("var_name_p")
+    conf_in["var_name_t"] = conf_comp.pop("var_name_t")
+    conf_in["var_name_qv"] = conf_comp.pop("var_name_qv")
+    conf_in["var_name_u"] = conf_comp.pop("var_name_u")
+    conf_in["var_name_v"] = conf_comp.pop("var_name_v")
+    conf_in["var_uv_stag"] = conf_comp.pop("var_uv_stag")
+    # SR_TMP >
+
     infiles_tss = conf_in["infiles_tss"]
     outfiles_tss = conf_out["outfiles_tss"]
     args_lst = [
@@ -79,7 +88,18 @@ def identify_fronts_ts(conf_in, conf_comp, conf_out, conf_exe, ts, ifile, ofile)
     # Read input fields
     if conf_exe["vb"] >= 1:
         print(pp_ts + " read {}".format(ifile))
-    iflds = read_fields(ifile, level)
+    iflds = read_fields(
+        ifile,
+        level,
+        name_lon=conf_in["lonlat_names"][0],
+        name_lat=conf_in["lonlat_names"][1],
+        name_p=conf_in["var_name_p"],
+        name_t=conf_in["var_name_t"],
+        name_qv=conf_in["var_name_qv"],
+        name_u=conf_in["var_name_u"],
+        name_v=conf_in["var_name_v"],
+        uv_stag=conf_in["var_uv_stag"],
+    )
 
     # Identify fronts
     if conf_exe["vb"] >= 1:
@@ -223,6 +243,7 @@ def write_front_fields(ifile, ofile, oflds, level, conf_comp, conf_out):
     outvars = conf_out["outvars"]
 
     # Write fields to netCDF file
+    os.makedirs(os.path.dirname(ofile), exist_ok=True)
     with nc4.Dataset(ofile, "w") as fo:
         with nc4.Dataset(ifile, "r") as fi:
             # Transfer dimensions, lon/lat, etc.
@@ -319,6 +340,13 @@ def parser_add_group__in(parser):
         metavar="level",
         default=850,
         dest="in__level_hPa",
+    )
+    group.add_argument(
+        "--lonlat-names",
+        help="names of lon and lat variables (lon/lat or rlon/rlat)",
+        nargs=2,
+        default=["rlon", "rlat"],
+        dest="in__lonlat_names",
     )
     return group
 
