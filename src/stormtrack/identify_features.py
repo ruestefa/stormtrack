@@ -878,7 +878,7 @@ def mask_field(fld, fld_mask, lower, upper):
     elif lower is None:
         mask = fld_mask < upper
     else:
-        mask = (fld_mask > lower) & (fld_mask < mask_lt)
+        mask = (fld_mask > lower) & (fld_mask < upper)
     fld[~mask] = 0
 
 
@@ -1653,9 +1653,6 @@ def preproc_args__preproc(parser, kwas, conf):
 
         if conf["mask_threshold_lt"] is None and conf["mask_threshold_lt"]:
             parser.error("must pass at least one threshold for masking")
-
-        elif conf["mask_threshold_gt"] is None:
-            parser.error("currently only --mask-gt is supported")
 
 
 def preproc_args__out(parser, kwas, conf):

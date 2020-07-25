@@ -4,7 +4,7 @@
 DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))"
 
 # Executable
-EXE="track-features"
+EXE="identify-features"
 which ${EXE} >/dev/null 2>&1 || {
     echo "error: executable not found: ${EXE}" >&2
     exit 1
@@ -48,18 +48,6 @@ ts_end=${5:-${default_ts_end}}
 
 # ------------------------------------------------------------------------------
 
-# Check num_procs and determine whether to decouple the identification
-if [ ${num_procs} -eq 1 ]; then
-    decoupled_id=0
-    num_procs_id=0
-elif [ ${num_procs} -ge 2 ]; then
-    decoupled_id=1
-    num_procs_id=$((num_procs - 1))
-else
-    echo "invalid num_proc=${num_proc} (must be > 0)" >&2
-    exit 1
-fi
-
 # Check front type
 case ${front_type} in
 cold | warm | stationary) ;;
@@ -72,10 +60,6 @@ esac
 # ------------------------------------------------------------------------------
 # Setup
 # ------------------------------------------------------------------------------
-
-# Run
-skip_start=0 # Skip first N outputs
-skip_end=0   # Skip last N outputs
 
 # Data
 level=850
@@ -113,15 +97,6 @@ case ${refyear} in
     exit 1
     ;;
 esac
-
-# Tracking
-min_p_size=0.6
-min_p_overlap=0.1
-min_p_tot=0.4
-alpha=0.5
-max_children=6
-min_duration=$((6 / dts))
-split_tracks=-1
 
 # ------------------------------------------------------------------------------
 # Files and folders
@@ -163,8 +138,6 @@ flags_in+=(--fronts-temp-var="${temp_var}")
 # Output
 flags_out=()
 flags_out+=(--outfile-fmt="${outdir}/${outfile}.pickle")
-flags_out+=(--output-skip-start=${skip_start})
-flags_out+=(--output-skip-end=${skip_end})
 
 # Identification
 flags_idfy=()
@@ -199,22 +172,9 @@ stationary)
 esac
 flags_idfy+=(--fronts-diffuse=${n_smooth})
 
-# Tracking
-flags_track=()
-flags_track+=(--min-p-size=${min_p_size})
-flags_track+=(--min-p-overlap=${min_p_overlap})
-flags_track+=(--min-p-tot=${min_p_tot})
-flags_track+=(--alpha=${alpha})
-flags_track+=(--minsize=${minsize})
-flags_track+=(--max-children=${max_children})
-flags_track+=(--min-duration=${min_duration})
-[ ${split_thresh} -gt 0 ] && flags_track+=(--merge-features)
-flags_track+=(--split-tracks=${split_tracks})
-
 # Execution
 flags_exe=()
-[ ${decoupled_id} -ne 0 ] && flags_exe+=(--overlay-id-track)
-flags_exe+=(--num-procs-id=${num_procs_id})
+flags_exe+=(--num-procs=${num_procs})
 # flags_exe+=(--profile=30)
 
 # ------------------------------------------------------------------------------
@@ -225,7 +185,6 @@ ${EXE} \
     ${flags_in[@]} \
     ${flags_out[@]} \
     ${flags_idfy[@]} \
-    ${flags_track[@]} \
     ${flags_exe[@]} ||
     {
         err=${?}
