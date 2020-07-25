@@ -1,0 +1,342 @@
+#!/bin/bash
+
+#
+# Get days of month
+#
+# Arguments:
+#   $1 month in {01..12}
+#
+month_days() {
+    local element=$1
+    $(datetime_is yyyymm ${element}) || return 2
+    local yyyy="${element:0:4}" mm="${element:4:2}"
+    case ${mm} in
+    01 | 03 | 05 | 07 | 08 | 10 | 12) echo 31 ;;
+    04 | 06 | 09 | 11) echo 30 ;;
+    02) [ $((yyyy % 4)) -eq 0 ] && echo 29 || echo 28 ;;
+    *) return 2 ;;
+    esac
+}
+
+
+#
+# Expand multiple list/range expressions of numbers
+# All numbers in each expression must be zero-padded to the same width
+#
+# Arguments:
+#   $@ expressions, e.g., 12+01-04 for (12 01 02 03 04)
+#
+expand_padded_number_lists_ranges() {
+    # Get width based on first number
+    local w=$(echo $1 | sed 's/\([0-9]\+\).*/\1/' | wc -L)
+
+    for ex in $(echo $@ | sed 's/+/ /g'); do
+        expand_padded_number_range "${ex}"
+    done
+}
+
+
+#
+# Expand a single range expression of numbers
+# All numbers must be zero-padded to the same width
+#
+# Arguments:
+#   $@ expressions, e.g., 01-04 for (01 02 03 04)
+#
+expand_padded_number_range() {
+    local ex="$1"
+    elements=($(echo ${ex//-/ }))
+    ne=${#elements[@]}
+
+    if [ ${ne} -eq 1 ]; then
+        # Simple number
+        element=${elements[0]}
+        [ "${element}" -eq "${element}" ] || exit 11 # int check
+        [ ${#element} -ne ${w} ] && exit 44
+        echo ${element}
+        continue
+
+    elif [ ${ne} -eq 2 ]; then
+        # Number range
+        element0=${elements[0]}
+        element1=${elements[1]}
+        [ "${element0}" -eq "${element0}" ] || exit 11 # int check
+        [ "${element1}" -eq "${element1}" ] || exit 11 # int check
+        [ ${#element0} -ne ${w} ] && exit 44
+        [ ${#element1} -ne ${w} ] && exit 44
+        for element in $(seq -w ${element0} ${element1}); do
+            echo ${element}
+        done
+
+    else
+        exit 55
+    fi
+}
+
+
+#
+# Expand multiple list/range expressions of months or datetimes
+#
+# For each element, start and end datetime tuples (separated by a dash)
+# are returned as a comma-separated list, e.g., for 200712+200701-200702
+# the following is returned: 2007120100-2007123123,2007010100-2007022823
+#
+# Arguments:
+#   $1 datetime format, e.g., yyyymmddhh, yymm
+#   $@ expressions, e.g., 2007011900-2007012123 or 200712+200701-200702
+#
+expand_month_datetime_lists_ranges() {
+    local format_target=$1
+    shift 1
+    local exprs=$@
+
+    local tss_all='' format_source subformat
+    for expr in ${exprs[@]}; do
+        local tss_expr=""
+        for element in ${expr//+/ }; do
+            # Ensure source is a subformat of target
+            local e0="$(echo ${element} | grep -o '^\w\+')"
+            format_source="$(datetime_find_format ${e0})" || return 3
+            subformat="${format_target:0:${#format_source}}"
+            [ "${format_source}" == "${subformat}" ] || return 4
+
+            local tss_i=$(datetime_expand_format ${format_target} ${element} \
+                "-") || return $?
+            tss_expr+=",${tss_i}"
+        done
+        tss_all+=" ${tss_expr:1}" # remove leading comma
+    done
+    echo "${tss_all:1}" # remove leading space
+}
+
+
+#
+# Determine start and end datetime of a month or a range of months
+#
+# Arguments:
+#   $1 datetime target format, e.g., yyyymmddhh, yymm
+#   $2 datetime or range of datetimes, e.g., 200701 or 20070300-20070502
+#   $3 separator, e.g., - or , (optional)
+#
+datetime_expand_format() {
+    local format_target=$1
+    local elements=(${2//-/ })
+    local separator=$3
+    [ "${separator}" == "" ] && separator=" "
+
+    local tss ts_start='' ts_end=''
+    for element in ${elements[@]}; do
+        if $(datetime_is ${format_target} ${element}); then
+            [ "${ts_start}" == "" ] && ts_start=${element}
+            ts_end=${element}
+        else
+            tss=($(datetime_get_start_end ${element} ${format_target}))
+            [ "${ts_start}" == "" ] && ts_start="${tss[0]}"
+            ts_end="${tss[1]}"
+        fi
+    done
+
+    echo "${ts_start}${separator}${ts_end}"
+}
+
+
+#
+# Get the first and last datetime of a higher-order datetime
+# For instance, for 200701, get 2007010100 and 2007013123
+#
+# Arguments:
+#   $1 higher-order datetime, e.g., 200701
+#   $2 target format, e.g., yyyymmddhh
+#   $3 separator, e.g., - or , (optional)
+#
+datetime_get_start_end() {
+    local element=$1
+    local format_target=$2
+    local separator=$3
+    [ "${separator}" == "" ] && separator=" "
+
+    local format_super="$(datetime_find_format ${element})"
+    local tss
+
+    if [ ${#format_super} -gt ${#format_target} ]; then
+        return 2
+
+    elif [ ${#format_super} -eq ${#format_target} ]; then
+        tss=(${element} ${element})
+
+    else
+        case ${format_super}-${format_target} in
+        yyyy-yyyymm) tss=("${element}01" "${element}12") ;;
+        yyyy-yyyymmdd) tss=("${element}0101" "${element}1231") ;;
+        yyyy-yyyymmddhh) tss=("${element}010100" "${element}123123") ;;
+        yyyy-yyyymmddhhnn) tss=("${element}01010000" "${element}12312359") ;;
+        yyyymm-yyyymmdd) tss=("${element}01" "${element}$(month_days ${element})") ;;
+        yyyymm-yyyymmddhh) tss=("${element}0100" "${element}$(month_days ${element})23") ;;
+        yyyymm-yyyymmddhhnn) tss=("${element}010000" "${element}$(month_days ${element})2359") ;;
+        yyyymmdd-yyyymmddhh) tss=("${element}00" "${element}23") ;;
+        yyyymmdd-yyyymmddhhnn) tss=("${element}0000" "${element}2359") ;;
+        yyyymmddhh-yyyymmddhhnn) tss=("${element}00" "${element}59") ;;
+        *) return 3 ;;
+        esac
+    fi
+
+    echo "${tss[0]}${separator}${tss[1]}"
+
+    return 0
+}
+
+
+#
+# Determine the format of a datetime string
+#
+# Arguments:
+#   $1 datetime, e.g., 2007013104
+#
+datetime_find_format() {
+    local element=$1
+    local format formats=(
+        yyyy
+        yyyymm
+        yyyymmdd
+        yyyymmddhh
+        yyyymmddhhnn
+    )
+    for format in ${formats[@]}; do
+        if $(datetime_is ${format} ${element}); then
+            echo ${format}
+            return 0
+        fi
+    done
+    return 1
+}
+
+
+#
+# Check whether a datetime string has a certain format
+#
+# Arguments:
+#   $1 format string, e.g., yyyy, yyyymmddhhnn
+#   $2 datetime string to check, e.g., 20070112
+#
+datetime_is() { (
+    # use subshell ('{(...); }') to isolate local functions
+    local format=$1
+    local dt=$2
+
+    local ry='[12][0-9]\{3\}'
+    local rm='\(0[1-9]\|1[012]\)'
+    local rd='\(0[1-9]\|[12][0-9]\|[3][01]\)'
+    local rh='\([01][0-9]\|2[0-3]\)'
+    local rn='\([0-5][0-9]\)'
+
+    matches() {
+        echo $1 | grep -q "^$2$"
+        echo $?
+    }
+
+    check_dt() {
+        case ${format} in
+        yyyy) return $(matches ${dt} "${ry}") ;;
+        yyyymm) return $(matches ${dt} "${ry}${rm}") ;;
+        yyyymmdd) return $(matches ${dt} "${ry}${rm}${rd}") ;;
+        yyyymmddhh) return $(matches ${dt} "${ry}${rm}${rd}${rh}") ;;
+        yyyymmddhhnn) return $(matches ${dt} "${ry}${rm}${rd}${rh}${rn}") ;;
+        *) return 42 ;;
+        esac
+    }
+    check_dt
+    local stat=$?
+    case $stat in
+    0) return 0 ;;
+    42) return 2 ;;
+    *) return 1 ;;
+    esac
+) }
+
+
+#
+# Create timesteps from combinations of years, days, months, hours
+#
+# Arguments:
+#   $1 year(s), e.g., 2001, 2004-2006+2008
+#   $2 month(s), e.g., 06, 12+01-02
+#   $3 day(s), e.g., 01, 01-28
+#   $4 hour(s), e.g., 00, 00+06+12+18
+#
+create_timesteps() {
+    local ys=($(expand_padded_number_lists_ranges ${1}))
+    local ms=($(expand_padded_number_lists_ranges ${2}))
+    local ds=($(expand_padded_number_lists_ranges ${3}))
+    local hs=($(expand_padded_number_lists_ranges ${4}))
+
+    local expr=""
+    [ ${#ys[@]} -eq 1 ] && expr+="${ys}" || expr+="{${ys[@]}}"
+    [ ${#ms[@]} -eq 1 ] && expr+="${ms}" || expr+="{${ms[@]}}"
+    [ ${#ds[@]} -eq 1 ] && expr+="${ds}" || expr+="{${ds[@]}}"
+    [ ${#hs[@]} -eq 1 ] && expr+="${hs}" || expr+="{${hs[@]}}"
+
+    expr="$(echo "${expr}" | sed 's/ /,/g')"
+    eval echo "${expr}"
+}
+
+
+#
+# Get timestep flags
+#
+# Arguments:
+#   $1 years, e.g., 2002-2004+2008
+#   $@ months, e.g., 01+04-06 for (01 04 05 06)
+#
+get_tsflags() {
+    local yyyys=$1
+    shift 1
+    local ts_start= ts_end=
+    for yyyy in $(expand_padded_number_lists_ranges ${yyyys}); do
+        for element in $(echo $@ | sed 's/+/ /g'); do
+            if [ ${#element} -eq 2 ]; then
+                ts_start="${yyyy}${element}0100"
+                ts_end="${yyyy}${element}$(month_days $element)23"
+            elif [ ${#element} -eq 5 ]; then
+                ts_start="${yyyy}${element:0:2}0100"
+                ts_end="${yyyy}${element:3:2}$(month_days ${element:3:2})23"
+            else
+                exit 66
+            fi
+            echo " -S $ts_start $ts_end 1"
+        done
+    done
+}
+
+
+#
+# Get name of time period (months, seasons)
+#
+# Arguments:
+#   $1 months, e.g., 04 for Apr, or 12+01-02 for DJF
+#
+get_period_name() {
+    local mms=$1
+    case ${mms} in
+    01) echo "Jan" ;;
+    02) echo "Feb" ;;
+    03) echo "Mar" ;;
+    04) echo "Apr" ;;
+    05) echo "May" ;;
+    06) echo "Jun" ;;
+    07) echo "Jul" ;;
+    08) echo "Aug" ;;
+    09) echo "Sep" ;;
+    10) echo "Oct" ;;
+    11) echo "Nov" ;;
+    12) echo "Dec" ;;
+    01-12) echo "all" ;;
+    12+01+02 | 12+01-02) echo "DJF" ;;
+    03+04+05 | 03-05) echo "MAM" ;;
+    06+07+08 | 06-08) echo "JJA" ;;
+    09+10+11 | 09-11) echo "SON" ;;
+    *)
+        echo "unknown mms ${mms}" >&2
+        exit 4
+        ;;
+    esac
+}

@@ -113,3 +113,6 @@ venvs/
 
 # Vim
 .*.swp
+
+# VSCode
+.nfs**

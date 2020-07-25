@@ -624,8 +624,8 @@ def distribute_tracks_across_outfiles(
 
     # Collect group info for track info
     group_name_lt, group_name_ge = group_names
-    group_args_lt = {g["name"]: ("lt", g["threshold"]) for g in sorted(args_methods)}
-    group_args_ge = {g["name"]: ("ge", g["threshold"]) for g in sorted(args_methods)}
+    group_args_lt = {g["name"]: ("lt", g["threshold"]) for g in args_methods}
+    group_args_ge = {g["name"]: ("ge", g["threshold"]) for g in args_methods}
     group_info_lt = {"name": group_name_lt, "args": group_args_lt}
     group_info_ge = {"name": group_name_ge, "args": group_args_ge}
 
@@ -944,7 +944,7 @@ def read_feature_file(
     ignore_missing_neighbors=True,
     ignore_edges_pshare_0=True,
     ignore_missing_total_track_stats=False,
-    ignore_missing_missing_features_stats=False,
+    ignore_missing_features_stats=False,
     # SR_TMP >
 ):
     """Read a '.json' file containing features and/or tracks, and linked files.
@@ -1097,7 +1097,7 @@ def read_feature_file(
         potentially many subtracks spread over as many files;
         obsolete once no more legacy files without such stats are around.
 
-    ignore_missing_missing_features_stats : bool, optional (default: False)
+    ignore_missing_features_stats : bool, optional (default: False)
         Ignore missing 'features stats' of tracks;
         obsolete once no more legacy files without such stats are around.
 
@@ -1133,7 +1133,7 @@ def read_feature_file(
             ignore_missing_neighbors=ignore_missing_neighbors,
             ignore_edges_pshare_0=ignore_edges_pshare_0,
             ignore_missing_total_track_stats=ignore_missing_total_track_stats,
-            ignore_missing_missing_features_stats=ignore_missing_missing_features_stats,
+            ignore_missing_features_stats=ignore_missing_features_stats,
             # SR_TMP >
         )
         tracks = _r["tracks"]
@@ -1315,7 +1315,7 @@ def read_feature_file(
                 counter=counter,
                 ignore_missing_neighbors=ignore_missing_neighbors,
                 ignore_missing_total_track_stats=ignore_missing_total_track_stats,
-                ignore_missing_missing_features_stats=ignore_missing_missing_features_stats,
+                ignore_missing_features_stats=ignore_missing_features_stats,
             )
             features = _r["features"]
             nskip_features = _r["nskip_features"]
@@ -1391,7 +1391,7 @@ def read_feature_file(
                 debug=debug,
                 counter=counter,
                 ignore_missing_total_track_stats=ignore_missing_total_track_stats,
-                ignore_missing_missing_features_stats=ignore_missing_missing_features_stats,
+                ignore_missing_features_stats=ignore_missing_features_stats,
             )
             tracks = _r["tracks"]
             nskip_tracks = _r["nskip_tracks"]
@@ -1667,7 +1667,7 @@ def _rebuild_tracks_from_graphs(
     ignore_missing_neighbors,
     ignore_edges_pshare_0,
     ignore_missing_total_track_stats,
-    ignore_missing_missing_features_stats,
+    ignore_missing_features_stats,
 ):
 
     # SR_TMP <
@@ -1862,7 +1862,7 @@ def _rebuild_tracks_from_graphs(
             debug=False,
             counter=counter,
             ignore_missing_total_track_stats=ignore_missing_total_track_stats,
-            ignore_missing_missing_features_stats=ignore_missing_missing_features_stats,
+            ignore_missing_features_stats=ignore_missing_features_stats,
         )
         new_tracks = _r["tracks"]
         nskip_tracks = _r["nskip_tracks"]
@@ -2222,7 +2222,7 @@ def rebuild_tracks(
     tids_skip,
     fids_skip,
     ignore_missing_total_track_stats,
-    ignore_missing_missing_features_stats,
+    ignore_missing_features_stats,
 ):
 
     if debug:
@@ -2306,12 +2306,12 @@ def rebuild_tracks(
 
             # Missing features stats
             stats = jdat_track["missing_features_stats"]
-            if not stats and not ignore_missing_missing_features_stats:
+            if not stats and not ignore_missing_features_stats:
                 raise Exception(
                     f"track {track.id}: incomplete, but no missing features stats"
                 )
             track.set_missing_features_stats(
-                stats, ignore_missing=ignore_missing_missing_features_stats
+                stats, ignore_missing=ignore_missing_features_stats
             )
 
     if counter:

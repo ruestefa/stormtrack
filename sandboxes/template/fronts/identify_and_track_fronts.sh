@@ -16,8 +16,9 @@ which ${EXE} >/dev/null 2>&1 || {
 
 args=(num_procs front_type)
 opts=(dts ts_start ts_end)
-if [ ${#} -lt ${#args[@]} ]; then
-    echo "error: expected ${#args[@]} arguments, got ${#}" >&2
+n_args=$#
+if [ ${n_args} -lt "${#args[@]}" ]; then
+    echo "error: expected ${#args[@]} arguments, got ${n_args}" >&2
     echo "usage: $(basename ${0}) ${args[@]} [${opts[@]}]" >&2
     exit 1
 fi

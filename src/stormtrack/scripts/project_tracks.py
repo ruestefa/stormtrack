@@ -13,12 +13,12 @@ import netCDF4 as nc4
 import numpy as np
 
 # Local
-from ..core.io import read_feature_file
-from ..utils.netcdf import nc_prepare_file
-from ..utils.various import TimestepGenerator
-from ..utils.various import TimestepStringFormatter
-from ..utils.various import extract_args
-from ..utils.various import print_args
+from stormtrack.core.io import read_feature_file
+from stormtrack.utils.netcdf import nc_prepare_file
+from stormtrack.utils.various import TimestepGenerator
+from stormtrack.utils.various import TimestepStringFormatter
+from stormtrack.utils.various import extract_args
+from stormtrack.utils.various import print_args
 
 
 def main(tss__infile__ts_outfile_lst__lst, feature_name, conf_lonlat, conf_out):

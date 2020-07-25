@@ -8,9 +8,9 @@ import sys
 from IPython.terminal.embed import embed
 
 # Local
-from ..utils.various import print_args
-from ..utils.various import extract_args
-from ..core.io import read_feature_files
+from stormtrack.utils.various import print_args
+from stormtrack.utils.various import extract_args
+from stormtrack.core.io import read_feature_files
 
 
 DEFAULT_ARGS_WITH_TYPE = {
@@ -37,7 +37,7 @@ DEFAULT_ARGS_WITH_TYPE = {
     "ignore_missing_neighbors": (bool, True),
     "ignore_edges_pshare_0": (bool, True),
     "ignore_missing_total_track_stats": (bool, False),
-    "ignore_missing_missing_features_stats": (bool, False),
+    "ignore_missing_features_stats": (bool, False),
     "silent_core": (bool, None),
     "counter_core": (bool, True),
     "is_subperiod": (bool, True),
