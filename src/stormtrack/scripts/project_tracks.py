@@ -81,8 +81,6 @@ def read_lonlat_1d(infile, name_lon="lon", name_lat="lat", transpose=False):
         raise OSError(f"{e} ({infile})")
 
     # Remove any leading dummy dimensions
-    if lon.shape != lat.shape:
-        raise Exception(f"lon and lat differ in shape: {lon.shape} != {lat.shape}")
     while len(lon.shape) > 2:
         if lon.shape[0] != 1:
             raise Exception(f"leading dimension > 1: {lon.shape}")
