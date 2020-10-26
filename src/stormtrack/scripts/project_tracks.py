@@ -55,11 +55,13 @@ def main(tss__infile__ts_outfile_lst__lst, feature_name, conf_lonlat, conf_out):
 
             # Project track properties onto field by aid of masks
             flds = {
+                "id": np.zeros([nx, ny], np.int32),
                 "duration": np.zeros([nx, ny], np.int32),
                 "age": np.zeros([nx, ny], np.int32),
             }
             for track in tracks:
                 mask_i = track.to_mask(nx, ny, timesteps=[timestep])
+                flds["id"][mask_i] = track.id
                 flds["duration"][mask_i] = track.duration()
                 flds["age"][mask_i] = track.age(timestep)
 
