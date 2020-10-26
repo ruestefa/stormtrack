@@ -1687,7 +1687,6 @@ def preproc_args__idfy(parser, kwas, conf):
                     feature_name, type_code
                 )
             )
-            raise ValueError(err)
     else:
         try:
             type_code = DEFAULT_TYPE_CODES[feature_name]
@@ -1707,16 +1706,14 @@ def preproc_args__split(parser, kwas, conf):
     split_levels = conf["levels"]
     if split_levels and len(split_levels) > 1:
         parser.error(
-            (
-                "cannot accept split levels: {}\n\n"
-                "splitting with multiple split levels resulted in segfault "
-                "the last time I've tried, so it's currently disabled\n\n"
-                "command which segfaulted:\n\n./bin.dev/identify_features.py "
-                "-v=TOT_PREC -n=prec10 -i=data.lm_f.2/{YYYY}/{MM}/lffd{YYYY}"
-                "{MM}{DD}{HH}.nc -s 20070101{00..23} -o=precip/prec01_split-"
-                "0.5-1.0-3000_2007${m}${d} -t 0.1 -1 --split-levels 0.5 1.0 "
-                "--split-seed-minsize 3000\n"
-            ).format(thresholds)
+            f"cannot accept split levels: {split_levels}\n\n"
+            "splitting with multiple split levels resulted in segfault "
+            "the last time I've tried, so it's currently disabled\n\n"
+            "command which segfaulted:\n\n./bin.dev/identify_features.py "
+            "-v=TOT_PREC -n=prec10 -i=data.lm_f.2/{YYYY}/{MM}/lffd{YYYY}"
+            "{MM}{DD}{HH}.nc -s 20070101{00..23} -o=precip/prec01_split-"
+            "0.5-1.0-3000_2007${m}${d} -t 0.1 -1 --split-levels 0.5 1.0 "
+            "--split-seed-minsize 3000\n"
         )
     # SR_TMP>
 
