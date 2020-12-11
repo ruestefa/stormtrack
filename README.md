@@ -89,7 +89,9 @@ source "${venv_dir}/bin/activate"
 ./sandboxes/create_sandboxes.py "${sandbox_path}"  # add -f when re-running
 ```
 
-This will create a subdirectory `sandboxes` containing the individual sandboxes, copy (or link) the run scripts and download the input data (caution: ~11GB at the time of writing!).
+This will create a subdirectory `sandboxes` containing the individual sandboxes, copy (or link) the run scripts and download the input data.
+
+NOTE: Currently no data is availble by default, so the script will fail, but the data may be provided upon personal request.
 
 To run the test cases, you need the StormTrack commands in your `$PATH`, either by properly installing them or by just keeping the virtual environment active.
 
