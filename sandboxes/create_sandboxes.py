@@ -36,7 +36,7 @@ log.basicConfig(format="%(message)s")
 
 # Some defaults
 DEFAULT_TEMPLATE_PATH = Path(__file__).parent / "template"
-DEFAULT_DATA_PATH_FTP = "ftp://iacftp.ethz.ch/pub_read/ruestefa/stormtrack/sandboxes"
+DEFAULT_DATA_PATH_FTP = "N/A"
 
 
 @click.command(context_settings={"help_option_names": ["-h", "--help"]})
