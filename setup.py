@@ -19,7 +19,7 @@ def read_file(path):
     with open(path, "r") as f:
         return "\n".join([l.strip() for l in f.readlines()])
 
-description_files = ["README.rst", "HISTORY.rst"]
+description_files = ["README.md", "HISTORY.md"]
 
 metadata = {
     "name": "stormtrack",
