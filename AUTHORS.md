@@ -1,13 +1,10 @@
-=======
-Credits
-=======
+# Credits
 
-Development Lead
-----------------
+## Development Lead
 
 * Stefan Ruedisuehli <stefan.ruedisuehli@env.ethz.ch>
 
-Contributors
-------------
+## Contributors
 
 None yet. Why not be the first?
+
