@@ -40,7 +40,7 @@ metadata = {
     ],
 }
 
-python = "==3.7"
+python = "==3.7.*"
 
 dependencies = [
     "basemap @ git+https://github.com/matplotlib/basemap.git",
