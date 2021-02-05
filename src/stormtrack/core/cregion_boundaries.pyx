@@ -634,13 +634,13 @@ cdef bint categorize_boundary_is_shell(cGrid *grid, cRegion *boundary) except -1
                 f" : {angle} ({angle_sum})"
             )
         cPixelCycle_advance(pxs)
+    cPixelCycle_reset(pxs)
     if angle_sum == -360:
         return True
     elif angle_sum == 360:
         return False
     else:
         raise Exception("angle sum not +-360", angle_sum)
-    cPixelCycle_reset(pxs)
 
 
 # :call: > --- callers ---
@@ -675,10 +675,10 @@ cdef struct cPixelCycle:
 # :call: v stormtrack::core::cregion_boundaries::cPixelCycle_reset
 cdef cPixelCycle cPixelCycle_new(bint debug=False) except *:
     """Create a new instance of ``cPixelCycle``."""
+    cdef cPixelCycle self
     self.debug = debug
     if self.debug:
         print("cPixelCycle: create new object")
-    cdef cPixelCycle self
     self._pixels = NULL
     self._skip = NULL
     cPixelCycle_reset(&self)

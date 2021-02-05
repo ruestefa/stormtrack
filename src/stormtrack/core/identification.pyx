@@ -1910,8 +1910,8 @@ cpdef list feature_split_regiongrow(
             feature_pixel_table[cpixel.x][cpixel.y] = True
 
     # Turn seeds into cregions
-    if debug: log.debug("  turn {} seeds into cregions".format(n_seed_regions))
     cdef int n_seed_regions = len(seed_features)
+    if debug: log.debug("  turn {} seeds into cregions".format(n_seed_regions))
     cdef cRegions cregions_seeds = cregions_create(n_seed_regions)
     cdef bint ignore_missing_neighbors = True
     features_to_cregions(
@@ -5744,12 +5744,11 @@ cdef class Feature:
         self._vertex_name = None
 
     def convex_hull(self):
-        if (len(self.shells) == 0 or
-                sum([shell.size for shell in self.shells]) == 0):
+        if (len(self.shells) == 0 or sum([shell.size for shell in self.shells]) == 0):
             raise Exception("cannot compute convex hull without shells")
         raise NotImplementedError("Feature.convex_hull for multiple shells") # SR_ONE_SHELL
-        hull = sp.spatial.ConvexHull(self.shell)
-        return self.shell[hull.vertices]
+        # hull = sp.spatial.ConvexHull(self.shell)
+        # return self.shell[hull.vertices]
 
 
 # :call: > --- callers ---
