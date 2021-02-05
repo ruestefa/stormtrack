@@ -116,3 +116,4 @@ venvs/
 
 # VSCode
 .nfs**
+.vscode
