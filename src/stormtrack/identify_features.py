@@ -134,6 +134,8 @@ def read_lonlat2d(conf):
     infile = conf["infile_lonlat"]
     name_lon, name_lat = conf["lonlat_names"]
     transpose = conf["lonlat_transp"]
+    reduce_grid_res = conf["reduce_grid_resolution"]
+    reduce_grid_stride = conf["reduce_grid_stride"]
 
     # Read fields from file
     if infile.endswith(".npz"):
@@ -144,8 +146,8 @@ def read_lonlat2d(conf):
             lon, lat = fi[name_lon], fi[name_lat]
     else:
         with nc4.Dataset(infile, "r") as fi:
-            lon = fi["lon"][:]
-            lat = fi["lat"][:]
+            lon = fi[name_lon][:]
+            lat = fi[name_lat][:]
 
     if len(lon.shape) == 1:
         assert len(lat.shape) == 1
@@ -157,10 +159,10 @@ def read_lonlat2d(conf):
         lon = lon.T
         lat = lat.T
 
-    if conf.get("reduce_grid_resolution", False):
+    if reduce_grid_res:
         # Reduce the grid resolution by striding
-        lon = reduce_grid_resolution(lon, conf["reduce_grid_stride"], "pick")
-        lat = reduce_grid_resolution(lat, conf["reduce_grid_stride"], "pick")
+        lon = reduce_grid_resolution(lon, reduce_grid_stride, "pick")
+        lat = reduce_grid_resolution(lat, reduce_grid_stride, "pick")
 
     return lon, lat
 
@@ -939,8 +941,7 @@ def identify_cyclones(infile, name, conf_in, conf_preproc, timestep, anti=False)
         infile,
         fld_name,
         level,
-        "lon",
-        "lat",
+        conf_in,
         conv_fact=fact,
         crop=conf_preproc["crop_domain_n"],
     )
@@ -1003,7 +1004,13 @@ def identify_cyclones(infile, name, conf_in, conf_preproc, timestep, anti=False)
 
 
 def read_input_field_lonlat(
-    input_file, fld_name, level, lon_name, lat_name, conv_fact=None, crop=0
+    input_file,
+    fld_name,
+    level,
+    conf_in,
+    *,
+    conv_fact=None,
+    crop=0,
 ):
     """Read from file and pre-process a field.
 
@@ -1012,24 +1019,30 @@ def read_input_field_lonlat(
     Arguments:
      - input_file: Input netCDF file.
      - fld_name: Name of the input field used in the input file.
-     - lon_name: Name of the longitude field in the input file.
-     - lat_name: Name of the latitude field in the input file.
+     - conf_in: Input configuration.
 
     Optional arguments:
      - conv_fact: Conversion factor applied to the field.
      - crop: cut N pixels off around the domain
+
     """
-    # Read the raw field from file, along with lon/lat fields
+    lon, lat = read_lonlat2d(conf_in)
+
+    # Read the raw field from file
     try:
         with nc4.Dataset(input_file, "r") as fi:
-            lon = fi[lon_name][:]
-            lat = fi[lat_name][:]
             fld_raw = fi[fld_name][0]  # strip leading time dimension
     except Exception as e:
         err = "Cannot read '{}' from {}\n{}: {}".format(
             fld_name, input_file, e.__class__.__name__, str(e).strip()
         )
         raise IOError(err)
+    if conf_in["infield_transpose"]:
+        fld_raw = fld_raw.T
+
+    # SR_TMP <
+    assert lon.shape == fld_raw.shape
+    # SR_TMP >
 
     # Shrink domain
     if crop is not None and crop > 0:
@@ -1155,10 +1168,9 @@ def parser_extend_group__in(parser, group):
         dest="in__varname",
     )
     group.add_argument(
-        "--lvl",
         "--level",
         help="level (for 3d input data)",
-        type=int,
+        type=lambda v: None if str(v) == "None" else int(v),
         metavar="lvl",
         dest="in__infield_lvl",
     )
@@ -1208,7 +1220,10 @@ def parser_extend_group__in(parser, group):
         "--reduce-grid-mode",
         help=("how to reduce the values from the original to the " "strided grid"),
         metavar="mode",
-        choices=("pick", "mean",),
+        choices=(
+            "pick",
+            "mean",
+        ),
         default="mean",
         dest="in__reduce_grid_mode",
     )

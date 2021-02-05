@@ -1650,7 +1650,7 @@ def cli():
         parser.print_help()
         exit(1)
     # SR_DBG<
-    pr = cProfile.Profile()
+    # pr = cProfile.Profile()
     # pr.enable()
     # SR_DBG>
     kwas = vars(parser.parse_args())
