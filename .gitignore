@@ -92,11 +92,9 @@ celerybeat-schedule
 # Dotenv
 .env
 
-# Virtualenv
-.venv
-.venvs
-venv/
-venvs/
+# Virtual envx
+/venv
+/venvs
 
 # Spyder
 .spyderproject
