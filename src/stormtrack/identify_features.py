@@ -1054,7 +1054,8 @@ def read_input_field_lonlat(
     # Read the raw field from file
     try:
         with nc4.Dataset(input_file, "r") as fi:
-            fld_raw = fi[fld_name][0]  # strip leading time dimension
+            # Strip leading time dimension
+            fld_raw = fi[fld_name][0].astype(np.float32)
     except Exception as e:
         err = "Cannot read '{}' from {}\n{}: {}".format(
             fld_name, input_file, e.__class__.__name__, str(e).strip()
@@ -1087,7 +1088,7 @@ def read_input_field_lonlat(
     return fld
 
 
-# SR_TMP< TODO solve issue with compoling fronts._libfronts on daint
+# SR_TMP< TODO solve issue with compiling fronts._libfronts on daint
 try:
     from .identify_front_fields import (
         parser_add_group__comp as parser_add_group__comp_fronts,
