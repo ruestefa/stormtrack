@@ -55,7 +55,7 @@ def main(tss__infile__ts_outfile_lst__lst, feature_name, conf_lonlat, conf_out):
 
             # Project track properties onto field by aid of masks
             flds = {
-                "id": np.zeros([nx, ny], np.int32),
+                "id": np.zeros([nx, ny], np.int64),
                 "duration": np.zeros([nx, ny], np.int32),
                 "age": np.zeros([nx, ny], np.int32),
             }
