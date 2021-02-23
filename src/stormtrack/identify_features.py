@@ -61,7 +61,14 @@ def main(
         timings["core_lst"] = []
 
     # Read grid parameters
-    lon, lat = read_lonlat2d(conf_in)
+    lon, lat = read_lonlat2d(
+        infile=conf_in["infile_lonlat"],
+        name_lon=conf_in["lonlat_names"][0],
+        name_lat=conf_in["lonlat_names"][1],
+        transpose2d=conf_in["infield_transpose"],
+        reduce_grid_res=conf_in["reduce_grid_resolution"],
+        reduce_grid_stride=conf_in["reduce_grid_stride"],
+    )
     nx, ny = lon.shape
     conf_in["nx"] = nx
     conf_in["ny"] = ny
@@ -129,21 +136,23 @@ def main(
         ps.strip_dirs().sort_stats("tottime").print_stats(nlines)
 
 
-def read_lonlat2d(conf):
-
-    infile = conf["infile_lonlat"]
-    name_lon, name_lat = conf["lonlat_names"]
-    transpose = conf["lonlat_transp"]
-    reduce_grid_res = conf["reduce_grid_resolution"]
-    reduce_grid_stride = conf["reduce_grid_stride"]
-
+def read_lonlat2d(
+    infile: str,
+    name_lon: str,
+    name_lat: str,
+    transpose2d: bool,
+    reduce_grid_res: bool,
+    reduce_grid_stride: bool,
+):
     # Read fields from file
     if infile.endswith(".npz"):
         with np.load(infile) as fi:
-            lon, lat = fi[name_lon], fi[name_lat]
+            lon = fi[name_lon]
+            lat = fi[name_lat]
     elif infile.endswith("h5"):
         with h5py.File(infile) as fi:
-            lon, lat = fi[name_lon], fi[name_lat]
+            lon = fi[name_lon]
+            lon = fi[name_lat]
     else:
         with nc4.Dataset(infile, "r") as fi:
             lon = fi[name_lon][:]
@@ -154,10 +163,17 @@ def read_lonlat2d(conf):
         nx, ny = lon.size, lat.size
         lon = np.stack([lon] * ny, axis=1)
         lat = np.stack([lat] * nx, axis=0)
-
-    if transpose:
+    elif transpose2d:
         lon = lon.T
         lat = lat.T
+
+    # SR_DBG <
+    # if lat[0, 0] > lat[0, -1]:
+    #     print(
+    #         "warning: read_lonlat2d: lat[:, 0] > lat[:, -1]:"
+    #         f" {lat[0, 0]} > {lat[0, -1]}"
+    #     )
+    # SR_DBG >
 
     if reduce_grid_res:
         # Reduce the grid resolution by striding
@@ -1026,7 +1042,14 @@ def read_input_field_lonlat(
      - crop: cut N pixels off around the domain
 
     """
-    lon, lat = read_lonlat2d(conf_in)
+    lon, lat = read_lonlat2d(
+        infile=conf_in["infile_lonlat"],
+        name_lon=conf_in["lonlat_names"][0],
+        name_lat=conf_in["lonlat_names"][1],
+        transpose2d=conf_in["infield_transpose"],
+        reduce_grid_res=conf_in["reduce_grid_resolution"],
+        reduce_grid_stride=conf_in["reduce_grid_stride"],
+    )
 
     # Read the raw field from file
     try:
@@ -1149,12 +1172,6 @@ def parser_add_group__in__base(parser):
         nargs=2,
         default=["rlon", "rlat"],
         dest="in__lonlat_names",
-    )
-    group.add_argument(
-        "--lonlat-transpose",
-        help="transpose lon/lat fields",
-        action="store_true",
-        dest="in__lonlat_transp",
     )
 
     return group

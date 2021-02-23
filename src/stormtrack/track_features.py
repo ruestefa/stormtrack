@@ -81,7 +81,14 @@ def main(
         timings["wait"] = mp.Value("d", 0.0)
 
     # Read lon/lat
-    lon2d, lat2d = read_lonlat2d(conf_in)
+    lon2d, lat2d = read_lonlat2d(
+        infile=conf_in["infile_lonlat"],
+        name_lon=conf_in["lonlat_names"][0],
+        name_lat=conf_in["lonlat_names"][1],
+        transpose2d=conf_in["infield_transpose"],
+        reduce_grid_res=conf_in["reduce_grid_resolution"],
+        reduce_grid_stride=conf_in["reduce_grid_stride"],
+    )
     nx, ny = lon2d.shape
     print("GRID : {} x {}".format(nx, ny))
     conf_in["nx"] = nx
@@ -1153,12 +1160,6 @@ def parser_add_group__in(parser):
         # default = ["rlon", "rlat"],
         default=["lon", "lat"],
         dest="in__lonlat_names",
-    )
-    group.add_argument(
-        "--lonlat-transpose",
-        help="transpose lon/lat fields",
-        action="store_true",
-        dest="in__lonlat_transp",
     )
     group.add_argument(
         "--restart-file-fmt",
