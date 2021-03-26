@@ -2,7 +2,6 @@
 
 # Standard library
 import datetime as dt
-import errno
 import functools
 import json
 import logging as log
@@ -10,32 +9,26 @@ import os
 import re
 import warnings
 from multiprocessing import Pool
-from pprint import pprint
 
 # Third-party
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import netCDF4 as nc4
 import numpy as np
-import pytz
 import scipy as sp
 import shapely.geometry as geo
 from descartes.patch import PolygonPatch
 from matplotlib import cm
-from matplotlib import colors
-from matplotlib import patches
-from matplotlib import path
 from mpl_toolkits.basemap import Basemap
 
 try:
     from numpy.ma.core import MaskedArrayFutureWarning
 except ImportError:
-    MaskedArrayFutureWarning = None
+    MaskedArrayFutureWarning = None  # type: ignore
 
 # Local
 from ..utils.netcdf import nc_prepare_file
 from ..utils.spatial import path_along_domain_boundary
-from ..utils.various import TimestepGenerator
 from .utilities_misc import Domain
 from .utilities_misc import Field2D
 from .utilities_misc import inds2lonlat
@@ -47,11 +40,46 @@ __all__ = []
 # Plot precip
 
 PRECIP_LEVELS_PSEUDO_LOG_ORIG = np.array(
-    [0.1, 0.2, 1.0, 2.0, 4.0, 6.0, 10.0, 20.0, 40.0, 60.0,]
+    [
+        0.1,
+        0.2,
+        1.0,
+        2.0,
+        4.0,
+        6.0,
+        10.0,
+        20.0,
+        40.0,
+        60.0,
+    ]
 )
-PRECIP_LEVELS_PSEUDO_LOG = np.array([0.1, 0.22, 0.46, 1, 2.2, 4.6, 10, 22, 46, 100,])
+PRECIP_LEVELS_PSEUDO_LOG = np.array(
+    [
+        0.1,
+        0.22,
+        0.46,
+        1,
+        2.2,
+        4.6,
+        10,
+        22,
+        46,
+        100,
+    ]
+)
 PRECIP_LEVELS_PSEUDO_LOG_NARROW = np.array(
-    [1, 1.5, 2.2, 3.2, 4.6, 7, 10, 15, 22, 32,]  # 46,
+    [
+        1,
+        1.5,
+        2.2,
+        3.2,
+        4.6,
+        7,
+        10,
+        15,
+        22,
+        32,
+    ]  # 46,
 )
 
 PRECIP_LEVELS_LOG = 10 ** np.arange(-1, 2.1, 0.2)
@@ -1753,7 +1781,9 @@ class PlotElement:
         return other
 
     def _derive_kwas(self):
-        kwas = dict(pltkw=self.pltkw.copy(),)
+        kwas = dict(
+            pltkw=self.pltkw.copy(),
+        )
         try:
             kwas["cbar"] = (self.cbar_kwas.copy(),)
         except AttributeError:
@@ -1803,7 +1833,10 @@ class PlotElement_Color(PlotElement):
                 # cbar.ax.set_xlabel(self.cbar_kwas["label"], size=self.labelsize)
 
     def _derive_kwas(self):
-        return dict(cbar=self.cbar_kwas.copy(), pltkw=self.pltkw.copy(),)
+        return dict(
+            cbar=self.cbar_kwas.copy(),
+            pltkw=self.pltkw.copy(),
+        )
 
 
 class PlotElement_Shading(PlotElement):
@@ -1836,7 +1869,9 @@ class PlotElement_Shading(PlotElement):
         )
 
     def _derive_kwas(self):
-        return dict(pltkw=self.pltkw.copy(),)
+        return dict(
+            pltkw=self.pltkw.copy(),
+        )
 
 
 class PlotElement_Line(PlotElement):
@@ -3392,7 +3427,12 @@ def ax_add_track_edge(
             x0, y0, fid0, x1, y1, fid1
         )
         raise Exception(err)
-    px, py = np.array([[mlon[x0, y0], mlat[x0, y0]], [mlon[x1, y1], mlat[x1, y1]],]).T
+    px, py = np.array(
+        [
+            [mlon[x0, y0], mlat[x0, y0]],
+            [mlon[x1, y1], mlat[x1, y1]],
+        ]
+    ).T
     ax.plot(px, py, **kw)
 
 
