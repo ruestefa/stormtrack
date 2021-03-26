@@ -6916,7 +6916,7 @@ def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
 
     # Get all pixels (compute the kdtree only once)
     mask, kdtree = paths_lonlat_to_mask(paths, lon, lat, return_tree=True)
-    pixels = np.dstack(np.where(mask > 0))[0]
+    pixels = np.dstack(np.where(mask))[0]
 
     def _get_indices(xy, tree, shape):
         _, ind = tree.query(xy)

@@ -2776,7 +2776,7 @@ def read_masks(infile, lon, lat, silent=False, dtype=bool):
             PIL.ImageDraw.Draw(raster).polygon(shell, fill=1, outline=1)
         for hole in holes_xy:
             hole = [(x, y) for x, y in hole]
-            PIL.ImageDraw.Draw(raster).polygon(hole, fill=0, outline=0)
+            PIL.ImageDraw.Draw(raster).polygon(hole, fill=0, outline=1)
         mask = np.array(raster, dtype).T
         masks[name] = mask
 

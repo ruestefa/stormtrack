@@ -61,12 +61,12 @@ def paths_lonlat_to_mask(paths, lon, lat, *, return_tree=False, silent=False, _t
     nx, ny = lon.shape
     img = PIL.Image.new("L", [nx, ny], 0)
     for path in paths:
-        d, inds = tree.query(path, k=1)
+        _, inds = tree.query(path)
         pxs, pys = np.unravel_index(inds, lon.shape)
-        path_ind = [(x, y) for x, y in zip(pxs, pys)]
+        path_ind = list(map(tuple, zip(pxs, pys)))
         PIL.ImageDraw.Draw(img).polygon(path_ind, outline=1, fill=1)
     # Note: Numpy reads in order (y, x[, z]), therefore transpose
-    mask = np.array(img).T
+    mask = np.array(img, np.int8).T
     if mask.shape != lon.shape:
         raise Exception(
             f"constructed mask has wrong shape: {mask.shape} != {lon.shape}"
