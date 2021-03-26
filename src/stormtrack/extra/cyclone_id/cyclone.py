@@ -554,11 +554,10 @@ class DepressionFactory:
             raise ValueError(err)
 
         # Create Depression objects from the grouped contours
-        depressions = [
-            cont
-            for cluster in contour_clusters
-            for cont in self._create_depressions(cluster)
-        ]
+        depressions = []
+        for cluster in contour_clusters:
+            depressions_i = self._create_depressions(cluster)
+            depressions.extend(depressions_i)
 
         # Remove unwanted boundary-crossing contours
         depressions = remove_surplus_bcc_clusters(depressions, self._bcc_frac)
@@ -621,7 +620,8 @@ class DepressionFactory:
             contours=contained(contours, cont), minima=None, parent=None
         )
 
-        children = child_factory.run(ncont_min=self._ncont_min, bcc_frac=self._bcc_frac)
+        # Constrain ncont_min and bbc_frac only at the parent level
+        children = child_factory.run(ncont_min=0, bcc_frac=1)
 
         depr = Depression(
             id=self.next_id,
@@ -668,21 +668,20 @@ class DepressionFactory:
         fulfill these criteria are returned as a list.
         """
         if self.contours_valid:
-            valid_contours = self.contours
+            valid_contours = list(self.contours)
         else:
             # Check all contours for validity in (assumedly) random order.
             # Points not to be contained by any contour are blacklisted.
             is_valid = lambda cont: self._contour_is_valid(cont, blacklist)
             blacklist = []
-            # SR_DBG<
-            for contour in [c for c in self.contours]:
+            for contour in list(self.contours):
                 try:
                     is_valid(contour)
-                except Exception as e:
-                    _n = len(contour.boundary.xy[0])
-                    log.warning("skip invalid contour (n={})".format(_n))
+                except Exception:
+                    log.warning(
+                        f"skip invalid contour (n={len(contour.boundary.xy[0])})"
+                    )
                     self.contours.remove(contour)
-            # SR_DBG>
             valid_contours = [cont for cont in self.contours if is_valid(cont)]
 
             # Remove contours that contain blacklisted points.
@@ -1241,25 +1240,24 @@ class CycloneIOReaderJson(IOReaderJsonBase):
         if removed_contours is None:
             removed_contours = []
         depr_list = []
-        for d in data:
-            contour_ids = [i for i in d["contours_id"] if i not in removed_contours]
+        for data_i in data:
+            contour_ids = [i for i in data_i["contours_id"] if i not in removed_contours]
             cont_list = self._collect_contours(contours, contour_ids)
             if len(cont_list) == 0:
                 log.warning(
-                    ("Cannot rebuild Depression {} (no contours found)").format(d["id"])
+                    ("Cannot rebuild Depression {} (no contours found)").format(data_i["id"])
                 )
                 continue
 
-            min_list = self._collect_referenced(minima, d["minima_id"])
+            min_list = self._collect_referenced(minima, data_i["minima_id"])
 
-            # SR_DBG<
+            # SR_TMP <
             # depr_list.extend(Depression.create(cont_list, minima=min_list))
-            # SR_DBG-
             new_deprs = Depression.create(cont_list, minima=min_list)
             assert len(new_deprs) == 1
-            if "id" in d:
-                new_deprs[-1]._id = d["id"]
-            # SR_DBG>
+            if "id" in data_i:
+                new_deprs[-1]._id = data_i["id"]
+            # SR_TMP >
 
             depr_list.extend(new_deprs)
         return depr_list
