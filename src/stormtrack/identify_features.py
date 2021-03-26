@@ -10,6 +10,7 @@ import sys
 from multiprocessing import Pool
 from pprint import pformat
 from timeit import default_timer as timer
+from typing import Optional
 
 # Thirt-party
 import h5py
@@ -74,7 +75,16 @@ def main(
     conf_in["ny"] = ny
 
     # Read topography (if necessary)
-    read_topo(conf_topo, conf_in)
+    if conf_topo["filter_threshold"] < 0:
+        conf_topo["fld"] = None
+    else:
+        conf_topo["fld"] = read_fld(
+            infile=conf_topo["infile"],
+            varname=conf_topo["varname"],
+            reduce_stride=conf_in["reduce_grid_stride"],
+            reduce_mode=conf_in["reduce_grid_mode"],
+        )
+    conf_topo["filter_apply"] = conf_topo["fld"] is not None
 
     if conf_exe["timings_measure"]:
         timings["input_lst"].append(timer() - timings.pop("input_start"))
@@ -183,37 +193,24 @@ def read_lonlat2d(
     return lon, lat
 
 
-def read_topo(conf_topo, conf_in):
-
-    varname = conf_topo["varname"]
-    filter_threshold = conf_topo["filter_threshold"]
-    infile = conf_topo["infile"]
-
-    reduce_stride = conf_in["reduce_grid_stride"]
-    reduce_mode = conf_in["reduce_grid_mode"]
-
-    if filter_threshold < 0:
-        conf_topo["fld"] = None
-        conf_topo["filter_apply"] = False
-        return
-
-    log.info("read topography field {} from {}".format(varname, infile))
+def read_fld(
+    infile: str,
+    varname: str,
+    reduce_stride: int = 1,
+    reduce_mode: str = "mean",
+) -> np.ndarray:
+    log.info("read field {} from {}".format(varname, infile))
     if infile.endswith(".npz"):
         # Numpy archive
         with np.load(infile) as fi:
-            topo_fld = fi[varname]
+            fld = fi[varname]
     else:
         # Assuming netcdf
         with nc4.Dataset(infile, "r") as fi:
-            topo_fld = fi[varname][0]
-
-    conf_topo["fld"] = topo_fld
-    conf_topo["filter_apply"] = True
-
+            fld = fi[varname][0]
     if reduce_stride > 1:
-        conf_topo["fld"] = reduce_grid_resolution(
-            conf_topo["fld"], reduce_stride, reduce_mode
-        )
+        fld = reduce_grid_resolution(fld, reduce_stride, reduce_mode)
+    return fld
 
 
 def read_identify_write_seq(
@@ -924,7 +921,9 @@ def postproc_features(features, flds_named, infile, lon, lat, conf_in):
                 features.remove(feature)
 
 
-def identify_cyclones(infile, name, conf_in, conf_preproc, timestep, anti=False):
+def identify_cyclones(
+    infile, name, conf_in, conf_preproc, timestep, anti=False
+):
 
     fld_name = conf_in["varname"]
 
@@ -933,7 +932,6 @@ def identify_cyclones(infile, name, conf_in, conf_preproc, timestep, anti=False)
         raise Exception("must pass cyclones inifile")
 
     # SR_TMP< TODO use command line arguments
-    topo = None
     fact = 0.01  # convert Pa to hPa or geopotential to gpdm
     # SR_TMP>
 
@@ -943,6 +941,32 @@ def identify_cyclones(infile, name, conf_in, conf_preproc, timestep, anti=False)
     conf = cycl_cfg.merge_configs([conf_def, conf_ini])
     conf["IDENTIFY"]["timings-identify"] = None
     conf["IDENTIFY"]["datetime"] = timestep
+
+    def read_topo(file, var):
+        with nc4.Dataset(file) as fi:
+            fld = fi.variables[var][:]
+            lon = fi.variables[conf_in["lonlat_names"][0]][:]
+            lat = fi.variables[conf_in["lonlat_names"][1]][:]
+        if len(fld.shape) == 3:
+            if fld.shape[0] == 1:
+                fld = fld[0]
+            else:
+                raise Exception(f"topo field {var} has unexpected shape: {fld.shape}")
+        if len(lon.shape) == 1:
+            topo_lonlat_shape = (lon.size, lat.size)
+        else:
+            topo_lonlat_shape = lon.shape
+        if fld.shape == topo_lonlat_shape[::-1]:
+            fld = fld.T
+        return Field2D(fld, lon=lon, lat=lat, name=var)
+
+    if conf["IDENTIFY"]["topo-cutoff-level"] < 0:
+        topo = None
+    else:
+        topo = read_topo(
+            f"{conf['GENERAL']['topofile-path'] or '.'}/{conf['GENERAL']['topofile']}",
+            conf["GENERAL"]["topo-field-name"],
+        )
 
     # Fetch some config values
     level = conf_in["infield_lvl"]

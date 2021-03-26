@@ -9,17 +9,11 @@ import multiprocessing as mp
 import os
 import pstats
 import cProfile
-import re
 import sys
 from copy import copy
-from pprint import pprint
 from pprint import pformat
 from time import sleep
 from timeit import default_timer as timer
-
-# Third-party
-import numpy as np
-import pathlib
 
 # Local
 from .core.constants import default_constants
@@ -31,12 +25,11 @@ from .core.tracking import FeatureTracker
 from .identify_features import get_info_features
 from .identify_features import identify_features as identify_features_core
 from .identify_features import read_lonlat2d
-from .identify_features import read_topo
+from .identify_features import read_fld
 from .utils.spatial import derive_lonlat_1d
 from .utils.various import TimestepGenerator
 from .utils.various import TimestepStringFormatter
 from .utils.various import extract_args
-from .utils.various import ipython
 from .utils.various import print_args
 
 log.basicConfig(format="%(message)s", level=log.INFO)
@@ -98,7 +91,16 @@ def main(
     lon1d, lat1d = derive_lonlat_1d(lon2d, lat2d, nonreg_ok=True)
 
     # Read topography (if necessary)
-    read_topo(conf_topo, conf_in)
+    if conf_topo["filter_threshold"] < 0:
+        conf_topo["fld"] = None
+    else:
+        conf_topo["fld"] = read_fld(
+            infile=conf_topo["infile"],
+            varname=conf_topo["varname"],
+            reduce_stride=conf_in["reduce_grid_stride"],
+            reduce_mode=conf_in["reduce_grid_mode"],
+        )
+    conf_topo["filter_apply"] = conf_topo["fld"] is not None
 
     if conf_exe["timings_measure"]:
         with timings["input"].get_lock():

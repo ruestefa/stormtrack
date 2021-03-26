@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 # Standard library
-import os
-import logging as log
 import numpy as np
 
 # Local

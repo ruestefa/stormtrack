@@ -2,21 +2,16 @@
 
 # Standard library
 import datetime as dt
-import functools
 import logging as log
-import multiprocessing as mp
 import os
 import sys
-from copy import copy
 from functools import total_ordering
-from pprint import pprint as pp
 
 # Third-party
 import matplotlib.pyplot as plt
 import numpy as np
 import pyproj
 import scipy as sp
-import scipy.spatial
 import shapely.geometry as geo
 from scipy.ndimage import filters
 
@@ -485,16 +480,22 @@ class Field2D(np.ndarray):
         if field.name is None:
             raise ValueError("Invalid topography field; name missing!")
 
-        if field.name in ["ZB", "HSURF"]:
+        if field.name.lower() in ["z", "zb", "hsurf"]:
             fct = lambda p: field[p.i, p.j] < cutoff_level
-        elif field.name in ["PS"]:
+        elif field.name.lower() in ["ps"]:
             fct = lambda p: field[p.i, p.j] > cutoff_level
         else:
             err = "Invalid topography field name '{}'".format(field.name)
             raise ValueError(err)
 
-        self._minima = [p for p in self._minima if fct(p)]
-        self._maxima = [p for p in self._maxima if fct(p)]
+        try:
+            self._minima = [p for p in self._minima if fct(p)]
+            self._maxima = [p for p in self._maxima if fct(p)]
+        except IndexError as e:
+            raise Exception(
+                f"extrema out of bounds for topo field '{field.name}' with shape"
+                f" {field.shape}"
+            ) from e
 
 
 class ImmutableError(Exception):

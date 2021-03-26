@@ -3,7 +3,6 @@
 # Standard library
 import argparse
 import ast
-import json
 import logging as log
 import os
 import sys

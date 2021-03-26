@@ -8,8 +8,6 @@ import sys
 from IPython.terminal.embed import embed
 
 # Local
-from stormtrack.utils.various import print_args
-from stormtrack.utils.various import extract_args
 from stormtrack.core.io import read_feature_files
 
 
@@ -92,7 +90,6 @@ def main(infiles, feature_name, args_in):
     print()
 
     # Print input file(s)
-    _n = len(infiles)
     print(
         f"reading {len(infiles)} infile{'s' if len(infiles) > 1 else ''}:\n"
         + "\n".join([f"  {f}" for f in infiles])

@@ -5,14 +5,11 @@ import json
 import logging as log
 import os
 import re
-import sys
 from functools import total_ordering
 from pprint import pformat
-from pprint import pprint as pp
 
 # Third-party
 import numpy as np
-import scipy as sp
 
 # Local
 from ..io_misc import IOReaderBinaryBase
