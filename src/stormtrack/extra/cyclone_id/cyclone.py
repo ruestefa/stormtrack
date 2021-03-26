@@ -905,6 +905,8 @@ class CycloneFactory:
         The default values for thresh_dcc and thresh_tcc follow HC12.
 
         """
+        if nmin_max not in [1, 2, 3]:
+            raise ValueError(f"nmin_max ({nmin_max}) not in [1, 2, 3]")
         self._cls_default = cls_default
         self._min_depth = min_depth
         self._nmin_max = nmin_max
@@ -959,6 +961,11 @@ class CycloneFactory:
             )
             raise ValueError(err)
 
+        if depression.n_minima() > self._nmin_max:
+            splits = depression.reduce_to_max_n_minima(self._nmin_max)
+            splits = remove_shallow_clusters(splits, self._ncont_min)
+            return self.run(splits)
+
         # No minimum
         if depression.n_minima() == 0:
             err = "Depression object must contain at least one minimum."
@@ -981,7 +988,7 @@ class CycloneFactory:
 
         # Three minima
         elif depression.n_minima() == 3:
-            if depression.shared_contour_ratio() >= self._thresh_dcc:
+            if depression.shared_contour_ratio() >= self._thresh_tcc:
                 cyclones = [TripleCenterCyclone(depression, id=self.next_id)]
                 self.next_id += 1
             else:
