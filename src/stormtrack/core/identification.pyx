@@ -6927,9 +6927,12 @@ def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
     extrema = np.array(
         [_get_indices(pt.xy, kdtree, lon.shape) for pt in oldfeature.minima()]
     )
-    shell = np.array(
-        [_get_indices(xy, kdtree, lon.shape) for xy in oldfeature.path()]
-    )
+    shell = []
+    for xy in oldfeature.path():
+        x, y = _get_indices(xy, kdtree, lon.shape)
+        if not shell or (x, y) != shell[-1]:
+            shell.append((x, y))
+    shell = np.array(shell, np.int32)
 
     return (
         pixels.astype(np.int32),
