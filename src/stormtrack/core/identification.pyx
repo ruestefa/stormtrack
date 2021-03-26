@@ -4339,10 +4339,18 @@ def dbg_features_check_unique_pixels(features):
                 shared = sorted(pxs1.intersection(pxs2))
                 if len(shared) > 0:
                     shared_fids[(feature1.id, feature2.id)] = shared
-        err = f"{len(shared_fids)} feature pairs share pixels:\n" + "\n".join([
-                f" [{fid1}]<->[{fid2}]: {', '.join([f'({x}, {y})' for x, y in pxs])}"
-                for (fid1, fid2), pxs in sorted(shared_fids.items())
-            ])
+        n_sharing = len(shared_fids)
+        err = (
+            f"{n_sharing} feature pair{'s' if n_sharing > 1 else ''}"
+            f" share{'' if n_sharing > 1 else 's'} pixels:\n"
+            + "\n".join(
+                [
+                    f" [{fid1}]<->[{fid2}]: "
+                    + ", ".join([f"({x}, {y})" for x, y in pxs])
+                    for (fid1, fid2), pxs in sorted(shared_fids.items())
+                ]
+            )
+        )
         print("warning: "+err)
         # raise ValueError(err)
         outfile = "cyclone_tracking_debug_shared_pixels.txt"
@@ -6950,6 +6958,11 @@ def cyclones_to_features(ts, cyclones, slp, lon, lat, vb=True, out=None):
         pixels, extrema, center, shell = oldfeature_to_pixels(cyclone, lon, lat)
         if vb:
             print(f"extracted {len(pixels)} pixels, {len(extrema)} extrema, and center")
+        if pixels.size == 0:
+            raise Exception(
+                f"could not convert cyclone {feature.id} to feature: no pixels"
+                f"\ncenter: {center}\nextrema: {extrema}\nshell: {shell}"
+            )
 
         # Turn pixels into new-style features
         if vb:
