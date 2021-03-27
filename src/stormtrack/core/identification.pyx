@@ -5279,12 +5279,12 @@ cdef class Feature:
 
         for shell in self.shells:
             shell = [(x, y) for x, y in shell]
-            # draw.polygon(shell, fill=1, outline=1)
             PIL.ImageDraw.Draw(raster).polygon(shell, fill=1, outline=1)
+            # If path is a line, it won't be drawn by .polygon, but by .line
+            PIL.ImageDraw.Draw(raster).line(shell, fill=1)
 
         for hole in self.holes:
             hole = [(x, y) for x, y in hole]
-            # draw.polygon(hole, fill=0, outline=1)
             PIL.ImageDraw.Draw(raster).polygon(hole, fill=0, outline=1)
 
         mask = np.array(raster, np.int8).T

@@ -2774,6 +2774,8 @@ def read_masks(infile, lon, lat, silent=False, dtype=bool):
         for shell in shells_xy:
             shell = [(x, y) for x, y in shell]
             PIL.ImageDraw.Draw(raster).polygon(shell, fill=1, outline=1)
+            # If path is a line, it won't be drawn by .polygon, but by .line
+            PIL.ImageDraw.Draw(raster).line(shell, fill=1)
         for hole in holes_xy:
             hole = [(x, y) for x, y in hole]
             PIL.ImageDraw.Draw(raster).polygon(hole, fill=0, outline=1)
