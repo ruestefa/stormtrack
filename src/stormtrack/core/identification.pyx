@@ -6914,7 +6914,6 @@ def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
     else:
         paths = [f.path() for f in oldfeature.features()]
 
-    # Get all pixels (compute the kdtree only once)
     mask, kdtree = paths_lonlat_to_mask(paths, lon, lat, return_tree=True)
     pixels = np.dstack(np.where(mask))[0]
 
@@ -6922,23 +6921,15 @@ def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
         _, ind = tree.query(xy)
         return np.array(np.unravel_index(ind, shape))
 
-    # Get the center, minima, and shell
     center = _get_indices(oldfeature.center(), kdtree, lon.shape)
     extrema = np.array(
         [_get_indices(pt.xy, kdtree, lon.shape) for pt in oldfeature.minima()]
     )
-    shell = []
-    for xy in oldfeature.path():
-        x, y = _get_indices(xy, kdtree, lon.shape)
-        if not shell or (x, y) != shell[-1]:
-            shell.append((x, y))
-    shell = np.array(shell, np.int32)
 
     return (
         pixels.astype(np.int32),
         extrema.astype(np.int32),
         center.astype(np.int32),
-        shell.astype(np.int32)
     )
 
 
@@ -6947,25 +6938,52 @@ def oldfeature_to_pixels(oldfeature, lon, lat, vb=True):
 # :call: v --- calling ---
 # :call: v stormtrack::core::identification::oldfeature_to_pixels
 # :call: v stormtrack::core::identification::Feature
-def cyclones_to_features(ts, cyclones, slp, lon, lat, vb=True, out=None):
+def cyclones_to_features(ts, cyclones, slp, lon, lat, vb=True, out=None, dedup=False):
     """Convert old-style cyclone features into new-style Feature objects."""
 
     if out is None:
         out = []
 
+    pixels_ctrl = np.zeros(slp.shape, np.int32)
     for cyclone in cyclones:
         if vb:
             print(f"convert cyclone {cyclone.id()}")
 
         # Extract feature pixels
-        pixels, extrema, center, shell = oldfeature_to_pixels(cyclone, lon, lat)
+        pixels, extrema, center = oldfeature_to_pixels(cyclone, lon, lat)
         if vb:
             print(f"extracted {len(pixels)} pixels, {len(extrema)} extrema, and center")
         if pixels.size == 0:
             raise Exception(
                 f"could not convert cyclone {feature.id} to feature: no pixels"
-                f"\ncenter: {center}\nextrema: {extrema}\nshell: {shell}"
+                f"\ncenter: {center}\nextrema: {extrema}"
             )
+
+        pixels_ctrl[tuple(pixels.T.tolist())] += 1
+        if dedup and pixels_ctrl.max() > 1:
+            # Remove pixels overlapping with already processed features
+            # Note: Which features retains these pixels depends entirely on the
+            # order of features passed into the function; there would be more
+            # elegant solutions like assigning them to the biggest involved
+            # feature or similar, but those are a bit harder to implement
+            pixels_lst = pixels.tolist()
+            for x, y in pixels:
+                if pixels_ctrl[x, y] > 1:
+                    print(
+                        f"removing already used pixel ({x}, {y}) from cyclone"
+                        f" {cyclone.id()}"
+                    )
+                    pixels_lst.remove([x, y])
+                    if [x, y] in extrema.tolist():
+                        extrema = np.array(
+                            [[x_, y_] for x_, y_ in extrema if (x_, y_) != (x, y)]
+                        )
+                    if (x, y) == tuple(center):
+                        raise Exception(
+                            f"cannot remove already used pixel ({x}, {y}): is center"
+                        )
+                pixels_ctrl[x, y] -= 1
+            pixels = np.array(pixels_lst, np.int32)
 
         # Turn pixels into new-style features
         if vb:
@@ -6976,7 +6994,6 @@ def cyclones_to_features(ts, cyclones, slp, lon, lat, vb=True, out=None):
             values=values,
             center=center,
             extrema=extrema,
-            shells=[shell],
             id_=cyclone.id(),
             timestep=ts
         )
@@ -6984,5 +7001,9 @@ def cyclones_to_features(ts, cyclones, slp, lon, lat, vb=True, out=None):
 
         if out is not None:
             out.append(feature)
+
+    if dedup and pixels_ctrl.max() > 1:
+        dups = list(map(tuple, np.array(np.where(pixels_ctrl > 1)).T))
+        raise Exception(f"{len(dups)} duplicate pixels: {dups}")
 
     return out

@@ -1036,7 +1036,7 @@ def identify_cyclones(
     # Convert cyclone features to new-style features
     features = []
     cyclones_to_features(
-        timestep, cyclones, fld, fld.lon, fld.lat, out=features, vb=False
+        timestep, cyclones, fld, fld.lon, fld.lat, out=features, vb=False, dedup=True
     )
 
     flds_by_name = {fld_name: fld}
