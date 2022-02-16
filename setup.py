@@ -1,8 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-The setup script.
-"""
+"""Set up the project."""
+# Standard library
+from typing import List
+from typing import Sequence
+
 # Third-party
 import numpy
 from numpy import f2py
@@ -16,17 +16,32 @@ from setuptools.command.build_ext import build_ext
 from Cython.Build import cythonize  # isort: skip
 from Cython import Compiler  # isort:skip
 
-def read_file(path):
-    with open(path, "r") as f:
-        return "\n".join([l.strip() for l in f.readlines()])
+def read_present_files(paths: Sequence[str]) -> str:
+    """Read the content of those files that are present."""
+    contents: List[str] = []
+    for path in paths:
+        try:
+            with open(path, "r") as f:
+                contents += ["\n".join(map(str.strip, f.readlines()))]
+        except FileNotFoundError:
+            continue
+    return "\n\n".join(contents)
 
-description_files = ["README.md", "HISTORY.md"]
+
+description_files = [
+    "README",
+    "README.md",
+    "README.rst",
+    "HISTORY",
+    "HISTORY.md",
+    "HISTORY.rst",
+]
 
 metadata = {
     "name": "stormtrack",
     "version": "0.4.6",
     "description": "Track two-dimensional features over time in high-resolution weather/climate data.",
-    "long_description": "\n\n".join([read_file(f) for f in description_files]),
+    "long_description": read_present_files(description_files),
     "author": "Stefan Ruedisuehli",
     "author_email": "stefan.ruedisuehli@env.ethz.ch",
     "url": "https://github.com/ruestefa/stormtrack",

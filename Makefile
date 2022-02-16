@@ -6,30 +6,23 @@ SHELL := /bin/bash
 # Options
 #==============================================================================
 
-ECHO_PREFIX ?= \nMAKE: #OPT Prefix of command echos
-IGNORE_VENV ?= 0#OPT Don't create and/or use a virtual environment.
-CHAIN ?= 0#OPT Whether to chain targets, e.g., let test depend on install-test.
-VENV_DIR ?= venv#OPT Path to virtual environment to be created and/or used.
-VENV_NAME ?= stormtrack#OPT Name of virtual environment if one is created.
+CHAIN ?= 0#OPT Whether to chain targets, e.g., let test depend on install-test
+IGNORE_VENV ?= 0#OPT Don't create and/or use a virtual environment
+MSG ?= #OPT Message used as, e.g., tag annotation in version bump commands
+PYTHON ?= 3.10.2#OPT Python version used to create conda virtual environment
+VENV_DIR ?= #OPT Path to existing or new conda virtual environment (overrides VENV_NAME)
+VENV_NAME ?= stormtrack#OPT Name of conda virtual environment (overridden by VENV_DIR)
+
+# Default values used below (caution: keep values in sync with above)
+DEFAULT_VENV_NAME = stormtrack#
+export DEFAULT_VENV_NAME
 
 #------------------------------------------------------------------------------
 
-PREFIX_VENV = ${VENV_DIR}/bin/#
-export PREVIX_VENV
-
-ifneq (${IGNORE_VENV}, 0)
-# Ignore virtual env
-PREFIX ?=#
-else
-ifneq (${VIRTUAL_ENV},)
-# Virtual env is active
-PREFIX =#
-else
-# Virtual env is not active
-PREFIX = ${PREFIX_VENV}
-endif
-endif
-export PREFIX
+# Options for all calls to up-do-date pip (i.e., AFTER `pip install -U pip`)
+# Example: `--use-feature=2020-resolver` before the new resolver became the default
+PIP_OPTS = # --use-feature=in-tree-build is now default in pip
+export PIP_OPTS
 
 #
 # Targets conditional on ${CHAIN}.
@@ -43,29 +36,23 @@ export PREFIX
 # regardless of ${CHAIN}.
 #
 ifeq (${CHAIN}, 0)
-	_VENV :=
-	_INSTALL :=
-	_INSTALL_EDIT :=
-	_INSTALL_TEST :=
-	_INSTALL_DEV :=
-	_INSTALL_PINNED :=
-	_INSTALL_TEST_PINNED :=
+	_INSTALL := venv
+	_INSTALL_DEV := venv
 else
-	_VENV := venv
 	_INSTALL := install
-	_INSTALL_EDIT := install-edit
-	_INSTALL_TEST := install-test
 	_INSTALL_DEV := install-dev
-	_INSTALL_PINNED := install-pinned
-	_INSTALL_TEST_PINNED := install-test-pinned
 endif
-export _VENV
 export _INSTALL
-export _INSTALL_EDIT
-export _INSTALL_TEST
 export _INSTALL_DEV
-export _INSTALL_PINNED
-export _INSTALL_TEST_PINNED
+
+_TMP_VENV := $(shell date +venv-tmp-%s)
+export _TMP_VENV
+
+# If conda base environment is active, ignore it
+ifeq (${CONDA_DEFAULT_ENV},base)
+	CONDA_DEFAULT_ENV := #
+	export CONDA_DEFAULT_ENV
+endif
 
 #==============================================================================
 # Python script: Print help
@@ -81,18 +68,22 @@ def parse_makefile(lines):
     rx_opt = re.compile(
         r"^(?P<name>[A-Z_]+) *\?= *(?P<value>[^ ]*) *#OPT (?P<help>.*)? *$$"
     )
-    rx_cmd = re.compile(
+    rx_cmd1 = re.compile(
         r"^(?P<name>[a-zA-Z_-]+):.*?#CMD (?P<help>.*) *$$"
+    )
+    rx_cmd2 = re.compile(
+        r"^.PHONY: (?P<name>[a-zA-Z_-]+) *#CMD (?P<help>.*) *$$"
     )
     for line in lines:
         match_opt = rx_opt.match(line)
-        match_cmd = rx_cmd.match(line)
+        match_cmd1 = rx_cmd1.match(line)
+        match_cmd2 = rx_cmd2.match(line)
         if match_opt:
             m = match_opt
             help = m.group("help").split(r"\n")
             options[m.group("name")] = (m.group("value"), help)
-        elif match_cmd:
-            m = match_cmd
+        elif match_cmd1 or match_cmd2:
+            m = match_cmd1 if match_cmd1 else match_cmd2
             commands[m.group("name")] = m.group("help").split(r"\n")
     return options, commands
 
@@ -148,7 +139,7 @@ browser = ${PREFIX}python -c "$$BROWSER_PY"
 # Help
 #==============================================================================
 
-.PHONY: help
+.PHONY: help #CMD Print this help page.
 help:
 	@python -c "$$PRINT_HELP_PY" < $(MAKEFILE_LIST)
 
@@ -156,231 +147,402 @@ help:
 # Cleanup
 #==============================================================================
 
-.PHONY: clean-all
-clean-all: clean clean-venv clean-test #CMD Remove all build, test, coverage and Python artifacts.
-	@echo -e "${ECHO_PREFIX}cleaning up everything"
+.PHONY: clean-all #CMD Remove all build, test, coverage and Python artifacts.
+clean-all: clean-venv clean-test clean-build
+	@echo -e "\n[make clean-all] cleaning up everything"
 
-.PHONY: clean
-clean: clean-build clean-cython clean-pyc #CMD Remove all build and Python artifacts.
-	@echo -e "${ECHO_PREFIX}cleaning up code artifacts"
+.PHONY: clean-build #CMD Remove all build artifacts.
+clean-build: clean-python clean-cython clean-pyc
+	@echo -e "\n[make clean-build] removing all build artifacts"
 
-.PHONY: clean-build
-clean-build: #CMD Remove Python build artifacts.
-	@echo -e "${ECHO_PREFIX}removing build artifacts"
+.PHONY: clean-cython #CMD Remove Python build artifacts.
+clean-python:
+	@echo -e "\n[make clean-python] removing Python build artifacts"
 	\rm -rf "build/"
 	\rm -rf "dist/"
 	\rm -rf ".eggs/"
-	\find . -not -path "${VENV_DIR}" -name '*.egg' -exec rm -f {} \+
-	\find . -not -path "${VENV_DIR}" -name '*.egg-info' -exec rm -rf {} \+
+	@\rm -ff $(\find . -not -path './venv*' -and -not -path './ENV*' -name '*.egg' -exec echo "rm -ff '{}'" \;)
+	@\rm -ff $(\find . -not -path './venv*' -and -not -path './ENV*' -name '*.egg' -exec echo "rm -ff '{}'" \;)
 
-.PHONY: clean-cython
-clean-cython: #CMD Remove Cython build artifacts.
+.PHONY: clean-cython #CMD Remove Cython build artifacts.
+clean-cython:
+	@echo -e "\n[make clean-cython] removing Cython build artifacts"
 	\find src -name '*.html' -exec rm -f {} \+
 	\find src -name '*.c' -exec rm -f {} \+
 	\find src -name '*.so' -exec rm -f {} \+
 
-.PHONY: clean-pyc
-clean-pyc: #CMD Remove Python file artifacts.
-	@echo -e "${ECHO_PREFIX}removing Python file artifacts"
-	\find . -not -path "${VENV_DIR}" -name '*.pyc' -exec rm -f {} \+
-	\find . -not -path "${VENV_DIR}" -name '*.pyo' -exec rm -f {} \+
-	\find . -not -path "${VENV_DIR}" -name '*~' -exec rm -f {} \+
-	\find . -not -path "${VENV_DIR}" -name '__pycache__' -exec rm -rf {} \+
+.PHONY: clean-pyc #CMD Remove Python file artifacts.
+clean-pyc:
+	@echo -e "\n[make clean-pyc] removing Python file artifacts"
+	@\rm -rf $(\find . -not -path './venv*' -and -not -path './ENV*' -name '*.pyc'       -exec echo "rm -rf '{}'" \;)
+	@\rm -rf $(\find . -not -path './venv*' -and -not -path './ENV*' -name '*.pyo'       -exec echo "rm -rf '{}'" \;)
+	@\rm -rf $(\find . -not -path './venv*' -and -not -path './ENV*' -name '*~'          -exec echo "rm -rf '{}'" \;)
+	@\rm -rf $(\find . -not -path './venv*' -and -not -path './ENV*' -name '__pycache__' -exec echo "rm -rf '{}'" \;)
 
-.PHONY: clean-code
-
-.PHONY: clean-test
-clean-test: #CMD Remove testing artifacts.
-	@echo -e "${ECHO_PREFIX}removing testing artifacts"
+.PHONY: clean-test #CMD Remove testing artifacts.
+clean-test:
+	@echo -e "\n[make clean-test] removing testing artifacts"
 	\rm -rf ".tox/"
 	\rm -f ".coverage"
 	\rm -rf "htmlcov/"
 	\rm -rf ".pytest_cache"
+	\rm -rf ".mypy_cache"
 
-.PHONY: clean-venv
-clean-venv: #CMD Remove virtual environment.
-	@echo -e "${ECHO_PREFIX}removing virtual environment at '${VENV_DIR}'"
-	\rm -rf "${VENV_DIR}"
-
-#==============================================================================
-# Virtual Environments
-#==============================================================================
-
-.PHONY: venv
-venv: #CMD Create a virtual environment.
+.PHONY: clean-venv #CMD Remove virtual environment.
+clean-venv:
 ifeq (${IGNORE_VENV}, 0)
-	$(eval PREFIX = ${PREFIX_VENV})
-	@export PREFIX
-ifeq (${VIRTUAL_ENV},)
-	@echo -e "${ECHO_PREFIX}creating virtual environment '${VENV_NAME}' at '${VENV_DIR}'"
-	which python
-	python --version
-	python -m venv ${VENV_DIR} --prompt='${VENV_NAME}'
-	${PREFIX}python --version
-	${PREFIX}python -m pip install -U pip
+	@# Do not ignore existing venv
+ifeq (${VENV_DIR},)
+	@# Path to conda venv has not been passed
+ifneq ($(shell conda list --name $(VENV_NAME) 2>/dev/null 1>&2; echo $$?),0)
+	@echo -e "\n[make clean-venv] no conda virtual environment '${VENV_NAME}' to remove"
+else
+	@echo -e "\n[make clean-venv] removing conda virtual environment '${VENV_NAME}'"
+	conda env remove --yes --name ${VENV_NAME}
+endif
+else
+	@# Path to conda venv has been passed
+ifneq ($(shell conda list --prefix $(VENV_DIR) 2>/dev/null 1>&2; echo $$?),0)
+	@echo -e "\n[make clean-venv] no conda virtual environment at '${VENV_DIR}' to remove"
+else
+	@echo -e "\n[make clean-venv] removing conda virtual environment at '${VENV_DIR}'"
+	conda env remove --yes --prefix ${VENV_DIR}
 endif
 endif
-
-#==============================================================================
-# Installation
-#==============================================================================
-
-.PHONY: install
-install: venv #CMD Install the package with unpinned runtime dependencies.
-	@echo -e "${ECHO_PREFIX}installing the package"
-	${PREFIX}python -m pip install .
-
-.PHONY: install-edit
-install-edit: venv #CMD Install the package as editable with unpinned runtime dependencies.
-	@echo -e "${ECHO_PREFIX}installing the package as editable"
-	${PREFIX}python -m pip install -e .
-
-.PHONY: install-pinned
-install-pinned: venv #CMD Install the package with pinned runtime dependencies.
-	@echo -e "${ECHO_PREFIX}installing the package with pinned dependencies"
-	${PREFIX}python -m pip install -r requirements/requirements.txt
-	${PREFIX}python -m pip install .
-
-.PHONY: install-test-pinned
-install-test-pinned: venv #CMD Install the package with pinned runtime and testing dependencies.
-	@echo -e "${ECHO_PREFIX}installing the package as editable with pinned testing dependencies"
-	${PREFIX}python -m pip install -r requirements/test-requirements.txt
-	${PREFIX}python -m pip install -e .
-
-.PHONY: install-test
-install-test: install-edit #CMD Install the package with unpinned runtime and testing dependencies.
-	@echo -e "${ECHO_PREFIX}installing the package with testing dependencies"
-	${PREFIX}python -m pip install -r requirements/test-requirements.in
-
-.PHONY: install-dev
-install-dev: install-test #CMD Install the package as editable with unpinned runtime,\ntesting, and development dependencies.
-	@echo -e "${ECHO_PREFIX}installing the package as editable with testing and development dependencies"
-	${PREFIX}python -m pip install -r requirements/dev-requirements.in
-
-.PHONY: install-offline
-install-offline: #CMD Install the package in editable mode without build isolation, which does not require an internet connection, but the dependencies must already be installed.
-	@echo -e "${ECHO_PREFIX}installing the package as editable without build isolation"
-	${PREFIX}python -m pip install --no-build-isolation -e .
+endif
 
 #==============================================================================
 # Version control
 #==============================================================================
 
-.PHONY: git
-git: clean-all #CMD Initialize a git repository and make initial commit.
-ifeq ($(shell git tag >/dev/null 2>&1 && echo 0 || echo 1), 0)
-	@echo -e "${ECHO_PREFIX}git already initialized"
-else
-	@echo -e "${ECHO_PREFIX}initializing Git repository"
+# Note: Check if git is initialized by checking error status of git rev-parse
+.PHONY: git #CMD Initialize a git repository and make initial commit.
+git:
+	@git rev-parse 2>&1 && $(MAKE) _git_ok || $(MAKE) _git_init
+
+# Hidden target called when git is already initialized
+.PHONY: _git_ok
+_git_ok:
+	@echo -e "\n[make git] git already initialized"
+
+# Hidden target called when git is not yet initialized
+.PHONY: _git_init
+_git_init:
+	$(MAKE) clean-all
+	@echo -e "\n[make git] initializing git repository"
 	\git init
 	\git add .
 	\git commit -m 'initial commit'
 	\git --no-pager log -n1 --stat
-endif
+
+#==============================================================================
+# Conda Virtual Environment
+#==============================================================================
+
+.PHONY: venv #CMD Create/locate conda virtual environment.
+venv: _create_conda_venv
+	@# Use an active or existing conda env if possible, otherwise create new one
+ifneq (${VIRTUAL_ENV},)
+	@# An active Python virtual environment has been found, so abort this mission!
+	@echo -e "[make venv] error: active non-conda virtual environment found: ${VIRTUAL_ENV}"
+	exit 1
+endif  # VIRTUAL_ENV
+ifeq (${IGNORE_VENV}, 0)
+	@# Don't ignore an existing conda env, and if there is none, create one
+ifeq (${VENV_DIR},)
+	@# Path VENV_DIR to conda env has NOT been passed
+	$(eval VENV_DIR = $(shell conda run --name $(VENV_NAME) python -c 'import pathlib, sys; print(pathlib.Path(sys.executable).parent.parent)'))
+	@export VENV_DIR
+else  # VENV_DIR
+	@# Path VENV_DIR to conda venv has been passed
+	$(eval VENV_DIR = $(shell conda run --prefix $(VENV_DIR) python -c 'import pathlib, sys; print(pathlib.Path(sys.executable).parent.parent)'))
+	@export VENV_DIR
+ifneq (${VENV_NAME},${DEFAULT_VENV_NAME})
+	@# Name VENV_NAME of conda env has been passed alongside path VENV_DIR
+	@echo -e "[make venv] warning: VENV_DIR=${VENV_DIR} overrides VENV_NAME=${VENV_NAME}"
+endif  # VENV_NAME
+endif  # VENV_DIR
+	$(eval PREFIX = ${VENV_DIR}/bin/)
+	@export PREFIX
+endif  # IGNORE_VENV
+	${PREFIX}python -V
+
+.PHONY: _create_conda_venv
+_create_conda_venv: git
+	@# If there is an active conda environment, use it, regardless of VENV_NAME and VENV_DIR;
+	@# if there is an existing env matching VENV_NAME and (if set) VENV_DIR, use that;
+	@# otherwise create a new one based on VENV_NAME and (if set) VENV_DIR.
+ifeq (${IGNORE_VENV}, 0)
+	@# Do not ignore existing venv
+ifneq (${CONDA_DEFAULT_ENV},)
+	@# There already is an active conda environment, so use it (regardless of its name and path)
+	@echo -e "\n[make venv] found active conda environment '${CONDA_DEFAULT_ENV}' at '${CONDA_PREFIX}'"
+ifneq (${CONDA_DEFAULT_ENV}, ${VENV_NAME})
+	@# The name of the active env does not match VENV_NAME, but we assume that's OK over override it
+	@echo -e "[make venv] warning: name of active venv '${CONDA_DEFAULT_ENV}' overrides VENV_NAME='${VENV_NAME}'"
+	$(eval VENV_NAME = ${CONDA_DEFAULT_ENV})
+	@export VENV_NAME
+endif  # CONDA_DEFAULT_ENV
+ifneq (${CONDA_PREFIX}, ${VENV_DIR})
+	@# The path to the active env does not match VENV_DIR (if set), but we assume that's OK and override it
+ifneq (${VENV_DIR},)
+	@echo -e "[make venv] warning: path to active venv '${CONDA_PREFIX}' overrides VENV_DIR='${VENV_DIR}'"
+endif  # VENV_DIR
+	$(eval VENV_DIR = ${CONDA_PREFIX})
+	@export VENV_DIR
+endif  # CONDA_PREFIX
+else  # CONDA_DEFAULT_ENV
+	@# The is no active conda environment
+ifeq (${VENV_DIR},)
+	@# Path VENV_DIR to conda env has NOT been passed
+ifeq ($(shell conda list --name $(VENV_NAME) 2>/dev/null 1>&2; echo $$?),0)
+	@# Conda venv with name VENV_NAME already exists, so use it
+	@echo -e "\n[make venv] conda virtual environment '${VENV_NAME}' already exists"
+else  # shell conda ...
+	@# Conda env with name VENV_NAME doesn't exist yet, so create it
+	@echo -e "\n[make venv] creating conda virtual environment '${VENV_NAME}'"
+	conda create -y --name "${VENV_NAME}" python==${PYTHON}
+endif  # shell conda ...
+else  # VENV_DIR
+	@# Path to conda env VENV_DIR has been passed
+ifeq ($(shell conda list --prefix $(VENV_DIR) 2>/dev/null 1>&2; echo $$?),0)
+	@# Conda env at path VENV_DIR already exists, so use it
+	@echo -e "\n[make venv] conda virtual environment at '${VENV_DIR}'"
+else  # shell conda ...
+	@# Conda env at path VENV_DIR does NOT yet exist, so create it
+	@echo -e "\n[make venv] creating conda virtual environment at '${VENV_DIR}'"
+	conda create -y --prefix "${VENV_DIR}" python==${PYTHON}
+endif  # shell conda ...
+endif  # VENV_DIR
+endif  # CONDA_DEFAULT_ENV
+endif  # IGNORE_VENV
+
+#==============================================================================
+# Installation
+#==============================================================================
+
+.PHONY: install #CMD Install the package with unpinned runtime dependencies.
+install: venv
+	@echo -e "\n[make install] installing the package"
+	conda env update --prefix "${VENV_DIR}" --file=environment.yml
+	# conda install --yes --prefix "${VENV_DIR}" --file requirements/requirements.txt  # pinned
+	# conda install --yes --prefix "${VENV_DIR}" --file requirements/requirements.in  # unpinned
+	# ${PREFIX}python -m pip install -U pip
+	${PREFIX}python -m pip install . ${PIP_OPTS}
+	${PREFIX}stormtrack -V
+
+.PHONY: install-dev #CMD Install the package as editable with pinned runtime and\ndevelopment dependencies.
+install-dev: venv
+	@echo -e "\n[make install-dev] installing the package as editable with development dependencies"
+	# conda install --yes --prefix "${VENV_DIR}" --file requirements/dev-requirements.txt  # pinned
+	conda install --yes --prefix "${VENV_DIR}" --file requirements/requirements.in  # unpinned
+	conda install --yes --prefix "${VENV_DIR}" --file requirements/dev-requirements.in  # unpinned
+	# ${PREFIX}python -m pip install -U pip
+	${PREFIX}python -m pip install --editable . ${PIP_OPTS}
+	${PREFIX}pre-commit install
+	${PREFIX}pyflexplot -V
+
+#==============================================================================
+# Dependencies
+#==============================================================================
+
+.PHONY: update-run-deps #CMD Update pinned runtime dependencies based on setup.py;\nshould be followed by update-dev-deps (consider update-run-dev-deps)
+update-run-deps: git
+	@echo -e "\n[make update-run-deps] not yet implemented for conda"
+	exit 1
+	# @echo -e "\n[make update-run-deps] updating pinned runtime dependencies in requirements/requirements.txt"
+	# \rm -f requirements/requirements.txt
+	# @echo -e "temporary virtual environment: ${_TMP_VENV}-run"
+	# python -m venv ${_TMP_VENV}-run
+	# ${_TMP_VENV}-run/bin/python -m pip install -U pip
+	# ${_TMP_VENV}-run/bin/python -m pip install . ${PIP_OPTS}
+	# ${_TMP_VENV}-run/bin/python -m pip freeze | \grep -v '\<file:' > requirements/requirements.txt
+	# \rm -rf ${_TMP_VENV}-run
+
+.PHONY: update-dev-deps #CMD Update pinned development dependencies based on\nrequirements/dev-requirements.in; includes runtime dependencies in\nrequirements/requirements.txt
+update-dev-deps: git
+	@echo -e "\n[make update-dev-deps] not yet implemented for conda"
+	exit 1
+	# @echo -e "\n[make update-dev-deps] updating pinned development dependencies in requirements/requirements.txt"
+	# \rm -f requirements/dev-requirements.txt
+	# @echo -e "temporary virtual environment: ${_TMP_VENV}-dev"
+	# python -m venv ${_TMP_VENV}-dev
+	# ${_TMP_VENV}-dev/bin/python -m pip install -U pip
+	# ${_TMP_VENV}-dev/bin/python -m pip install -r requirements/dev-requirements.in ${PIP_OPTS}
+	# ${_TMP_VENV}-dev/bin/python -m pip install -r requirements/requirements.txt --no-deps ${PIP_OPTS}
+	# ${_TMP_VENV}-dev/bin/python -m pip freeze > requirements/dev-requirements.txt
+	# \rm -rf ${_TMP_VENV}-dev
+
+# Note: Updating run and dev deps MUST be done in sequence
+.PHONY: update-run-dev-deps #CMD Update pinned runtime and development dependencies
+update-run-dev-deps:
+	$(MAKE) update-run-deps
+	$(MAKE) update-dev-deps
+
+#.PHONY: update-tox-deps #CMD Update pinned tox testing dependencies based on\nrequirements/tox-requirements.in
+#update-tox-deps: git
+#	@echo -e "\n[make update-tox-deps] not yet implemented for conda"
+#	exit 1
+#	# \rm -f requirements/tox-requirements.txt
+#	# @echo -e "\n[make update-tox-deps] updating pinned tox testing dependencies in requirements/tox-requirements.txt"
+#	# @echo -e "temporary virtual environment: ${_TMP_VENV}-tox"
+#	# python -m venv ${_TMP_VENV}-tox
+#	# ${_TMP_VENV}-tox/bin/python -m pip install -U pip
+#	# ${_TMP_VENV}-tox/bin/python -m pip install -r requirements/tox-requirements.in ${PIP_OPTS}
+#	# ${_TMP_VENV}-tox/bin/python -m pip freeze > requirements/tox-requirements.txt
+#	# \rm -rf ${_TMP_VENV}-tox
+
+.PHONY: update-precommit-deps #CMD Update pinned pre-commit dependencies specified in\n.pre-commit-config.yaml
+update-precommit-deps: git
+	@echo -e "\n[make update-precommit-deps] not yet implemented for conda"
+	exit 1
+	# @echo -e "\n[make update-precommit-deps] updating pinned tox testing dependencies in .pre-commit-config.yaml"
+	# python -m venv ${_TMP_VENV}-precommit
+	# ${_TMP_VENV}-precommit/bin/python -m pip install -U pip
+	# ${_TMP_VENV}-precommit/bin/python -m pip install pre-commit
+	# ${_TMP_VENV}-precommit/bin/pre-commit autoupdate
+	# \rm -rf ${_TMP_VENV}-precommit
+
+.PHONY: update-deps #CMD Update all pinned dependencies (run, dev, tox, precommit)
+# update-deps: update-run-dev-deps update-tox-deps update-precommit-deps
+update-deps: update-run-dev-deps update-precommit-deps
+	@echo -e "\n[make update-deps] updating all pinned dependencies (run, dev, tox, precommit)"
 
 #==============================================================================
 # Versioning
 #==============================================================================
 
-.PHONY: bump-patch
-bump-patch: ${_INSTALL_DEV} #CMD Bump patch component of version number (x.y.Z), incl. git commit and tag
-	@echo -e "${ECHO_PREFIX}bumping version number: increment patch component"
-	cat VERSION.txt
-	${PREFIX}bumpversion patch
-	cat VERSION.txt
+# Note:
+# Bump2version v1.0.0 is incompatible with pre-commit hook fix-trailing-whitespace
+# (https://github.com/c4urself/bump2version/issues/124), therefore we pre-commit,
+# commit, and tag manually. Once the whitespace problem is fixed, this can again
+# be done in one command:
+#  @read -p "Please annotate new tag: " msg \
+#  && ${PREFIX}bumpversion patch --verbose --tag-message="$${msg}"
 
-.PHONY: bump-minor
-bump-minor: ${_INSTALL_DEV} #CMD Bump minor component of version number (x.Y.z), incl. git commit and tag
-	@echo -e "${ECHO_PREFIX}bumping version number: increment minor component"
-	cat VERSION.txt
-	${PREFIX}bumpversion minor
-	cat VERSION.txt
+.PHONY: bump-patch #CMD Increment patch component Z of version number X.Y.Z,\nincl. git commit and tag
+bump-patch: ${_INSTALL_DEV}
+ifeq ($(MSG),)
+	@echo -e "\n[make bump-patch] Error: Please provide a description with MSG='...' (use '"'\\n'"' for multiple lines)"
+else
+	@echo -e "\n[make bump-patch] bumping version number: increment patch component\n"
+	@echo -e '\nTag annotation:\n\n$(subst ',",$(MSG))\n'
+	@${PREFIX}bumpversion patch --verbose --no-commit --no-tag && echo
+	@${PREFIX}pre-commit run --files $$(git diff --name-only) && git add -u
+	@git commit -m "new version v$$(cat VERSION) (patch bump)"$$'\n\n$(subst ',",$(MSG))' --no-verify && echo
+	@git tag -a v$$(cat VERSION) -m $$'$(subst ',",$(MSG))'
+	@echo -e "\ngit tag -n -l v$$(cat VERSION)" && git tag -n -l v$$(cat VERSION)
+	@echo -e "\ngit log -n1" && git log -n1
+endif
+# ' (close quote that vim thinks is still open to get the syntax highlighting back in order)
 
-.PHONY: bump-major
-bump-major: ${_INSTALL_DEV} #CMD Bump minor component of version number (X.y.z), incl. git commit and tag
-	@echo -e "${ECHO_PREFIX}bumping version number: increment major component"
-	cat VERSION.txt
-	${PREFIX}bumpversion major
-	cat VERSION.txt
+.PHONY: bump-minor #CMD Increment minor component Y of version number X.Y.Z,\nincl. git commit and tag
+bump-minor: ${_INSTALL_DEV}
+ifeq ($(MSG),)
+	@echo -e "\n[make bump-minor] Error: Please provide a description with MSG='...' (use '"'\\n'"' for multiple lines)"
+else
+	@echo -e '\nTag annotation:\n\n$(subst ',",$(MSG))\n'
+	@${PREFIX}bumpversion minor --verbose --no-commit --no-tag && echo
+	@${PREFIX}pre-commit run --files $$(git diff --name-only) && git add -u
+	@git commit -m "new version v$$(cat VERSION) (minor bump)"$$'\n\n$(subst ',",$(MSG))' --no-verify && echo
+	@git tag -a v$$(cat VERSION) -m $$'$(subst ',",$(MSG))'
+	@echo -e "\ngit tag -n -l v$$(cat VERSION)" && git tag -n -l v$$(cat VERSION)
+	@echo -e "\ngit log -n1" && git log -n1
+endif
+# ' (close quote that vim thinks is still open to get the syntax highlighting back in order)
 
-.PHONY: bump-patch-dry
-bump-patch-dry: ${_INSTALL_DEV} #CMD Bump patch component of version number (x.y.Z), without git commit and tag
-	@echo -e "${ECHO_PREFIX}bumping version number: increment patch component (dry run)"
-	cat VERSION.txt
-	${PREFIX}bumpversion patch --no-commit --no-tag
-	cat VERSION.txt
-
-.PHONY: bump-minor-dry
-bump-minor-dry: ${_INSTALL_DEV} #CMD Bump minor component of version number (x.Y.z), without git commit and tag
-	@echo -e "${ECHO_PREFIX}bumping version number: increment minor component (dry run)"
-	cat VERSION.txt
-	${PREFIX}bumpversion minor --no-commit --no-tag
-	cat VERSION.txt
-
-.PHONY: bump-major-dry
-bump-major-dry: ${_INSTALL_DEV} #CMD Bump minor component of version number (X.y.z), without git commit and tag
-	@echo -e "${ECHO_PREFIX}bumping version number: increment major component (dry run)"
-	cat VERSION.txt
-	${PREFIX}bumpversion major --no-commit --no-tag
-	cat VERSION.txt
+.PHONY: bump-major #CMD Increment major component X of version number X.Y.Z,\nincl. git commit and tag
+bump-major: ${_INSTALL_DEV}
+ifeq ($(MSG),)
+	@echo -e "\n[make bump-major] Error: Please provide a description with MSG='...' (use '"'\\n'"' for multiple lines)"
+else
+	@echo -e '\nTag annotation:\n\n$(subst ',",$(MSG))\n'
+	@${PREFIX}bumpversion major --verbose --no-commit --no-tag && echo
+	@${PREFIX}pre-commit run --files $$(git diff --name-only) && git add -u
+	@git commit -m "new version v$$(cat VERSION) (major bump)"$$'\n\n$(subst ',",$(MSG))' --no-verify && echo
+	@git tag -a v$$(cat VERSION) -m $$'$(subst ',",$(MSG))'
+	@echo -e "\ngit tag -n -l v$$(cat VERSION)" && git tag -n -l v$$(cat VERSION)
+	@echo -e "\ngit log -n1" && git log -n1
+endif
+# ' (close quote that vim thinks is still open to get the syntax highlighting back in order)
 
 #==============================================================================
-# Formatting and linting
+# Format and check the code
 #==============================================================================
 
-.PHONY: format
-format: ${_INSTALL_DEV} #CMD Reformat the code to conform with standards like PEP 8.
-	@echo -e "${ECHO_PREFIX}reformatting the code"
+.PHONY: format #CMD Check and fix the code formatting
+format: ${_INSTALL_DEV}
+	@echo -e "\n[make format] checking and fixing code formatting"
 	${PREFIX}black src tests
 
-.PHONY: lint
-lint: ${_INSTALL_DEV} #CMD Check the code style.
-	@echo -e "${ECHO_PREFIX}checking the code style (linting)"
+#.PHONY: format #CMD Check and fix the code formatting
+#format: ${_INSTALL_DEV}
+#	@echo -e "\n[make format] checking and fixing code formatting"
+#	${PREFIX}pre-commit run --all-files
+
+.PHONY: lint #CMD Check the code style.
+lint: ${_INSTALL_DEV}
+	@echo -e "\n[make linst] checking the code style (linting)"
 	${PREFIX}flake8 src tests
 
+.PHONY: check #CMD Check the code for correctness and best practices
+check: ${_INSTALL_DEV}
+	@echo -e "\n[make check] checking code correctness and best practices"
+	${PREFIX}tox --parallel -e mypy -e flake8 -e pylint
+
+.PHONY: spellcheck #CMD Check for spelling errors
+spellcheck: ${_INSTALL_DEV}
+	@echo -e "\n[make spellcheck] checking for spelling errors"
+	${PREFIX}codespell *.rst
+	find src tests docs -name '*.rst' -exec ${PREFIX}codespell {} \+
+	${PREFIX}codespell *.md
+	find src tests docs -name '*.md' -exec ${PREFIX}codespell {} \+
+	${PREFIX}codespell *.py
+	find src tests docs -name '*.py' -exec ${PREFIX}codespell {} \+
+
 #==============================================================================
-# Testing
+# Run the tests
 #==============================================================================
 
-.PHONY: test
-test: ${_INSTALL_TEST} #CMD Run all tests with the default Python version.
-	@echo -e "${ECHO_PREFIX}running tests"
-	${PREFIX}pytest
+.PHONY: test #CMD Run all tests in the development environment
+test: ${_INSTALL_DEV}
+	@echo -e "\n[make test] running all tests locally"
+	# ${PREFIX}tox -e py37
+	${PREFIX}pytest tests
 
-.PHONY: test-cov
-test-cov: ${_INSTALL_TEST} #CMD Check code coverage of tests.
-	@echo -e "${ECHO_PREFIX}running tests with coverage check"
-	${PREFIX}pytest --cov=src
+.PHONY: test-iso #CMD Run all tests in an isolated environment
+test-iso: ${_INSTALL_DEV}
+	@echo -e "\n[make test-iso] running all tests in isolation"
+	${PREFIX}tox -e py37
 
-.PHONY: test-cov-html
-test-cov-html: ${_INSTALL_TEST} #CMD Check code coverage of tests and show results in browser.
-	@echo -e "${ECHO_PREFIX}running tests with coverage check and browser report"
-	${PREFIX}pytest --cov=src --cov-report=html
-	${browser} htmlcov/index.html
+#.PHONY: test-cov #CMD Check code coverage of tests.
+#test-cov: ${_INSTALL_DEV}
+#	@echo -e "\n[make test-cov] running tests with coverage check"
+#	${PREFIX}pytest --cov=src
 
-.PHONY: test-all
-test-all: ${_INSTALL} #CMD Run tests on all specified Python versions with tox.
-	@echo -e "${ECHO_PREFIX}running tests in isolated environments"
-	${PREFIX}python -m pip install tox
-	${PREFIX}tox
+#.PHONY: test-cov-html #CMD Check code coverage of tests and show results in browser.
+#test-cov-html: ${_INSTALL_DEV}
+#	@echo -e "\n[make test-cov-html] running tests with coverage check and browser report"
+#	${PREFIX}pytest --cov=src --cov-report=html
+#	${browser} htmlcov/index.html
 
 #==============================================================================
 # Documentation
 #==============================================================================
 
-# .PHONY: docs
-# docs: ${_INSTALL_DEV} #CMD Generate HTML documentation, including API docs.
-#	@echo -e "${ECHO_PREFIX}generating HTML documentation"
-# 	\rm -f docs/stormtrack.rst
-# 	\rm -f docs/modules.rst
-# 	${PREFIX}sphinx-apidoc -o docs/ src/stormtrack
-# 	$(MAKE) -C docs clean
-# 	$(MAKE) -C docs html
-# 	${browser} docs/_build/html/index.html
+#.PHONY: docs #CMD Generate HTML documentation, including API docs.
+#docs: ${_INSTALL_DEV}
+#	@echo -e "\n[make docs] generating HTML documentation"
+#	\rm -f docs/stormtrack.rst
+#	\rm -f docs/modules.rst
+#	${PREFIX}sphinx-apidoc -o docs/ src/stormtrack
+#	$(MAKE) -C docs clean
+#	$(MAKE) -C docs html
+#	${browser} docs/_build/html/index.html
 
-# .PHONY: servedocs
-# servedocs: docs #CMD Compile the docs watching for changes.
-#	@echo -e "${ECHO_PREFIX}continuously regenerating HTML documentation"
-# 	${PREFIX}watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+#.PHONY: servedocs #CMD Compile the docs watching for changes.
+#servedocs: docs
+#	@echo -e "\n[make servedocs] continuously regenerating HTML documentation"
+#	${PREFIX}watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 #==============================================================================
