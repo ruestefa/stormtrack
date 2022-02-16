@@ -17,7 +17,7 @@ Types of Contributions
 Report Bugs
 ^^^^^^^^^^^
 
-Report bugs at https://github.com/MeteoSwiss-APN/stormtrack/issues.
+Report bugs at https://github.com/ruestefa/stormtrack/issues.
 
 If you are reporting a bug, please include:
 
@@ -49,7 +49,7 @@ StormTrack could always use more documentation, whether as part of the official 
 Submit Feedback
 ^^^^^^^^^^^^^^^
 
-The best way to send feedback is to file an issue at https://github.com/MeteoSwiss-APN/stormtrack/issues.
+The best way to send feedback is to file an issue at https://github.com/ruestefa/stormtrack/issues.
 
 If you are proposing a feature:
 
@@ -194,6 +194,8 @@ Project Structure
 
    * -  requirements/
      -  Folder with requirements files specifying various types of dependencies.
+   * -  requirements/requirements.in
+     -  Unpinned direct runtime dependencies.
    * -  requirements/test-requirements.in
      -  Unpinned direct testing dependencies.
    * -  requirements/dev-requirements.in
