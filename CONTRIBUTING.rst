@@ -77,8 +77,8 @@ Ready to contribute? Here's how to set up `stormtrack` for local development.
 
     -   Build dependencies in ``pyproject.toml``
     -   Runtime dependencies in ``setup.py``
-    -   Testing dependencies in ``requirements/test-unpinned.txt``
-    -   Development dependencies in ``requirements/dev-unpinned.txt``
+    -   Testing dependencies in ``requirements/test-requirements.in``
+    -   Development dependencies in ``requirements/dev-requirements.in``
 
     Optionally activate the virtual environment::
 
@@ -194,15 +194,15 @@ Project Structure
 
    * -  requirements/
      -  Folder with requirements files specifying various types of dependencies.
-   * -  requirements/test-unpinned.txt
+   * -  requirements/test-requirements.in
      -  Unpinned direct testing dependencies.
-   * -  requirements/dev-unpinned.txt
+   * -  requirements/dev-requirements.in
      -  Unpinned direct development dependencies.
-   * -  requirements/run-pinned.txt
+   * -  requirements/requirements.txt
      -  Pinned runtime requirements, covering the whole dependency tree with fixed versions.
-   * -  requirements/test-pinned.txt
+   * -  requirements/test-requirements.txt
      -  Pinned testing dependencies, along with runtime dependencies, covering the whole dependency tree with fixed versions.
-   * -  requirements/dev-pinned.txt
+   * -  requirements/dev-requirements.txt
      -  Pinned development dependencies, along with testing and runtime dependencies, covering the whole dependency tree with fixed versions.
 
    * -  tox.ini
@@ -224,27 +224,27 @@ The dependencies in the following files are managed by hand:
  *  ``setup.cfg``:
     Unpinned direct runtime dependencies, i.e., packages imported in the code.
     Installed while building the package with, e.g., ``make install``.
- *  ``requirements/test-unpinned.txt``:
+ *  ``requirements/test-requirements.in``:
     Unpinned direct testing dependencies, i.e., packages used during testing.
     Separate from other development dependencies because one may want to test the package on a given system prior to installation without changing it.
- *  ``requirements/dev-unpinned.txt``:
+ *  ``requirements/dev-requirements.in``:
     Unpinned direct development dependencies, i.e., packages used during development (in addition to the testing dependencies).
 
 The following files, by contrast, and created with ``pip freeze`` after installing the respective packages:
 
- *  ``requirements/run-pinned.txt``:
+ *  ``requirements/requirements.txt``:
      Pinned runtime requirements, covering the whole dependency tree with fixed versions.
- *  ``requirements/test-pinned.txt``:
+ *  ``requirements/test-requirements.txt``:
      Pinned testing dependencies, along with runtime dependencies, covering the whole dependency tree with fixed versions.
- *  ``requirements/dev-pinned.txt``:
+ *  ``requirements/dev-requirements.txt``:
      Pinned development dependencies, along with testing and runtime dependencies, covering the whole dependency tree with fixed versions.
 
 For instance, the runtime dependencies can be pinned as follows::
 
     $ make install
-    $ ./venv/bin/python -m pip freeze >requirements/run-pinned.txt
+    $ ./venv/bin/python -m pip freeze >requirements/requirements.txt
 
-Note that the quasi-standard `pip requirements file`_ ``requirements.txt`` corresponds to ``requirements/run-pinned.txt``.
+Note that the quasi-standard `pip requirements file`_ ``requirements.txt`` corresponds to ``requirements/requirements.txt``.
 The dependencies specified in a requirements file are installed with ``pip install -r <requirements file>``.
 
 Unpinned and pinned dependencies have specific characteristics, advantages, and drawbacks:

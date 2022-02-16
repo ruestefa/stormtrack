@@ -238,24 +238,24 @@ install-edit: venv #CMD Install the package as editable with unpinned runtime de
 .PHONY: install-pinned
 install-pinned: venv #CMD Install the package with pinned runtime dependencies.
 	@echo -e "${ECHO_PREFIX}installing the package with pinned dependencies"
-	${PREFIX}python -m pip install -r requirements/run-pinned.txt
+	${PREFIX}python -m pip install -r requirements/requirements.txt
 	${PREFIX}python -m pip install .
 
 .PHONY: install-test-pinned
 install-test-pinned: venv #CMD Install the package with pinned runtime and testing dependencies.
 	@echo -e "${ECHO_PREFIX}installing the package as editable with pinned testing dependencies"
-	${PREFIX}python -m pip install -r requirements/test-pinned.txt
+	${PREFIX}python -m pip install -r requirements/test-requirements.txt
 	${PREFIX}python -m pip install -e .
 
 .PHONY: install-test
 install-test: install-edit #CMD Install the package with unpinned runtime and testing dependencies.
 	@echo -e "${ECHO_PREFIX}installing the package with testing dependencies"
-	${PREFIX}python -m pip install -r requirements/test-unpinned.txt
+	${PREFIX}python -m pip install -r requirements/test-requirements.in
 
 .PHONY: install-dev
 install-dev: install-test #CMD Install the package as editable with unpinned runtime,\ntesting, and development dependencies.
 	@echo -e "${ECHO_PREFIX}installing the package as editable with testing and development dependencies"
-	${PREFIX}python -m pip install -r requirements/dev-unpinned.txt
+	${PREFIX}python -m pip install -r requirements/dev-requirements.in
 
 .PHONY: install-offline
 install-offline: #CMD Install the package in editable mode without build isolation, which does not require an internet connection, but the dependencies must already be installed.

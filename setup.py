@@ -6,6 +6,7 @@ The setup script.
 # Third-party
 import numpy
 from numpy import f2py
+from pkg_resources import parse_requirements
 from setuptools.extension import Extension
 from setuptools import find_packages
 from setuptools import setup
@@ -35,30 +36,16 @@ metadata = {
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.10",
         "Programming Language :: Cython",
     ],
 }
 
-# python = "==3.7.*"
-python = ">=3.7"
+python = ">=3.10"
 
-dependencies = [
-    "basemap @ git+https://github.com/matplotlib/basemap.git",
-    "cython",
-    "click >= 6.0",
-    "descartes",
-    "h5py",
-    "python-igraph",
-    "netcdf4",
-    "numpy",
-    "matplotlib",
-    "scipy",
-    "shapely",
-    "pillow",
-    "pytz",
-    "pyproj",
-]
+# Runtime dependencies: top-level and unpinned (only critical version restrictions)
+with open("requirements/requirements.in") as f:
+    requirements = list(map(str, parse_requirements(f.readlines())))
 
 scripts = [
     # Main
@@ -98,7 +85,7 @@ cython_setup = {
 
 setup(
     python_requires=python,
-    install_requires=dependencies,
+    install_requires=requirements,
     entry_points={"console_scripts": scripts},
     packages=find_packages("src"),
     package_dir={"": "src"},
