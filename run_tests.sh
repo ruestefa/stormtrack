@@ -48,7 +48,6 @@ DEFAULT_DRY_RUN=false
 DRY_RUN="${DRY_RUN:-${DEFAULT_DRY_RUN}}"
 
 # Verbosity (0 silent; 1 regular; 2 verbose; >2 debug)
-echo $VERBOSE
 DEFAULT_VERBOSE=1
 VERBOSE="${VERBOSE:-${DEFAULT_VERBOSE}}"
 
@@ -127,7 +126,7 @@ main()
             0) pc="    " ;;
             *) local pc="$(\printf "%3d%%" $((100 * n_pass / n_run)))" ;;
         esac
-        echo "[ ${pc} ] ${n_pass} passed, ${n_fail} failed of ${n_tot} total, ${n_skip} skipped"
+        echo " [ ${pc} ] ${n_tot} modules, ${n_pass} passed, ${n_fail} failed, ${n_skip} skipped"
     }
     return ${n_fail}
 }
@@ -217,12 +216,12 @@ run_test_module()
 
     # Run tests
     [ ${VERBOSE} -ge 3 ] && echo ''
-    [ ${VERBOSE} -ge 2 ] && echo -e "[  RUN ] ${test_name}"
+    [ ${VERBOSE} -ge 2 ] && echo -e " [  RUN ] ${test_name}"
     local cmd="PYTHONPATH=${pypath} ${PYTHON} -m ${module_pypath}"
     pdbg ${_name_} "command" "${cmd}"
     if ${DRY_RUN}; then
         [ ${VERBOSE} -ge 1 ] && {
-            echo "[  DRY ] ${test_name}"
+            echo " [  DRY ] ${test_name}"
             echo "         ${cmd}"
         }
     else
@@ -234,8 +233,8 @@ run_test_module()
         local stat=${?}
         case ${VERBOSE}/${stat} in
             0/*) ;;
-            */0) echo "[ PASS ] ${test_name}" ;;
-            */*) echo "[ FAIL ] ${test_name}" ;;
+            */0) echo " [ PASS ] ${test_name}" ;;
+            */*) echo "*[ FAIL ] ${test_name}" ;;
         esac
     fi
     return ${stat}
