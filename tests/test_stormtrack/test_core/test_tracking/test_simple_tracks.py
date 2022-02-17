@@ -540,6 +540,7 @@ class SimpleTrack__SplitMergeTrack(SimpleTrack__Base):
         s.assertEqual(tracks_in, tracks_out_2)
 
 
+@pytest.skip("not implemented")
 @pytest.mark.skip("not implemented")
 class SimpleTrack_MissingFeature(TestTracks_Base):
 
@@ -574,6 +575,7 @@ class SimpleTrack_MissingFeature(TestTracks_Base):
         features = [[f] for f in s.track1]
         s.assert_tracks_features(tracks, [features])
 
+    @pytest.skip("TODO")
     @pytest.mark.skip("TODO")
     def test_one_missing_split(s):
         """Split the track at the missing feature."""

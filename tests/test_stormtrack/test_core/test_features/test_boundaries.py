@@ -578,6 +578,7 @@ class FindBoundaries_NestedShells(TestBoundaries_Base):
         s.assertBoundaries(shells, s.shells8, holes, s.holes8)
 
 
+# @unittest.skip("WIP")
 # @pytest.mark.skip("WIP")
 class FindBoundaries_RealCase(TestBoundaries_Base):
     def setUp(s):

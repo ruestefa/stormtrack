@@ -23,6 +23,7 @@ from stormtrack.extra.utilities_misc import Field2D
 # log.getLogger().setLevel(log.DEBUG)
 
 
+@unittest.skip("missing input data")
 @pytest.mark.skip("missing input data")
 class TestIdentifyFeatures(TestCase):
     """Run the identification using the same case but different configs.
@@ -145,6 +146,7 @@ class TestIdentifyFeatures(TestCase):
 
     # SMOOTHING
 
+    @unittest.skip("takes far too long")
     @pytest.mark.skip("takes far too long")
     def test_sig00(s):
         s.conf["smoothing-sigma"] = 0.0
@@ -154,6 +156,7 @@ class TestIdentifyFeatures(TestCase):
         s.conf["smoothing-sigma"] = 3.0
         s.run_test("test_sig03")
 
+    @unittest.skip("fails...")
     @pytest.mark.skip("fails...")
     def test_sig15(s):
         s.conf["smoothing-sigma"] = 15.0

@@ -227,6 +227,7 @@ class IdentifyRegions2DSeeds(IdentifyRegions2D_Base):
         s.assertEqual(len(features_px), 2, "should find exactly two regions")
         s.assert_regions(features_px, s.regions_xy[0])
 
+    @unittest.skip("TODO")
     @pytest.mark.skip("TODO")
     def test_lvl1(s):
         """Multiple seed points in one region."""
@@ -242,6 +243,7 @@ class IdentifyRegions2DSeeds(IdentifyRegions2D_Base):
         s.assertSetEqual(set(seeds_px[0]), sol)
         s.assert_regions(features_px, s.regions_xy[1])
 
+    @unittest.skip("TODO")
     @pytest.mark.skip("TODO")
     def test_lvl2(s):
         pass

@@ -44,6 +44,7 @@ class TestCycloneIO(TestCase):
         s.writer_json = CycloneIOWriterJson()
         s.writer_bin = CycloneIOWriterBinary()
 
+    @unittest.skip("missing input data")
     @pytest.mark.skip("missing input data")
     def test_pure_json(s):
         """Read and write pure JSON output.
@@ -84,6 +85,7 @@ class TestCycloneIO(TestCase):
         # Clean up
         os.remove(s.file_out_json)
 
+    @unittest.skip("missing input data")
     @pytest.mark.skip("missing input data")
     def test_hybrid_json_binary(s):
         """Read and write all mixed JSON-binary output.
@@ -146,6 +148,7 @@ class TestTrackIO(TestCase):
         s.writer_json = FeatureTrackIOWriterJson()
         # s.writer_bin = FeatureTrackIOWriterBinary()
 
+    @unittest.skip("add method rebuild_features (?)")
     @pytest.mark.skip("add method rebuild_features (?)")
     def test_pure_json(s):
         """Read and write pure JSON output.
@@ -180,6 +183,7 @@ class TestTrackIO(TestCase):
         # Clean up
         os.remove(s.file_out_json)
 
+    @unittest.skip("Not Implemented")
     @pytest.mark.skip("Not Implemented")
     def test_hybrid_json_binary(s):
         """Read and write all mixed JSON-binary output.
