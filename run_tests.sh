@@ -3,7 +3,7 @@
 # Collect Python test files and run the tests.
 #
 # Motivation:
-#   Alternative to  pytest, which does not work with Cython code.
+#   Alternative to pytest, which does not work with Cython code.
 #
 # Author:
 #   Stefan Ruedisuehli
@@ -23,8 +23,8 @@
 # Example: `$ script.sh FOO=BAR` should behave like `$ FOO=BAR script.sh`
 declare_variables()
 {
-    local arg; for arg in "${@}"
-    do
+    local arg
+    for arg in "${@}"; do
         local name_val=(${arg/=/ })
         declare -g ${name_val[0]}="${name_val[1]}"
     done
@@ -107,8 +107,7 @@ main()
     local n_pass=0
     local n_fail=0
     local n_skip=0
-    for module_pypath_root in "${modules_pypath_root[@]}"
-    do
+    for module_pypath_root in "${modules_pypath_root[@]}"; do
         pdbg ${_name_} "module_pypath_root" "${module_pypath_root}"
         run_test_module $(echo "${module_pypath_root/@/ }")
         case ${?} in
@@ -138,13 +137,11 @@ collect_modules()
     local _name_="collect_modules"
     local test_file_path
     local modules=()
-    for test_file_path in ${test_file_paths[@]}
-    do
+    for test_file_path in ${test_file_paths[@]}; do
         pdbg ${_name_} "test_file_path" "${test_file_path}"
         local found=false
         local package_root
-        for package_root in ${package_roots[@]}
-        do
+        for package_root in ${package_roots[@]}; do
             pdbg ${_name_} "package_root" "${package_root}"
             startswith "${test_file_path}" "${package_root}" || continue
             found=true
@@ -190,12 +187,10 @@ run_test_module()
     local test_name="${module_pypath} @ ${module_root}"
 
     # Run test module only if specified as included
-    if [ ${#INCLUDE[@]} -gt 0 ]
-    then
+    if [ ${#INCLUDE[@]} -gt 0 ]; then
         local include=false
         local module_to_include
-        for module_to_include in "${INCLUDE[@]}"
-        do
+        for module_to_include in "${INCLUDE[@]}"; do
             echo "${module_pypath}" | \grep -q "${module_to_include//./\\.}" && {
                 include=true
                 break
@@ -209,8 +204,7 @@ run_test_module()
 
     # Skip test module if specified as excluded
     local module_to_exclude
-    for module_to_exclude in "${EXCLUDE[@]}"
-    do
+    for module_to_exclude in "${EXCLUDE[@]}"; do
         echo "${module_pypath}" | \grep -q "${module_to_exclude//./\\.}" && {
             [ ${VERBOSE} -ge 1 ] && echo "[ SKIP ] ${test_name} (excluded)"
             return 2
@@ -226,8 +220,7 @@ run_test_module()
     [ ${VERBOSE} -ge 2 ] && echo -e "[  RUN ] ${test_name}"
     local cmd="PYTHONPATH=${pypath} ${PYTHON} -m ${module_pypath}"
     pdbg ${_name_} "command" "${cmd}"
-    if ${DRY_RUN}
-    then
+    if ${DRY_RUN}; then
         [ ${VERBOSE} -ge 1 ] && {
             echo "[  DRY ] ${test_name}"
             echo "         ${cmd}"
@@ -258,8 +251,7 @@ pdbg()
     [ ${VERBOSE} -le 2 ] && return 0
     local fmt="%-15s"
     local i
-    for i in $(seq $((${#} - 2)))
-    do
+    for i in $(seq $((${#} - 2))); do
         fmt+=" : %-20s"
     done
     fmt+=" : %s"
@@ -288,12 +280,10 @@ elim_subpaths()
     local paths=("${@}")
     local roots=()
     local path
-    for path in "${paths[@]}"
-    do
+    for path in "${paths[@]}"; do
         pdbg ${_name_} "path" "${path}"
         is_root=true
-        for path_ref in "${paths[@]}"
-        do
+        for path_ref in "${paths[@]}"; do
             [ "${path_ref}" == "${path}" ] && continue
             pdbg ${_name_} "path_ref" "${path_ref}"
             startswith "${path}" "${path_ref}" && {
