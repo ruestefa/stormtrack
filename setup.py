@@ -56,7 +56,8 @@ metadata = {
     ],
 }
 
-python = ">=3.10"
+# python = ">=3.10"
+python = ">=3.9"
 
 # Runtime dependencies: top-level and unpinned (only critical version restrictions)
 with open("requirements/requirements.in") as f:
