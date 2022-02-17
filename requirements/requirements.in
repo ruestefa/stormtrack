@@ -9,6 +9,6 @@ numpy
 matplotlib
 scipy
 shapely
-pillow
+pillow>=8.4.0
 pytz
 pyproj

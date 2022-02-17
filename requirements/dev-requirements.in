@@ -1,13 +1,13 @@
 black
 bumpversion
 flake8
+flake8-isort
 ipdb
 ipython
+isort
 mypy
-# pluggy
 pylint
+pytest
 rope
-# sphinx
-# twine
-# watchdog
+tox >= 3.3
 wheel
